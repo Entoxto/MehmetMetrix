@@ -33,11 +33,23 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
 
   // Единая типографика
   const TYPOGRAPHY = {
-    h2: { fontSize: isMobile ? 24 : 32, fontWeight: 900, lineHeight: 1.2 },
+    h2: { fontSize: isMobile ? 24 : 40, fontWeight: 900, lineHeight: 1.2 },
     h3: { fontSize: isMobile ? 20 : 24, fontWeight: 800, lineHeight: 1.3 },
     body: { fontSize: 12, lineHeight: 1.5 },
-    caption: { fontSize: 10, lineHeight: 1.4 },
-    amount: { fontSize: isMobile ? 28 : 32, fontWeight: 900, lineHeight: 1.1 },
+    caption: { fontSize: isMobile ? 10 : 11, lineHeight: 1.4 },
+    amount: { fontSize: isMobile ? 28 : 36, fontWeight: 900, lineHeight: 1.1 },
+  };
+
+  // Стили для легких и дорогих карточек
+  const CARD_STYLE = {
+    background: isMobile ? COLORS.background.card : "rgba(38,38,38,0.4)",
+    border: `1px solid ${COLORS.border.default}`,
+    borderRadius: isMobile ? 16 : 24,
+    boxShadow: isMobile
+      ? "0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05)"
+      : "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
+    backdropFilter: isMobile ? "none" : "blur(10px)",
+    transition: "all 0.3s ease",
   };
 
   return (
@@ -45,12 +57,15 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
       style={{
         flex: 1,
         padding: isMobile ? SPACING.md : SPACING.xl,
+        paddingTop: isMobile ? SPACING.md : SPACING.lg,
+        paddingBottom: isMobile ? SPACING.md : SPACING.lg,
         display: "flex",
         flexDirection: "column",
-        gap: isMobile ? SPACING.md : SPACING.lg,
+        gap: isMobile ? SPACING.md : SPACING.xl * 2,
       }}
     >
-      <div style={{ marginBottom: 8, textAlign: "center" }}>
+      {/* Заголовок секции с легким свечением */}
+      <div style={{ marginBottom: isMobile ? 8 : SPACING.md, textAlign: "center" }}>
         <h2
           style={{
             ...TYPOGRAPHY.h2,
@@ -59,10 +74,14 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 8,
+            gap: 12,
+            textShadow: isMobile
+              ? "none"
+              : `0 0 20px rgba(251,191,36,0.3), 0 0 40px rgba(251,191,36,0.15), 0 0 60px rgba(251,191,36,0.1)`,
+            letterSpacing: isMobile ? 0 : -1,
           }}
         >
-          Надвигающаяся расплата <span style={{ fontSize: isMobile ? 20 : 28 }}>💸</span>
+          Надвигающаяся расплата <span style={{ fontSize: isMobile ? 20 : 36 }}>💸</span>
         </h2>
       </div>
 
@@ -71,174 +90,430 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
           display: isMobile ? "flex" : "grid",
           flexDirection: isMobile ? "column" : undefined,
           gridTemplateColumns: isMobile ? undefined : "1fr auto 1fr",
-          gap: 0,
-          alignItems: "center",
+          gap: isMobile ? SPACING.lg : SPACING.xl * 2,
+          alignItems: "stretch",
         }}
       >
         {/* ЛЕВАЯ ЧАСТЬ - ОПЛАТЫ */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingRight: isMobile ? 0 : 32, paddingLeft: 0, width: "100%" }}>
-          <Card
-            expandable
-            cardId="total_payment"
-            expanded={expandedCards.has("total_payment")}
-            onToggle={() => onToggleCard("total_payment")}
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
+          <div
+            onClick={() => onToggleCard("total_payment")}
+            style={{
+              ...CARD_STYLE,
+              padding: isMobile ? SPACING.md : SPACING.xl,
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              gap: isMobile ? SPACING.sm : SPACING.md,
+            }}
+            onMouseEnter={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.boxShadow =
+                  "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
+                e.currentTarget.style.transform = "translateY(0)";
+              }
+            }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* Заголовок и сумма на одной горизонтали */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: SPACING.md,
+                marginBottom: isMobile ? 0 : SPACING.xs,
+              }}
+            >
+              <p
+                style={{
+                  ...TYPOGRAPHY.caption,
+                  color: COLORS.text.secondary,
+                  textTransform: "uppercase",
+                  letterSpacing: 1.5,
+                  margin: 0,
+                  fontSize: isMobile ? 10 : 11,
+                }}
+              >
+                Всего к оплате
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
+                {expandedCards.has("total_payment") && (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>
+                    ▼
+                  </span>
+                )}
+                {!expandedCards.has("total_payment") && (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
+                )}
+              </div>
+            </div>
+            <p style={{ ...TYPOGRAPHY.amount, color: COLORS.error, letterSpacing: -1, margin: 0, fontSize: isMobile ? 28 : 36 }}>
+              {formatCurrency(totalPayment)}
+            </p>
+            <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0, marginTop: isMobile ? 0 : SPACING.xs }}>
+              По данным из партий и предоплат
+            </p>
+            {expandedCards.has("total_payment") && (
+              <div
+                style={{
+                  marginTop: isMobile ? SPACING.md : SPACING.lg,
+                  paddingTop: isMobile ? SPACING.md : SPACING.lg,
+                  borderTop: `1px solid ${COLORS.border.default}`,
+                  animation: "fadeIn 0.3s ease",
+                }}
+              >
                 <p
                   style={{
-                    ...TYPOGRAPHY.caption,
+                    ...TYPOGRAPHY.body,
                     color: COLORS.text.secondary,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
-                    margin: 0,
+                    marginBottom: isMobile ? SPACING.md : SPACING.lg,
+                    marginTop: 0,
+                    fontSize: isMobile ? 12 : 13,
+                    fontWeight: 600,
                   }}
                 >
-                  Всего к оплате
+                  Детализация:
                 </p>
-                {expandedCards.has("total_payment") && (
-                  <span style={{ fontSize: 12, transition: "transform 0.3s ease" }}>▼</span>
-                )}
-                {!expandedCards.has("total_payment") && <span style={{ fontSize: 12 }}>▶</span>}
-              </div>
-              <p style={{ ...TYPOGRAPHY.amount, color: COLORS.error, letterSpacing: -1, margin: 0 }}>
-                {formatCurrency(totalPayment)}
-              </p>
-              <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0 }}>
-                По данным из партий и предоплат
-              </p>
-              {expandedCards.has("total_payment") && (
+                {/* Таблица детализации с разделителями и hover-эффектом */}
                 <div
                   style={{
-                    marginTop: 16,
-                    paddingTop: 16,
-                    borderTop: `1px solid ${COLORS.border.default}`,
-                    animation: "fadeIn 0.3s ease",
+                    display: "grid",
+                    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
+                    gap: 0,
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    border: `1px solid ${COLORS.border.default}`,
                   }}
                 >
-                  <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.secondary, marginBottom: 12, marginTop: 0 }}>
-                    Детализация:
-                  </p>
-                  {/* 2-колоночная сетка на десктопе, 1 колонка на мобиле */}
+                  {/* Строка 1 */}
                   <div
                     style={{
-                      display: "grid",
-                      gridTemplateColumns: isDesktop ? "1fr 1fr" : "1fr",
-                      gap: isDesktop ? SPACING.md : 6,
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
                     }}
                   >
-                    <div
+                    <span
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: SPACING.sm,
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
                       }}
                     >
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.text.primary,
-                          margin: 0,
-                          overflowWrap: "break-word",
-                          wordBreak: "break-word",
-                          whiteSpace: "normal",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        Оплата за партию 9
-                      </span>
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.error,
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(shipment9Total)}
-                      </span>
-                    </div>
-                    <div
+                      Оплата за партию 9
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: SPACING.sm,
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.error,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
                       }}
                     >
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.text.primary,
-                          margin: 0,
-                          overflowWrap: "break-word",
-                          wordBreak: "break-word",
-                          whiteSpace: "normal",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        Оплата за партию 8
-                      </span>
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.error,
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(shipment8Total)}
-                      </span>
-                    </div>
-                    <div
+                      {formatCurrency(shipment9Total)}
+                    </span>
+                  </div>
+                  {/* Строка 2 */}
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: SPACING.sm,
-                        gridColumn: isDesktop ? "1 / -1" : "1",
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
                       }}
                     >
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.text.primary,
-                          margin: 0,
-                          overflowWrap: "break-word",
-                          wordBreak: "break-word",
-                          whiteSpace: "normal",
-                          flex: 1,
-                          minWidth: 0,
-                          maxWidth: isDesktop ? "none" : "100%",
-                        }}
-                      >
-                        Предоплата за материал коричневая матовая и коричневая глянцевая кожа питона
-                      </span>
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.error,
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(materialPrepayment)}
-                      </span>
-                    </div>
+                      Оплата за партию 8
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.error,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
+                      }}
+                    >
+                      {formatCurrency(shipment8Total)}
+                    </span>
+                  </div>
+                  {/* Строка 3 */}
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      Предоплата за материал коричневая матовая и коричневая глянцевая кожа питона
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.error,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
+                      }}
+                    >
+                      {formatCurrency(materialPrepayment)}
+                    </span>
                   </div>
                 </div>
-              )}
-            </div>
-          </Card>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* РАЗДЕЛИТЕЛЬ */}
@@ -251,14 +526,14 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
               justifyContent: "center",
               height: "100%",
               minHeight: 200,
-              padding: "0 16px",
+              padding: `0 ${SPACING.md}px`,
             }}
           >
             <div
               style={{
-                width: 2,
+                width: 1,
                 height: "100%",
-                background: "linear-gradient(to bottom, transparent, rgba(251,191,36,0.3) 10%, rgba(251,191,36,0.3) 90%, transparent)",
+                background: "linear-gradient(to bottom, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
               }}
             />
           </div>
@@ -269,140 +544,325 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
           <div
             style={{
               width: "100%",
-              height: 2,
-              background: "linear-gradient(to right, transparent, rgba(251,191,36,0.3) 10%, rgba(251,191,36,0.3) 90%, transparent)",
-              margin: `${SPACING.lg}px 0`,
+              height: 1,
+              background: "linear-gradient(to right, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
             }}
           />
         )}
 
         {/* ПРАВАЯ ЧАСТЬ - ДЕПОЗИТЫ */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingLeft: isMobile ? 0 : 32, paddingRight: 0, width: "100%" }}>
-          <Card
-            expandable
-            cardId="deposits"
-            expanded={expandedCards.has("deposits")}
-            onToggle={() => onToggleCard("deposits")}
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
+          <div
+            onClick={() => onToggleCard("deposits")}
+            style={{
+              ...CARD_STYLE,
+              padding: isMobile ? SPACING.md : SPACING.xl,
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              gap: isMobile ? SPACING.sm : SPACING.md,
+            }}
+            onMouseEnter={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.boxShadow =
+                  "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
+                e.currentTarget.style.transform = "translateY(0)";
+              }
+            }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {/* Заголовок и сумма на одной горизонтали */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: SPACING.md,
+                marginBottom: isMobile ? 0 : SPACING.xs,
+              }}
+            >
+              <p
+                style={{
+                  ...TYPOGRAPHY.caption,
+                  color: COLORS.text.secondary,
+                  textTransform: "uppercase",
+                  letterSpacing: 1.5,
+                  margin: 0,
+                  fontSize: isMobile ? 10 : 11,
+                }}
+              >
+                Депозитов внесено
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
+                {expandedCards.has("deposits") && (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>
+                    ▼
+                  </span>
+                )}
+                {!expandedCards.has("deposits") && (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
+                )}
+              </div>
+            </div>
+            <p style={{ ...TYPOGRAPHY.amount, color: COLORS.success, letterSpacing: -1, margin: 0, fontSize: isMobile ? 28 : 36 }}>
+              {formatCurrency(15840)}
+            </p>
+            <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0, marginTop: isMobile ? 0 : SPACING.xs }}>
+              Депозиты и предоплаты
+            </p>
+            {expandedCards.has("deposits") && (
+              <div
+                style={{
+                  marginTop: isMobile ? SPACING.md : SPACING.lg,
+                  paddingTop: isMobile ? SPACING.md : SPACING.lg,
+                  borderTop: `1px solid ${COLORS.border.default}`,
+                  animation: "fadeIn 0.3s ease",
+                }}
+              >
                 <p
                   style={{
-                    ...TYPOGRAPHY.caption,
+                    ...TYPOGRAPHY.body,
                     color: COLORS.text.secondary,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
-                    margin: 0,
+                    marginBottom: isMobile ? SPACING.md : SPACING.lg,
+                    marginTop: 0,
+                    fontSize: isMobile ? 12 : 13,
+                    fontWeight: 600,
                   }}
                 >
-                  Депозитов внесено
+                  Детализация:
                 </p>
-                {expandedCards.has("deposits") && (
-                  <span style={{ fontSize: 12, transition: "transform 0.3s ease" }}>▼</span>
-                )}
-                {!expandedCards.has("deposits") && <span style={{ fontSize: 12 }}>▶</span>}
-              </div>
-              <p style={{ ...TYPOGRAPHY.amount, color: COLORS.success, letterSpacing: -1, margin: 0 }}>
-                {formatCurrency(15840)}
-              </p>
-              <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0 }}>
-                Депозиты и предоплаты
-              </p>
-              {expandedCards.has("deposits") && (
+                {/* Таблица детализации с разделителями и hover-эффектом */}
                 <div
                   style={{
-                    marginTop: 16,
-                    paddingTop: 16,
-                    borderTop: `1px solid ${COLORS.border.default}`,
-                    animation: "fadeIn 0.3s ease",
+                    display: "grid",
+                    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
+                    gap: 0,
+                    borderRadius: 8,
+                    overflow: "hidden",
+                    border: `1px solid ${COLORS.border.default}`,
                   }}
                 >
-                  <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.secondary, marginBottom: 12, marginTop: 0 }}>
-                    Детализация:
-                  </p>
-                  {/* 2-колоночная сетка на десктопе, 1 колонка на мобиле */}
+                  {/* Строка 1 */}
                   <div
                     style={{
-                      display: "grid",
-                      gridTemplateColumns: isDesktop ? "1fr 1fr" : "1fr",
-                      gap: isDesktop ? SPACING.md : 6,
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
                     }}
                   >
-                    <div
+                    <span
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: SPACING.sm,
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
                       }}
                     >
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.text.primary,
-                          margin: 0,
-                          overflowWrap: "break-word",
-                          wordBreak: "break-word",
-                          whiteSpace: "normal",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        Предоплата hermes mouse
-                      </span>
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.success,
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(2000)}
-                      </span>
-                    </div>
-                    <div
+                      Предоплата hermes mouse
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: SPACING.sm,
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.success,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
                       }}
                     >
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.text.primary,
-                          margin: 0,
-                          overflowWrap: "break-word",
-                          wordBreak: "break-word",
-                          whiteSpace: "normal",
-                          flex: 1,
-                          minWidth: 0,
-                        }}
-                      >
-                        Депозит подлежащий списанию при ближайшей оплате
-                      </span>
-                      <span
-                        style={{
-                          ...TYPOGRAPHY.body,
-                          color: COLORS.success,
-                          fontWeight: 600,
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                          textAlign: "right",
-                        }}
-                      >
-                        {formatCurrency(13840)}
-                      </span>
-                    </div>
+                      {formatCurrency(2000)}
+                    </span>
+                  </div>
+                  {/* Строка 2 */}
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      Депозит подлежащий списанию при ближайшей оплате
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.success,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
+                      }}
+                    >
+                      {formatCurrency(13840)}
+                    </span>
                   </div>
                 </div>
-              )}
-            </div>
-          </Card>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

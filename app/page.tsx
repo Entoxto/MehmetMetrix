@@ -100,7 +100,7 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
       },
       {
         productId: "python-007",
-        overrideName: "Юбка из кожи чёрного питона",
+        overrideName: "Юбка из чёрного глянцевого питона",
         sample: true,
         quantityOverride: 1,
         note: "образец",
@@ -223,7 +223,7 @@ const buildShipmentItems = (
         ? price * effectiveQuantity
         : null;
     const quantityLabel = item.sample
-      ? `образец${effectiveQuantity ? ` (${effectiveQuantity} шт.)` : ""}`
+      ? effectiveQuantity ? `${effectiveQuantity} шт.` : "образец"
       : `${effectiveQuantity ?? 0} шт.`;
     const statusKey: ShipmentStatusKey = item.status ?? "in_progress";
     const statusMeta = SHIPMENT_STATUS_META[statusKey];
@@ -839,7 +839,7 @@ export default function HomePage() {
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: isMobile ? "1.5fr 0.7fr 0.6fr 0.7fr 0.8fr" : "1.8fr 0.8fr 0.75fr 0.8fr 0.9fr",
+                    gridTemplateColumns: isMobile ? "1.6fr 1fr 1fr 1fr" : "1.6fr 1fr 1fr 1fr",
                     gap: 0,
                     border: `1px solid ${COLORS.border.default}`,
                     borderRadius: 12,
@@ -875,21 +875,7 @@ export default function HomePage() {
                             letterSpacing: 1,
                             color: COLORS.text.secondary,
                             borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "left",
-                            margin: 0,
-                          }}
-                        >
-                          Статус
-                        </div>
-                        <div
-                          style={{
-                            padding: isMobile ? "10px 12px" : "14px 18px",
-                            background: COLORS.background.card,
-                            ...TYPOGRAPHY.tableHeader,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            color: COLORS.text.secondary,
-                            borderBottom: `1px solid ${COLORS.border.default}`,
+                            textAlign: "center",
                             margin: 0,
                           }}
                         >
@@ -904,7 +890,7 @@ export default function HomePage() {
                             letterSpacing: 1,
                             color: COLORS.text.secondary,
                             borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "right",
+                            textAlign: "center",
                             margin: 0,
                           }}
                         >
@@ -919,7 +905,7 @@ export default function HomePage() {
                             letterSpacing: 1,
                             color: COLORS.text.secondary,
                             borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "right",
+                            textAlign: "center",
                             margin: 0,
                           }}
                         >
@@ -1024,12 +1010,36 @@ export default function HomePage() {
                                   {item.note && (
                                     <span
                                       style={{
-                                        ...STYLES.categoryBadge,
-                                        fontSize: isMobile ? 9 : 10,
-                                        letterSpacing: 0.4,
-                                        padding: isMobile ? "3px 8px" : "4px 12px",
-                                        background: item.paidPreviously || item.noPayment ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
-                                        color: item.paidPreviously || item.noPayment ? COLORS.success : COLORS.primary,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        padding: isMobile ? "4px 10px" : "5px 12px",
+                                        borderRadius: 9999,
+                                        fontSize: isMobile ? 12 : 13,
+                                        fontWeight: 600,
+                                        letterSpacing: 0.5,
+                                        background: item.note === "образец" 
+                                          ? "rgba(59,130,246,0.1)" 
+                                          : item.paidPreviously || item.noPayment 
+                                            ? "rgba(52,211,153,0.15)" 
+                                            : "rgba(251,191,36,0.15)",
+                                        color: item.note === "образец"
+                                          ? "#3B82F6"
+                                          : item.paidPreviously || item.noPayment
+                                            ? COLORS.success
+                                            : COLORS.primary,
+                                        border: item.note === "образец"
+                                          ? "1px solid rgba(59,130,246,0.3)"
+                                          : "1px solid",
+                                        borderColor: item.note === "образец"
+                                          ? "rgba(59,130,246,0.3)"
+                                          : item.paidPreviously || item.noPayment
+                                            ? "rgba(52,211,153,0.3)"
+                                            : "rgba(251,191,36,0.3)",
+                                        boxShadow: item.note === "образец"
+                                          ? "0 0 8px rgba(59,130,246,0.3), 0 0 16px rgba(59,130,246,0.15)"
+                                          : "none",
+                                        transition: "all 0.2s ease",
                                       }}
                                     >
                                       {item.note}
@@ -1037,46 +1047,12 @@ export default function HomePage() {
                                   )}
                                 </div>
                               </div>
-                              {/* Статус как чип - единый стиль */}
                               <div
                                 style={{
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
                                   display: "flex",
                                   alignItems: "center",
-                                  borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                  background: shipmentCellBaseBackground,
-                                  cursor: "pointer",
-                                  transition: "background 0.2s ease, border 0.2s ease",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: 6,
-                                    padding: "6px 12px",
-                                    height: 28,
-                                    borderRadius: 999,
-                                    fontSize: 12,
-                                    fontWeight: 600,
-                                    lineHeight: 1.4,
-                                    border: "1px solid",
-                                    background: "rgba(251,191,36,0.15)",
-                                    color: COLORS.primary,
-                                    borderColor: "rgba(251,191,36,0.3)",
-                                  }}
-                                  role="status"
-                                  aria-label={`Статус: ${item.status.label}`}
-                                >
-                                  <span style={{ fontSize: 14 }} aria-hidden="true">{item.status.icon}</span>
-                                  <span style={{ textTransform: "uppercase", fontSize: 12 }}>{item.status.label}</span>
-                                </div>
-                              </div>
-                              <div
-                                style={{
-                                  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                  display: "flex",
-                                  alignItems: "center",
+                                  justifyContent: "center",
                                   borderBottom: `1px solid ${shipmentCellBaseBorder}`,
                                   ...TYPOGRAPHY.tableCell,
                                   fontWeight: 600,
@@ -1094,7 +1070,7 @@ export default function HomePage() {
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "flex-end",
+                                  justifyContent: "center",
                                   borderBottom: `1px solid ${shipmentCellBaseBorder}`,
                                   ...TYPOGRAPHY.tableCell,
                                   color: item.hasPrice ? COLORS.text.primary : COLORS.primary,
@@ -1103,7 +1079,6 @@ export default function HomePage() {
                                   cursor: "pointer",
                                   transition: "background 0.2s ease, border 0.2s ease",
                                   margin: 0,
-                                  textAlign: "right",
                                 }}
                               >
                                 {item.hasPrice && item.price != null ? formatCurrency(item.price) : "уточняется"}
@@ -1113,7 +1088,7 @@ export default function HomePage() {
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
                                   display: "flex",
                                   alignItems: "center",
-                                  justifyContent: "flex-end",
+                                  justifyContent: "center",
                                   borderBottom: `1px solid ${shipmentCellBaseBorder}`,
                                   ...TYPOGRAPHY.tableCell,
                                   color: item.total != null ? COLORS.success : COLORS.primary,
@@ -1132,7 +1107,6 @@ export default function HomePage() {
                         );
                       })}
                     </div>
-                  )}
 
               {/* Итого по партии - лейблы слева, суммы справа */}
               <div

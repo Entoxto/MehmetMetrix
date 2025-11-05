@@ -44,6 +44,14 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
     borderColor: "rgba(251,191,36,0.3)",
   };
 
+  // Единые стили для фото
+  const PHOTO_STYLE = {
+    borderRadius: isMobile ? 16 : 20,
+    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
+    overflow: "hidden" as const,
+    background: COLORS.background.cardExpanded,
+  };
+
   return (
     <div
       style={{
@@ -54,21 +62,21 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         flexDirection: isMobile ? "column" : undefined,
         gridTemplateColumns: isMobile ? undefined : "1fr 1fr",
         gap: isMobile ? SPACING.lg : SPACING.xl,
-        alignItems: isMobile ? undefined : "start",
+        alignItems: isMobile ? undefined : "stretch",
         maxWidth: isMobile ? "100%" : "none",
       }}
     >
-      {/* Фото товара - соотношение сторон 4:5 */}
+      {/* Фото товара - квадратное (1:1) */}
       <div
         style={{
           width: "100%",
-          aspectRatio: "4 / 5",
-          background: COLORS.background.cardExpanded,
+          aspectRatio: isMobile ? undefined : "1 / 1",
+          height: isMobile ? 300 : "auto",
+          maxWidth: isMobile ? "100%" : "500px",
+          ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          borderRadius: isMobile ? 16 : 20,
-          overflow: "hidden",
           flexShrink: 0,
         }}
       >
@@ -95,25 +103,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           flexDirection: "column",
           gap: isMobile ? SPACING.lg : SPACING.xl,
           flex: 1,
+          minHeight: isMobile ? "auto" : 0, // Для одинаковой высоты с фото на десктопе
         }}
       >
-        {/* Заголовок */}
-        <div>
-          <h1
-            style={{
-              ...TYPOGRAPHY.h1,
-              color: COLORS.primary,
-              margin: 0,
-              marginBottom: isMobile ? SPACING.md : SPACING.lg,
-              overflowWrap: "break-word",
-              wordBreak: "break-word",
-              whiteSpace: "normal",
-            }}
-          >
-            {product.name}
-          </h1>
-        </div>
-
         {/* Размеры */}
         <div>
           <p
