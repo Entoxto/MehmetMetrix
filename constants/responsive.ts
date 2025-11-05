@@ -62,11 +62,3 @@ export const useBreakpoint = () => {
   } as const;
 };
 
-export const pickResponsiveValue = <T,>(
-  breakpoint: BreakpointKey,
-  values: { base: T } & Partial<Record<BreakpointKey, T>>,
-): T => {
-  return values[breakpoint] ?? values.base;
-};
-
-

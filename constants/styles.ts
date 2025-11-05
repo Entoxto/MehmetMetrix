@@ -59,15 +59,6 @@ export const STYLES = {
     fontSize: 12,
     border: "1px solid rgba(251,191,36,0.3)",
   },
-  sizeBadgeLarge: {
-    background: "rgba(251,191,36,0.15)",
-    color: COLORS.primary,
-    padding: "10px 18px",
-    borderRadius: 8,
-    fontSize: 18,
-    fontWeight: 600,
-    border: "1px solid rgba(251,191,36,0.3)",
-  },
   categoryBadge: {
     background: "rgba(245, 158, 11, 0.2)",
     color: "#fde68a",

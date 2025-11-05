@@ -7,7 +7,6 @@ interface CardProps {
   children: React.ReactNode;
   padding?: number;
   expandable?: boolean;
-  cardId?: string;
   expanded?: boolean;
   onToggle?: () => void;
 }
@@ -16,7 +15,6 @@ export const Card: React.FC<CardProps> = ({
   children,
   padding = 16,
   expandable = false,
-  cardId = "",
   expanded = false,
   onToggle,
 }) => {

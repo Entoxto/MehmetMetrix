@@ -10,6 +10,7 @@ import { CategoryCard } from "@/components/CategoryCard";
 import { MoneyView } from "@/components/MoneyView";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
+import { formatCurrency } from "@/lib/utils";
 
 type ShipmentStatusKey = "in_progress" | "ready" | "received";
 
@@ -261,11 +262,6 @@ const buildShipmentItems = (
   }
 
   return items.sort(sortByStatus);
-};
-
-// Форматирование денег с тонким пробелом: $45 970
-const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString("ru-RU").replace(/\s/g, "\u2009")}`;
 };
 
 export default function HomePage() {
@@ -634,7 +630,8 @@ export default function HomePage() {
                 display: "grid",
                 gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
                 gap: isDesktop ? SPACING.lg : SPACING.md,
-                alignItems: "flex-start",
+                alignItems: "center",
+                minHeight: isDesktop ? 60 : "auto",
               }}
             >
               {/* Левая колонка: иконка, статус, заголовок */}
@@ -684,15 +681,17 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Правая колонка: блок мета (план/дата) - сетка 180px / 1fr, лейбл вверху */}
+              {/* Правая колонка: блок мета (план/дата) - выровнен по центру, компактные отступы */}
               {isDesktop && (
                 <div
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "180px 1fr",
-                    gap: SPACING.sm,
-                    alignItems: "flex-start",
-                    textAlign: "right",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    justifyContent: "center",
+                    gap: 4,
+                    minHeight: 60,
+                    paddingRight: SPACING.md,
                   }}
                 >
                   {shipment.receivedDate ? (
@@ -700,10 +699,11 @@ export default function HomePage() {
                       <p
                         style={{
                           ...TYPOGRAPHY.caption,
-                          color: COLORS.text.muted,
+                          color: "rgba(212, 212, 212, 0.6)",
                           textTransform: "uppercase",
                           margin: 0,
                           lineHeight: 1.4,
+                          textAlign: "right",
                         }}
                       >
                         Дата получения
@@ -727,10 +727,11 @@ export default function HomePage() {
                       <p
                         style={{
                           ...TYPOGRAPHY.caption,
-                          color: COLORS.text.muted,
+                          color: "rgba(212, 212, 212, 0.6)",
                           textTransform: "uppercase",
                           margin: 0,
                           lineHeight: 1.4,
+                          textAlign: "right",
                         }}
                       >
                         План доставки

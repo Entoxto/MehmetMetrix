@@ -3,12 +3,8 @@
 import React from "react";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
+import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/types/product";
-
-// Форматирование денег с тонким пробелом: $45 970
-const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString("ru-RU").replace(/\s/g, "\u2009")}`;
-};
 
 interface ProductDetailProps {
   product: Product;

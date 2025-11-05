@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { Card } from "./Card";
 import { COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
+import { formatCurrency } from "@/lib/utils";
 
 interface MoneyViewProps {
   expandedCards: Set<string>;
@@ -13,11 +13,6 @@ interface MoneyViewProps {
   materialPrepayment: number;
   totalPayment: number;
 }
-
-// Форматирование денег с тонким пробелом: $45 970
-const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString("ru-RU").replace(/\s/g, "\u2009")}`;
-};
 
 export const MoneyView: React.FC<MoneyViewProps> = ({
   expandedCards,
