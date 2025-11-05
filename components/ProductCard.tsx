@@ -1,0 +1,118 @@
+"use client";
+
+import React from "react";
+import { Card } from "./Card";
+import { STYLES, COLORS } from "@/constants/styles";
+import type { Product } from "@/types/product";
+
+interface ProductCardProps {
+  product: Product;
+  onClick: () => void;
+}
+
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+  return (
+    <Card padding={0} expandable={false}>
+      <div
+        onClick={onClick}
+        style={{
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-4px)";
+          const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
+          if (card) card.style.boxShadow = "0 8px 32px rgba(251,191,36,0.2)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
+          if (card) card.style.boxShadow = "none";
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            height: 300,
+            background: COLORS.background.cardExpanded,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            overflow: "hidden",
+          }}
+        >
+          <img
+            src={product.photo}
+            alt={product.name}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = "none";
+              target.parentElement!.innerHTML =
+                '<span style="color: #737373; font-size: 48px;">📷</span>';
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+        <div style={{ padding: 20, display: "flex", flexDirection: "column", minHeight: 180 }}>
+          <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: COLORS.primary, minHeight: 60, maxHeight: 60, overflow: "hidden", lineHeight: "1.3" }}>
+            {product.name}
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+            <div>
+              {/* NOTE: All prices are in USD dollars only */}
+              <p
+                style={{
+                  color: COLORS.text.secondary,
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  marginBottom: 4,
+                  height: 15,
+                  lineHeight: "15px",
+                }}
+              >
+                Цена
+              </p>
+              {product.price ? (
+                <p style={{ color: COLORS.success, fontSize: 20, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
+                  ${product.price.toLocaleString()}
+                </p>
+              ) : (
+                <p style={{ color: COLORS.primary, fontSize: 20, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
+                  уточняется
+                </p>
+              )}
+            </div>
+            <div>
+              <p
+                style={{
+                  color: COLORS.text.secondary,
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  marginBottom: 4,
+                  height: 15,
+                  lineHeight: "15px",
+                }}
+              >
+                Размеры
+              </p>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {product.sizes.map((size: string, i: number) => (
+                  <span key={i} style={STYLES.sizeBadge}>
+                    {size}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+

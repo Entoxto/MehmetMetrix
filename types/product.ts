@@ -11,7 +11,6 @@ export interface Product {
   photo: string;
   sizes: string[];
   price?: number;
-  description?: string;
   materials?: ProductMaterials;
   inStock: boolean;
   tags?: string[];

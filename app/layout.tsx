@@ -3,6 +3,13 @@ export const metadata = {
   description: "Маленькая витрина для каталога и показателей",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -12,6 +19,26 @@ export default function RootLayout({
     <html lang="ru">
       <head>
         <style>{`
+          * {
+            box-sizing: border-box;
+          }
+          
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+          }
+          
+          body {
+            position: relative;
+          }
+          
           @keyframes fadeIn {
             from {
               opacity: 0;
