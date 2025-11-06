@@ -293,218 +293,6 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
                       {formatCurrency(shipment9Total)}
                     </span>
                   </div>
-                  {/* Строка 2 */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Оплата за партию 8
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.error,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(shipment8Total)}
-                    </span>
-                  </div>
-                  {/* Строка 3 */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Предоплата за материал коричневая матовая и коричневая глянцевая кожа питона
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.error,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(materialPrepayment)}
-                    </span>
-                  </div>
                 </div>
               </div>
             )}
@@ -605,7 +393,7 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
               </div>
             </div>
             <p style={{ ...TYPOGRAPHY.amount, color: COLORS.success, letterSpacing: -1, margin: 0, fontSize: isMobile ? 28 : 36 }}>
-              {formatCurrency(15840)}
+              {formatCurrency(17930)}
             </p>
             <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0, marginTop: isMobile ? 0 : SPACING.xs }}>
               Депозиты и предоплаты
@@ -692,7 +480,7 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
                         whiteSpace: "normal",
                       }}
                     >
-                      Предоплата hermes mouse
+                      Предоплата hermes mouse ≈ 35 изделий
                     </span>
                   </div>
                   <div
@@ -749,7 +537,118 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
                       {formatCurrency(2000)}
                     </span>
                   </div>
-                  {/* Строка 2 */}
+                  {/* Строка 2 - Предоплата на питона (перенесена из левой карточки) */}
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      Предоплата на коричневого питона
+                      <br />
+                      глянцевый ≈ 20 изделий
+                      <br />
+                      матовый ≈ 10 изделий
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: isMobile ? SPACING.sm : SPACING.md,
+                      borderBottom: `1px solid ${COLORS.border.default}`,
+                      borderLeft: `1px solid ${COLORS.border.default}`,
+                      textAlign: "right",
+                      background: "transparent",
+                      transition: "background 0.2s ease",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      minHeight: isMobile ? 40 : 48,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
+                          }
+                        }
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isMobile) {
+                        const row = e.currentTarget.parentElement;
+                        if (row) {
+                          const children = Array.from(row.children);
+                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
+                          const startIdx = rowIndex * 2;
+                          const endIdx = startIdx + 2;
+                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
+                            (children[i] as HTMLElement).style.background = "transparent";
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <span
+                      style={{
+                        ...TYPOGRAPHY.body,
+                        color: COLORS.success,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                        margin: 0,
+                      }}
+                    >
+                      {formatCurrency(materialPrepayment)}
+                    </span>
+                  </div>
+                  {/* Строка 3 - Депозит подлежащий списанию */}
                   <div
                     style={{
                       padding: isMobile ? SPACING.sm : SPACING.md,
@@ -851,7 +750,7 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
                         margin: 0,
                       }}
                     >
-                      {formatCurrency(13840)}
+                      {formatCurrency(12830)}
                     </span>
                   </div>
                 </div>

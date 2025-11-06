@@ -120,9 +120,9 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
   {
     id: "shipment-8",
     title: "Партия №8",
-    status: { label: "Получено, но не оплачено", icon: "📦" },
+    status: { label: "Получено, оплачено", icon: "✅" },
     receivedDate: "04.11.2025",
-    groupByPayment: true,
+    groupByPayment: false,
     rawItems: [
       {
         productId: "suede-003",
@@ -201,7 +201,7 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
         quantityOverride: 2,
         status: "received",
         noPayment: true,
-        note: "вернулись после ремонта (без оплаты)",
+        note: "вернулись после ремонта",
       },
     ],
   },
@@ -210,7 +210,7 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
 const buildShipmentItems = (
   rawItems: readonly ShipmentRawItem[],
   products: Product[],
-  { groupByPayment = false }: { groupByPayment?: boolean } = {}
+  { groupByPayment = false, shipmentId }: { groupByPayment?: boolean; shipmentId?: string } = {}
 ) => {
   const items = rawItems.map((item) => {
     const product = products.find((p) => p.id === item.productId);
@@ -255,6 +255,10 @@ const buildShipmentItems = (
   if (groupByPayment) {
     return items.sort((a, b) => {
       if (a.needsPayment !== b.needsPayment) {
+        // Для партии №8: сначала "Оплачено" (needsPayment = true), потом "Оплачено ранее" (needsPayment = false)
+        if (shipmentId === "shipment-8") {
+          return a.needsPayment ? -1 : 1;
+        }
         return a.needsPayment ? -1 : 1;
       }
       return sortByStatus(a, b);
@@ -276,7 +280,7 @@ export default function HomePage() {
   // Загрузка данных с обработкой ошибок (статический импорт)
   const products: Product[] = React.useMemo(() => {
     try {
-      const productsDataTyped = productsData as ProductsData;
+  const productsDataTyped = productsData as ProductsData;
       return productsDataTyped.products || [];
     } catch (err) {
       return [];
@@ -377,7 +381,7 @@ export default function HomePage() {
   const allShipments = React.useMemo(
     () =>
       SHIPMENTS_CONFIG.map((config) => {
-        const items = buildShipmentItems(config.rawItems, products, { groupByPayment: config.groupByPayment });
+        const items = buildShipmentItems(config.rawItems, products, { groupByPayment: config.groupByPayment, shipmentId: config.id });
         const totalAmount = items.reduce((sum, item) => sum + (item.total ?? 0), 0);
         const hasPriceGaps = items.some((item) => item.total == null);
 
@@ -447,7 +451,7 @@ export default function HomePage() {
         if (!isMobile) {
           e.currentTarget.style.background = STYLES.button.background;
           e.currentTarget.style.border = STYLES.button.border;
-          e.currentTarget.style.transform = "translateX(0)";
+        e.currentTarget.style.transform = "translateX(0)";
         }
       }}
       style={{
@@ -465,15 +469,16 @@ export default function HomePage() {
       return (
         <div style={{ flex: 1, padding: SPACING.xl, display: "flex", justifyContent: "center", alignItems: "center" }}>
           <p style={{ color: COLORS.error, fontSize: 16 }}>{error}</p>
-        </div>
-      );
+    </div>
+  );
     }
 
     if (view === "money") {
       const shipment9Total = allShipments.find((s) => s.id === "shipment-9")?.totalAmount ?? 0;
       const shipment8Total = allShipments.find((s) => s.id === "shipment-8")?.totalAmount ?? 0;
       const materialPrepayment = 3100;
-      const totalPayment = shipment9Total + shipment8Total + materialPrepayment;
+      // Партия №8 оплачена, предоплата перенесена в депозиты - остаётся только партия 9
+      const totalPayment = shipment9Total;
       
       return (
         <MoneyView
@@ -495,7 +500,7 @@ export default function HomePage() {
               <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 12 : 13, fontStyle: "italic" }}>
                 {categoryDescriptions[selectedCategory]}
               </p>
-            </div>
+                  </div>
             <div style={{ display: "grid", gap: isMobile ? SPACING.md : SPACING.lg, gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))" }}>
               {categoryProducts.map((product) => (
                 <ProductCard
@@ -504,8 +509,8 @@ export default function HomePage() {
                   onClick={() => setSelectedProduct(product)}
                 />
               ))}
-            </div>
-          </div>
+                        </div>
+                        </div>
         );
       }
 
@@ -522,7 +527,7 @@ export default function HomePage() {
             <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 12 : 13, fontStyle: "italic" }}>
               Выбери, чем сегодня восхищаться.
             </p>
-          </div>
+                  </div>
           <div style={{ display: "grid", gap: isMobile ? SPACING.md : 20, gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(220px, 1fr))" }}>
             {catalogGroups.map((g, i) => (
               <CategoryCard
@@ -575,9 +580,9 @@ export default function HomePage() {
           fontWeight: 600,
           lineHeight: 1.4,
           border: "1px solid",
-          background: shipment.id === "shipment-8" ? "rgba(248,113,113,0.15)" : "rgba(251,191,36,0.15)",
-          color: shipment.id === "shipment-8" ? COLORS.error : COLORS.primary,
-          borderColor: shipment.id === "shipment-8" ? "rgba(248,113,113,0.3)" : "rgba(251,191,36,0.3)",
+          background: shipment.id === "shipment-8" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
+          color: shipment.id === "shipment-8" ? COLORS.success : COLORS.primary,
+          borderColor: shipment.id === "shipment-8" ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)",
         };
 
         // Заменяем пробел между "Партия" и "№9" на неразрывный пробел
@@ -595,23 +600,23 @@ export default function HomePage() {
                 handleToggleCard(shipment.id);
               }
             }}
-            style={{
+                    style={{
               ...CARD_STYLE,
-              cursor: "pointer",
+                      cursor: "pointer",
               outline: "none",
-            }}
-            onMouseEnter={(e) => {
+                    }}
+                    onMouseEnter={(e) => {
               if (!isMobile) {
                 e.currentTarget.style.background = COLORS.background.cardExpanded;
                 e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1)";
                 e.currentTarget.style.transform = "translateY(-2px)";
               }
-            }}
-            onMouseLeave={(e) => {
+                    }}
+                    onMouseLeave={(e) => {
               if (!isMobile) {
                 e.currentTarget.style.background = CARD_STYLE.background;
                 e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
-                e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.transform = "translateY(0)";
               }
             }}
             onFocus={(e) => {
@@ -620,7 +625,7 @@ export default function HomePage() {
             }}
             onBlur={(e) => {
               e.currentTarget.style.outline = "none";
-            }}
+                    }}
             aria-expanded={isExpanded}
             aria-label={`${shipment.title}, ${shipment.status.label}`}
           >
@@ -630,7 +635,7 @@ export default function HomePage() {
                 display: "grid",
                 gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
                 gap: isDesktop ? SPACING.lg : SPACING.md,
-                alignItems: "center",
+                      alignItems: "center",
                 minHeight: isDesktop ? 60 : "auto",
               }}
             >
@@ -639,14 +644,14 @@ export default function HomePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: SPACING.md }}>
                   {/* Иконка стрелки */}
                   <span
-                    style={{
+                        style={{
                       fontSize: isMobile ? 14 : 18,
                       color: COLORS.primary,
                       transition: "transform 0.3s ease",
                       transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
                       flexShrink: 0,
                       lineHeight: 1,
-                    }}
+                        }}
                     aria-hidden="true"
                   >
                     ▶
@@ -665,7 +670,7 @@ export default function HomePage() {
                     }}
                   >
                     {titleWithNonBreakingSpace}
-                  </h3>
+                      </h3>
                 </div>
                 
                 {/* Статус как единый чип */}
@@ -757,7 +762,7 @@ export default function HomePage() {
               {/* На мобиле: блок мета в одну колонку под заголовком */}
               {!isDesktop && (
                 <div
-                  style={{
+                                style={{
                     display: "flex",
                     flexDirection: "column",
                     gap: SPACING.xs,
@@ -786,7 +791,7 @@ export default function HomePage() {
                           color: COLORS.text.primary,
                           fontWeight: 600,
                           margin: 0,
-                        }}
+                                }}
                         aria-label={`Дата получения: ${shipment.receivedDate}`}
                       >
                         {shipment.receivedDate}
@@ -819,9 +824,9 @@ export default function HomePage() {
                       </p>
                     </>
                   )}
-                </div>
-              )}
-            </div>
+                          </div>
+                        )}
+                      </div>
 
             {/* Разделитель между заголовком и содержимым */}
             {isExpanded && (
@@ -866,7 +871,7 @@ export default function HomePage() {
                           }}
                         >
                           Позиция
-                        </div>
+                    </div>
                         <div
                           style={{
                             padding: isMobile ? "10px 12px" : "14px 18px",
@@ -881,7 +886,7 @@ export default function HomePage() {
                           }}
                         >
                           Кол-во
-                        </div>
+                  </div>
                         <div
                           style={{
                             padding: isMobile ? "10px 12px" : "14px 18px",
@@ -896,7 +901,7 @@ export default function HomePage() {
                           }}
                         >
                           Цена
-                        </div>
+            </div>
                         <div
                           style={{
                             padding: isMobile ? "10px 12px" : "14px 18px",
@@ -911,39 +916,206 @@ export default function HomePage() {
                           }}
                         >
                           Сумма
-                        </div>
+          </div>
                       </div>
 
-                      {shipment.items.map((item, index) => {
-                        const prev = shipment.items[index - 1];
-                        const showStatusHeader = !prev || prev.statusKey !== item.statusKey;
-                        const showPaymentHeader = shipment.id === "shipment-8" && (!prev || prev.needsPayment !== item.needsPayment);
+                      {shipment.id === "shipment-8" ? (
+                        // Для партии №8: группировка позиций по категории оплаты
+                        (() => {
+                          // Маппинг статусов для партии №8
+                          const mapPaymentStatus = (needsPayment: boolean) => {
+                            return needsPayment ? { label: "Оплачено", icon: "💰" } : { label: "Оплачено ранее", icon: "✅" };
+                          };
 
-                        return (
-                          <React.Fragment key={item.id}>
-                            {showPaymentHeader && (
+                          // Группировка позиций: сначала "Оплачено" (needsPayment = true), потом "Оплачено ранее" (needsPayment = false)
+                          const groupedItems = shipment.items.reduce((acc, item) => {
+                            const groupKey = item.needsPayment ? "paid" : "paidPreviously";
+                            if (!acc[groupKey]) {
+                              acc[groupKey] = [];
+                            }
+                            acc[groupKey].push(item);
+                            return acc;
+                          }, {} as Record<"paid" | "paidPreviously", typeof shipment.items>);
+
+                          // Порядок групп: "Оплачено" → "Оплачено ранее"
+                          const groupOrder: Array<{ key: "paid" | "paidPreviously"; items: typeof shipment.items }> = [];
+                          if (groupedItems.paid) {
+                            groupOrder.push({ key: "paid", items: groupedItems.paid });
+                          }
+                          if (groupedItems.paidPreviously) {
+                            groupOrder.push({ key: "paidPreviously", items: groupedItems.paidPreviously });
+                          }
+
+                          return groupOrder.map((group, groupIndex) => {
+                            const statusInfo = mapPaymentStatus(group.key === "paid");
+                            return (
+                              <React.Fragment key={group.key}>
+                                {/* Заголовок группы - показывается один раз */}
+                                <div
+                                  style={{
+                                    gridColumn: "1 / -1",
+                                    background: group.key === "paid" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
+                                    borderBottom: `1px solid ${COLORS.border.default}`,
+                                    padding: isMobile ? "10px 12px" : "12px 18px",
+                                    ...TYPOGRAPHY.tableCell,
+                                    fontWeight: 600,
+                                    color: group.key === "paid" ? COLORS.success : COLORS.primary,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    margin: 0,
+                                  }}
+                                >
+                                  <span style={{ fontSize: 14 }}>{statusInfo.icon}</span>
+                                  <span>{statusInfo.label}</span>
+                                </div>
+                                {/* Позиции внутри группы */}
+                                {group.items.map((item) => (
+                                  <React.Fragment key={item.id}>
+                                    <div
+                                      style={{ display: "contents" }}
+                                      role="button"
+                                      tabIndex={0}
+                                      onClick={() => handleOpenProductById(item.productId)}
+                                      onKeyDown={(event) => {
+                                        if (event.key === "Enter" || event.key === " ") {
+                                          event.preventDefault();
+                                          handleOpenProductById(item.productId);
+                                        }
+                                      }}
+                                      onMouseEnter={(event) => handleShipmentRowHover(event, true)}
+                                      onMouseLeave={(event) => handleShipmentRowHover(event, false)}
+                                    >
+                                      <div
+                                        style={{
+                                          padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
+                                          display: "flex",
+                                          flexDirection: "column",
+                                          gap: isMobile ? 6 : 8,
+                                          borderBottom: `1px solid ${shipmentCellBaseBorder}`,
+                                          background: shipmentCellBaseBackground,
+                                          cursor: "pointer",
+                                          transition: "background 0.2s ease, border 0.2s ease",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            ...TYPOGRAPHY.tableCell,
+                                            color: COLORS.text.primary,
+                                            fontWeight: 600,
+                                            margin: 0,
+                                            overflowWrap: "break-word",
+                                            wordBreak: "break-word",
+                                            whiteSpace: "normal",
+                                            hyphens: "auto",
+                                          }}
+                                        >
+                                          {item.name}
+                                        </div>
+                                        <div style={{ display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap" }}>
+                                          {item.sizeLabels.map((label, labelIndex) => (
+                                            <span key={labelIndex} style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : "4px 10px" }}>
+                                              {label}
+                                            </span>
+                                          ))}
+                                          {item.note && (
+                                            <span
+                                              style={{
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                padding: isMobile ? "4px 10px" : "5px 12px",
+                                                borderRadius: 9999,
+                                                fontSize: isMobile ? 12 : 13,
+                                                fontWeight: 600,
+                                                letterSpacing: 0.5,
+                                                background: item.note === "образец"
+                                                  ? "rgba(59,130,246,0.1)"
+                                                  : item.paidPreviously || item.noPayment
+                                                    ? "rgba(52,211,153,0.15)"
+                                                    : "rgba(251,191,36,0.15)",
+                                                color: item.note === "образец"
+                                                  ? "#3B82F6"
+                                                  : item.paidPreviously || item.noPayment
+                                                    ? COLORS.success
+                                                    : COLORS.primary,
+                                                border: item.note === "образец"
+                                                  ? "1px solid rgba(59,130,246,0.3)"
+                                                  : "1px solid",
+                                                borderColor: item.note === "образец"
+                                                  ? "rgba(59,130,246,0.3)"
+                                                  : item.paidPreviously || item.noPayment
+                                                    ? "rgba(52,211,153,0.3)"
+                                                    : "rgba(251,191,36,0.3)",
+                                                boxShadow: item.note === "образец"
+                                                  ? "0 0 8px rgba(59,130,246,0.3), 0 0 16px rgba(59,130,246,0.15)"
+                                                  : "none",
+                                                transition: "all 0.2s ease",
+                                              }}
+                                            >
+                                              {item.note}
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      style={{
+                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
+                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
+                                        background: shipmentCellBaseBackground,
+                                        textAlign: "center",
+                                        ...TYPOGRAPHY.tableCell,
+                                        color: COLORS.text.primary,
+                                        margin: 0,
+                                      }}
+                                    >
+                                      {item.quantityLabel}
+                                    </div>
+                                    <div
+                                      style={{
+                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
+                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
+                                        background: shipmentCellBaseBackground,
+                                        textAlign: "center",
+                                        ...TYPOGRAPHY.tableCell,
+                                        color: COLORS.text.primary,
+                                        margin: 0,
+                                      }}
+                                    >
+                                      {item.hasPrice ? formatCurrency(item.price ?? 0) : "—"}
+                                    </div>
+                                    <div
+                                      style={{
+                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
+                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
+                                        background: shipmentCellBaseBackground,
+                                        textAlign: "center",
+                                        ...TYPOGRAPHY.tableCell,
+                                        color: COLORS.text.primary,
+                                        fontWeight: 600,
+                                        margin: 0,
+                                      }}
+                                    >
+                                      {item.total != null ? formatCurrency(item.total) : "—"}
+                                    </div>
+                                  </React.Fragment>
+                                ))}
+                              </React.Fragment>
+                            );
+                          });
+                        })()
+                      ) : (
+                        // Для остальных партий: стандартный рендеринг
+                        shipment.items.map((item, index) => {
+                          const prev = shipment.items[index - 1];
+                          const showStatusHeader = !prev || prev.statusKey !== item.statusKey;
+
+                          return (
+                            <React.Fragment key={item.id}>
+                              {showStatusHeader && (
                               <div
-                                style={{
-                                  gridColumn: "1 / -1",
-                                  background: item.needsPayment ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
-                                  borderBottom: `1px solid ${COLORS.border.default}`,
-                                  padding: isMobile ? "10px 12px" : "12px 18px",
-                                  ...TYPOGRAPHY.tableCell,
-                                  fontWeight: 600,
-                                  color: item.needsPayment ? COLORS.success : COLORS.primary,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 8,
-                                  margin: 0,
-                                }}
-                              >
-                                <span style={{ fontSize: 14 }}>{item.needsPayment ? "💰" : "✅"}</span>
-                                <span>{item.needsPayment ? "К оплате" : "Не требует оплаты"}</span>
-                              </div>
-                            )}
-                            {showStatusHeader && shipment.id !== "shipment-8" && (
-                              <div
-                                style={{
+                  style={{
                                   gridColumn: "1 / -1",
                                   background: COLORS.background.cardExpanded,
                                   borderBottom: `1px solid ${COLORS.border.default}`,
@@ -955,11 +1127,11 @@ export default function HomePage() {
                                   alignItems: "center",
                                   gap: 8,
                                   margin: 0,
-                                }}
+                  }}
                               >
                                 <span style={{ fontSize: 14 }}>{item.status.icon}</span>
                                 <span>{item.status.label}</span>
-                              </div>
+              </div>
                             )}
 
                             <div
@@ -979,8 +1151,8 @@ export default function HomePage() {
                               <div
                                 style={{
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                  display: "flex",
-                                  flexDirection: "column",
+                display: "flex",
+                flexDirection: "column",
                                   gap: isMobile ? 6 : 8,
                                   borderBottom: `1px solid ${shipmentCellBaseBorder}`,
                                   background: shipmentCellBaseBackground,
@@ -989,25 +1161,25 @@ export default function HomePage() {
                                 }}
                               >
                                 <div
-                                  style={{
+                          style={{
                                     ...TYPOGRAPHY.tableCell,
                                     color: COLORS.text.primary,
-                                    fontWeight: 600,
+                            fontWeight: 600,
                                     margin: 0,
                                     overflowWrap: "break-word",
                                     wordBreak: "break-word",
                                     whiteSpace: "normal",
                                     hyphens: "auto",
-                                  }}
-                                >
+                          }}
+                        >
                                   {item.name}
                                 </div>
                                 <div style={{ display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap" }}>
                                   {item.sizeLabels.map((label, labelIndex) => (
                                     <span key={labelIndex} style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : "4px 10px" }}>
                                       {label}
-                                    </span>
-                                  ))}
+                        </span>
+                      ))}
                                   {item.note && (
                                     <span
                                       style={{
@@ -1045,9 +1217,9 @@ export default function HomePage() {
                                     >
                                       {item.note}
                                     </span>
-                                  )}
-                                </div>
-                              </div>
+                  )}
+                </div>
+                        </div>
                               <div
                                 style={{
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
@@ -1065,7 +1237,7 @@ export default function HomePage() {
                                 }}
                               >
                                 {item.quantityLabel}
-                              </div>
+                        </div>
                               <div
                                 style={{
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
@@ -1083,7 +1255,7 @@ export default function HomePage() {
                                 }}
                               >
                                 {item.hasPrice && item.price != null ? formatCurrency(item.price) : "уточняется"}
-                              </div>
+                    </div>
                               <div
                                 style={{
                                   padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
@@ -1102,17 +1274,18 @@ export default function HomePage() {
                                 }}
                               >
                                 {item.total != null ? formatCurrency(item.total) : "—"}
-                              </div>
-                            </div>
+                  </div>
+              </div>
                           </React.Fragment>
-                        );
-                      })}
-                    </div>
+        );
+                      })
+                      )}
+          </div>
 
               {/* Итого по партии - лейблы слева, суммы справа */}
               <div
-                style={{
-                  display: "flex",
+                style={{ 
+                  display: "flex", 
                   flexWrap: "wrap",
                   justifyContent: "space-between",
                   alignItems: "flex-start",
@@ -1136,11 +1309,11 @@ export default function HomePage() {
                   <p style={{ ...TYPOGRAPHY.caption, margin: 0, color: COLORS.text.secondary, textTransform: "uppercase" }}>
                     {shipment.receivedDate ? "Сумма партии" : "Сумма к оплате"}
                   </p>
-                  <p style={{ ...TYPOGRAPHY.amount, margin: 0, color: COLORS.success }}>
+                  <p style={{ ...TYPOGRAPHY.amount, margin: 0, color: shipment.receivedDate || shipment.id === "shipment-8" ? COLORS.success : COLORS.primary }}>
                     {formatCurrency(shipment.totalAmount)}
                   </p>
-                </div>
               </div>
+          </div>
 
                   {shipment.hasPriceGaps && (
                     <p style={{ ...TYPOGRAPHY.body, margin: 0, marginTop: SPACING.sm, color: COLORS.text.secondary, fontStyle: "italic", overflowWrap: "break-word", wordBreak: "break-word", whiteSpace: "normal" }}>
@@ -1149,8 +1322,8 @@ export default function HomePage() {
                   )}
                 </>
               )}
-          </div>
-        );
+        </div>
+      );
       };
 
       return (
@@ -1255,18 +1428,18 @@ export default function HomePage() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+      minHeight: "100vh", 
         background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
-        color: "white",
-        display: "flex",
+      color: "white", 
+      display: "flex", 
         flexDirection: "column",
       }}
     >
       <header
         style={{
-          display: "grid",
+        display: "grid", 
           gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr",
-          alignItems: "center",
+        alignItems: "center", 
           padding: isMobile ? "8px 16px" : "0px 32px",
           borderBottom: `1px solid rgba(102,102,102,0.2)`,
           background: COLORS.background.header,
@@ -1286,28 +1459,28 @@ export default function HomePage() {
                 textShadow: "0 0 20px rgba(251,191,36,0.5)",
               }}
             >
-              Mehmet Metrics
-            </h1>
-          </div>
+            Mehmet Metrics
+          </h1>
+        </div>
           {isMobile && BackButton}
         </div>
         {!isMobile && (
           <>
-            {selectedProduct ? (
-              <div style={{ textAlign: "center" }}>
+        {selectedProduct ? (
+          <div style={{ textAlign: "center" }}>
                 <h2 style={{ fontSize: 28, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
-                  {selectedProduct.name}
-                </h2>
-              </div>
-            ) : selectedCategory ? (
-              <div style={{ textAlign: "center" }}>
+              {selectedProduct.name}
+            </h2>
+          </div>
+        ) : selectedCategory ? (
+          <div style={{ textAlign: "center" }}>
                 <h2 style={{ fontSize: 32, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
-                  {selectedCategory}
-                </h2>
-              </div>
-            ) : (
-              <div></div>
-            )}
+              {selectedCategory}
+            </h2>
+          </div>
+        ) : (
+          <div></div>
+        )}
             <div style={{ display: "flex", justifyContent: "flex-end" }}>{BackButton}</div>
           </>
         )}
@@ -1322,18 +1495,18 @@ export default function HomePage() {
                 {selectedCategory}
               </h2>
             )}
-          </div>
+        </div>
         )}
       </header>
       {renderBody()}
       <footer
         style={{
-          padding: 20,
-          textAlign: "center",
+        padding: 20, 
+        textAlign: "center", 
           color: COLORS.text.muted,
           borderTop: `1px solid rgba(102,102,102,0.2)`,
-          fontSize: 12,
-          fontStyle: "italic",
+        fontSize: 12, 
+        fontStyle: "italic",
           background: COLORS.background.footer,
         }}
       >
