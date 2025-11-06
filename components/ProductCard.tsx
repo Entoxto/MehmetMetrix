@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Card } from "./Card";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
@@ -7,10 +8,9 @@ import type { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
-  onClick: () => void;
 }
 
-export const ProductCard = ({ product, onClick }: ProductCardProps) => {
+export const ProductCard = ({ product }: ProductCardProps) => {
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
     CARD_HOVER_EFFECTS.product.default
@@ -18,11 +18,14 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
   return (
     <Card padding={0} expandable={false}>
-      <div
-        onClick={onClick}
+      <Link
+        href={`/catalog/${product.id}`}
+        prefetch={false}
         style={{
           cursor: "pointer",
           transition: "all 0.3s ease",
+          textDecoration: "none",
+          display: "block",
         }}
         onMouseEnter={(e) => {
           hoverHandlers.onMouseEnter(e);
@@ -118,7 +121,7 @@ export const ProductCard = ({ product, onClick }: ProductCardProps) => {
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     </Card>
   );
 };

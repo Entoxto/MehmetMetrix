@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useMemo, useCallback, Fragment, type ReactNode, type MouseEvent } from "react";
+import { useState, useMemo, useCallback, useEffect, Fragment, type ReactNode, type MouseEvent } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
 import { ProductCard } from "@/components/ProductCard";
-import { ProductDetail } from "@/components/ProductDetail";
 import { CategoryCard } from "@/components/CategoryCard";
 import { MoneyView } from "@/components/MoneyView";
-import { PositionRow } from "@/components/PositionRow";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import { formatCurrency } from "@/lib/utils";
+import { toBatch } from "@/lib/adapters";
+import { BatchView } from "@/components/work/BatchView";
+// Рефактор: логика вынесена в derive/format, компоненты унифицированы.
 
 type ShipmentStatusKey = "in_progress" | "ready" | "received" | "inTransit";
 
@@ -279,13 +281,70 @@ const buildShipmentItems = (
 
 export default function HomePage() {
   const { isMobile, breakpoint } = useBreakpoint();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   // Десктоп = >=1024px (laptop и desktop)
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
-  const [view, setView] = useState<"menu" | "catalog" | "money" | "work">("menu");
+  
+  // Инициализация view из URL query параметра
+  const urlView = searchParams.get("view") as "menu" | "catalog" | "money" | "work" | null;
+  const initialView = (urlView && ["menu", "catalog", "money", "work"].includes(urlView)) ? urlView : "menu";
+  
+  const [view, setView] = useState<"menu" | "catalog" | "money" | "work">(initialView);
   const [previousView, setPreviousView] = useState<"menu" | "catalog" | "money" | "work" | null>(null);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Синхронизация view с URL query параметром
+  useEffect(() => {
+    if (urlView && urlView !== view && ["menu", "catalog", "money", "work"].includes(urlView)) {
+      setView(urlView);
+    }
+  }, [urlView, view]);
+
+  // восстановление скролла и раскрытия партии
+  useEffect(() => {
+    if (view === "work" && typeof window !== "undefined") {
+      const batchId = searchParams.get("batch");
+      const posId = searchParams.get("pos");
+      const hash = window.location.hash;
+
+      // Раскрываем партию если есть ?batch=ID
+      if (batchId) {
+        setExpandedCards((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(batchId);
+          return newSet;
+        });
+      }
+
+      // Восстанавливаем скролл и позицию
+      const restoreScroll = () => {
+        const savedScrollY = sessionStorage.getItem("workScrollY");
+        if (savedScrollY) {
+          const y = Number(savedScrollY);
+          if (!Number.isNaN(y) && y > 0) {
+            window.scrollTo({ top: y, behavior: "instant" });
+          }
+          sessionStorage.removeItem("workScrollY");
+        }
+
+        // Если есть якорь в URL, скроллим к нему
+        if (hash && hash.startsWith("#pos-")) {
+          const elementId = hash.substring(1);
+          setTimeout(() => {
+            const element = document.getElementById(elementId);
+            if (element) {
+              element.scrollIntoView({ block: "start", behavior: "instant" });
+            }
+          }, 100);
+        }
+      };
+
+      // Небольшая задержка для рендеринга
+      setTimeout(restoreScroll, 50);
+    }
+  }, [view, searchParams]);
   // Загрузка данных с обработкой ошибок (статический импорт)
   const products: Product[] = useMemo(() => {
     try {
@@ -364,17 +423,6 @@ export default function HomePage() {
     return products.filter((p: Product) => p.category === selectedCategory && p.inStock);
   }, [products, selectedCategory]);
 
-  const handleOpenProductById = useCallback(
-    (productId: string) => {
-      const product = products.find((p) => p.id === productId);
-      if (!product) return;
-      setPreviousView(view);
-      setSelectedCategory(product.category);
-      setSelectedProduct(product);
-      setView("catalog");
-    },
-    [products, view]
-  );
 
   const shipmentCellBaseBackground = COLORS.background.card;
   const shipmentCellHoverBackground = COLORS.background.cardExpanded;
@@ -412,24 +460,6 @@ export default function HomePage() {
 
 
   const handleBack = () => {
-    // Guard clause: если выбран продукт, закрываем его
-    if (selectedProduct) {
-      setSelectedProduct(null);
-      if (previousView && previousView !== "catalog") {
-        setSelectedCategory(null);
-        setView(previousView);
-        setPreviousView(null);
-      } else if (selectedCategory) {
-        // Если были в категории каталога, остаёмся там
-        return;
-      } else if (previousView) {
-        // Если не было категории, возвращаемся в предыдущий view
-        setView(previousView);
-        setPreviousView(null);
-      }
-      return;
-    }
-
     // Guard clause: если выбрана категория, закрываем её
     if (selectedCategory) {
       setSelectedCategory(null);
@@ -440,6 +470,8 @@ export default function HomePage() {
     if (view !== "menu") {
       setView("menu");
       setPreviousView(null);
+      // Обновляем URL для возврата в меню
+      router.push("/");
     }
   };
 
@@ -455,7 +487,7 @@ export default function HomePage() {
     });
   }, []);
 
-  const BackButton = (view !== "menu" || selectedCategory || selectedProduct) ? (
+  const BackButton = (view !== "menu" || selectedCategory) ? (
     <button
       onClick={handleBack}
       onMouseEnter={(e) => {
@@ -511,7 +543,8 @@ export default function HomePage() {
     }
 
     if (view === "catalog") {
-      if (selectedCategory && !selectedProduct) {
+      // Удалён альтернативный рендер карточки из 'work' - теперь используется единый маршрут /catalog/[id]
+      if (selectedCategory) {
         return (
           <div style={{ flex: 1, padding: isMobile ? SPACING.md : SPACING.xl }}>
             <div style={{ marginBottom: isMobile ? SPACING.md : SPACING.lg }}>
@@ -524,16 +557,11 @@ export default function HomePage() {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onClick={() => setSelectedProduct(product)}
                 />
               ))}
                         </div>
                         </div>
         );
-      }
-
-      if (selectedProduct) {
-        return <ProductDetail product={selectedProduct} />;
       }
 
       return (
@@ -875,190 +903,13 @@ export default function HomePage() {
                   aria-hidden="true"
                 />
                 {/* Таблица с позициями партии */}
-                <div
-                  style={{
-                    display: "grid",
-                    // Сетка строки таблицы через CSS Grid БЕЗ заполнителей
-                    // На мобилке: колонка "Позиция" шире, остальные колонки компактные, все 4 колонки помещаются без скролла
-                    gridTemplateColumns: isMobile ? "1fr 0.8fr 0.8fr 0.8fr" : "1.6fr 1fr 1fr 1fr",
-                    gap: 0,
-                    border: `1px solid ${COLORS.border.default}`,
-                    borderRadius: 12,
-                    overflow: "hidden", // Убираем скролл на мобилке, все колонки должны помещаться
-                    fontSize: isMobile ? 11 : 12,
-                  }}
-                >
-                      {/* Заголовки колонок таблицы - прямые дети grid-контейнера БЕЗ заполнителей */}
-                      <div
-                        style={{
-                          padding: isMobile ? "10px 12px" : "14px 18px",
-                          background: COLORS.background.card,
-                          ...TYPOGRAPHY.tableHeader,
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                          color: COLORS.text.secondary,
-                          borderBottom: `1px solid ${COLORS.border.default}`,
-                          margin: 0,
-                        }}
-                      >
-                        Позиция
-                      </div>
-                      <div
-                        style={{
-                          padding: isMobile ? "10px 12px" : "14px 18px",
-                          background: COLORS.background.card,
-                          ...TYPOGRAPHY.tableHeader,
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                          color: COLORS.text.secondary,
-                          borderBottom: `1px solid ${COLORS.border.default}`,
-                          textAlign: "center",
-                          margin: 0,
-                        }}
-                      >
-                        Кол-во
-                      </div>
-                      <div
-                        style={{
-                          padding: isMobile ? "10px 12px" : "14px 18px",
-                          background: COLORS.background.card,
-                          ...TYPOGRAPHY.tableHeader,
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                          color: COLORS.text.secondary,
-                          borderBottom: `1px solid ${COLORS.border.default}`,
-                          textAlign: "center",
-                          margin: 0,
-                        }}
-                      >
-                        Цена
-                      </div>
-                      <div
-                        style={{
-                          padding: isMobile ? "10px 12px" : "14px 18px",
-                          background: COLORS.background.card,
-                          ...TYPOGRAPHY.tableHeader,
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                          color: COLORS.text.secondary,
-                          borderBottom: `1px solid ${COLORS.border.default}`,
-                          textAlign: "center",
-                          margin: 0,
-                        }}
-                      >
-                        Сумма
-                      </div>
-
-                      {shipment.id === "shipment-8" ? (
-                        // Для партии №8: группировка позиций по категории оплаты
-                        (() => {
-                          // Маппинг статусов для партии №8
-                          const mapPaymentStatus = (needsPayment: boolean) => {
-                            return needsPayment ? { label: "Оплачено", icon: "💰" } : { label: "Оплачено ранее", icon: "✅" };
-                          };
-
-                          // Группировка позиций: сначала "Оплачено" (needsPayment = true), потом "Оплачено ранее" (needsPayment = false)
-                          const groupedItems = shipment.items.reduce((acc, item) => {
-                            const groupKey = item.needsPayment ? "paid" : "paidPreviously";
-                            if (!acc[groupKey]) {
-                              acc[groupKey] = [];
-                            }
-                            acc[groupKey].push(item);
-                            return acc;
-                          }, {} as Record<"paid" | "paidPreviously", typeof shipment.items>);
-
-                          // Порядок групп: "Оплачено" → "Оплачено ранее"
-                          const groupOrder: Array<{ key: "paid" | "paidPreviously"; items: typeof shipment.items }> = [];
-                          if (groupedItems.paid) {
-                            groupOrder.push({ key: "paid", items: groupedItems.paid });
-                          }
-                          if (groupedItems.paidPreviously) {
-                            groupOrder.push({ key: "paidPreviously", items: groupedItems.paidPreviously });
-                          }
-
-                          return groupOrder.map((group, groupIndex) => {
-                            const statusInfo = mapPaymentStatus(group.key === "paid");
-                            return (
-                              <Fragment key={group.key}>
-                                {/* Заголовок группы - показывается один раз */}
-                                <div
-                                  style={{
-                                    gridColumn: "1 / -1",
-                                    background: group.key === "paid" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
-                                    borderBottom: `1px solid ${COLORS.border.default}`,
-                                    padding: isMobile ? "10px 12px" : "12px 18px",
-                                    ...TYPOGRAPHY.tableCell,
-                                    fontWeight: 600,
-                                    color: group.key === "paid" ? COLORS.success : COLORS.primary,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 8,
-                                    margin: 0,
-                                  }}
-                                >
-                                  <span style={{ fontSize: 14 }}>{statusInfo.icon}</span>
-                                  <span>{statusInfo.label}</span>
-                                </div>
-                                {/* Позиции внутри группы - используем единый компонент PositionRow */}
-                                {group.items.map((item) => (
-                                  <PositionRow
-                                    key={item.id}
-                                    item={item}
-                                    onProductClick={handleOpenProductById}
-                                    onRowHover={handleShipmentRowHover}
-                                    cellBaseBackground={shipmentCellBaseBackground}
-                                    cellBaseBorder={shipmentCellBaseBorder}
-                                    typography={TYPOGRAPHY}
-                                  />
-                                ))}
-                              </Fragment>
-                            );
-                          });
-                        })()
-                      ) : (
-                        // Для остальных партий: стандартный рендеринг
-                        shipment.items.map((item, index) => {
-                          const prev = shipment.items[index - 1];
-                          const showStatusHeader = !prev || prev.statusKey !== item.statusKey;
-
-                          return (
-                            <Fragment key={item.id}>
-                              {showStatusHeader && (
-                              <div
-                  style={{
-                                  gridColumn: "1 / -1",
-                                  background: COLORS.background.cardExpanded,
-                                  borderBottom: `1px solid ${COLORS.border.default}`,
-                                  padding: isMobile ? "10px 12px" : "12px 18px",
-                                  ...TYPOGRAPHY.tableCell,
-                                  fontWeight: 600,
-                                  color: COLORS.primary,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 8,
-                                  margin: 0,
-                  }}
-                              >
-                                <span style={{ fontSize: 14 }}>{item.status.icon}</span>
-                                <span>{item.status.label}</span>
-              </div>
-                            )}
-
-                            {/* Используем единый компонент PositionRow для всех партий */}
-                            <PositionRow
-                              key={item.id}
-                              item={item}
-                              onProductClick={handleOpenProductById}
-                              onRowHover={handleShipmentRowHover}
-                              cellBaseBackground={shipmentCellBaseBackground}
-                              cellBaseBorder={shipmentCellBaseBorder}
-                              typography={TYPOGRAPHY}
-                            />
-                          </Fragment>
-        );
-                      })
-                      )}
-          </div>
+                <BatchView
+                  batch={toBatch(shipment, products)}
+                  onRowHover={handleShipmentRowHover}
+                  cellBaseBackground={shipmentCellBaseBackground}
+                  cellBaseBorder={shipmentCellBaseBorder}
+                  typography={TYPOGRAPHY}
+                />
 
               {/* Итого по партии - лейблы слева, суммы справа */}
               <div
@@ -1244,13 +1095,7 @@ export default function HomePage() {
         </div>
         {!isMobile && (
           <>
-        {selectedProduct ? (
-          <div style={{ textAlign: "center" }}>
-                <h2 style={{ fontSize: 28, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
-              {selectedProduct.name}
-            </h2>
-          </div>
-        ) : selectedCategory ? (
+        {selectedCategory ? (
           <div style={{ textAlign: "center" }}>
                 <h2 style={{ fontSize: 32, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
               {selectedCategory}
@@ -1262,17 +1107,11 @@ export default function HomePage() {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>{BackButton}</div>
           </>
         )}
-        {isMobile && (selectedProduct || selectedCategory) && (
+        {isMobile && selectedCategory && (
           <div style={{ textAlign: "center", borderTop: `1px solid rgba(102,102,102,0.2)`, paddingTop: SPACING.xs }}>
-            {selectedProduct ? (
-              <h2 style={{ fontSize: 18, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
-                {selectedProduct.name}
-              </h2>
-            ) : (
               <h2 style={{ fontSize: 20, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
                 {selectedCategory}
               </h2>
-            )}
         </div>
         )}
       </header>
