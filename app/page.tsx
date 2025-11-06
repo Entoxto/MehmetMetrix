@@ -1,23 +1,24 @@
 "use client";
 
-import React from "react";
+import { useState, useMemo, useCallback, Fragment, type ReactNode, type MouseEvent } from "react";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
-import { Card } from "@/components/Card";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductDetail } from "@/components/ProductDetail";
 import { CategoryCard } from "@/components/CategoryCard";
 import { MoneyView } from "@/components/MoneyView";
+import { PositionRow } from "@/components/PositionRow";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import { formatCurrency } from "@/lib/utils";
 
-type ShipmentStatusKey = "in_progress" | "ready" | "received";
+type ShipmentStatusKey = "in_progress" | "ready" | "received" | "inTransit";
 
 const SHIPMENT_STATUS_META: Record<ShipmentStatusKey, { label: string; icon: string; order: number }> = {
   in_progress: { label: "В производстве", icon: "🛠️", order: 1 },
   ready: { label: "Готов", icon: "✅", order: 2 },
   received: { label: "Получено", icon: "📦", order: 3 },
+  inTransit: { label: "Уже в пути", icon: "🚚", order: 2.5 }, // Между ready и received
 };
 
 type SizeConfig = Record<string, number>;
@@ -32,6 +33,8 @@ interface ShipmentRawItem {
   note?: string;
   paidPreviously?: boolean;
   noPayment?: boolean;
+  inTransit?: boolean; // Флаг для статуса "уже в пути"
+  showStatusTag?: boolean; // Флаг для отображения подписи-статуса (по умолчанию false)
 }
 
 interface ShipmentConfig {
@@ -106,6 +109,8 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
         quantityOverride: 1,
         note: "образец",
         status: "ready",
+        inTransit: true, // Статус "уже в пути"
+        showStatusTag: true, // Включить отображение подписи-статуса
       },
       {
         productId: "fur-003",
@@ -202,6 +207,7 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
         status: "received",
         noPayment: true,
         note: "вернулись после ремонта",
+        showStatusTag: true, // Включить отображение подписи-статуса
       },
     ],
   },
@@ -226,7 +232,8 @@ const buildShipmentItems = (
     const quantityLabel = item.sample
       ? effectiveQuantity ? `${effectiveQuantity} шт.` : "образец"
       : `${effectiveQuantity ?? 0} шт.`;
-    const statusKey: ShipmentStatusKey = item.status ?? "in_progress";
+    // Определяем статус: если указан inTransit, используем его, иначе берём status или по умолчанию
+    const statusKey: ShipmentStatusKey = item.inTransit ? "inTransit" : (item.status ?? "in_progress");
     const statusMeta = SHIPMENT_STATUS_META[statusKey];
     const needsPayment = !item.paidPreviously && !item.noPayment;
 
@@ -246,6 +253,8 @@ const buildShipmentItems = (
       paidPreviously: item.paidPreviously,
       noPayment: item.noPayment,
       needsPayment,
+      inTransit: item.inTransit ?? false, // Флаг для отображения бейджа "уже в пути"
+      showStatusTag: item.showStatusTag ?? false, // Флаг для отображения подписи-статуса (по умолчанию false)
     };
   });
 
@@ -272,62 +281,68 @@ export default function HomePage() {
   const { isMobile, breakpoint } = useBreakpoint();
   // Десктоп = >=1024px (laptop и desktop)
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
-  const [view, setView] = React.useState<"menu" | "catalog" | "money" | "work">("menu");
-  const [previousView, setPreviousView] = React.useState<"menu" | "catalog" | "money" | "work" | null>(null);
-  const [expandedCards, setExpandedCards] = React.useState<Set<string>>(new Set());
-  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
+  const [view, setView] = useState<"menu" | "catalog" | "money" | "work">("menu");
+  const [previousView, setPreviousView] = useState<"menu" | "catalog" | "money" | "work" | null>(null);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   // Загрузка данных с обработкой ошибок (статический импорт)
-  const products: Product[] = React.useMemo(() => {
+  const products: Product[] = useMemo(() => {
     try {
-  const productsDataTyped = productsData as ProductsData;
+      const productsDataTyped = productsData as ProductsData;
       return productsDataTyped.products || [];
-    } catch (err) {
+    } catch {
       return [];
     }
   }, []);
 
   // Проверка на ошибки
-  const error = React.useMemo(() => {
+  const error: string | null = useMemo(() => {
     if (products.length === 0) {
       return "Нет данных о продуктах";
     }
     return null;
   }, [products]);
 
-  const menuItems = [
-    {
-      title: "Посмотреть, что по бабкам",
-      description: "Финансы, депозиты и расчёты с Мехметом — где деньги, Лебовски?",
-      onClick: () => setView("money"),
-      icon: "💰",
-      image: "/images/products/что по бабкам.JPG",
-    },
-    {
-      title: "Проконтролировать работу",
-      description: "Посмотри, кто что шьёт, что готово, что на ремонте и у кого кофе закончился.",
-      onClick: () => setView("work"),
-      icon: "🧥",
-      image: "/images/products/Проконтролировать работу.jpg",
-    },
-    {
-      title: "Каталог изделий",
-      description: "Листай, смотри, восхищайся",
-      onClick: () => setView("catalog"),
-      icon: "📦",
-      image: "/images/products/Каталог.JPG",
-    },
-  ];
+  const menuItems = useMemo(
+    () => [
+      {
+        title: "Посмотреть, что по бабкам",
+        description: "Финансы, депозиты и расчёты с Мехметом — где деньги, Лебовски?",
+        onClick: () => setView("money"),
+        icon: "💰",
+        image: "/images/products/что по бабкам.JPG",
+      },
+      {
+        title: "Проконтролировать работу",
+        description: "Посмотри, кто что шьёт, что готово, что на ремонте и у кого кофе закончился.",
+        onClick: () => setView("work"),
+        icon: "🧥",
+        image: "/images/products/Проконтролировать работу.jpg",
+      },
+      {
+        title: "Каталог изделий",
+        description: "Листай, смотри, восхищайся",
+        onClick: () => setView("catalog"),
+        icon: "📦",
+        image: "/images/products/Каталог.JPG",
+      },
+    ],
+    []
+  );
 
-  const categoryDescriptions: Record<string, string> = {
-    "Мех": "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
-    "Замша": "Мягкая, как голос Мехмета, когда он говорит про сроки.",
-    "Кожа": "Коровка старалась, не подведи её в каталоге.",
-    "Экзотика": "Для тех, кто любит, чтобы шкура шипела дорого.",
-  };
+  const categoryDescriptions: Record<string, string> = useMemo(
+    () => ({
+      "Мех": "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
+      "Замша": "Мягкая, как голос Мехмета, когда он говорит про сроки.",
+      "Кожа": "Коровка старалась, не подведи её в каталоге.",
+      "Экзотика": "Для тех, кто любит, чтобы шкура шипела дорого.",
+    }),
+    []
+  );
 
   // Оптимизированная генерация категорий
-  const catalogGroups = React.useMemo(() => {
+  const catalogGroups = useMemo(() => {
     const categoryMap = products.reduce((acc, product) => {
       if (!acc[product.category]) {
         acc[product.category] = 0;
@@ -344,12 +359,12 @@ export default function HomePage() {
   }, [products]);
 
   // Оптимизированная фильтрация продуктов по категории
-  const categoryProducts = React.useMemo(() => {
+  const categoryProducts = useMemo(() => {
     if (!selectedCategory) return [];
     return products.filter((p: Product) => p.category === selectedCategory && p.inStock);
   }, [products, selectedCategory]);
 
-  const handleOpenProductById = React.useCallback(
+  const handleOpenProductById = useCallback(
     (productId: string) => {
       const product = products.find((p) => p.id === productId);
       if (!product) return;
@@ -366,8 +381,8 @@ export default function HomePage() {
   const shipmentCellBaseBorder = COLORS.border.default;
   const shipmentCellHoverBorder = COLORS.border.primaryHover;
 
-  const handleShipmentRowHover = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, isHover: boolean) => {
+  const handleShipmentRowHover = useCallback(
+    (event: MouseEvent<HTMLDivElement>, isHover: boolean) => {
       const row = event.currentTarget;
       const cells = Array.from(row.children) as HTMLElement[];
       cells.forEach((cell) => {
@@ -378,7 +393,7 @@ export default function HomePage() {
     [shipmentCellBaseBackground, shipmentCellHoverBackground, shipmentCellBaseBorder, shipmentCellHoverBorder]
   );
 
-  const allShipments = React.useMemo(
+  const allShipments = useMemo(
     () =>
       SHIPMENTS_CONFIG.map((config) => {
         const items = buildShipmentItems(config.rawItems, products, { groupByPayment: config.groupByPayment, shipmentId: config.id });
@@ -397,6 +412,7 @@ export default function HomePage() {
 
 
   const handleBack = () => {
+    // Guard clause: если выбран продукт, закрываем его
     if (selectedProduct) {
       setSelectedProduct(null);
       if (previousView && previousView !== "catalog") {
@@ -406,26 +422,28 @@ export default function HomePage() {
       } else if (selectedCategory) {
         // Если были в категории каталога, остаёмся там
         return;
-      } else {
-        // Если не было категории, возвращаемся в предыдущий view или меню
-        if (previousView) {
-          setView(previousView);
-          setPreviousView(null);
-        }
+      } else if (previousView) {
+        // Если не было категории, возвращаемся в предыдущий view
+        setView(previousView);
+        setPreviousView(null);
       }
       return;
     }
+
+    // Guard clause: если выбрана категория, закрываем её
     if (selectedCategory) {
       setSelectedCategory(null);
       return;
     }
+
+    // Guard clause: если не в меню, возвращаемся в меню
     if (view !== "menu") {
       setView("menu");
       setPreviousView(null);
     }
   };
 
-  const handleToggleCard = (cardId: string) => {
+  const handleToggleCard = useCallback((cardId: string) => {
     setExpandedCards((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(cardId)) {
@@ -435,7 +453,7 @@ export default function HomePage() {
       }
       return newSet;
     });
-  };
+  }, []);
 
   const BackButton = (view !== "menu" || selectedCategory || selectedProduct) ? (
     <button
@@ -569,16 +587,21 @@ export default function HomePage() {
         };
 
         // Единый чип статуса с правильными размерами: h-7, px-3, радиус pill
+        // Лёгкое уменьшение шрифта и высоты капсулы для статусов партий
         const STATUS_CHIP = {
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
-          padding: "6px 12px", // px-3 = 12px
-          height: 28, // h-7 = 28px
-          borderRadius: 999, // pill
-          fontSize: 12,
+          // Mobile (≤430px): padding: 3px 10px; Desktop: padding: 4px 12px
+          // Горизонтальные отступы (padding-left/right) оставлены прежними
+          padding: isMobile ? "3px 10px" : "4px 12px",
+          // Высота пропорционально подогнана (не оставлять лишнего вертикального пространства)
+          // height убран, чтобы высота определялась автоматически по padding и line-height
+          borderRadius: 999, // pill (border-radius оставить как есть)
+          // Mobile (≤430px): font-size: clamp(11px, 2vw, 12px); Desktop: font-size: clamp(12px, 0.9vw, 13px)
+          fontSize: isMobile ? "clamp(11px, 2vw, 12px)" : "clamp(12px, 0.9vw, 13px)",
           fontWeight: 600,
-          lineHeight: 1.4,
+          lineHeight: 1, // line-height: 1
           border: "1px solid",
           background: shipment.id === "shipment-8" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
           color: shipment.id === "shipment-8" ? COLORS.success : COLORS.primary,
@@ -680,8 +703,18 @@ export default function HomePage() {
                     role="status"
                     aria-label={`Статус: ${shipment.status.label}`}
                   >
-                    <span style={{ fontSize: 14 }} aria-hidden="true">{shipment.status.icon}</span>
-                    <span style={{ textTransform: "uppercase", fontSize: 12 }}>{shipment.status.label}</span>
+                    {/* Иконка пропорционально уменьшена: Mobile: clamp(12px, 2vw, 13px); Desktop: clamp(13px, 0.9vw, 14px) */}
+                    <span
+                      style={{
+                        fontSize: isMobile ? "clamp(12px, 2vw, 13px)" : "clamp(13px, 0.9vw, 14px)",
+                        lineHeight: 1,
+                      }}
+                      aria-hidden="true"
+                    >
+                      {shipment.status.icon}
+                    </span>
+                    {/* Текст использует fontSize из STATUS_CHIP, поэтому здесь не переопределяем */}
+                    <span style={{ textTransform: "uppercase" }}>{shipment.status.label}</span>
                   </div>
                 </div>
               </div>
@@ -845,78 +878,75 @@ export default function HomePage() {
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: isMobile ? "1.6fr 1fr 1fr 1fr" : "1.6fr 1fr 1fr 1fr",
+                    // Сетка строки таблицы через CSS Grid БЕЗ заполнителей
+                    // На мобилке: колонка "Позиция" шире, остальные колонки компактные, все 4 колонки помещаются без скролла
+                    gridTemplateColumns: isMobile ? "1fr 0.8fr 0.8fr 0.8fr" : "1.6fr 1fr 1fr 1fr",
                     gap: 0,
                     border: `1px solid ${COLORS.border.default}`,
                     borderRadius: 12,
-                    overflow: isMobile ? "auto" : "hidden",
+                    overflow: "hidden", // Убираем скролл на мобилке, все колонки должны помещаться
                     fontSize: isMobile ? 11 : 12,
                   }}
                 >
+                      {/* Заголовки колонок таблицы - прямые дети grid-контейнера БЕЗ заполнителей */}
                       <div
                         style={{
-                          display: "contents",
+                          padding: isMobile ? "10px 12px" : "14px 18px",
+                          background: COLORS.background.card,
+                          ...TYPOGRAPHY.tableHeader,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                          color: COLORS.text.secondary,
+                          borderBottom: `1px solid ${COLORS.border.default}`,
+                          margin: 0,
                         }}
                       >
-                        <div
-                          style={{
-                            padding: isMobile ? "10px 12px" : "14px 18px",
-                            background: COLORS.background.card,
-                            ...TYPOGRAPHY.tableHeader,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            color: COLORS.text.secondary,
-                            borderBottom: `1px solid ${COLORS.border.default}`,
-                            margin: 0,
-                          }}
-                        >
-                          Позиция
-                    </div>
-                        <div
-                          style={{
-                            padding: isMobile ? "10px 12px" : "14px 18px",
-                            background: COLORS.background.card,
-                            ...TYPOGRAPHY.tableHeader,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            color: COLORS.text.secondary,
-                            borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "center",
-                            margin: 0,
-                          }}
-                        >
-                          Кол-во
-                  </div>
-                        <div
-                          style={{
-                            padding: isMobile ? "10px 12px" : "14px 18px",
-                            background: COLORS.background.card,
-                            ...TYPOGRAPHY.tableHeader,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            color: COLORS.text.secondary,
-                            borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "center",
-                            margin: 0,
-                          }}
-                        >
-                          Цена
-            </div>
-                        <div
-                          style={{
-                            padding: isMobile ? "10px 12px" : "14px 18px",
-                            background: COLORS.background.card,
-                            ...TYPOGRAPHY.tableHeader,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            color: COLORS.text.secondary,
-                            borderBottom: `1px solid ${COLORS.border.default}`,
-                            textAlign: "center",
-                            margin: 0,
-                          }}
-                        >
-                          Сумма
-          </div>
+                        Позиция
+                      </div>
+                      <div
+                        style={{
+                          padding: isMobile ? "10px 12px" : "14px 18px",
+                          background: COLORS.background.card,
+                          ...TYPOGRAPHY.tableHeader,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                          color: COLORS.text.secondary,
+                          borderBottom: `1px solid ${COLORS.border.default}`,
+                          textAlign: "center",
+                          margin: 0,
+                        }}
+                      >
+                        Кол-во
+                      </div>
+                      <div
+                        style={{
+                          padding: isMobile ? "10px 12px" : "14px 18px",
+                          background: COLORS.background.card,
+                          ...TYPOGRAPHY.tableHeader,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                          color: COLORS.text.secondary,
+                          borderBottom: `1px solid ${COLORS.border.default}`,
+                          textAlign: "center",
+                          margin: 0,
+                        }}
+                      >
+                        Цена
+                      </div>
+                      <div
+                        style={{
+                          padding: isMobile ? "10px 12px" : "14px 18px",
+                          background: COLORS.background.card,
+                          ...TYPOGRAPHY.tableHeader,
+                          textTransform: "uppercase",
+                          letterSpacing: 1,
+                          color: COLORS.text.secondary,
+                          borderBottom: `1px solid ${COLORS.border.default}`,
+                          textAlign: "center",
+                          margin: 0,
+                        }}
+                      >
+                        Сумма
                       </div>
 
                       {shipment.id === "shipment-8" ? (
@@ -949,7 +979,7 @@ export default function HomePage() {
                           return groupOrder.map((group, groupIndex) => {
                             const statusInfo = mapPaymentStatus(group.key === "paid");
                             return (
-                              <React.Fragment key={group.key}>
+                              <Fragment key={group.key}>
                                 {/* Заголовок группы - показывается один раз */}
                                 <div
                                   style={{
@@ -969,139 +999,19 @@ export default function HomePage() {
                                   <span style={{ fontSize: 14 }}>{statusInfo.icon}</span>
                                   <span>{statusInfo.label}</span>
                                 </div>
-                                {/* Позиции внутри группы */}
+                                {/* Позиции внутри группы - используем единый компонент PositionRow */}
                                 {group.items.map((item) => (
-                                  <React.Fragment key={item.id}>
-                                    <div
-                                      style={{ display: "contents" }}
-                                      role="button"
-                                      tabIndex={0}
-                                      onClick={() => handleOpenProductById(item.productId)}
-                                      onKeyDown={(event) => {
-                                        if (event.key === "Enter" || event.key === " ") {
-                                          event.preventDefault();
-                                          handleOpenProductById(item.productId);
-                                        }
-                                      }}
-                                      onMouseEnter={(event) => handleShipmentRowHover(event, true)}
-                                      onMouseLeave={(event) => handleShipmentRowHover(event, false)}
-                                    >
-                                      <div
-                                        style={{
-                                          padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                          display: "flex",
-                                          flexDirection: "column",
-                                          gap: isMobile ? 6 : 8,
-                                          borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                          background: shipmentCellBaseBackground,
-                                          cursor: "pointer",
-                                          transition: "background 0.2s ease, border 0.2s ease",
-                                        }}
-                                      >
-                                        <div
-                                          style={{
-                                            ...TYPOGRAPHY.tableCell,
-                                            color: COLORS.text.primary,
-                                            fontWeight: 600,
-                                            margin: 0,
-                                            overflowWrap: "break-word",
-                                            wordBreak: "break-word",
-                                            whiteSpace: "normal",
-                                            hyphens: "auto",
-                                          }}
-                                        >
-                                          {item.name}
-                                        </div>
-                                        <div style={{ display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap" }}>
-                                          {item.sizeLabels.map((label, labelIndex) => (
-                                            <span key={labelIndex} style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : "4px 10px" }}>
-                                              {label}
-                                            </span>
-                                          ))}
-                                          {item.note && (
-                                            <span
-                                              style={{
-                                                display: "inline-flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                padding: isMobile ? "4px 10px" : "5px 12px",
-                                                borderRadius: 9999,
-                                                fontSize: isMobile ? 12 : 13,
-                                                fontWeight: 600,
-                                                letterSpacing: 0.5,
-                                                background: item.note === "образец"
-                                                  ? "rgba(59,130,246,0.1)"
-                                                  : item.paidPreviously || item.noPayment
-                                                    ? "rgba(52,211,153,0.15)"
-                                                    : "rgba(251,191,36,0.15)",
-                                                color: item.note === "образец"
-                                                  ? "#3B82F6"
-                                                  : item.paidPreviously || item.noPayment
-                                                    ? COLORS.success
-                                                    : COLORS.primary,
-                                                border: item.note === "образец"
-                                                  ? "1px solid rgba(59,130,246,0.3)"
-                                                  : "1px solid",
-                                                borderColor: item.note === "образец"
-                                                  ? "rgba(59,130,246,0.3)"
-                                                  : item.paidPreviously || item.noPayment
-                                                    ? "rgba(52,211,153,0.3)"
-                                                    : "rgba(251,191,36,0.3)",
-                                                boxShadow: item.note === "образец"
-                                                  ? "0 0 8px rgba(59,130,246,0.3), 0 0 16px rgba(59,130,246,0.15)"
-                                                  : "none",
-                                                transition: "all 0.2s ease",
-                                              }}
-                                            >
-                                              {item.note}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      style={{
-                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                        background: shipmentCellBaseBackground,
-                                        textAlign: "center",
-                                        ...TYPOGRAPHY.tableCell,
-                                        color: COLORS.text.primary,
-                                        margin: 0,
-                                      }}
-                                    >
-                                      {item.quantityLabel}
-                                    </div>
-                                    <div
-                                      style={{
-                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                        background: shipmentCellBaseBackground,
-                                        textAlign: "center",
-                                        ...TYPOGRAPHY.tableCell,
-                                        color: COLORS.text.primary,
-                                        margin: 0,
-                                      }}
-                                    >
-                                      {item.hasPrice ? formatCurrency(item.price ?? 0) : "—"}
-                                    </div>
-                                    <div
-                                      style={{
-                                        padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                        borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                        background: shipmentCellBaseBackground,
-                                        textAlign: "center",
-                                        ...TYPOGRAPHY.tableCell,
-                                        color: COLORS.text.primary,
-                                        fontWeight: 600,
-                                        margin: 0,
-                                      }}
-                                    >
-                                      {item.total != null ? formatCurrency(item.total) : "—"}
-                                    </div>
-                                  </React.Fragment>
+                                  <PositionRow
+                                    key={item.id}
+                                    item={item}
+                                    onProductClick={handleOpenProductById}
+                                    onRowHover={handleShipmentRowHover}
+                                    cellBaseBackground={shipmentCellBaseBackground}
+                                    cellBaseBorder={shipmentCellBaseBorder}
+                                    typography={TYPOGRAPHY}
+                                  />
                                 ))}
-                              </React.Fragment>
+                              </Fragment>
                             );
                           });
                         })()
@@ -1112,7 +1022,7 @@ export default function HomePage() {
                           const showStatusHeader = !prev || prev.statusKey !== item.statusKey;
 
                           return (
-                            <React.Fragment key={item.id}>
+                            <Fragment key={item.id}>
                               {showStatusHeader && (
                               <div
                   style={{
@@ -1134,149 +1044,17 @@ export default function HomePage() {
               </div>
                             )}
 
-                            <div
-                              style={{ display: "contents" }}
-                              role="button"
-                              tabIndex={0}
-                              onClick={() => handleOpenProductById(item.productId)}
-                              onKeyDown={(event) => {
-                                if (event.key === "Enter" || event.key === " ") {
-                                  event.preventDefault();
-                                  handleOpenProductById(item.productId);
-                                }
-                              }}
-                              onMouseEnter={(event) => handleShipmentRowHover(event, true)}
-                              onMouseLeave={(event) => handleShipmentRowHover(event, false)}
-                            >
-                              <div
-                                style={{
-                                  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                display: "flex",
-                flexDirection: "column",
-                                  gap: isMobile ? 6 : 8,
-                                  borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                  background: shipmentCellBaseBackground,
-                                  cursor: "pointer",
-                                  transition: "background 0.2s ease, border 0.2s ease",
-                                }}
-                              >
-                                <div
-                          style={{
-                                    ...TYPOGRAPHY.tableCell,
-                                    color: COLORS.text.primary,
-                            fontWeight: 600,
-                                    margin: 0,
-                                    overflowWrap: "break-word",
-                                    wordBreak: "break-word",
-                                    whiteSpace: "normal",
-                                    hyphens: "auto",
-                          }}
-                        >
-                                  {item.name}
-                                </div>
-                                <div style={{ display: "flex", gap: isMobile ? 4 : 6, flexWrap: "wrap" }}>
-                                  {item.sizeLabels.map((label, labelIndex) => (
-                                    <span key={labelIndex} style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : "4px 10px" }}>
-                                      {label}
-                        </span>
-                      ))}
-                                  {item.note && (
-                                    <span
-                                      style={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        padding: isMobile ? "4px 10px" : "5px 12px",
-                                        borderRadius: 9999,
-                                        fontSize: isMobile ? 12 : 13,
-                                        fontWeight: 600,
-                                        letterSpacing: 0.5,
-                                        background: item.note === "образец" 
-                                          ? "rgba(59,130,246,0.1)" 
-                                          : item.paidPreviously || item.noPayment 
-                                            ? "rgba(52,211,153,0.15)" 
-                                            : "rgba(251,191,36,0.15)",
-                                        color: item.note === "образец"
-                                          ? "#3B82F6"
-                                          : item.paidPreviously || item.noPayment
-                                            ? COLORS.success
-                                            : COLORS.primary,
-                                        border: item.note === "образец"
-                                          ? "1px solid rgba(59,130,246,0.3)"
-                                          : "1px solid",
-                                        borderColor: item.note === "образец"
-                                          ? "rgba(59,130,246,0.3)"
-                                          : item.paidPreviously || item.noPayment
-                                            ? "rgba(52,211,153,0.3)"
-                                            : "rgba(251,191,36,0.3)",
-                                        boxShadow: item.note === "образец"
-                                          ? "0 0 8px rgba(59,130,246,0.3), 0 0 16px rgba(59,130,246,0.15)"
-                                          : "none",
-                                        transition: "all 0.2s ease",
-                                      }}
-                                    >
-                                      {item.note}
-                                    </span>
-                  )}
-                </div>
-                        </div>
-                              <div
-                                style={{
-                                  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                  ...TYPOGRAPHY.tableCell,
-                                  fontWeight: 600,
-                                  color: COLORS.text.primary,
-                                  background: shipmentCellBaseBackground,
-                                  cursor: "pointer",
-                                  transition: "background 0.2s ease, border 0.2s ease",
-                                  margin: 0,
-                                }}
-                              >
-                                {item.quantityLabel}
-                        </div>
-                              <div
-                                style={{
-                                  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                  ...TYPOGRAPHY.tableCell,
-                                  color: item.hasPrice ? COLORS.text.primary : COLORS.primary,
-                                  fontWeight: item.hasPrice ? 600 : 500,
-                                  background: shipmentCellBaseBackground,
-                                  cursor: "pointer",
-                                  transition: "background 0.2s ease, border 0.2s ease",
-                                  margin: 0,
-                                }}
-                              >
-                                {item.hasPrice && item.price != null ? formatCurrency(item.price) : "уточняется"}
-                    </div>
-                              <div
-                                style={{
-                                  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  borderBottom: `1px solid ${shipmentCellBaseBorder}`,
-                                  ...TYPOGRAPHY.tableCell,
-                                  color: item.total != null ? COLORS.success : COLORS.primary,
-                                  fontWeight: 700,
-                                  background: shipmentCellBaseBackground,
-                                  cursor: "pointer",
-                                  transition: "background 0.2s ease, border 0.2s ease",
-                                  margin: 0,
-                                  textAlign: "right",
-                                }}
-                              >
-                                {item.total != null ? formatCurrency(item.total) : "—"}
-                  </div>
-              </div>
-                          </React.Fragment>
+                            {/* Используем единый компонент PositionRow для всех партий */}
+                            <PositionRow
+                              key={item.id}
+                              item={item}
+                              onProductClick={handleOpenProductById}
+                              onRowHover={handleShipmentRowHover}
+                              cellBaseBackground={shipmentCellBaseBackground}
+                              cellBaseBorder={shipmentCellBaseBorder}
+                              typography={TYPOGRAPHY}
+                            />
+                          </Fragment>
         );
                       })
                       )}

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import { formatCurrency } from "@/lib/utils";
@@ -10,7 +9,7 @@ interface ProductDetailProps {
   product: Product;
 }
 
-export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
+export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile } = useBreakpoint();
 
   // Единая типографика
@@ -82,7 +81,10 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.style.display = "none";
-            target.parentElement!.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: ${isMobile ? 48 : 80}px;">📷</span>`;
+            const parent = target.parentElement;
+            if (parent) {
+              parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: ${isMobile ? 48 : 80}px;">📷</span>`;
+            }
           }}
           style={{
             width: "100%",
@@ -117,8 +119,8 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
             Размеры
           </p>
           <div style={{ display: "flex", gap: SPACING.sm, flexWrap: "wrap" }}>
-            {product.sizes.map((size: string, i: number) => (
-              <span key={i} style={SIZE_CHIP_STYLE}>
+            {product.sizes.map((size) => (
+              <span key={size} style={SIZE_CHIP_STYLE}>
                 {size.toUpperCase()}
               </span>
             ))}

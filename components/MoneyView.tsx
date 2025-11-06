@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { COLORS, SPACING } from "@/constants/styles";
+import { COLORS, SPACING, CARD_HOVER_EFFECTS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 
 interface MoneyViewProps {
   expandedCards: Set<string>;
@@ -14,14 +13,14 @@ interface MoneyViewProps {
   totalPayment: number;
 }
 
-export const MoneyView: React.FC<MoneyViewProps> = ({
+export const MoneyView = ({
   expandedCards,
   onToggleCard,
   shipment9Total,
   shipment8Total,
   materialPrepayment,
   totalPayment,
-}) => {
+}: MoneyViewProps) => {
   const { isMobile, breakpoint } = useBreakpoint();
   // Десктоп = >=1024px (laptop и desktop)
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
@@ -101,19 +100,12 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
               flexDirection: "column",
               gap: isMobile ? SPACING.sm : SPACING.md,
             }}
-            onMouseEnter={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.boxShadow =
-                  "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
-                e.currentTarget.style.transform = "translateY(0)";
-              }
-            }}
+            {...(isMobile
+              ? {}
+              : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
+                  boxShadow: CARD_STYLE.boxShadow as string,
+                  transform: "translateY(0)",
+                }))}
           >
             {/* Заголовок и сумма на одной горизонтали */}
             <div
@@ -345,19 +337,12 @@ export const MoneyView: React.FC<MoneyViewProps> = ({
               flexDirection: "column",
               gap: isMobile ? SPACING.sm : SPACING.md,
             }}
-            onMouseEnter={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.boxShadow =
-                  "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
-                e.currentTarget.style.transform = "translateY(0)";
-              }
-            }}
+            {...(isMobile
+              ? {}
+              : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
+                  boxShadow: CARD_STYLE.boxShadow as string,
+                  transform: "translateY(0)",
+                }))}
           >
             {/* Заголовок и сумма на одной горизонтали */}
             <div

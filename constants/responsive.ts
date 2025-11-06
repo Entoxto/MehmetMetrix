@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect } from "react";
 
 export const BREAKPOINTS = {
   mobile: 480,
@@ -33,10 +33,14 @@ const getInitialBreakpoint = (): BreakpointKey => {
   return resolveBreakpoint(window.innerWidth);
 };
 
+/**
+ * Хук для определения текущего брейкпоинта экрана
+ * @returns Объект с текущим брейкпоинтом и флагами для мобильных устройств
+ */
 export const useBreakpoint = () => {
-  const [breakpoint, setBreakpoint] = React.useState<BreakpointKey>(getInitialBreakpoint);
+  const [breakpoint, setBreakpoint] = useState<BreakpointKey>(getInitialBreakpoint);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }

@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import { Card } from "./Card";
-import { STYLES, COLORS } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
+import { createCardHoverHandlers } from "@/lib/utils";
 import type { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -10,7 +10,12 @@ interface ProductCardProps {
   onClick: () => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
+export const ProductCard = ({ product, onClick }: ProductCardProps) => {
+  const hoverHandlers = createCardHoverHandlers(
+    CARD_HOVER_EFFECTS.product.hover,
+    CARD_HOVER_EFFECTS.product.default
+  );
+
   return (
     <Card padding={0} expandable={false}>
       <div
@@ -20,14 +25,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
           transition: "all 0.3s ease",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-4px)";
+          hoverHandlers.onMouseEnter(e);
           const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
-          if (card) card.style.boxShadow = "0 8px 32px rgba(251,191,36,0.2)";
+          if (card) card.style.boxShadow = CARD_HOVER_EFFECTS.product.hover.boxShadow || "none";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
+          hoverHandlers.onMouseLeave(e);
           const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
-          if (card) card.style.boxShadow = "none";
+          if (card) card.style.boxShadow = CARD_HOVER_EFFECTS.product.default.boxShadow || "none";
         }}
       >
         <div
@@ -49,8 +54,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.style.display = "none";
-              target.parentElement!.innerHTML =
-                '<span style="color: #737373; font-size: 48px;">📷</span>';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.innerHTML = '<span style="color: #737373; font-size: 48px;">📷</span>';
+              }
             }}
             style={{
               width: "100%",
@@ -102,8 +109,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) =>
                 Размеры
               </p>
               <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                {product.sizes.map((size: string, i: number) => (
-                  <span key={i} style={STYLES.sizeBadge}>
+                {product.sizes.map((size) => (
+                  <span key={size} style={STYLES.sizeBadge}>
                     {size}
                   </span>
                 ))}

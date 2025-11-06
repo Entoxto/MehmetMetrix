@@ -77,4 +77,42 @@ export const SPACING = {
   xl: 32,
 } as const;
 
+/**
+ * Стандартные hover-эффекты для карточек
+ */
+export const CARD_HOVER_EFFECTS = {
+  category: {
+    hover: {
+      transform: "translateY(-4px) scale(1.02)",
+      boxShadow: "0 8px 32px rgba(251,191,36,0.2)",
+      border: `1px solid ${COLORS.border.primaryHover}`,
+    },
+    default: {
+      transform: "translateY(0) scale(1)",
+      boxShadow: "none",
+      border: `1px solid ${COLORS.border.default}`,
+    },
+  },
+  product: {
+    hover: {
+      transform: "translateY(-4px)",
+      boxShadow: "0 8px 32px rgba(251,191,36,0.2)",
+    },
+    default: {
+      transform: "translateY(0)",
+      boxShadow: "none",
+    },
+  },
+  money: {
+    hover: {
+      boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)",
+      transform: "translateY(-2px)",
+    },
+    default: {
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
+      transform: "translateY(0)",
+    },
+  },
+} as const;
+
 

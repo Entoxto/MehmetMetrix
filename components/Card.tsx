@@ -1,23 +1,23 @@
 "use client";
 
-import React from "react";
+import type { ReactNode } from "react";
 import { STYLES } from "@/constants/styles";
 
 interface CardProps {
-  children: React.ReactNode;
+  children: ReactNode;
   padding?: number;
   expandable?: boolean;
   expanded?: boolean;
   onToggle?: () => void;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card = ({
   children,
   padding = 16,
   expandable = false,
   expanded = false,
   onToggle,
-}) => {
+}: CardProps) => {
   const handleClick = () => {
     if (expandable && onToggle) {
       onToggle();
