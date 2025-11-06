@@ -98,71 +98,64 @@ export default function ProductPage() {
       <header
         style={{
           display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "1fr auto",
+          gridTemplateColumns: isMobile ? "70% 1fr" : "1fr auto",
           alignItems: "center",
           padding: isMobile ? "8px 16px" : "16px 32px",
           minHeight: isMobile ? "auto" : "80px",
           borderBottom: `1px solid rgba(102,102,102,0.2)`,
           background: COLORS.background.header,
           backdropFilter: "blur(10px)",
-          gap: isMobile ? SPACING.sm : 0,
+          gap: isMobile ? SPACING.sm : SPACING.md,
         }}
       >
         <h1
           style={{
-            fontSize: isMobile ? 20 : 28,
+            fontSize: isMobile ? 18 : 22,
             fontWeight: 900,
             color: COLORS.primary,
             margin: 0,
+            paddingTop: isMobile ? 0 : "10px",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            whiteSpace: "normal",
+            lineHeight: 1.3,
+            wordBreak: "break-word",
+            maxWidth: isMobile ? "100%" : "calc(100% - 140px)",
+            textAlign: isMobile ? "center" : "left",
           }}
         >
           {product.name}
         </h1>
-        {!isMobile && (
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <button
-              onClick={handleBack}
-              onMouseEnter={(e) => {
-                if (!isMobile) {
-                  e.currentTarget.style.background = STYLES.buttonHover.background;
-                  e.currentTarget.style.border = STYLES.buttonHover.border;
-                  e.currentTarget.style.transform = STYLES.buttonHover.transform;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isMobile) {
-                  e.currentTarget.style.background = STYLES.button.background;
-                  e.currentTarget.style.border = STYLES.button.border;
-                  e.currentTarget.style.transform = "translateX(0)";
-                }
-              }}
-              style={{
-                ...STYLES.button,
-                padding: isMobile ? "8px 16px" : STYLES.button.padding,
-                fontSize: isMobile ? 12 : STYLES.button.fontSize,
-              }}
-            >
-              <span style={{ fontSize: isMobile ? 14 : 18 }}>←</span> Назад
-            </button>
-          </div>
-        )}
-        {isMobile && (
-          <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: SPACING.xs }}>
-            <button
-              onClick={handleBack}
-              style={{
-                ...STYLES.button,
-                padding: "8px 16px",
-                fontSize: 12,
-              }}
-            >
-              <span style={{ fontSize: 14 }}>←</span> Назад
-            </button>
-          </div>
-        )}
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "flex-end",
+          marginTop: isMobile ? 0 : "6px",
+        }}>
+          <button
+            onClick={handleBack}
+            onMouseEnter={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.background = STYLES.buttonHover.background;
+                e.currentTarget.style.border = STYLES.buttonHover.border;
+                e.currentTarget.style.transform = STYLES.buttonHover.transform;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isMobile) {
+                e.currentTarget.style.background = STYLES.button.background;
+                e.currentTarget.style.border = STYLES.button.border;
+                e.currentTarget.style.transform = "translateX(0)";
+              }
+            }}
+            style={{
+              ...STYLES.button,
+              padding: isMobile ? "8px 16px" : STYLES.button.padding,
+              fontSize: isMobile ? 12 : STYLES.button.fontSize,
+            }}
+          >
+            <span style={{ fontSize: isMobile ? 14 : 18 }}>←</span> Назад
+          </button>
+        </div>
       </header>
       <ProductDetail product={product} />
     </div>
