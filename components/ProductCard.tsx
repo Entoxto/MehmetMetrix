@@ -19,7 +19,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Card padding={0} expandable={false}>
       <Link
-        href={`/catalog/${product.id}`}
+        href={{ pathname: `/catalog/${product.id}`, query: { from: "catalog" } }}
         prefetch={false}
         style={{
           cursor: "pointer",

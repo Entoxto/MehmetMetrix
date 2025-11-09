@@ -41,7 +41,6 @@ export default function ProductPage() {
     const batch = searchParams.get("batch");
     const pos = searchParams.get("pos");
 
-    // Если пришли из work, всегда возвращаемся в work через главную страницу
     if (from === "work") {
       const params = new URLSearchParams();
       params.set("view", "work");
@@ -49,10 +48,11 @@ export default function ProductPage() {
       if (pos) params.set("pos", pos);
       const hash = pos ? `#pos-${pos}` : "";
       router.push(`/?${params.toString()}${hash}`);
+    } else if (from === "catalog") {
+      router.push("/?view=catalog", { scroll: false });
     } else if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
-      // Возвращаемся в каталог через главную страницу
       router.push("/?view=catalog", { scroll: false });
     }
   };

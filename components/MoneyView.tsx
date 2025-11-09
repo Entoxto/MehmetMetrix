@@ -7,8 +7,8 @@ import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 interface MoneyViewProps {
   expandedCards: Set<string>;
   onToggleCard: (cardId: string) => void;
-  shipment9Total: number;
-  shipment8Total: number;
+  shipment11Total: number;
+  shipment10Total: number;
   materialPrepayment: number;
   totalPayment: number;
 }
@@ -16,8 +16,8 @@ interface MoneyViewProps {
 export const MoneyView = ({
   expandedCards,
   onToggleCard,
-  shipment9Total,
-  shipment8Total,
+  shipment11Total,
+  shipment10Total,
   materialPrepayment,
   totalPayment,
 }: MoneyViewProps) => {
@@ -282,7 +282,7 @@ export const MoneyView = ({
                         margin: 0,
                       }}
                     >
-                      {formatCurrency(shipment9Total)}
+                      {formatCurrency(shipment11Total)}
                     </span>
                   </div>
                 </div>

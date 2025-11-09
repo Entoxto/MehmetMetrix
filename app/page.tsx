@@ -51,8 +51,8 @@ interface ShipmentConfig {
 
 const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
   {
-    id: "shipment-9",
-    title: "Партия №9",
+    id: "shipment-11",
+    title: "Партия №11",
     status: { label: "В работе", icon: "🧵" },
     eta: "Ожидаем отправку на текущей неделе",
     rawItems: [
@@ -125,8 +125,8 @@ const SHIPMENTS_CONFIG: readonly ShipmentConfig[] = [
     ],
   },
   {
-    id: "shipment-8",
-    title: "Партия №8",
+    id: "shipment-10",
+    title: "Партия №10",
     status: { label: "Получено, оплачено", icon: "✅" },
     receivedDate: "04.11.2025",
     groupByPayment: false,
@@ -267,7 +267,7 @@ const buildShipmentItems = (
     return items.sort((a, b) => {
       if (a.needsPayment !== b.needsPayment) {
         // Для партии №8: сначала "Оплачено" (needsPayment = true), потом "Оплачено ранее" (needsPayment = false)
-        if (shipmentId === "shipment-8") {
+        if (shipmentId === "shipment-10") {
           return a.needsPayment ? -1 : 1;
         }
         return a.needsPayment ? -1 : 1;
@@ -524,18 +524,18 @@ export default function HomePage() {
     }
 
     if (view === "money") {
-      const shipment9Total = allShipments.find((s) => s.id === "shipment-9")?.totalAmount ?? 0;
-      const shipment8Total = allShipments.find((s) => s.id === "shipment-8")?.totalAmount ?? 0;
+      const shipment11Total = allShipments.find((s) => s.id === "shipment-11")?.totalAmount ?? 0;
+      const shipment10Total = allShipments.find((s) => s.id === "shipment-10")?.totalAmount ?? 0;
       const materialPrepayment = 3100;
-      // Партия №8 оплачена, предоплата перенесена в депозиты - остаётся только партия 9
-      const totalPayment = shipment9Total;
+      // Партия №10 оплачена, предоплата перенесена в депозиты - остаётся только партия 11
+      const totalPayment = shipment11Total;
       
       return (
         <MoneyView
           expandedCards={expandedCards}
           onToggleCard={handleToggleCard}
-          shipment9Total={shipment9Total}
-          shipment8Total={shipment8Total}
+          shipment11Total={shipment11Total}
+          shipment10Total={shipment10Total}
           materialPrepayment={materialPrepayment}
           totalPayment={totalPayment}
         />
@@ -631,9 +631,9 @@ export default function HomePage() {
           fontWeight: 600,
           lineHeight: 1, // line-height: 1
           border: "1px solid",
-          background: shipment.id === "shipment-8" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
-          color: shipment.id === "shipment-8" ? COLORS.success : COLORS.primary,
-          borderColor: shipment.id === "shipment-8" ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)",
+          background: shipment.id === "shipment-10" ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
+          color: shipment.id === "shipment-10" ? COLORS.success : COLORS.primary,
+          borderColor: shipment.id === "shipment-10" ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)",
         };
 
         // Заменяем пробел между "Партия" и "№9" на неразрывный пробел
@@ -938,7 +938,7 @@ export default function HomePage() {
                   <p style={{ ...TYPOGRAPHY.caption, margin: 0, color: COLORS.text.secondary, textTransform: "uppercase" }}>
                     {shipment.receivedDate ? "Сумма партии" : "Сумма к оплате"}
                   </p>
-                  <p style={{ ...TYPOGRAPHY.amount, margin: 0, color: shipment.receivedDate || shipment.id === "shipment-8" ? COLORS.success : COLORS.primary }}>
+                  <p style={{ ...TYPOGRAPHY.amount, margin: 0, color: shipment.receivedDate || shipment.id === "shipment-10" ? COLORS.success : COLORS.primary }}>
                     {formatCurrency(shipment.totalAmount)}
                   </p>
               </div>
