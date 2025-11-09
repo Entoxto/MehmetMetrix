@@ -1,8 +1,13 @@
 "use client";
 
 import { COLORS } from "@/constants/styles";
+import type { ReactNode } from "react";
 
-export const Footer = () => (
+interface FooterProps {
+  children?: ReactNode;
+}
+
+export const Footer = ({ children }: FooterProps) => (
   <footer
     style={{
       padding: 20,
@@ -14,7 +19,7 @@ export const Footer = () => (
       background: COLORS.background.footer,
     }}
   >
-    Сделано с любовью и лёгким запахом кожи © {new Date().getFullYear()}
+    {children ?? <>Сделано с любовью и лёгким запахом кожи © {new Date().getFullYear()}</>}
   </footer>
 );
 

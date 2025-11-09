@@ -203,7 +203,73 @@ function HomePageContent() {
         flexDirection: "column",
       }}
     >
-      <Header isMobile={isMobile} selectedCategory={selectedCategory} backButton={BackButton} />
+      <Header>
+        <div
+          style={{
+            display: isMobile ? "flex" : "grid",
+            flexDirection: isMobile ? "column" : undefined,
+            gridTemplateColumns: isMobile ? undefined : "1fr auto 1fr",
+            alignItems: "center",
+            gap: isMobile ? SPACING.sm : 0,
+            padding: isMobile ? "8px 16px" : "0px 32px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: isMobile ? 8 : 14,
+              justifyContent: isMobile ? "space-between" : "flex-start",
+              width: "100%",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 8 : 14 }}>
+              <span style={{ fontSize: isMobile ? 24 : 36 }}>⚡</span>
+              <h1
+                style={{
+                  fontSize: isMobile ? 28 : 44,
+                  fontWeight: 900,
+                  letterSpacing: -1.5,
+                  color: COLORS.primary,
+                  textShadow: "0 0 20px rgba(251,191,36,0.5)",
+                  margin: 0,
+                }}
+              >
+                Mehmet Metrics
+              </h1>
+            </div>
+            {isMobile && BackButton}
+          </div>
+
+          {!isMobile && (
+            <>
+              {selectedCategory ? (
+                <div style={{ textAlign: "center" }}>
+                  <h2 style={{ fontSize: 32, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
+                    {selectedCategory}
+                  </h2>
+                </div>
+              ) : (
+                <div />
+              )}
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>{BackButton}</div>
+            </>
+          )}
+        </div>
+        {isMobile && selectedCategory && (
+          <div
+            style={{
+              textAlign: "center",
+              borderTop: `1px solid rgba(102,102,102,0.2)`,
+              paddingTop: SPACING.xs,
+            }}
+          >
+            <h2 style={{ fontSize: 20, fontWeight: 900, color: COLORS.primary, margin: 0 }}>
+              {selectedCategory}
+            </h2>
+          </div>
+        )}
+      </Header>
       {renderContent()}
       <Footer />
     </div>

@@ -12,6 +12,8 @@ import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
+import { Header } from "../../home/Header";
+import { Footer } from "../../home/Footer";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -96,70 +98,45 @@ export default function ProductPage() {
         flexDirection: "column",
       }}
     >
-      <header
-        style={{
-          display: isCompact ? "flex" : "grid",
-          flexDirection: isCompact ? "column" : undefined,
-          gridTemplateColumns: isCompact ? undefined : "1fr auto",
-          alignItems: "center",
-          padding: isCompact ? "12px 16px" : "16px 32px",
-          minHeight: isCompact ? "auto" : "80px",
-          borderBottom: `1px solid rgba(102,102,102,0.2)`,
-          background: COLORS.background.header,
-          backdropFilter: "blur(10px)",
-          gap: isCompact ? SPACING.sm : SPACING.md,
-        }}
-      >
-        <h1
+      <Header>
+        <div
           style={{
-            fontSize: isCompact ? 18 : 22,
-            fontWeight: 900,
-            color: COLORS.primary,
-            margin: 0,
-            paddingTop: isCompact ? 0 : "10px",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "normal",
-            lineHeight: 1.3,
-            wordBreak: "break-word",
-            maxWidth: isCompact ? "100%" : "calc(100% - 140px)",
-            textAlign: isCompact ? "center" : "left",
+            display: isCompact ? "flex" : "grid",
+            flexDirection: isCompact ? "column" : undefined,
+            gridTemplateColumns: isCompact ? undefined : "1fr auto",
+            alignItems: "center",
+            padding: isCompact ? "12px 16px" : "16px 32px",
+            gap: isCompact ? SPACING.sm : SPACING.md,
           }}
         >
-          {product.name}
-        </h1>
-        <div style={{ 
-          display: "flex", 
-          justifyContent: isCompact ? "center" : "flex-end",
-          marginTop: isCompact ? SPACING.sm : "6px",
-        }}>
+          <h1
+            style={{
+              fontSize: isCompact ? 18 : 22,
+              fontWeight: 900,
+              color: COLORS.primary,
+              margin: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {product.name}
+          </h1>
           <button
             onClick={handleBack}
-            onMouseEnter={(e) => {
-              if (!isCompact) {
-                e.currentTarget.style.background = STYLES.buttonHover.background;
-                e.currentTarget.style.border = STYLES.buttonHover.border;
-                e.currentTarget.style.transform = STYLES.buttonHover.transform;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isCompact) {
-                e.currentTarget.style.background = STYLES.button.background;
-                e.currentTarget.style.border = STYLES.button.border;
-                e.currentTarget.style.transform = "translateX(0)";
-              }
-            }}
             style={{
               ...STYLES.button,
               padding: isCompact ? "8px 16px" : STYLES.button.padding,
               fontSize: isCompact ? 12 : STYLES.button.fontSize,
+              alignSelf: isCompact ? "flex-end" : undefined,
+              marginTop: isCompact ? SPACING.xs : 0,
             }}
           >
             <span style={{ fontSize: isCompact ? 14 : 18 }}>←</span> Назад
           </button>
         </div>
-      </header>
+      </Header>
       <ProductDetail product={product} />
+      <Footer />
     </div>
   );
 }
