@@ -17,7 +17,8 @@ export default function ProductPage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const { isMobile } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
+  const isCompact = isMobile || isTablet;
 
   const productId = params.id as string;
 
@@ -62,7 +63,7 @@ export default function ProductPage() {
       <div
         style={{
           flex: 1,
-          padding: isMobile ? 16 : 32,
+          padding: isCompact ? 16 : 32,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -75,11 +76,11 @@ export default function ProductPage() {
           onClick={handleBack}
           style={{
             ...STYLES.button,
-            padding: isMobile ? "8px 16px" : STYLES.button.padding,
-            fontSize: isMobile ? 12 : STYLES.button.fontSize,
+            padding: isCompact ? "8px 16px" : STYLES.button.padding,
+            fontSize: isCompact ? 12 : STYLES.button.fontSize,
           }}
         >
-          <span style={{ fontSize: isMobile ? 14 : 18 }}>←</span> Назад
+          <span style={{ fontSize: isCompact ? 14 : 18 }}>←</span> Назад
         </button>
       </div>
     );
@@ -98,30 +99,30 @@ export default function ProductPage() {
       <header
         style={{
           display: "grid",
-          gridTemplateColumns: isMobile ? "70% 1fr" : "1fr auto",
+          gridTemplateColumns: isCompact ? "70% 1fr" : "1fr auto",
           alignItems: "center",
-          padding: isMobile ? "8px 16px" : "16px 32px",
-          minHeight: isMobile ? "auto" : "80px",
+          padding: isCompact ? "8px 16px" : "16px 32px",
+          minHeight: isCompact ? "auto" : "80px",
           borderBottom: `1px solid rgba(102,102,102,0.2)`,
           background: COLORS.background.header,
           backdropFilter: "blur(10px)",
-          gap: isMobile ? SPACING.sm : SPACING.md,
+          gap: isCompact ? SPACING.sm : SPACING.md,
         }}
       >
         <h1
           style={{
-            fontSize: isMobile ? 18 : 22,
+            fontSize: isCompact ? 18 : 22,
             fontWeight: 900,
             color: COLORS.primary,
             margin: 0,
-            paddingTop: isMobile ? 0 : "10px",
+            paddingTop: isCompact ? 0 : "10px",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "normal",
             lineHeight: 1.3,
             wordBreak: "break-word",
-            maxWidth: isMobile ? "100%" : "calc(100% - 140px)",
-            textAlign: isMobile ? "center" : "left",
+            maxWidth: isCompact ? "100%" : "calc(100% - 140px)",
+            textAlign: isCompact ? "center" : "left",
           }}
         >
           {product.name}
@@ -129,19 +130,19 @@ export default function ProductPage() {
         <div style={{ 
           display: "flex", 
           justifyContent: "flex-end",
-          marginTop: isMobile ? 0 : "6px",
+          marginTop: isCompact ? 0 : "6px",
         }}>
           <button
             onClick={handleBack}
             onMouseEnter={(e) => {
-              if (!isMobile) {
+              if (!isCompact) {
                 e.currentTarget.style.background = STYLES.buttonHover.background;
                 e.currentTarget.style.border = STYLES.buttonHover.border;
                 e.currentTarget.style.transform = STYLES.buttonHover.transform;
               }
             }}
             onMouseLeave={(e) => {
-              if (!isMobile) {
+              if (!isCompact) {
                 e.currentTarget.style.background = STYLES.button.background;
                 e.currentTarget.style.border = STYLES.button.border;
                 e.currentTarget.style.transform = "translateX(0)";
@@ -149,11 +150,11 @@ export default function ProductPage() {
             }}
             style={{
               ...STYLES.button,
-              padding: isMobile ? "8px 16px" : STYLES.button.padding,
-              fontSize: isMobile ? 12 : STYLES.button.fontSize,
+              padding: isCompact ? "8px 16px" : STYLES.button.padding,
+              fontSize: isCompact ? 12 : STYLES.button.fontSize,
             }}
           >
-            <span style={{ fontSize: isMobile ? 14 : 18 }}>←</span> Назад
+            <span style={{ fontSize: isCompact ? 14 : 18 }}>←</span> Назад
           </button>
         </div>
       </header>
