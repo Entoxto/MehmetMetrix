@@ -20,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
+        <meta name="robots" content="noindex,nofollow" />
         <style>{`
           * {
             box-sizing: border-box;
