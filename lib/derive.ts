@@ -41,11 +41,11 @@ export function groupByStatus(positions: Position[]): Record<PositionStatus, Pos
  */
 export const orderStatuses: PositionStatus[] = [
   PositionStatus.inProduction,
-  PositionStatus.inTransit,
   PositionStatus.done,
   PositionStatus.paid,
   PositionStatus.paidEarlier,
   PositionStatus.returned,
+  PositionStatus.inTransit,
 ];
 
 /**
