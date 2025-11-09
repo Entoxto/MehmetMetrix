@@ -10,15 +10,16 @@ interface ProductDetailProps {
 }
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
-  const { isMobile } = useBreakpoint();
+  const { isMobile, isTablet } = useBreakpoint();
+  const isCompact = isMobile || isTablet;
 
   // Единая типографика
   const TYPOGRAPHY = {
-    h1: { fontSize: isMobile ? 24 : 32, fontWeight: 800, lineHeight: 1.3 },
-    h2: { fontSize: isMobile ? 14 : 16, fontWeight: 600, lineHeight: 1.4 },
-    body: { fontSize: isMobile ? 14 : 16, lineHeight: 1.5 },
-    caption: { fontSize: isMobile ? 11 : 12, lineHeight: 1.4 },
-    price: { fontSize: isMobile ? 32 : 40, fontWeight: 700, lineHeight: 1.2 },
+    h1: { fontSize: isCompact ? 24 : 32, fontWeight: 800, lineHeight: 1.3 },
+    h2: { fontSize: isCompact ? 14 : 16, fontWeight: 600, lineHeight: 1.4 },
+    body: { fontSize: isCompact ? 14 : 16, lineHeight: 1.5 },
+    caption: { fontSize: isCompact ? 11 : 12, lineHeight: 1.4 },
+    price: { fontSize: isCompact ? 32 : 40, fontWeight: 700, lineHeight: 1.2 },
   };
 
   // Стили для чипов размеров
@@ -26,9 +27,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: isMobile ? "10px 16px" : "12px 20px",
+    padding: isCompact ? "10px 16px" : "12px 20px",
     borderRadius: 8,
-    fontSize: isMobile ? 14 : 16,
+    fontSize: isCompact ? 14 : 16,
     fontWeight: 600,
     lineHeight: 1.4,
     border: "1px solid",
@@ -41,7 +42,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   // Единые стили для фото
   const PHOTO_STYLE = {
-    borderRadius: isMobile ? 16 : 20,
+    borderRadius: isCompact ? 16 : 20,
     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
     overflow: "hidden" as const,
     background: COLORS.background.cardExpanded,
@@ -51,23 +52,23 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     <div
       style={{
         flex: 1,
-        padding: isMobile ? SPACING.md : SPACING.xl,
-        paddingBottom: isMobile ? SPACING.xl * 2 : SPACING.xl, // Безопасный отступ для toast на мобиле
-        display: isMobile ? "flex" : "grid",
-        flexDirection: isMobile ? "column" : undefined,
-        gridTemplateColumns: isMobile ? undefined : "1fr 1fr",
-        gap: isMobile ? SPACING.lg : SPACING.xl,
-        alignItems: isMobile ? undefined : "stretch",
-        maxWidth: isMobile ? "100%" : "none",
+        padding: isCompact ? SPACING.md : SPACING.xl,
+        paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.xl, // Безопасный отступ для toast на мобиле
+        display: isCompact ? "flex" : "grid",
+        flexDirection: isCompact ? "column" : undefined,
+        gridTemplateColumns: isCompact ? undefined : "1fr 1fr",
+        gap: isCompact ? SPACING.lg : SPACING.xl,
+        alignItems: isCompact ? undefined : "stretch",
+        maxWidth: isCompact ? "100%" : "none",
       }}
     >
       {/* Фото товара - квадратное (1:1) */}
       <div
         style={{
           width: "100%",
-          aspectRatio: isMobile ? undefined : "1 / 1",
-          height: isMobile ? 300 : "auto",
-          maxWidth: isMobile ? "100%" : "500px",
+          aspectRatio: isCompact ? undefined : "1 / 1",
+          height: isCompact ? 300 : "auto",
+          maxWidth: isCompact ? "100%" : "500px",
           ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
@@ -83,7 +84,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             target.style.display = "none";
             const parent = target.parentElement;
             if (parent) {
-              parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: ${isMobile ? 48 : 80}px;">📷</span>`;
+              parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: ${isCompact ? 48 : 80}px;">📷</span>`;
             }
           }}
           style={{
@@ -99,9 +100,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: isMobile ? SPACING.lg : SPACING.xl,
+          gap: isCompact ? SPACING.lg : SPACING.xl,
           flex: 1,
-          minHeight: isMobile ? "auto" : 0, // Для одинаковой высоты с фото на десктопе
+          minHeight: isCompact ? "auto" : 0, // Для одинаковой высоты с фото на десктопе
         }}
       >
         {/* Размеры */}
