@@ -6,7 +6,6 @@
 import type { Position, Batch, Size } from '@/types/domain';
 import { PositionStatus } from '@/types/domain';
 import type { Product } from '@/types/product';
-import { calcSum } from './derive';
 
 // Старый формат данных из app/page.tsx
 interface ShipmentRawItem {

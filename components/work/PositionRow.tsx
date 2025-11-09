@@ -6,14 +6,13 @@
  */
 
 import Link from "next/link";
-import { COLORS, STYLES } from "@/constants/styles";
+import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
-import { formatCurrency, statusIcon, statusLabel } from "@/lib/format";
-import { PositionStatus } from "@/types/domain";
+import { formatCurrency, statusIcon } from "@/lib/format";
+import type { Position } from "@/types/domain";
 import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import type { Position } from "@/types/domain";
 import type { MouseEvent } from "react";
 
 interface PositionRowProps {

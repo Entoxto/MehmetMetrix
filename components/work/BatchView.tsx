@@ -6,9 +6,9 @@
  */
 
 import { Fragment } from "react";
-import { COLORS, SPACING } from "@/constants/styles";
+import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
-import { formatCurrency, statusLabel, statusIcon } from "@/lib/format";
+import { statusLabel, statusIcon } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
 import { PositionRow } from "./PositionRow";
 import type { Batch } from "@/types/domain";

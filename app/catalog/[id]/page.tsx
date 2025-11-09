@@ -5,7 +5,7 @@
  * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
  */
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";

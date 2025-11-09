@@ -1,6 +1,6 @@
 "use client";
 
-import { STYLES, COLORS, SPACING } from "@/constants/styles";
+import { COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/types/product";

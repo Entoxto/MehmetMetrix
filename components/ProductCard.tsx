@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card } from "./Card";
+import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import type { Product } from "@/types/product";
@@ -16,8 +16,25 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     CARD_HOVER_EFFECTS.product.default
   );
 
+  const cardStyle: CSSProperties = {
+    ...STYLES.card,
+    padding: 0,
+    transition: "all 0.3s ease",
+  };
+
+  if (CARD_HOVER_EFFECTS.product.default.boxShadow !== undefined) {
+    cardStyle.boxShadow = CARD_HOVER_EFFECTS.product.default.boxShadow;
+  }
+  if (CARD_HOVER_EFFECTS.product.default.transform !== undefined) {
+    cardStyle.transform = CARD_HOVER_EFFECTS.product.default.transform;
+  }
+
   return (
-    <Card padding={0} expandable={false}>
+    <div
+      style={cardStyle}
+      onMouseEnter={hoverHandlers.onMouseEnter}
+      onMouseLeave={hoverHandlers.onMouseLeave}
+    >
       <Link
         href={{ pathname: `/catalog/${product.id}`, query: { from: "catalog" } }}
         prefetch={false}
@@ -26,16 +43,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           transition: "all 0.3s ease",
           textDecoration: "none",
           display: "block",
-        }}
-        onMouseEnter={(e) => {
-          hoverHandlers.onMouseEnter(e);
-          const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
-          if (card) card.style.boxShadow = CARD_HOVER_EFFECTS.product.hover.boxShadow || "none";
-        }}
-        onMouseLeave={(e) => {
-          hoverHandlers.onMouseLeave(e);
-          const card = e.currentTarget.closest("div[style*='border-radius']") as HTMLElement;
-          if (card) card.style.boxShadow = CARD_HOVER_EFFECTS.product.default.boxShadow || "none";
         }}
       >
         <div
@@ -70,7 +77,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           />
         </div>
         <div style={{ padding: 20, display: "flex", flexDirection: "column", minHeight: 180 }}>
-          <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: COLORS.primary, minHeight: 60, maxHeight: 60, overflow: "hidden", lineHeight: "1.3" }}>
+          <h3
+            style={{
+              fontSize: 20,
+              fontWeight: 700,
+              marginBottom: 12,
+              color: COLORS.primary,
+              minHeight: 60,
+              maxHeight: 60,
+              overflow: "hidden",
+              lineHeight: "1.3",
+            }}
+          >
             {product.name}
           </h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
@@ -122,7 +140,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
       </Link>
-    </Card>
+    </div>
   );
 };
 

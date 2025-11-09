@@ -8,7 +8,6 @@ interface MoneyViewProps {
   expandedCards: Set<string>;
   onToggleCard: (cardId: string) => void;
   shipment11Total: number;
-  shipment10Total: number;
   materialPrepayment: number;
   totalPayment: number;
 }
@@ -17,7 +16,6 @@ export const MoneyView = ({
   expandedCards,
   onToggleCard,
   shipment11Total,
-  shipment10Total,
   materialPrepayment,
   totalPayment,
 }: MoneyViewProps) => {
