@@ -36,7 +36,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       onMouseLeave={hoverHandlers.onMouseLeave}
     >
       <Link
-        href={{ pathname: `/catalog/${product.id}`, query: { from: "catalog" } }}
+        href={{ pathname: `/ProductCard/${product.id}`, query: { from: "catalog" } }}
         prefetch={false}
         style={{
           cursor: "pointer",

@@ -76,7 +76,7 @@ export const PositionRow = ({
         >
           {/* Ссылка из 'work' с query from/batch/pos */}
           <Link
-            href={`/catalog/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
+            href={`/ProductCard/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
             prefetch={false}
             onClick={(event) => {
               event.stopPropagation();
