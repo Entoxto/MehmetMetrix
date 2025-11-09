@@ -14,7 +14,7 @@ import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { Position } from "@/types/domain";
-import type { MouseEvent, SyntheticEvent } from "react";
+import type { MouseEvent } from "react";
 
 interface PositionRowProps {
   position: Position;
@@ -40,12 +40,8 @@ export const PositionRow = ({
   const hasSizes = Object.values(position.sizes).some(count => count > 0);
   const qtyLabel = position.sample ? `${position.qty} шт.` : `${position.qty} шт.`;
 
-  const stopPropagation = (event: SyntheticEvent) => {
-    event.stopPropagation();
-  };
-
   // клик по названию ведёт на карточку
-  const handleLinkClick = (e: React.MouseEvent) => {
+  const handleLinkClick = () => {
     // Сохраняем позицию скролла перед переходом
     if (typeof window !== "undefined") {
       sessionStorage.setItem("workScrollY", String(window.scrollY));
@@ -61,8 +57,8 @@ export const PositionRow = ({
         style={{ display: "contents" }}
         onMouseEnter={onRowHover ? (event) => onRowHover(event, true) : undefined}
         onMouseLeave={onRowHover ? (event) => onRowHover(event, false) : undefined}
-        onClick={stopPropagation}
-        onTouchStart={stopPropagation}
+        onClick={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
       >
         <div
           style={{
@@ -83,9 +79,11 @@ export const PositionRow = ({
           <Link
             href={`/catalog/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
             prefetch={false}
-            onClick={handleLinkClick}
-            onClickCapture={stopPropagation}
-            onTouchStartCapture={stopPropagation}
+            onClick={(event) => {
+              event.stopPropagation();
+              handleLinkClick();
+            }}
+            onTouchStart={(event) => event.stopPropagation()}
             style={{
               ...typography.tableCell,
               color: COLORS.text.primary,
@@ -152,8 +150,8 @@ export const PositionRow = ({
           transition: "background 0.2s ease, border 0.2s ease",
           margin: 0,
         }}
-        onClick={stopPropagation}
-        onTouchStart={stopPropagation}
+        onClick={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
       >
         {qtyLabel}
       </div>
@@ -174,8 +172,8 @@ export const PositionRow = ({
           transition: "background 0.2s ease, border 0.2s ease",
           margin: 0,
         }}
-        onClick={stopPropagation}
-        onTouchStart={stopPropagation}
+        onClick={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
       >
         {position.price != null ? formatCurrency(position.price) : "уточняется"}
       </div>
@@ -197,8 +195,8 @@ export const PositionRow = ({
           margin: 0,
           textAlign: "right",
         }}
-        onClick={stopPropagation}
-        onTouchStart={stopPropagation}
+        onClick={(event) => event.stopPropagation()}
+        onTouchStart={(event) => event.stopPropagation()}
       >
         {position.sum != null ? formatCurrency(position.sum) : "—"}
       </div>
