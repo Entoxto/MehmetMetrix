@@ -10,11 +10,11 @@ export interface MenuItem {
   onClick: () => void;
 }
 
-interface MenuViewProps {
+interface MenuProps {
   items: MenuItem[];
 }
 
-export const MenuView = ({ items }: MenuViewProps) => (
+export const Menu = ({ items }: MenuProps) => (
   <main
     style={{
       flex: 1,

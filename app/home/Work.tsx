@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/lib/shipments";
 
-interface WorkViewProps {
+interface WorkProps {
   isMobile: boolean;
   isDesktop: boolean;
   shipments: ShipmentWithItems[];
@@ -14,13 +14,13 @@ interface WorkViewProps {
   onToggleCard: (cardId: string) => void;
 }
 
-export const WorkView = ({
+export const Work = ({
   isMobile,
   isDesktop,
   shipments,
   expandedCards,
   onToggleCard,
-}: WorkViewProps) => {
+}: WorkProps) => {
   const TYPOGRAPHY = {
     h2: { fontSize: isMobile ? 24 : 32, fontWeight: 900, lineHeight: 1.2 },
     h3: { fontSize: isMobile ? 20 : 24, fontWeight: 800, lineHeight: 1.3 },

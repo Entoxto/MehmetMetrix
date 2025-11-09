@@ -11,7 +11,7 @@ interface CatalogGroup {
   badge: string;
 }
 
-interface CatalogViewProps {
+interface CatalogProps {
   isMobile: boolean;
   selectedCategory: string | null;
   categoryDescriptions: Record<string, string>;
@@ -20,14 +20,14 @@ interface CatalogViewProps {
   onSelectCategory: (category: string | null) => void;
 }
 
-export const CatalogView = ({
+export const Catalog = ({
   isMobile,
   selectedCategory,
   categoryDescriptions,
   catalogGroups,
   categoryProducts,
   onSelectCategory,
-}: CatalogViewProps) => {
+}: CatalogProps) => {
   if (selectedCategory) {
     return (
       <div style={{ flex: 1, padding: isMobile ? SPACING.md : SPACING.xl }}>

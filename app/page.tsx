@@ -8,9 +8,9 @@ import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { MoneyView } from "@/components/MoneyView";
 import { UpSector } from "./home/UpSector";
 import { DownSector } from "./home/DownSector";
-import { MenuView, type MenuItem } from "./home/views/MenuView";
-import { CatalogView } from "./home/views/CatalogView";
-import { WorkView } from "./home/views/WorkView";
+import { Menu, type MenuItem } from "./home/Menu";
+import { Catalog } from "./home/Catalog";
+import { Work } from "./home/Work";
 import { useHomeState } from "@/hooks/useHomeState";
 import { buildShipments } from "@/lib/shipments";
 
@@ -167,7 +167,7 @@ function HomePageContent() {
 
     if (view === "catalog") {
       return (
-        <CatalogView
+        <Catalog
           isMobile={isMobile}
           selectedCategory={selectedCategory}
           categoryDescriptions={categoryDescriptions}
@@ -180,7 +180,7 @@ function HomePageContent() {
 
     if (view === "work") {
       return (
-        <WorkView
+        <Work
           isMobile={isMobile}
           isDesktop={isDesktop}
           shipments={shipments}
@@ -190,7 +190,7 @@ function HomePageContent() {
       );
     }
 
-    return <MenuView items={menuItems} />;
+    return <Menu items={menuItems} />;
   };
 
   return (
