@@ -99,8 +99,8 @@ export default function ProductPage() {
       <header
         style={{
           display: "grid",
-          gridTemplateColumns: isCompact ? "70% 1fr" : "1fr auto",
-          alignItems: "center",
+          gridTemplateColumns: isCompact ? "1fr" : "1fr auto",
+          alignItems: isCompact ? "stretch" : "center",
           padding: isCompact ? "8px 16px" : "16px 32px",
           minHeight: isCompact ? "auto" : "80px",
           borderBottom: `1px solid rgba(102,102,102,0.2)`,
@@ -129,8 +129,8 @@ export default function ProductPage() {
         </h1>
         <div style={{ 
           display: "flex", 
-          justifyContent: "flex-end",
-          marginTop: isCompact ? 0 : "6px",
+          justifyContent: isCompact ? "center" : "flex-end",
+          marginTop: isCompact ? SPACING.sm : "6px",
         }}>
           <button
             onClick={handleBack}
