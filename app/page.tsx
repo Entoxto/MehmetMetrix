@@ -10,7 +10,7 @@ import {
   type ReactNode,
   type MouseEvent,
 } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
 import { ProductCard } from "@/components/ProductCard";
@@ -299,17 +299,49 @@ function HomePageContent() {
   const urlView = searchParams.get("view") as "menu" | "catalog" | "money" | "work" | null;
   const initialView = (urlView && ["menu", "catalog", "money", "work"].includes(urlView)) ? urlView : "menu";
   
-  const [view, setView] = useState<"menu" | "catalog" | "money" | "work">(initialView);
-  const [previousView, setPreviousView] = useState<"menu" | "catalog" | "money" | "work" | null>(null);
+  const [view, setViewState] = useState<"menu" | "catalog" | "money" | "work">(initialView);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Синхронизация view с URL query параметром
   useEffect(() => {
-    if (urlView && urlView !== view && ["menu", "catalog", "money", "work"].includes(urlView)) {
-      setView(urlView);
+    if (urlView && ["menu", "catalog", "money", "work"].includes(urlView)) {
+      setViewState(urlView);
     }
-  }, [urlView, view]);
+  }, [urlView]);
+
+  const setView = useCallback(
+    (nextView: "menu" | "catalog" | "money" | "work") => {
+      setViewState(nextView);
+      const search = new URLSearchParams(window.location.search);
+      if (nextView === "menu") {
+        search.delete("view");
+        search.delete("batch");
+        search.delete("pos");
+        router.push(`/?${search.toString()}`, { scroll: false });
+      } else {
+        search.set("view", nextView);
+        router.push(`/?${search.toString()}`, { scroll: false });
+      }
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handler = () => {
+      const search = new URLSearchParams(window.location.search);
+      const nextView = (search.get("view") as "menu" | "catalog" | "money" | "work" | null) ?? "menu";
+      setViewState(nextView);
+    };
+
+    window.addEventListener("popstate", handler);
+
+    return () => {
+      window.removeEventListener("popstate", handler);
+    };
+  }, []);
 
   // восстановление скролла и раскрытия партии
   useEffect(() => {
@@ -478,9 +510,6 @@ function HomePageContent() {
     // Guard clause: если не в меню, возвращаемся в меню
     if (view !== "menu") {
       setView("menu");
-      setPreviousView(null);
-      // Обновляем URL для возврата в меню
-      router.push("/");
     }
   };
 
