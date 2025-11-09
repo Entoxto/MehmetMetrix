@@ -1,6 +1,15 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect, Fragment, type ReactNode, type MouseEvent } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  Fragment,
+  Suspense,
+  type ReactNode,
+  type MouseEvent,
+} from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
@@ -279,7 +288,7 @@ const buildShipmentItems = (
   return items.sort(sortByStatus);
 };
 
-export default function HomePage() {
+function HomePageContent() {
   const { isMobile, breakpoint } = useBreakpoint();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -1130,5 +1139,28 @@ export default function HomePage() {
         Сделано с любовью и лёгким запахом кожи © {new Date().getFullYear()}
       </footer>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
+            color: COLORS.text.primary,
+          }}
+        >
+          Загрузка...
+        </div>
+      }
+    >
+      <HomePageContent />
+    </Suspense>
   );
 }
