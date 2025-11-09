@@ -1,0 +1,165 @@
+[
+  {
+    "id": "shipment-11",
+    "title": "Партия №11",
+    "status": { "label": "В работе", "icon": "🧵" },
+    "eta": "Ожидаем отправку на текущей неделе",
+    "rawItems": [
+      {
+        "productId": "python-004",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый глянец",
+        "sizes": { "xs": 5, "s": 5 },
+        "status": "in_progress"
+      },
+      {
+        "productId": "python-005",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый матовый",
+        "sizes": { "xs": 2, "s": 3 },
+        "status": "in_progress"
+      },
+      {
+        "productId": "pony-001",
+        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "sizes": { "xs": 1, "s": 3 },
+        "status": "ready"
+      },
+      {
+        "productId": "suede-002",
+        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "sizes": { "s": 1 },
+        "status": "ready"
+      },
+      {
+        "productId": "merino-002",
+        "overrideName": "Штаны из бежевого мериноса",
+        "sizes": { "xs": 11, "s": 7, "m": 2 },
+        "status": "in_progress"
+      },
+      {
+        "productId": "merino-001",
+        "overrideName": "Дублёнка из бежевого мериноса",
+        "sizes": { "xs": 12, "s": 8 },
+        "status": "in_progress"
+      },
+      {
+        "productId": "python-003",
+        "overrideName": "Жакет приталенный из кожи питона — чёрный глянец",
+        "sizes": { "xs": 3, "s": 3 },
+        "status": "ready"
+      },
+      {
+        "productId": "python-002",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "sizes": { "xs": 1, "s": 3 },
+        "status": "ready"
+      },
+      {
+        "productId": "python-007",
+        "overrideName": "Юбка из чёрного глянцевого питона",
+        "sample": true,
+        "quantityOverride": 1,
+        "note": "образец",
+        "status": "ready",
+        "inTransit": true,
+        "showStatusTag": true
+      },
+      {
+        "productId": "fur-003",
+        "overrideName": "Дублёнка таскана волк",
+        "sample": true,
+        "quantityOverride": 1,
+        "note": "образец",
+        "status": "in_progress"
+      }
+    ]
+  },
+  {
+    "id": "shipment-10",
+    "title": "Партия №10",
+    "status": { "label": "Получено, оплачено", "icon": "✅" },
+    "receivedDate": "04.11.2025",
+    "groupByPayment": false,
+    "rawItems": [
+      {
+        "productId": "suede-003",
+        "overrideName": "Жакет из коричневой замши в стиле 80-х",
+        "sizes": { "xs": 5, "s": 5 },
+        "status": "received"
+      },
+      {
+        "productId": "suede-005",
+        "overrideName": "Брюки из коричневой замши",
+        "sizes": { "xs": 4, "s": 4, "m": 2 },
+        "status": "received"
+      },
+      {
+        "productId": "suede-002",
+        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "sizes": { "xs": 3, "s": 3 },
+        "status": "received"
+      },
+      {
+        "productId": "suede-004",
+        "overrideName": "Брюки из бежевой замши",
+        "sizes": { "xs": 4, "s": 4, "m": 2 },
+        "status": "received"
+      },
+      {
+        "productId": "python-006",
+        "overrideName": "Жакет приталенный из кожи питона — чёрный матовый",
+        "sizes": { "xs": 3, "s": 3 },
+        "status": "received"
+      },
+      {
+        "productId": "python-002",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "sizes": { "xs": 3, "s": 2 },
+        "status": "received"
+      },
+      {
+        "productId": "pony-001",
+        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "sizes": { "xs": 4, "s": 2 },
+        "status": "received"
+      },
+      {
+        "productId": "pony-001",
+        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "sizes": { "xs": 1 },
+        "status": "received",
+        "paidPreviously": true,
+        "note": "оплачен ранее"
+      },
+      {
+        "productId": "pony-002",
+        "overrideName": "Штаны из меха пони чёрный",
+        "sizes": { "xs": 6, "s": 4 },
+        "status": "received"
+      },
+      {
+        "productId": "leather-002",
+        "overrideName": "Жакет из кожи Ermes Mouse в стиле 80-х",
+        "sizes": { "xs": 3, "s": 1 },
+        "status": "received"
+      },
+      {
+        "productId": "python-002",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "sizes": { "xs": 1, "s": 2 },
+        "status": "received",
+        "paidPreviously": true,
+        "note": "оплачен ранее"
+      },
+      {
+        "productId": "suede-002",
+        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "sizes": {},
+        "quantityOverride": 2,
+        "status": "received",
+        "noPayment": true,
+        "note": "вернулись после ремонта",
+        "showStatusTag": true
+      }
+    ]
+  }
+]
