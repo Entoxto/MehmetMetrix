@@ -12,8 +12,8 @@ import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/responsive";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
-import { Header } from "../../home/Header";
-import { Footer } from "../../home/Footer";
+import { UpSector } from "../../home/UpSector";
+import { DownSector } from "../../home/DownSector";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -98,7 +98,7 @@ export default function ProductPage() {
         flexDirection: "column",
       }}
     >
-      <Header>
+      <UpSector>
         <div
           style={{
             display: isCompact ? "flex" : "grid",
@@ -134,9 +134,9 @@ export default function ProductPage() {
             <span style={{ fontSize: isCompact ? 14 : 18 }}>←</span> Назад
           </button>
         </div>
-      </Header>
+      </UpSector>
       <ProductDetail product={product} />
-      <Footer />
+      <DownSector />
     </div>
   );
 }

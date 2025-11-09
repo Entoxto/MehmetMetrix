@@ -7,7 +7,7 @@ interface HeaderProps {
   children?: ReactNode;
 }
 
-export const Header = ({ children }: HeaderProps) => (
+export const UpSector = ({ children }: HeaderProps) => (
   <header
     style={{
       display: "grid",

@@ -7,7 +7,7 @@ interface FooterProps {
   children?: ReactNode;
 }
 
-export const Footer = ({ children }: FooterProps) => (
+export const DownSector = ({ children }: FooterProps) => (
   <footer
     style={{
       padding: 20,

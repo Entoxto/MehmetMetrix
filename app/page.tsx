@@ -6,8 +6,8 @@ import type { Product, ProductsData } from "@/types/product";
 import { useBreakpoint } from "@/constants/responsive";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
 import { MoneyView } from "@/components/MoneyView";
-import { Header } from "./home/Header";
-import { Footer } from "./home/Footer";
+import { UpSector } from "./home/UpSector";
+import { DownSector } from "./home/DownSector";
 import { MenuView, type MenuItem } from "./home/views/MenuView";
 import { CatalogView } from "./home/views/CatalogView";
 import { WorkView } from "./home/views/WorkView";
@@ -203,7 +203,7 @@ function HomePageContent() {
         flexDirection: "column",
       }}
     >
-      <Header>
+      <UpSector>
         <div
           style={{
             display: isMobile ? "flex" : "grid",
@@ -269,9 +269,9 @@ function HomePageContent() {
             </h2>
           </div>
         )}
-      </Header>
+      </UpSector>
       {renderContent()}
-      <Footer />
+      <DownSector />
     </div>
   );
 }
