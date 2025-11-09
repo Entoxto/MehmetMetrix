@@ -98,10 +98,11 @@ export default function ProductPage() {
     >
       <header
         style={{
-          display: "grid",
-          gridTemplateColumns: isCompact ? "1fr" : "1fr auto",
-          alignItems: isCompact ? "stretch" : "center",
-          padding: isCompact ? "8px 16px" : "16px 32px",
+          display: isCompact ? "flex" : "grid",
+          flexDirection: isCompact ? "column" : undefined,
+          gridTemplateColumns: isCompact ? undefined : "1fr auto",
+          alignItems: "center",
+          padding: isCompact ? "12px 16px" : "16px 32px",
           minHeight: isCompact ? "auto" : "80px",
           borderBottom: `1px solid rgba(102,102,102,0.2)`,
           background: COLORS.background.header,
