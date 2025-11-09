@@ -29,7 +29,7 @@ const SHIPMENT_STATUS_META: Record<ShipmentStatusKey, { label: string; icon: str
   in_progress: { label: "В производстве", icon: "🛠️", order: 1 },
   ready: { label: "Готов", icon: "✅", order: 2 },
   received: { label: "Получено", icon: "📦", order: 3 },
-  inTransit: { label: "Уже в пути", icon: "🚚", order: 2.5 }, // Между ready и received
+  inTransit: { label: "Уже в пути", icon: "🚚", order: 4 }, // В самом конце списка
 };
 
 type SizeConfig = Record<string, number>;
