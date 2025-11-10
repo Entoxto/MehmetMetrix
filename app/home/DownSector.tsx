@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * DownSector — нижняя панель каркаса.
+ * Даёт общий подвал с дефолтным текстом и принимает children для кастомизации.
+ */
 import { COLORS } from "@/constants/styles";
 import type { ReactNode } from "react";
 

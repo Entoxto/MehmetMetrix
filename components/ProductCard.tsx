@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Компактная карточка товара.
+ * Показывает превью в каталоге и ведёт на полную страницу по клику.
+ * Содержит картинку, цену, быстрые метки и hover-анимацию.
+ */
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";

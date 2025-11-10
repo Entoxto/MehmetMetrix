@@ -1,13 +1,14 @@
 "use client";
 
 /**
- * Компонент для отображения партии с группировкой по статусам
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Таблица партии в разделе «Работа».
+ * Группирует позиции по статусам и рендерит строки через PositionRow.
+ * Поддерживает наведение для подсветки строк на десктопе.
  */
 
 import { Fragment } from "react";
 import { COLORS } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import { statusLabel, statusIcon } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
 import { PositionRow } from "./PositionRow";

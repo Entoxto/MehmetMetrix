@@ -1,3 +1,7 @@
+/**
+ * RootLayout — общий каркас Next.js приложения.
+ * Задаёт метаданные, глобальный CSS и оборачивает все страницы в <html>/<body>.
+ */
 export const metadata = {
   title: "Mehmet Metrics",
   description: "Маленькая витрина для каталога и показателей",

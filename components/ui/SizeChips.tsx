@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Компонент чипов размеров (2 в строке, перенос, wrap/gap)
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Чипы размеров для карточки позиции.
+ * Отображают только доступные размеры и адаптируются под мобильный.
  */
 
 import { STYLES } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import type { Size } from "@/types/domain";
 
 interface SizeChipsProps {

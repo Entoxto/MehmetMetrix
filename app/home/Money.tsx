@@ -1,10 +1,15 @@
 "use client";
 
+/**
+ * Экран финансов «Что по бабкам».
+ * Суммирует партии, показывает детализацию и карточки с оплатами.
+ * Управляет раскрытием блоков и эффектами наведения под разные брейкпоинты.
+ */
 import { COLORS, SPACING, CARD_HOVER_EFFECTS } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 
-interface MoneyViewProps {
+interface MoneyProps {
   expandedCards: Set<string>;
   onToggleCard: (cardId: string) => void;
   shipment11Total: number;
@@ -12,13 +17,13 @@ interface MoneyViewProps {
   totalPayment: number;
 }
 
-export const MoneyView = ({
+export const Money = ({
   expandedCards,
   onToggleCard,
   shipment11Total,
   materialPrepayment,
   totalPayment,
-}: MoneyViewProps) => {
+}: MoneyProps) => {
   const { isMobile, breakpoint } = useBreakpoint();
   // Десктоп = >=1024px (laptop и desktop)
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";

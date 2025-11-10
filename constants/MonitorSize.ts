@@ -1,5 +1,13 @@
+/**
+ * Здесь лежат пороги ширины экрана для адаптации под размер экрана.
+ * Функция вычисляет, мобильный сейчас экран или десктоп,
+ * чтобы компоненты могли подобрать подходящие стили.
+ */
+"use client";
+
 import { useState, useEffect } from "react";
 
+// Определяет границы для мобильного, планшета, ноутбука и настольного компьютера
 export const BREAKPOINTS = {
   mobile: 480,
   tablet: 768,
@@ -9,6 +17,7 @@ export const BREAKPOINTS = {
 
 export type BreakpointKey = keyof typeof BREAKPOINTS;
 
+// Определяем, в какой диапазон попадает ширина экрана устройства
 const resolveBreakpoint = (width: number): BreakpointKey => {
   if (width < BREAKPOINTS.tablet) {
     return "mobile";
@@ -25,6 +34,7 @@ const resolveBreakpoint = (width: number): BreakpointKey => {
   return "desktop";
 };
 
+// Нужно для сервера, так как у него нет экрана
 const getInitialBreakpoint = (): BreakpointKey => {
   if (typeof window === "undefined") {
     return "desktop";
@@ -34,8 +44,8 @@ const getInitialBreakpoint = (): BreakpointKey => {
 };
 
 /**
- * Хук для определения текущего брейкпоинта экрана
- * @returns Объект с текущим брейкпоинтом и флагами для мобильных устройств
+ * Следит за шириной окна и сообщает компонентам подходящий тип экрана
+ * Внутри вызывает resolveBreakpoint и возвращает флаги для мобильных устройств
  */
 export const useBreakpoint = () => {
   const [breakpoint, setBreakpoint] = useState<BreakpointKey>(getInitialBreakpoint);

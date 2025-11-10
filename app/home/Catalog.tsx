@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Экран каталога на главной странице.
+ * Показывает список категорий и товары выбранной категории.
+ * Переключается между видами, использует ProductCard и CategoryCard.
+ */
 import type { Product } from "@/types/product";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCard } from "@/components/ProductCard";

@@ -1,15 +1,16 @@
 "use client";
 
 /**
- * Единый маршрут карточки (как в каталоге)
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Полный просмотр товара по адресу `/ProductCard/[id]`.
+ * Используется при переходе из каталога или раздела «Работа», ищет товар по id.
+ * Рендерит ProductDetail и управляет возвратом назад (в каталог или выбранную партию).
  */
 
 import { useMemo } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
 import { UpSector } from "../../home/UpSector";

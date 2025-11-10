@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Карточка категории каталога.
+ * Показывает название, короткое описание и бейдж с количеством.
+ * Используется на главной для выбора категории.
+ */
 import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 

@@ -1,7 +1,12 @@
 "use client";
 
+/**
+ * Полный просмотр товара.
+ * Показывает фото, описание, размеры и цену для экрана ProductCard/[id].
+ * Подстраивает макет под мобильный и планшет через useBreakpoint.
+ */
 import { COLORS, SPACING } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/types/product";
 

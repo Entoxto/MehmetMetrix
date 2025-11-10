@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * Экран «Работа».
+ * Показывает партии, группирует позиции по статусам и помогает следить за пошивом.
+ * Использует BatchView и PositionRow, раскрывающиеся карточки и hover-эффекты.
+ * Адаптируется под мобильный и десктоп.
+ */
 import type { MouseEvent } from "react";
 import { COLORS, SPACING } from "@/constants/styles";
 import { formatCurrency } from "@/lib/utils";

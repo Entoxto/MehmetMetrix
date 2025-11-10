@@ -1,3 +1,8 @@
+/**
+ * Общие цвета, базовые стили и эффекты для карточек и кнопок
+ * Компоненты тянут эти константы, чтобы выглядеть одинаково
+ */
+// Палитра проекта: базовые цвета, фоны и рамки
 export const COLORS = {
   primary: "#fbbf24",
   success: "#34d399",
@@ -24,16 +29,19 @@ export const COLORS = {
 } as const;
 
 export const STYLES = {
+  // Базовый стиль прямоугольных карточек (товары, категории каталога, меню)
   card: {
     background: COLORS.background.card,
     border: `1px solid ${COLORS.border.default}`,
     borderRadius: 16,
     transition: "all 0.3s ease",
   },
+  // Расширенная карточка (используется в раскрытом состоянии)
   cardExpanded: {
     background: COLORS.background.cardExpanded,
     border: `1px solid ${COLORS.border.hover}`,
   },
+  // Основная кнопка
   button: {
     border: `1px solid ${COLORS.border.primary}`,
     color: COLORS.primary,
@@ -46,11 +54,13 @@ export const STYLES = {
     fontSize: 14,
     boxShadow: "0 2px 8px rgba(251,191,36,0.1)",
   },
+  // Ховер-состояние для основной кнопки
   buttonHover: {
     background: "rgba(251,191,36,0.15)",
     border: `1px solid ${COLORS.border.primaryHover}`,
     transform: "translateX(-4px)",
   },
+  // Чип размеров у позиций
   sizeBadge: {
     background: "rgba(251,191,36,0.15)",
     color: COLORS.primary,
@@ -59,6 +69,7 @@ export const STYLES = {
     fontSize: 12,
     border: "1px solid rgba(251,191,36,0.3)",
   },
+  // Бейдж категории в меню или каталоге
   categoryBadge: {
     background: "rgba(245, 158, 11, 0.2)",
     color: "#fde68a",
@@ -69,6 +80,7 @@ export const STYLES = {
   },
 } as const;
 
+// Таблица отступов, чтобы не размножать числа в компонентах
 export const SPACING = {
   xs: 4,
   sm: 8,
@@ -77,10 +89,9 @@ export const SPACING = {
   xl: 32,
 } as const;
 
-/**
- * Стандартные hover-эффекты для карточек
- */
+// Готовые эффекты наведения для карточек разных типов
 export const CARD_HOVER_EFFECTS = {
+  // Плитка категории в меню каталога
   category: {
     hover: {
       transform: "translateY(-4px) scale(1.02)",
@@ -93,6 +104,7 @@ export const CARD_HOVER_EFFECTS = {
       border: `1px solid ${COLORS.border.default}`,
     },
   },
+  // Карточка товара
   product: {
     hover: {
       transform: "translateY(-4px)",
@@ -103,13 +115,16 @@ export const CARD_HOVER_EFFECTS = {
       boxShadow: "none",
     },
   },
+  // Карточка в разделе «Что по бабкам»
   money: {
     hover: {
-      boxShadow: "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)",
+      boxShadow:
+        "0 12px 48px rgba(0, 0, 0, 0.3), 0 6px 24px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(251,191,36,0.15)",
       transform: "translateY(-2px)",
     },
     default: {
-      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
+      boxShadow:
+        "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
       transform: "translateY(0)",
     },
   },

@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * UpSector — верхняя панель каркаса.
+ * Задаёт фон, рамку и отступы для шапки главной страницы и других экранов.
+ * Принимает children и позволяет страницам задавать содержимое шапки.
+ */
 import type { ReactNode } from "react";
 import { COLORS, SPACING } from "@/constants/styles";
 

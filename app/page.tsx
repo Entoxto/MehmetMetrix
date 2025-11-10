@@ -1,11 +1,16 @@
 "use client";
 
+/**
+ * Главная страница.
+ * Управляет состояниями домашнего экрана и собирает меню, каталог, финансы и раздел "Работа".
+ * Получает данные о продуктах, строит партии и рендерит нужный экран через компоненты из app/home.
+ */
 import { Suspense, useMemo } from "react";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
-import { MoneyView } from "@/components/MoneyView";
+import { Money } from "./home/Money";
 import { UpSector } from "./home/UpSector";
 import { DownSector } from "./home/DownSector";
 import { Menu, type MenuItem } from "./home/Menu";
@@ -155,7 +160,7 @@ function HomePageContent() {
       const totalPayment = shipment11Total;
 
       return (
-        <MoneyView
+        <Money
           expandedCards={expandedCards}
           onToggleCard={toggleCard}
           shipment11Total={shipment11Total}

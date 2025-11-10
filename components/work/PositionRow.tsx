@@ -1,13 +1,14 @@
 "use client";
 
 /**
- * Компонент для отображения одной позиции
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Строка позиции внутри партии.
+ * Показывает ссылку на товар, размеры, количество, цены и статус.
+ * Сохраняет SPA-переход и предотвращает сворачивание партии при клике.
  */
 
 import Link from "next/link";
 import { COLORS } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/responsive";
+import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency, statusIcon } from "@/lib/format";
 import type { Position } from "@/types/domain";
 import { SizeChips } from "@/components/ui/SizeChips";
