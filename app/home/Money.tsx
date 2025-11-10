@@ -5,39 +5,52 @@
  * Суммирует партии, показывает детализацию и карточки с оплатами.
  * Управляет раскрытием блоков и эффектами наведения под разные брейкпоинты.
  */
+import { Fragment, type MouseEvent, type CSSProperties } from "react";
 import { COLORS, SPACING, CARD_HOVER_EFFECTS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 
+interface MoneyStatusItem {
+  id: string;
+  title: string;
+  amount: number;
+}
+
+interface MoneyDepositItem {
+  id: string;
+  lines: string[];
+  amount: number;
+}
+
 interface MoneyProps {
   expandedCards: Set<string>;
   onToggleCard: (cardId: string) => void;
-  shipment11Total: number;
-  materialPrepayment: number;
-  totalPayment: number;
+  pending: {
+    total: number;
+    items: MoneyStatusItem[];
+  };
+  deposits: {
+    total: number;
+    items: MoneyDepositItem[];
+  };
 }
 
 export const Money = ({
   expandedCards,
   onToggleCard,
-  shipment11Total,
-  materialPrepayment,
-  totalPayment,
+  pending,
+  deposits,
 }: MoneyProps) => {
   const { isMobile, breakpoint } = useBreakpoint();
-  // Десктоп = >=1024px (laptop и desktop)
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
 
-  // Единая типографика
   const TYPOGRAPHY = {
     h2: { fontSize: isMobile ? 24 : 40, fontWeight: 900, lineHeight: 1.2 },
-    h3: { fontSize: isMobile ? 20 : 24, fontWeight: 800, lineHeight: 1.3 },
     body: { fontSize: 12, lineHeight: 1.5 },
     caption: { fontSize: isMobile ? 10 : 11, lineHeight: 1.4 },
     amount: { fontSize: isMobile ? 28 : 36, fontWeight: 900, lineHeight: 1.1 },
-  };
+  } as const;
 
-  // Стили для легких и дорогих карточек
   const CARD_STYLE = {
     background: isMobile ? COLORS.background.card : "rgba(38,38,38,0.4)",
     border: `1px solid ${COLORS.border.default}`,
@@ -47,6 +60,217 @@ export const Money = ({
       : "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
     backdropFilter: isMobile ? "none" : "blur(10px)",
     transition: "all 0.3s ease",
+  } as const;
+
+  const toggleRowHighlight = (element: HTMLDivElement, active: boolean) => {
+    const grid = element.parentElement;
+    if (!grid) return;
+    const cells = Array.from(grid.children) as HTMLElement[];
+    const index = cells.indexOf(element);
+    if (index === -1) return;
+    const rowIndex = Math.floor(index / 2);
+    const start = rowIndex * 2;
+    for (let i = start; i < start + 2 && i < cells.length; i++) {
+      cells[i].style.background = active ? "rgba(251,191,36,0.05)" : "transparent";
+    }
+  };
+
+  const getHoverHandlers = () =>
+    isMobile
+      ? {}
+      : {
+          onMouseEnter: (event: MouseEvent<HTMLDivElement>) =>
+            toggleRowHighlight(event.currentTarget, true),
+          onMouseLeave: (event: MouseEvent<HTMLDivElement>) =>
+            toggleRowHighlight(event.currentTarget, false),
+        };
+
+  const detailContainerStyle = {
+    marginTop: isMobile ? SPACING.md : SPACING.lg,
+    paddingTop: isMobile ? SPACING.md : SPACING.lg,
+    borderTop: `1px solid ${COLORS.border.default}`,
+    animation: "fadeIn 0.3s ease",
+  } as const;
+
+  const detailGridStyle = {
+    display: "grid",
+    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
+    gap: 0,
+    borderRadius: 8,
+    overflow: "hidden",
+    border: `1px solid ${COLORS.border.default}`,
+  } as const;
+
+  const getCellStyle = (isLast: boolean, alignRight = false): CSSProperties => ({
+    padding: isMobile ? SPACING.sm : SPACING.md,
+    borderBottom: isLast ? undefined : `1px solid ${COLORS.border.default}`,
+    borderLeft: alignRight ? `1px solid ${COLORS.border.default}` : undefined,
+    textAlign: alignRight ? "right" : "left",
+    background: "transparent",
+    transition: "background 0.2s ease",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: alignRight ? "flex-end" : "flex-start",
+    minHeight: isMobile ? 40 : 48,
+  });
+
+  const renderPendingDetails = () => {
+    if (!expandedCards.has("total_payment")) {
+      return null;
+    }
+
+    if (pending.items.length === 0) {
+      return (
+        <div style={detailContainerStyle}>
+          <p
+            style={{
+              ...TYPOGRAPHY.body,
+              color: COLORS.text.secondary,
+              margin: 0,
+            }}
+          >
+            Все партии оплачены
+          </p>
+        </div>
+      );
+    }
+
+    const hoverHandlers = getHoverHandlers();
+
+    return (
+      <div style={detailContainerStyle}>
+        <p
+          style={{
+            ...TYPOGRAPHY.body,
+            color: COLORS.text.secondary,
+            marginBottom: isMobile ? SPACING.md : SPACING.lg,
+            marginTop: 0,
+            fontSize: isMobile ? 12 : 13,
+            fontWeight: 600,
+          }}
+        >
+          Детализация:
+        </p>
+        <div style={detailGridStyle}>
+          {pending.items.map((item, index) => {
+            const isLast = index === pending.items.length - 1;
+            return (
+              <Fragment key={item.id}>
+                <div style={getCellStyle(isLast)} {...hoverHandlers}>
+                  <span
+                    style={{
+                      ...TYPOGRAPHY.body,
+                      color: COLORS.text.primary,
+                      margin: 0,
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                </div>
+                <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
+                  <span
+                    style={{
+                      ...TYPOGRAPHY.body,
+                      color: COLORS.error,
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                      margin: 0,
+                    }}
+                  >
+                    {formatCurrency(item.amount)}
+                  </span>
+                </div>
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderDepositDetails = () => {
+    if (!expandedCards.has("deposits")) {
+      return null;
+    }
+
+    if (deposits.items.length === 0) {
+      return (
+        <div style={detailContainerStyle}>
+          <p
+            style={{
+              ...TYPOGRAPHY.body,
+              color: COLORS.text.secondary,
+              margin: 0,
+            }}
+          >
+            Нет активных депозитов
+          </p>
+        </div>
+      );
+    }
+
+    const hoverHandlers = getHoverHandlers();
+
+    return (
+      <div style={detailContainerStyle}>
+        <p
+          style={{
+            ...TYPOGRAPHY.body,
+            color: COLORS.text.secondary,
+            marginBottom: isMobile ? SPACING.md : SPACING.lg,
+            marginTop: 0,
+            fontSize: isMobile ? 12 : 13,
+            fontWeight: 600,
+          }}
+        >
+          Детализация:
+        </p>
+        <div style={detailGridStyle}>
+          {deposits.items.map((item, index) => {
+            const isLast = index === deposits.items.length - 1;
+            return (
+              <Fragment key={item.id}>
+                <div style={getCellStyle(isLast)} {...hoverHandlers}>
+                  <span
+                    style={{
+                      ...TYPOGRAPHY.body,
+                      color: COLORS.text.primary,
+                      margin: 0,
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    {item.lines.map((line, lineIndex) => (
+                      <Fragment key={lineIndex}>
+                        {line}
+                        {lineIndex < item.lines.length - 1 && <br />}
+                      </Fragment>
+                    ))}
+                  </span>
+                </div>
+                <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
+                  <span
+                    style={{
+                      ...TYPOGRAPHY.body,
+                      color: COLORS.success,
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                      margin: 0,
+                    }}
+                  >
+                    {formatCurrency(item.amount)}
+                  </span>
+                </div>
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -61,7 +285,6 @@ export const Money = ({
         gap: isMobile ? SPACING.md : SPACING.xl * 2,
       }}
     >
-      {/* Заголовок секции с легким свечением */}
       <div style={{ marginBottom: isMobile ? 8 : SPACING.md, textAlign: "center" }}>
         <h2
           style={{
@@ -91,7 +314,6 @@ export const Money = ({
           alignItems: "stretch",
         }}
       >
-        {/* ЛЕВАЯ ЧАСТЬ - ОПЛАТЫ */}
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
           <div
             onClick={() => onToggleCard("total_payment")}
@@ -106,11 +328,10 @@ export const Money = ({
             {...(isMobile
               ? {}
               : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
-                  boxShadow: CARD_STYLE.boxShadow as string,
+                  boxShadow: CARD_STYLE.boxShadow,
                   transform: "translateY(0)",
                 }))}
           >
-            {/* Заголовок и сумма на одной горизонтали */}
             <div
               style={{
                 display: "flex",
@@ -133,168 +354,39 @@ export const Money = ({
                 Всего к оплате
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-                {expandedCards.has("total_payment") && (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>
-                    ▼
-                  </span>
-                )}
-                {!expandedCards.has("total_payment") && (
+                {expandedCards.has("total_payment") ? (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
+                ) : (
                   <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
                 )}
               </div>
             </div>
-            <p style={{ ...TYPOGRAPHY.amount, color: COLORS.error, letterSpacing: -1, margin: 0, fontSize: isMobile ? 28 : 36 }}>
-              {formatCurrency(totalPayment)}
+            <p
+              style={{
+                ...TYPOGRAPHY.amount,
+                color: COLORS.error,
+                letterSpacing: -1,
+                margin: 0,
+                fontSize: isMobile ? 28 : 36,
+              }}
+            >
+              {formatCurrency(pending.total)}
             </p>
-            <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0, marginTop: isMobile ? 0 : SPACING.xs }}>
+            <p
+              style={{
+                ...TYPOGRAPHY.body,
+                color: COLORS.text.muted,
+                fontStyle: "italic",
+                margin: 0,
+                marginTop: isMobile ? 0 : SPACING.xs,
+              }}
+            >
               По данным из партий и предоплат
             </p>
-            {expandedCards.has("total_payment") && (
-              <div
-                style={{
-                  marginTop: isMobile ? SPACING.md : SPACING.lg,
-                  paddingTop: isMobile ? SPACING.md : SPACING.lg,
-                  borderTop: `1px solid ${COLORS.border.default}`,
-                  animation: "fadeIn 0.3s ease",
-                }}
-              >
-                <p
-                  style={{
-                    ...TYPOGRAPHY.body,
-                    color: COLORS.text.secondary,
-                    marginBottom: isMobile ? SPACING.md : SPACING.lg,
-                    marginTop: 0,
-                    fontSize: isMobile ? 12 : 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  Детализация:
-                </p>
-                {/* Таблица детализации с разделителями и hover-эффектом */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
-                    gap: 0,
-                    borderRadius: 8,
-                    overflow: "hidden",
-                    border: `1px solid ${COLORS.border.default}`,
-                  }}
-                >
-                  {/* Строка 1 */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Оплата за партию 9
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.error,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(shipment11Total)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {renderPendingDetails()}
           </div>
         </div>
 
-        {/* РАЗДЕЛИТЕЛЬ */}
         {!isMobile && (
           <div
             style={{
@@ -311,24 +403,24 @@ export const Money = ({
               style={{
                 width: 1,
                 height: "100%",
-                background: "linear-gradient(to bottom, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
+                background:
+                  "linear-gradient(to bottom, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
               }}
             />
           </div>
         )}
 
-        {/* Горизонтальный разделитель на мобильных */}
         {isMobile && (
           <div
             style={{
               width: "100%",
               height: 1,
-              background: "linear-gradient(to right, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
+              background:
+                "linear-gradient(to right, transparent, rgba(251,191,36,0.2) 20%, rgba(251,191,36,0.2) 80%, transparent)",
             }}
           />
         )}
 
-        {/* ПРАВАЯ ЧАСТЬ - ДЕПОЗИТЫ */}
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
           <div
             onClick={() => onToggleCard("deposits")}
@@ -343,11 +435,10 @@ export const Money = ({
             {...(isMobile
               ? {}
               : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
-                  boxShadow: CARD_STYLE.boxShadow as string,
+                  boxShadow: CARD_STYLE.boxShadow,
                   transform: "translateY(0)",
                 }))}
           >
-            {/* Заголовок и сумма на одной горизонтали */}
             <div
               style={{
                 display: "flex",
@@ -370,380 +461,36 @@ export const Money = ({
                 Депозитов внесено
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-                {expandedCards.has("deposits") && (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>
-                    ▼
-                  </span>
-                )}
-                {!expandedCards.has("deposits") && (
+                {expandedCards.has("deposits") ? (
+                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
+                ) : (
                   <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
                 )}
               </div>
             </div>
-            <p style={{ ...TYPOGRAPHY.amount, color: COLORS.success, letterSpacing: -1, margin: 0, fontSize: isMobile ? 28 : 36 }}>
-              {formatCurrency(17930)}
+            <p
+              style={{
+                ...TYPOGRAPHY.amount,
+                color: COLORS.success,
+                letterSpacing: -1,
+                margin: 0,
+                fontSize: isMobile ? 28 : 36,
+              }}
+            >
+              {formatCurrency(deposits.total)}
             </p>
-            <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.muted, fontStyle: "italic", margin: 0, marginTop: isMobile ? 0 : SPACING.xs }}>
+            <p
+              style={{
+                ...TYPOGRAPHY.body,
+                color: COLORS.text.muted,
+                fontStyle: "italic",
+                margin: 0,
+                marginTop: isMobile ? 0 : SPACING.xs,
+              }}
+            >
               Депозиты и предоплаты
             </p>
-            {expandedCards.has("deposits") && (
-              <div
-                style={{
-                  marginTop: isMobile ? SPACING.md : SPACING.lg,
-                  paddingTop: isMobile ? SPACING.md : SPACING.lg,
-                  borderTop: `1px solid ${COLORS.border.default}`,
-                  animation: "fadeIn 0.3s ease",
-                }}
-              >
-                <p
-                  style={{
-                    ...TYPOGRAPHY.body,
-                    color: COLORS.text.secondary,
-                    marginBottom: isMobile ? SPACING.md : SPACING.lg,
-                    marginTop: 0,
-                    fontSize: isMobile ? 12 : 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  Детализация:
-                </p>
-                {/* Таблица детализации с разделителями и hover-эффектом */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
-                    gap: 0,
-                    borderRadius: 8,
-                    overflow: "hidden",
-                    border: `1px solid ${COLORS.border.default}`,
-                  }}
-                >
-                  {/* Строка 1 */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Предоплата hermes mouse ≈ 35 изделий
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.success,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(2000)}
-                    </span>
-                  </div>
-                  {/* Строка 2 - Предоплата на питона (перенесена из левой карточки) */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Предоплата на коричневого питона
-                      <br />
-                      глянцевый ≈ 20 изделий
-                      <br />
-                      матовый ≈ 10 изделий
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderBottom: `1px solid ${COLORS.border.default}`,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.success,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(materialPrepayment)}
-                    </span>
-                  </div>
-                  {/* Строка 3 - Депозит подлежащий списанию */}
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.text.primary,
-                        margin: 0,
-                        overflowWrap: "break-word",
-                        wordBreak: "break-word",
-                        whiteSpace: "normal",
-                      }}
-                    >
-                      Депозит подлежащий списанию при ближайшей оплате
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      padding: isMobile ? SPACING.sm : SPACING.md,
-                      borderLeft: `1px solid ${COLORS.border.default}`,
-                      textAlign: "right",
-                      background: "transparent",
-                      transition: "background 0.2s ease",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "flex-end",
-                      minHeight: isMobile ? 40 : 48,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "rgba(251,191,36,0.05)";
-                          }
-                        }
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isMobile) {
-                        const row = e.currentTarget.parentElement;
-                        if (row) {
-                          const children = Array.from(row.children);
-                          const rowIndex = Math.floor(children.indexOf(e.currentTarget) / 2);
-                          const startIdx = rowIndex * 2;
-                          const endIdx = startIdx + 2;
-                          for (let i = startIdx; i < endIdx && i < children.length; i++) {
-                            (children[i] as HTMLElement).style.background = "transparent";
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <span
-                      style={{
-                        ...TYPOGRAPHY.body,
-                        color: COLORS.success,
-                        fontWeight: 600,
-                        whiteSpace: "nowrap",
-                        margin: 0,
-                      }}
-                    >
-                      {formatCurrency(12830)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {renderDepositDetails()}
           </div>
         </div>
       </div>

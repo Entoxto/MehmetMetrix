@@ -7,6 +7,7 @@
  */
 import { Suspense, useMemo } from "react";
 import productsData from "@/data/products.json";
+import moneyData from "@/data/money.json";
 import type { Product, ProductsData } from "@/types/product";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { STYLES, COLORS, SPACING } from "@/constants/styles";
@@ -155,17 +156,60 @@ function HomePageContent() {
     }
 
     if (view === "money") {
-      const shipment11Total = shipments.find((s) => s.id === "shipment-11")?.totalAmount ?? 0;
-      const materialPrepayment = 3100;
-      const totalPayment = shipment11Total;
+      type PendingItem = { id: string; title: string; amount: number };
+      type DepositConfig = { id?: string; title?: string; lines?: string[]; amount?: number };
+      type DepositItem = { id: string; lines: string[]; amount: number };
+
+      const pendingItems: PendingItem[] = shipments
+        .map((shipment) => {
+          const pendingAmount = shipment.items
+            .filter((item) => item.needsPayment)
+            .reduce((sum, item) => sum + (item.total ?? 0), 0);
+
+          const isMarkedPaid = shipment.status?.label
+            ? shipment.status.label.toLowerCase().includes("оплач")
+            : false;
+
+          if (isMarkedPaid || pendingAmount <= 0) {
+            return null;
+          }
+
+          const normalizedTitle =
+            shipment.title?.replace(/^Партия/i, "партию") ?? `партию ${shipment.id}`;
+
+          return {
+            id: shipment.id,
+            title: `Оплата за ${normalizedTitle}`,
+            amount: pendingAmount,
+          };
+        })
+        .filter((item): item is PendingItem => Boolean(item));
+
+      const pendingTotal = pendingItems.reduce((sum, item) => sum + item.amount, 0);
+
+      const depositsConfig = Array.isArray((moneyData as { deposits?: DepositConfig[] }).deposits)
+        ? ((moneyData as { deposits?: DepositConfig[] }).deposits as DepositConfig[])
+        : [];
+
+      const depositItems: DepositItem[] = depositsConfig.map((item, index) => ({
+        id: item.id ?? `deposit-${index}`,
+        lines:
+          item.lines && item.lines.length > 0
+            ? item.lines
+            : item.title
+            ? [item.title]
+            : [`Депозит ${index + 1}`],
+        amount: typeof item.amount === "number" ? item.amount : Number(item.amount ?? 0),
+      }));
+
+      const depositTotal = depositItems.reduce((sum, item) => sum + item.amount, 0);
 
       return (
         <Money
           expandedCards={expandedCards}
           onToggleCard={toggleCard}
-          shipment11Total={shipment11Total}
-          materialPrepayment={materialPrepayment}
-          totalPayment={totalPayment}
+          pending={{ total: pendingTotal, items: pendingItems }}
+          deposits={{ total: depositTotal, items: depositItems }}
         />
       );
     }
