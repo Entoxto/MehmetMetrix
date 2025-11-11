@@ -8,6 +8,7 @@ export type Size = 'XS' | 'S' | 'M' | 'L' | 'XL';
 export enum PositionStatus {
   inProduction = 'inProduction',
   inTransit = 'inTransit',
+  receivedUnpaid = 'receivedUnpaid',
   done = 'done',
   paid = 'paid',
   paidEarlier = 'paidEarlier',

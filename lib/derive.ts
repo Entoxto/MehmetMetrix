@@ -23,6 +23,7 @@ export function groupByStatus(positions: Position[]): Record<PositionStatus, Pos
   const grouped: Record<PositionStatus, Position[]> = {
     [PositionStatus.inProduction]: [],
     [PositionStatus.inTransit]: [],
+    [PositionStatus.receivedUnpaid]: [],
     [PositionStatus.done]: [],
     [PositionStatus.paid]: [],
     [PositionStatus.paidEarlier]: [],
@@ -45,6 +46,7 @@ export const orderStatuses: PositionStatus[] = [
   PositionStatus.paid,
   PositionStatus.paidEarlier,
   PositionStatus.returned,
+  PositionStatus.receivedUnpaid,
   PositionStatus.inTransit,
 ];
 

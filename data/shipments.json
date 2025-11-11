@@ -59,8 +59,7 @@
         "sample": true,
         "quantityOverride": 1,
         "note": "образец",
-        "status": "ready",
-        "inTransit": true,
+        "status": "received_unpaid",
         "showStatusTag": true
       },
       {

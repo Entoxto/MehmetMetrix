@@ -3,7 +3,7 @@ import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
 import type { Batch } from "@/types/domain";
 
-export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "inTransit";
+export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
 
 interface ShipmentStatusMeta {
   label: string;
@@ -14,8 +14,9 @@ interface ShipmentStatusMeta {
 export const SHIPMENT_STATUS_META: Record<ShipmentStatusKey, ShipmentStatusMeta> = {
   in_progress: { label: "В производстве", icon: "🛠️", order: 1 },
   ready: { label: "Готов", icon: "✅", order: 2 },
-  received: { label: "Получено", icon: "📦", order: 3 },
-  inTransit: { label: "Уже в пути", icon: "🚚", order: 4 },
+  received_unpaid: { label: "Получено, без оплаты", icon: "🧾", order: 3 },
+  received: { label: "Получено", icon: "📦", order: 4 },
+  inTransit: { label: "Уже в пути", icon: "🚚", order: 5 },
 };
 
 type SizeConfig = Record<string, number>;

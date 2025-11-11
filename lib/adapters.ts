@@ -53,6 +53,7 @@ function toPositionStatus(
   noPayment?: boolean
 ): PositionStatus {
   if (inTransit) return PositionStatus.inTransit;
+  if (status === 'received_unpaid') return PositionStatus.receivedUnpaid;
   if (status === 'received' && paidPreviously) return PositionStatus.paidEarlier;
   if (status === 'received' && noPayment) return PositionStatus.returned;
   if (status === 'received') return PositionStatus.paid;

@@ -19,6 +19,7 @@ export function formatCurrency(n: number): string {
 export const statusIcon: Record<PositionStatus, string> = {
   [PositionStatus.inProduction]: '🛠️',
   [PositionStatus.inTransit]: '🚚',
+  [PositionStatus.receivedUnpaid]: '📦',
   [PositionStatus.done]: '✅',
   [PositionStatus.paid]: '💵',
   [PositionStatus.paidEarlier]: '☑️',
@@ -31,6 +32,7 @@ export const statusIcon: Record<PositionStatus, string> = {
 export const statusLabel: Record<PositionStatus, string> = {
   [PositionStatus.inProduction]: 'в производстве',
   [PositionStatus.inTransit]: 'уже в пути',
+  [PositionStatus.receivedUnpaid]: 'получено, без оплаты',
   [PositionStatus.done]: 'готов',
   [PositionStatus.paid]: 'оплачено',
   [PositionStatus.paidEarlier]: 'оплачено ранее',
