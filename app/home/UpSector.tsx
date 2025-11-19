@@ -6,26 +6,14 @@
  * Принимает children и позволяет страницам задавать содержимое шапки.
  */
 import type { ReactNode } from "react";
-import { COLORS, SPACING } from "@/constants/styles";
+import { HOME_STYLES } from "./styles";
 
 interface HeaderProps {
   children?: ReactNode;
 }
 
 export const UpSector = ({ children }: HeaderProps) => (
-  <header
-    style={{
-      display: "grid",
-      gridTemplateColumns: "1fr",
-      alignItems: "center",
-      padding: "8px 16px",
-      borderBottom: `1px solid rgba(102,102,102,0.2)`,
-      background: COLORS.background.header,
-      backdropFilter: "blur(10px)",
-      gap: SPACING.sm,
-    }}
-  >
+  <header style={HOME_STYLES.upSector}>
     {children}
   </header>
 );
-
