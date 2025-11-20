@@ -34,11 +34,11 @@ export const HOME_STYLES = {
   }),
 
   headerIcon: (isMobile: boolean): CSSProperties => ({
-    fontSize: isMobile ? 24 : 36,
+    fontSize: isMobile ? 22 : 36,
   }),
 
   headerTitle: (isMobile: boolean): CSSProperties => ({
-    fontSize: isMobile ? 28 : 44,
+    fontSize: isMobile ? 26 : 44,
     fontWeight: 900,
     letterSpacing: -1.5,
     color: COLORS.primary,
