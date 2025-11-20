@@ -7,7 +7,7 @@
  */
 
 import { Fragment } from "react";
-import { COLORS } from "@/constants/styles";
+import { COLORS, CARD_TEMPLATES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { statusLabel, statusIcon } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
@@ -51,59 +51,35 @@ export const BatchView = ({
       {/* Заголовки колонок */}
       <div
         style={{
-          padding: isMobile ? "10px 12px" : "14px 18px",
-          background: COLORS.background.card,
+          ...CARD_TEMPLATES.tableHeader(isMobile),
           ...typography.tableHeader,
-          textTransform: "uppercase",
-          letterSpacing: 1,
-          color: COLORS.text.secondary,
-          borderBottom: `1px solid ${COLORS.border.default}`,
-          margin: 0,
         }}
       >
         Позиция
       </div>
       <div
         style={{
-          padding: isMobile ? "8px 8px" : "12px 12px",
-          background: COLORS.background.card,
+          ...CARD_TEMPLATES.tableValue(isMobile, "center"),
           ...typography.tableHeader,
           textTransform: "uppercase",
-          letterSpacing: 1,
-          color: COLORS.text.secondary,
-          borderBottom: `1px solid ${COLORS.border.default}`,
-          textAlign: "center",
-          margin: 0,
         }}
       >
         Кол-во
       </div>
       <div
         style={{
-          padding: isMobile ? "8px 8px" : "12px 12px",
-          background: COLORS.background.card,
+          ...CARD_TEMPLATES.tableValue(isMobile, "center"),
           ...typography.tableHeader,
           textTransform: "uppercase",
-          letterSpacing: 1,
-          color: COLORS.text.secondary,
-          borderBottom: `1px solid ${COLORS.border.default}`,
-          textAlign: "center",
-          margin: 0,
         }}
       >
         Цена
       </div>
       <div
         style={{
-          padding: isMobile ? "8px 8px" : "12px 12px",
-          background: COLORS.background.card,
+          ...CARD_TEMPLATES.tableValue(isMobile, "center"),
           ...typography.tableHeader,
           textTransform: "uppercase",
-          letterSpacing: 1,
-          color: COLORS.text.secondary,
-          borderBottom: `1px solid ${COLORS.border.default}`,
-          textAlign: "center",
-          margin: 0,
         }}
       >
         Сумма

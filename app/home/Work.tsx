@@ -7,8 +7,8 @@
  * Адаптируется под мобильный и десктоп.
  */
 import type { MouseEvent } from "react";
-import { COLORS, SPACING } from "@/constants/styles";
-import { formatCurrency } from "@/lib/utils";
+import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
+import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/lib/shipments";
 
@@ -27,14 +27,20 @@ export const Work = ({
   expandedCards,
   onToggleCard,
 }: WorkProps) => {
-  const TYPOGRAPHY = {
-    h2: { fontSize: isMobile ? 24 : 32, fontWeight: 900, lineHeight: 1.2 },
-    h3: { fontSize: isMobile ? 20 : 24, fontWeight: 800, lineHeight: 1.3 },
-    body: { fontSize: 12, lineHeight: 1.5 },
-    caption: { fontSize: 10, lineHeight: 1.4 },
-    amount: { fontSize: isMobile ? 24 : 32, fontWeight: 900, lineHeight: 1.1 },
-    tableHeader: { fontSize: isMobile ? 10 : 12, lineHeight: 1.4 },
-    tableCell: { fontSize: isMobile ? 11 : 12, lineHeight: 1.5 },
+  const responsiveTypography = {
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : TYPOGRAPHY.h2.fontSize },
+    h3: { ...TYPOGRAPHY.h3, fontSize: isMobile ? 20 : TYPOGRAPHY.h3.fontSize },
+    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : TYPOGRAPHY.body.fontSize },
+    caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 10 : TYPOGRAPHY.caption.fontSize },
+    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 24 : TYPOGRAPHY.amount.fontSize },
+    tableHeader: {
+      ...TYPOGRAPHY.tableHeader,
+      fontSize: isMobile ? 10 : TYPOGRAPHY.tableHeader.fontSize,
+    },
+    tableCell: {
+      ...TYPOGRAPHY.tableCell,
+      fontSize: isMobile ? 11 : TYPOGRAPHY.tableCell.fontSize,
+    },
   };
 
   const shipmentCellBaseBackground = COLORS.background.card;
@@ -53,29 +59,11 @@ export const Work = ({
     });
   };
 
-  const CARD_STYLE = {
-    background: COLORS.background.card,
-    border: `1px solid ${COLORS.border.default}`,
-    borderRadius: isMobile ? 16 : 20,
-    padding: isMobile ? 20 : 24,
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05)",
-    transition: "all 0.2s ease",
-  };
-
-  const STATUS_CHIP = (highlight: boolean) => ({
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    padding: isMobile ? "3px 10px" : "4px 12px",
-    borderRadius: 999,
-    fontSize: isMobile ? "clamp(11px, 2vw, 12px)" : "clamp(12px, 0.9vw, 13px)",
-    fontWeight: 600,
-    lineHeight: 1,
-    border: "1px solid",
-    background: highlight ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
-    color: highlight ? COLORS.success : COLORS.primary,
-    borderColor: highlight ? "rgba(52,211,153,0.3)" : "rgba(251,191,36,0.3)",
-  });
+  const cardStyle = CARD_TEMPLATES.container(isMobile);
+  const hoverHandlers = createCardHoverHandlers(
+    CARD_HOVER_EFFECTS.work.hover,
+    CARD_HOVER_EFFECTS.work.default
+  );
 
   return (
     <div
@@ -90,8 +78,7 @@ export const Work = ({
       <div>
         <h2
           style={{
-            fontSize: isMobile ? 24 : 32,
-            fontWeight: 900,
+            ...responsiveTypography.h2,
             color: COLORS.primary,
             marginBottom: 6,
             display: "flex",
@@ -101,7 +88,13 @@ export const Work = ({
         >
           Что сейчас в работе <span style={{ fontSize: isMobile ? 20 : 28 }}>🧵</span>
         </h2>
-        <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 12 : 13, fontStyle: "italic" }}>
+        <p
+          style={{
+            color: COLORS.text.secondary,
+            fontSize: isMobile ? 12 : 13,
+            fontStyle: "italic",
+          }}
+        >
           Актуальные партии, статусы и суммы по поставкам.
         </p>
       </div>
@@ -123,22 +116,8 @@ export const Work = ({
                 onToggleCard(shipment.id);
               }
             }}
-            style={{ ...CARD_STYLE, cursor: "pointer", outline: "none" }}
-            onMouseEnter={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.background = COLORS.background.cardExpanded;
-                e.currentTarget.style.boxShadow =
-                  "0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isMobile) {
-                e.currentTarget.style.background = CARD_STYLE.background;
-                e.currentTarget.style.boxShadow = CARD_STYLE.boxShadow;
-                e.currentTarget.style.transform = "translateY(0)";
-              }
-            }}
+            style={{ ...cardStyle, cursor: "pointer", outline: "none" }}
+            {...(isMobile ? {} : hoverHandlers)}
             onFocus={(e) => {
               e.currentTarget.style.outline = `2px solid ${COLORS.primary}`;
               e.currentTarget.style.outlineOffset = "2px";
@@ -175,7 +154,7 @@ export const Work = ({
                   </span>
                   <h3
                     style={{
-                      ...TYPOGRAPHY.h3,
+                      ...responsiveTypography.h3,
                       color: COLORS.primary,
                       margin: 0,
                       whiteSpace: "nowrap",
@@ -190,7 +169,7 @@ export const Work = ({
 
                 <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
                   <div
-                    style={STATUS_CHIP(highlightStatus)}
+                    style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
                     role="status"
                     aria-label={`Статус: ${shipment.status.label}`}
                   >
@@ -224,7 +203,7 @@ export const Work = ({
                     <>
                       <p
                         style={{
-                          ...TYPOGRAPHY.caption,
+                          ...responsiveTypography.caption,
                           color: "rgba(212, 212, 212, 0.6)",
                           textTransform: "uppercase",
                           margin: 0,
@@ -252,7 +231,7 @@ export const Work = ({
                     <>
                       <p
                         style={{
-                          ...TYPOGRAPHY.caption,
+                          ...responsiveTypography.caption,
                           color: "rgba(212, 212, 212, 0.6)",
                           textTransform: "uppercase",
                           margin: 0,
@@ -295,7 +274,7 @@ export const Work = ({
                     <>
                       <p
                         style={{
-                          ...TYPOGRAPHY.caption,
+                          ...responsiveTypography.caption,
                           color: COLORS.text.muted,
                           textTransform: "uppercase",
                           margin: 0,
@@ -321,7 +300,7 @@ export const Work = ({
                     <>
                       <p
                         style={{
-                          ...TYPOGRAPHY.caption,
+                          ...responsiveTypography.caption,
                           color: COLORS.text.muted,
                           textTransform: "uppercase",
                           margin: 0,
@@ -365,7 +344,7 @@ export const Work = ({
                   onRowHover={handleShipmentRowHover}
                   cellBaseBackground={shipmentCellBaseBackground}
                   cellBaseBorder={shipmentCellBaseBorder}
-                  typography={TYPOGRAPHY}
+                  typography={responsiveTypography}
                 />
 
                 <div
@@ -380,13 +359,13 @@ export const Work = ({
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ ...TYPOGRAPHY.body, margin: 0, color: COLORS.text.secondary }}>
+                    <p style={{ ...responsiveTypography.body, margin: 0, color: COLORS.text.secondary }}>
                       Итого по партии
                     </p>
                     {shipment.hasPriceGaps && (
                       <p
                         style={{
-                          ...TYPOGRAPHY.caption,
+                          ...responsiveTypography.caption,
                           margin: 0,
                           marginTop: 4,
                           color: COLORS.text.muted,
@@ -402,7 +381,7 @@ export const Work = ({
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
                     <p
                       style={{
-                        ...TYPOGRAPHY.caption,
+                        ...responsiveTypography.caption,
                         margin: 0,
                         color: COLORS.text.secondary,
                         textTransform: "uppercase",
@@ -412,7 +391,7 @@ export const Work = ({
                     </p>
                     <p
                       style={{
-                        ...TYPOGRAPHY.amount,
+                        ...responsiveTypography.amount,
                         margin: 0,
                         color: shipment.receivedDate || shipment.id === "shipment-10"
                           ? COLORS.success
@@ -427,7 +406,7 @@ export const Work = ({
                 {shipment.hasPriceGaps && (
                   <p
                     style={{
-                      ...TYPOGRAPHY.body,
+                      ...responsiveTypography.body,
                       margin: 0,
                       marginTop: SPACING.sm,
                       color: COLORS.text.secondary,

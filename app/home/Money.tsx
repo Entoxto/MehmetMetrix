@@ -6,7 +6,7 @@
  * Управляет раскрытием блоков и эффектами наведения под разные брейкпоинты.
  */
 import { Fragment, type MouseEvent, type CSSProperties } from "react";
-import { COLORS, SPACING, CARD_HOVER_EFFECTS } from "@/constants/styles";
+import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
 
@@ -44,11 +44,11 @@ export const Money = ({
   const { isMobile, breakpoint } = useBreakpoint();
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
 
-  const TYPOGRAPHY = {
-    h2: { fontSize: isMobile ? 24 : 40, fontWeight: 900, lineHeight: 1.2 },
-    body: { fontSize: 12, lineHeight: 1.5 },
-    caption: { fontSize: isMobile ? 10 : 11, lineHeight: 1.4 },
-    amount: { fontSize: isMobile ? 28 : 36, fontWeight: 900, lineHeight: 1.1 },
+  const responsiveTypography = {
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 40 },
+    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : TYPOGRAPHY.body.fontSize },
+    caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 10 : 11 },
+    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 28 : 36 },
   } as const;
 
   const CARD_STYLE = {
@@ -124,7 +124,7 @@ export const Money = ({
         <div style={detailContainerStyle}>
           <p
             style={{
-              ...TYPOGRAPHY.body,
+              ...responsiveTypography.body,
               color: COLORS.text.secondary,
               margin: 0,
             }}
@@ -141,7 +141,7 @@ export const Money = ({
       <div style={detailContainerStyle}>
         <p
           style={{
-            ...TYPOGRAPHY.body,
+            ...responsiveTypography.body,
             color: COLORS.text.secondary,
             marginBottom: isMobile ? SPACING.md : SPACING.lg,
             marginTop: 0,
@@ -159,7 +159,7 @@ export const Money = ({
                 <div style={getCellStyle(isLast)} {...hoverHandlers}>
                   <span
                     style={{
-                      ...TYPOGRAPHY.body,
+                      ...responsiveTypography.body,
                       color: COLORS.text.primary,
                       margin: 0,
                       overflowWrap: "break-word",
@@ -173,7 +173,7 @@ export const Money = ({
                 <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
                   <span
                     style={{
-                      ...TYPOGRAPHY.body,
+                      ...responsiveTypography.body,
                       color: COLORS.error,
                       fontWeight: 600,
                       whiteSpace: "nowrap",
@@ -200,11 +200,11 @@ export const Money = ({
       return (
         <div style={detailContainerStyle}>
           <p
-            style={{
-              ...TYPOGRAPHY.body,
-              color: COLORS.text.secondary,
-              margin: 0,
-            }}
+          style={{
+            ...responsiveTypography.body,
+            color: COLORS.text.secondary,
+            margin: 0,
+          }}
           >
             Нет активных депозитов
           </p>
@@ -218,7 +218,7 @@ export const Money = ({
       <div style={detailContainerStyle}>
         <p
           style={{
-            ...TYPOGRAPHY.body,
+            ...responsiveTypography.body,
             color: COLORS.text.secondary,
             marginBottom: isMobile ? SPACING.md : SPACING.lg,
             marginTop: 0,
@@ -236,7 +236,7 @@ export const Money = ({
                 <div style={getCellStyle(isLast)} {...hoverHandlers}>
                   <span
                     style={{
-                      ...TYPOGRAPHY.body,
+                      ...responsiveTypography.body,
                       color: COLORS.text.primary,
                       margin: 0,
                       overflowWrap: "break-word",
@@ -255,7 +255,7 @@ export const Money = ({
                 <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
                   <span
                     style={{
-                      ...TYPOGRAPHY.body,
+                      ...responsiveTypography.body,
                       color: COLORS.success,
                       fontWeight: 600,
                       whiteSpace: "nowrap",
@@ -288,7 +288,7 @@ export const Money = ({
       <div style={{ marginBottom: isMobile ? 8 : SPACING.md, textAlign: "center" }}>
         <h2
           style={{
-            ...TYPOGRAPHY.h2,
+            ...responsiveTypography.h2,
             color: COLORS.primary,
             marginBottom: 6,
             display: "flex",
@@ -343,7 +343,7 @@ export const Money = ({
             >
               <p
                 style={{
-                  ...TYPOGRAPHY.caption,
+                  ...responsiveTypography.caption,
                   color: COLORS.text.secondary,
                   textTransform: "uppercase",
                   letterSpacing: 1.5,
@@ -363,18 +363,17 @@ export const Money = ({
             </div>
             <p
               style={{
-                ...TYPOGRAPHY.amount,
+                ...responsiveTypography.amount,
                 color: COLORS.error,
                 letterSpacing: -1,
                 margin: 0,
-                fontSize: isMobile ? 28 : 36,
               }}
             >
               {formatCurrency(pending.total)}
             </p>
             <p
               style={{
-                ...TYPOGRAPHY.body,
+                ...responsiveTypography.body,
                 color: COLORS.text.muted,
                 fontStyle: "italic",
                 margin: 0,
@@ -450,7 +449,7 @@ export const Money = ({
             >
               <p
                 style={{
-                  ...TYPOGRAPHY.caption,
+                  ...responsiveTypography.caption,
                   color: COLORS.text.secondary,
                   textTransform: "uppercase",
                   letterSpacing: 1.5,
@@ -470,18 +469,17 @@ export const Money = ({
             </div>
             <p
               style={{
-                ...TYPOGRAPHY.amount,
+                ...responsiveTypography.amount,
                 color: COLORS.success,
                 letterSpacing: -1,
                 margin: 0,
-                fontSize: isMobile ? 28 : 36,
               }}
             >
               {formatCurrency(deposits.total)}
             </p>
             <p
               style={{
-                ...TYPOGRAPHY.body,
+                ...responsiveTypography.body,
                 color: COLORS.text.muted,
                 fontStyle: "italic",
                 margin: 0,
