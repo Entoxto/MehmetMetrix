@@ -28,20 +28,21 @@ export const Work = ({
   onToggleCard,
 }: WorkProps) => {
   const responsiveTypography = {
-    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : TYPOGRAPHY.h2.fontSize },
-    h3: { ...TYPOGRAPHY.h3, fontSize: isMobile ? 20 : TYPOGRAPHY.h3.fontSize },
-    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : TYPOGRAPHY.body.fontSize },
-    caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 10 : TYPOGRAPHY.caption.fontSize },
-    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 24 : TYPOGRAPHY.amount.fontSize },
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 22 : 30 },
+    h3: { ...TYPOGRAPHY.h3, fontSize: isMobile ? 18 : 22 },
+    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 11 : 13 },
+    caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 9 : 11 },
+    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 22 : 30 },
     tableHeader: {
       ...TYPOGRAPHY.tableHeader,
-      fontSize: isMobile ? 10 : TYPOGRAPHY.tableHeader.fontSize,
+      fontSize: isMobile ? 9 : 11,
     },
     tableCell: {
       ...TYPOGRAPHY.tableCell,
-      fontSize: isMobile ? 11 : TYPOGRAPHY.tableCell.fontSize,
+      fontSize: isMobile ? 10 : 12,
     },
   };
+  const detailValueFontSize = isMobile ? 14 : 15;
 
   const shipmentCellBaseBackground = COLORS.background.card;
   const shipmentCellHoverBackground = COLORS.background.cardExpanded;
@@ -215,8 +216,8 @@ export const Work = ({
                       </p>
                       <p
                         style={{
-                          fontSize: 16,
-                          lineHeight: 1.5,
+                          fontSize: detailValueFontSize,
+                          lineHeight: 1.4,
                           color: COLORS.text.primary,
                           fontWeight: 600,
                           margin: 0,
@@ -243,8 +244,8 @@ export const Work = ({
                       </p>
                       <p
                         style={{
-                          fontSize: 16,
-                          lineHeight: 1.5,
+                          fontSize: detailValueFontSize,
+                          lineHeight: 1.4,
                           color: COLORS.text.primary,
                           fontWeight: 600,
                           margin: 0,
@@ -285,8 +286,8 @@ export const Work = ({
                       </p>
                       <p
                         style={{
-                          fontSize: 16,
-                          lineHeight: 1.5,
+                          fontSize: detailValueFontSize,
+                          lineHeight: 1.4,
                           color: COLORS.text.primary,
                           fontWeight: 600,
                           margin: 0,
@@ -311,8 +312,8 @@ export const Work = ({
                       </p>
                       <p
                         style={{
-                          fontSize: 16,
-                          lineHeight: 1.5,
+                          fontSize: detailValueFontSize,
+                          lineHeight: 1.4,
                           color: COLORS.text.primary,
                           fontWeight: 600,
                           margin: 0,
