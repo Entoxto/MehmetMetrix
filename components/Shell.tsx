@@ -33,14 +33,14 @@ export const Shell = ({ children, title, backHref }: ShellProps) => {
       style={{
         textDecoration: "none",
         ...STYLES.button,
-        padding: isMobile ? "8px 16px" : STYLES.button.padding,
-        fontSize: isMobile ? 12 : STYLES.button.fontSize,
+        padding: isMobile ? "6px 12px" : STYLES.button.padding,
+        fontSize: isMobile ? 11 : STYLES.button.fontSize,
         display: "inline-flex",
         alignItems: "center",
         gap: 6,
       }}
     >
-      <span style={{ fontSize: isMobile ? 14 : 18 }}>←</span> Назад
+      Назад
     </Link>
   ) : null;
 
