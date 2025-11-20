@@ -497,4 +497,3 @@ export const Money = ({
     </div>
   );
 };
-

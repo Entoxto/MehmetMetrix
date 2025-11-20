@@ -41,9 +41,11 @@ export default function MoneyPage() {
   const pendingItems: PendingItem[] = useMemo(() => {
     return shipments
       .map((shipment) => {
-        const pendingAmount = shipment.items
-          .filter((item) => item.needsPayment)
-          .reduce((sum, item) => sum + (item.total ?? 0), 0);
+        // В новой модели считаем сумму по позициям из batch
+        // Если position.sum !== null, значит позиция требует оплаты (и сумма уже посчитана с учетом цены и кол-ва)
+        const pendingAmount = shipment.batch.positions
+          .filter((position) => position.sum !== null)
+          .reduce((sum, position) => sum + (position.sum ?? 0), 0);
 
         const isMarkedPaid = shipment.status?.label
           ? shipment.status.label.toLowerCase().includes("оплач")
@@ -97,5 +99,3 @@ export default function MoneyPage() {
     </Shell>
   );
 }
-
-
