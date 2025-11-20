@@ -19,7 +19,6 @@ interface CatalogGroup {
 interface CatalogProps {
   isMobile: boolean;
   selectedCategory: string | null;
-  categoryDescriptions: Record<string, string>;
   catalogGroups: CatalogGroup[];
   categoryProducts: Product[];
   onSelectCategory: (category: string | null) => void;
@@ -28,7 +27,6 @@ interface CatalogProps {
 export const Catalog = ({
   isMobile,
   selectedCategory,
-  categoryDescriptions,
   catalogGroups,
   categoryProducts,
   onSelectCategory,
@@ -36,11 +34,6 @@ export const Catalog = ({
   if (selectedCategory) {
     return (
       <div style={{ flex: 1, padding: isMobile ? SPACING.md : SPACING.xl }}>
-        <div style={{ marginBottom: isMobile ? SPACING.md : SPACING.lg }}>
-          <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 12 : 13, fontStyle: "italic" }}>
-            {categoryDescriptions[selectedCategory]}
-          </p>
-        </div>
         <div
           style={{
             display: "grid",

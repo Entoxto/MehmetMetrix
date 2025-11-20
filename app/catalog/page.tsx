@@ -27,10 +27,10 @@ function CatalogPageContent() {
 
   const categoryDescriptions: Record<string, string> = useMemo(
     () => ({
-      "Мех": "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
-      "Замша": "Мягкая, как голос Мехмета, когда он говорит про сроки.",
-      "Кожа": "Коровка старалась, не подведи её в каталоге.",
-      "Экзотика": "Для тех, кто любит, чтобы шкура шипела дорого.",
+      Мех: "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
+      Замша: "Мягкая, как голос Мехмета, когда он говорит про сроки.",
+      Кожа: "Коровка старалась, не подведи её в каталоге.",
+      Экзотика: "Для тех, кто любит, чтобы шкура шипела дорого.",
     }),
     []
   );
@@ -65,13 +65,17 @@ function CatalogPageContent() {
   };
 
   const backHref = selectedCategory ? "/catalog" : "/";
+  const subtitle = selectedCategory ? categoryDescriptions[selectedCategory] : null;
 
   return (
-    <Shell title={selectedCategory} backHref={backHref}>
+    <Shell
+      title={selectedCategory}
+      subtitle={subtitle}
+      backHref={backHref}
+    >
       <Catalog
         isMobile={isMobile}
         selectedCategory={selectedCategory}
-        categoryDescriptions={categoryDescriptions}
         catalogGroups={catalogGroups}
         categoryProducts={categoryProducts}
         onSelectCategory={handleSelectCategory}

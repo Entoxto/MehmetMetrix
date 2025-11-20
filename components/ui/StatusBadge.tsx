@@ -5,7 +5,8 @@
  * Показывает капсулу с цветом, иконкой и адаптирует размеры под мобильный.
  */
 
-import { useState, useEffect } from "react";
+import { useBreakpoint } from "@/constants/MonitorSize";
+import { COLORS } from "@/constants/styles";
 
 export type StatusBadgeKind = "default" | "info" | "success" | "warning" | "error";
 
@@ -16,25 +17,13 @@ interface StatusBadgeProps {
 }
 
 export const StatusBadge = ({ children, kind = "default", icon }: StatusBadgeProps) => {
-  const [isNarrowMobile, setIsNarrowMobile] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    
-    const checkNarrow = () => {
-      setIsNarrowMobile(window.innerWidth <= 430);
-    };
-    
-    checkNarrow();
-    window.addEventListener("resize", checkNarrow);
-    
-    return () => window.removeEventListener("resize", checkNarrow);
-  }, []);
+  const { isMobile } = useBreakpoint();
+  const isNarrowMobile = isMobile;
 
   const colorMap: Record<StatusBadgeKind, { background: string; text: string; border: string }> = {
     default: {
       background: "rgba(251,191,36,0.15)",
-      text: "#fbbf24",
+      text: COLORS.primary,
       border: "rgba(251,191,36,0.3)",
     },
     info: {
@@ -44,17 +33,17 @@ export const StatusBadge = ({ children, kind = "default", icon }: StatusBadgePro
     },
     success: {
       background: "rgba(52,211,153,0.15)",
-      text: "#34d399",
+      text: COLORS.success,
       border: "rgba(52,211,153,0.3)",
     },
     warning: {
       background: "rgba(251,191,36,0.15)",
-      text: "#fbbf24",
+      text: COLORS.primary,
       border: "rgba(251,191,36,0.3)",
     },
     error: {
       background: "rgba(248,113,113,0.15)",
-      text: "#f87171",
+      text: COLORS.error,
       border: "rgba(248,113,113,0.3)",
     },
   };

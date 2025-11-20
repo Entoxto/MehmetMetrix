@@ -7,7 +7,7 @@
  */
 
 import { Fragment } from "react";
-import { COLORS, CARD_TEMPLATES } from "@/constants/styles";
+import { COLORS, CARD_TEMPLATES, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { statusLabel, statusIcon } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
@@ -100,7 +100,7 @@ export const BatchView = ({
               color: COLORS.primary,
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              gap: SPACING.sm,
               margin: 0,
             }}
           >

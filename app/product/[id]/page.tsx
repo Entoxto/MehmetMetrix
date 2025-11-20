@@ -76,7 +76,11 @@ function ProductPageContent() {
   }
 
   return (
-    <Shell title={product.name} backHref={backHref}>
+    <Shell
+      title={product.name}
+      subtitle={product.category}
+      backHref={backHref}
+    >
       <ProductDetail product={product} />
     </Shell>
   );

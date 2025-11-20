@@ -56,29 +56,40 @@ export const HOME_STYLES = {
     margin: 0,
   }),
 
-  categoryTitleContainer: {
+  pageHero: (isMobile: boolean): CSSProperties => ({
+    display: "flex",
+    justifyContent: "center",
+    padding: isMobile ? `${SPACING.sm}px ${SPACING.md}px` : `${SPACING.md}px ${SPACING.xl}px`,
+    width: "100%",
+    boxSizing: "border-box",
+  }),
+
+  heroContent: (isMobile: boolean): CSSProperties => ({
+    maxWidth: isMobile ? "100%" : 600,
+    width: "100%",
     textAlign: "center",
-  } as CSSProperties,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: isMobile ? 4 : 6,
+  }),
 
-  categoryTitle: {
-    fontSize: 32,
-    fontWeight: 900,
-    color: COLORS.primary,
+  heroTitle: (isMobile: boolean): CSSProperties => ({
     margin: 0,
-  } as CSSProperties,
-
-  mobileCategoryHeader: {
-    textAlign: "center",
-    borderTop: `1px solid rgba(102,102,102,0.2)`,
-    paddingTop: SPACING.xs,
-  } as CSSProperties,
-
-  mobileCategoryTitle: {
-    fontSize: 20,
-    fontWeight: 900,
+    fontSize: isMobile ? 22 : 28,
+    fontWeight: 700,
     color: COLORS.primary,
+    letterSpacing: -0.3,
+  }),
+
+  heroSubtitle: (isMobile: boolean): CSSProperties => ({
     margin: 0,
-  } as CSSProperties,
+    fontSize: isMobile ? 11 : 13,
+    lineHeight: 1.4,
+    fontStyle: "italic",
+    color: COLORS.text.secondary,
+    opacity: 0.75,
+  }),
 
   errorContainer: {
     flex: 1,

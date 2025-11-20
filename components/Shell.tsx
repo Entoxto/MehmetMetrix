@@ -6,16 +6,17 @@ import { usePathname } from "next/navigation";
 import { UpSector } from "@/app/home/UpSector";
 import { DownSector } from "@/app/home/DownSector";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { STYLES } from "@/constants/styles";
+import { STYLES, SPACING } from "@/constants/styles";
 import { HOME_STYLES } from "@/app/home/styles";
 
 interface ShellProps {
   children: ReactNode;
   title?: string | null;
+  subtitle?: string | null;
   backHref?: string;
 }
 
-export const Shell = ({ children, title, backHref }: ShellProps) => {
+export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
   const { isMobile } = useBreakpoint();
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -37,7 +38,7 @@ export const Shell = ({ children, title, backHref }: ShellProps) => {
         fontSize: isMobile ? 11 : STYLES.button.fontSize,
         display: "inline-flex",
         alignItems: "center",
-        gap: 6,
+        gap: SPACING.xs + 2,
       }}
     >
       Назад
@@ -59,19 +60,17 @@ export const Shell = ({ children, title, backHref }: ShellProps) => {
               </div>
             )}
           </div>
-
-          {!isMobile && title && (
-            <div style={HOME_STYLES.categoryTitleContainer}>
-              <h2 style={HOME_STYLES.categoryTitle}>{title}</h2>
-            </div>
-          )}
         </div>
-        {isMobile && title && (
-          <div style={HOME_STYLES.mobileCategoryHeader}>
-            <h2 style={HOME_STYLES.mobileCategoryTitle}>{title}</h2>
-          </div>
-        )}
       </UpSector>
+
+      {title && (
+        <div style={HOME_STYLES.pageHero(isMobile)}>
+          <div style={HOME_STYLES.heroContent(isMobile)}>
+            <h2 style={HOME_STYLES.heroTitle(isMobile)}>{title}</h2>
+            {subtitle && <p style={HOME_STYLES.heroSubtitle(isMobile)}>{subtitle}</p>}
+          </div>
+        </div>
+      )}
 
       {children}
 

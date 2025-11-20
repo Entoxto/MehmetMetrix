@@ -7,7 +7,7 @@
  */
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import type { Product } from "@/types/product";
 
@@ -71,7 +71,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               target.style.display = "none";
               const parent = target.parentElement;
               if (parent) {
-                parent.innerHTML = '<span style="color: #737373; font-size: 48px;">📷</span>';
+                parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: 48px;">📷</span>`;
               }
             }}
             style={{
@@ -81,12 +81,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             }}
           />
         </div>
-        <div style={{ padding: 20, display: "flex", flexDirection: "column", minHeight: 180 }}>
+        <div style={{ padding: SPACING.md + 4, display: "flex", flexDirection: "column", minHeight: 180 }}>
           <h3
             style={{
               fontSize: 20,
               fontWeight: 700,
-              marginBottom: 12,
+              marginBottom: SPACING.sm + 4,
               color: COLORS.primary,
               minHeight: 60,
               maxHeight: 60,
@@ -96,7 +96,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           >
             {product.name}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.sm + 4, alignItems: "start" }}>
             <div>
               {/* NOTE: All prices are in USD dollars only */}
               <p
@@ -104,7 +104,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                   color: COLORS.text.secondary,
                   fontSize: 11,
                   textTransform: "uppercase",
-                  marginBottom: 4,
+                  marginBottom: SPACING.xs,
                   height: 15,
                   lineHeight: "15px",
                 }}
@@ -127,14 +127,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                   color: COLORS.text.secondary,
                   fontSize: 11,
                   textTransform: "uppercase",
-                  marginBottom: 4,
+                  marginBottom: SPACING.xs,
                   height: 15,
                   lineHeight: "15px",
                 }}
               >
                 Размеры
               </p>
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: SPACING.xs + 2, flexWrap: "wrap" }}>
                 {product.sizes.map((size) => (
                   <span key={size} style={STYLES.sizeBadge}>
                     {size}

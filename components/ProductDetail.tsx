@@ -5,7 +5,7 @@
  * Показывает фото, описание, размеры и цену для экрана ProductCard/[id].
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
-import { COLORS, SPACING } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency } from "@/lib/utils";
 import type { Product } from "@/types/product";
@@ -18,31 +18,20 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
 
-  // Единая типографика
-  const TYPOGRAPHY = {
-    h1: { fontSize: isCompact ? 24 : 32, fontWeight: 800, lineHeight: 1.3 },
-    h2: { fontSize: isCompact ? 14 : 16, fontWeight: 600, lineHeight: 1.4 },
-    body: { fontSize: isCompact ? 14 : 16, lineHeight: 1.5 },
-    caption: { fontSize: isCompact ? 11 : 12, lineHeight: 1.4 },
+  // Адаптивная типографика на основе глобальной
+  const responsiveTypography = {
+    h1: { ...TYPOGRAPHY.h1, fontSize: isCompact ? 24 : 32 },
+    h2: { ...TYPOGRAPHY.h2, fontSize: isCompact ? 14 : 16 },
+    body: { ...TYPOGRAPHY.body, fontSize: isCompact ? 14 : 16 },
+    caption: { ...TYPOGRAPHY.caption, fontSize: isCompact ? 11 : 12 },
     price: { fontSize: isCompact ? 32 : 40, fontWeight: 700, lineHeight: 1.2 },
   };
 
-  // Стили для чипов размеров
+  // Стили для чипов размеров на основе глобального STYLES.sizeBadge
   const SIZE_CHIP_STYLE = {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
+    ...STYLES.sizeBadge,
     padding: isCompact ? "10px 16px" : "12px 20px",
-    borderRadius: 8,
     fontSize: isCompact ? 14 : 16,
-    fontWeight: 600,
-    lineHeight: 1.4,
-    border: "1px solid",
-    transition: "all 0.2s ease",
-    cursor: "default",
-    background: "rgba(251,191,36,0.15)",
-    color: COLORS.primary,
-    borderColor: "rgba(251,191,36,0.3)",
   };
 
   // Единые стили для фото
@@ -59,26 +48,33 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         flex: 1,
         padding: isCompact ? SPACING.md : SPACING.xl,
         paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.xl, // Безопасный отступ для toast на мобиле
-        display: isCompact ? "flex" : "grid",
-        flexDirection: isCompact ? "column" : undefined,
-        gridTemplateColumns: isCompact ? undefined : "1fr 1fr",
-        gap: isCompact ? SPACING.lg : SPACING.xl,
-        alignItems: isCompact ? undefined : "stretch",
-        maxWidth: isCompact ? "100%" : "none",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
       }}
     >
-      {/* Фото товара - квадратное (1:1) */}
+      <div
+        style={{
+          display: isCompact ? "flex" : "grid",
+          flexDirection: isCompact ? "column" : undefined,
+          gridTemplateColumns: isCompact ? undefined : "1fr 1fr",
+          gap: isCompact ? SPACING.lg : SPACING.xl,
+          alignItems: isCompact ? undefined : "stretch",
+          width: isCompact ? "100%" : "100%",
+          maxWidth: isCompact ? "100%" : "1200px", // Ограничиваем максимальную ширину на десктопе
+        }}
+      >
+      {/* Фото товара */}
       <div
         style={{
           width: "100%",
-          aspectRatio: isCompact ? undefined : "1 / 1",
-          height: isCompact ? 300 : "auto",
-          maxWidth: isCompact ? "100%" : "500px",
+          height: isCompact ? 300 : "auto", // На десктопе grid выровняет высоту автоматически
+          minHeight: isCompact ? 300 : 400, // Минимальная высота для пропорциональности
           ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          flexShrink: 0,
+          alignSelf: "stretch", // Растягивается на всю высоту строки grid
         }}
       >
         <img
@@ -114,7 +110,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div>
           <p
             style={{
-              ...TYPOGRAPHY.caption,
+              ...responsiveTypography.caption,
               color: COLORS.text.secondary,
               textTransform: "uppercase",
               letterSpacing: 1,
@@ -137,7 +133,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div>
           <p
             style={{
-              ...TYPOGRAPHY.caption,
+              ...responsiveTypography.caption,
               color: COLORS.text.secondary,
               textTransform: "uppercase",
               letterSpacing: 1,
@@ -149,11 +145,11 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             Цена
           </p>
           {product.price ? (
-            <p style={{ ...TYPOGRAPHY.price, color: COLORS.success, margin: 0 }}>
+            <p style={{ ...responsiveTypography.price, color: COLORS.success, margin: 0 }}>
               {formatCurrency(product.price)}
             </p>
           ) : (
-            <p style={{ ...TYPOGRAPHY.price, color: COLORS.primary, margin: 0 }}>
+            <p style={{ ...responsiveTypography.price, color: COLORS.primary, margin: 0 }}>
               уточняется
             </p>
           )}
@@ -169,7 +165,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           >
             <p
               style={{
-                ...TYPOGRAPHY.caption,
+                ...responsiveTypography.caption,
                 color: COLORS.text.secondary,
                 textTransform: "uppercase",
                 letterSpacing: 1,
@@ -184,7 +180,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 <div>
                   <p
                     style={{
-                      ...TYPOGRAPHY.caption,
+                      ...responsiveTypography.caption,
                       color: COLORS.text.secondary,
                       margin: 0,
                       marginBottom: SPACING.xs,
@@ -192,7 +188,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   >
                     Верхний материал
                   </p>
-                  <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.primary, margin: 0 }}>
+                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
                     {product.materials.outer}
                   </p>
                 </div>
@@ -201,7 +197,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 <div>
                   <p
                     style={{
-                      ...TYPOGRAPHY.caption,
+                      ...responsiveTypography.caption,
                       color: COLORS.text.secondary,
                       margin: 0,
                       marginBottom: SPACING.xs,
@@ -209,7 +205,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   >
                     Подкладка
                   </p>
-                  <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.primary, margin: 0 }}>
+                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
                     {product.materials.lining}
                   </p>
                 </div>
@@ -218,7 +214,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 <div>
                   <p
                     style={{
-                      ...TYPOGRAPHY.caption,
+                      ...responsiveTypography.caption,
                       color: COLORS.text.secondary,
                       margin: 0,
                       marginBottom: SPACING.xs,
@@ -226,7 +222,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   >
                     Примечания
                   </p>
-                  <p style={{ ...TYPOGRAPHY.body, color: COLORS.text.primary, margin: 0 }}>
+                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
                     {product.materials.comments}
                   </p>
                 </div>
@@ -234,6 +230,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
