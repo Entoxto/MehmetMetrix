@@ -7,13 +7,19 @@
  */
 import type { ReactNode } from "react";
 import { HOME_STYLES } from "./styles";
+import { useBreakpoint } from "@/constants/MonitorSize";
 
 interface HeaderProps {
   children?: ReactNode;
 }
 
-export const UpSector = ({ children }: HeaderProps) => (
-  <header style={HOME_STYLES.upSector}>
-    {children}
-  </header>
-);
+export const UpSector = ({ children }: HeaderProps) => {
+  const { isMobile } = useBreakpoint();
+  const padding = isMobile ? "8px 8px 8px 0" : "8px 24px";
+
+  return (
+    <header style={{ ...HOME_STYLES.upSector, padding }}>
+      {children}
+    </header>
+  );
+};

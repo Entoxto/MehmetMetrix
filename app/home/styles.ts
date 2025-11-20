@@ -11,19 +11,22 @@ export const HOME_STYLES = {
   } as CSSProperties,
 
   headerContainer: (isMobile: boolean): CSSProperties => ({
-    display: isMobile ? "flex" : "grid",
-    flexDirection: isMobile ? "column" : undefined,
-    gridTemplateColumns: isMobile ? undefined : "1fr auto 1fr",
-    alignItems: "center",
-    gap: isMobile ? SPACING.sm : 0,
-    padding: isMobile ? "8px 16px" : "0px 32px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: SPACING.sm,
+    padding: isMobile
+      ? `8px ${SPACING.md}px 8px ${SPACING.sm}px`
+      : `12px ${SPACING.lg}px 12px ${SPACING.md}px`,
+    width: "100%",
+    boxSizing: "border-box",
   }),
 
   headerTopRow: (isMobile: boolean): CSSProperties => ({
     display: "flex",
     alignItems: "center",
     gap: isMobile ? 8 : 14,
-    justifyContent: isMobile ? "space-between" : "flex-start",
+    justifyContent: "flex-start",
     width: "100%",
   }),
 
@@ -93,14 +96,14 @@ export const HOME_STYLES = {
   } as CSSProperties,
 
   upSector: {
-    display: "grid",
-    gridTemplateColumns: "1fr",
+    display: "flex",
     alignItems: "center",
-    padding: "8px 16px",
+    padding: "0",
     borderBottom: `1px solid rgba(102,102,102,0.2)`,
     background: COLORS.background.header,
     backdropFilter: "blur(10px)",
-    gap: SPACING.sm,
+    width: "100%",
+    justifyContent: "flex-start",
   } as CSSProperties,
 };
 
