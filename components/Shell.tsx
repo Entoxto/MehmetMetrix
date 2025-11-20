@@ -53,22 +53,17 @@ export const Shell = ({ children, title, backHref }: ShellProps) => {
               <span style={HOME_STYLES.headerIcon(isMobile)}>⚡</span>
               <h1 style={HOME_STYLES.headerTitle(isMobile)}>Mehmet Metrics</h1>
             </div>
-            {isMobile && BackButton}
-          </div>
-
-          {!isMobile && (
-            <>
-              {title ? (
-                <div style={HOME_STYLES.categoryTitleContainer}>
-                  <h2 style={HOME_STYLES.categoryTitle}>{title}</h2>
-                </div>
-              ) : (
-                <div />
-              )}
-              <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+            {showBackButton && (
+              <div style={HOME_STYLES.headerBackSlot(isMobile)}>
                 {BackButton}
               </div>
-            </>
+            )}
+          </div>
+
+          {!isMobile && title && (
+            <div style={HOME_STYLES.categoryTitleContainer}>
+              <h2 style={HOME_STYLES.categoryTitle}>{title}</h2>
+            </div>
           )}
         </div>
         {isMobile && title && (

@@ -25,8 +25,7 @@ export const HOME_STYLES = {
   headerTopRow: (isMobile: boolean): CSSProperties => ({
     display: "flex",
     alignItems: "center",
-    gap: isMobile ? 8 : 14,
-    justifyContent: "space-between",
+    gap: isMobile ? SPACING.sm : SPACING.md,
     width: "100%",
   }),
 
@@ -34,6 +33,14 @@ export const HOME_STYLES = {
     display: "flex",
     alignItems: "center",
     gap: isMobile ? 8 : 14,
+  }),
+
+  headerBackSlot: (isMobile: boolean): CSSProperties => ({
+    marginLeft: "auto",
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    minWidth: isMobile ? 0 : 120,
   }),
 
   headerIcon: (isMobile: boolean): CSSProperties => ({
