@@ -26,7 +26,7 @@ export const HOME_STYLES = {
     display: "flex",
     alignItems: "center",
     gap: isMobile ? 8 : 14,
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     width: "100%",
   }),
 

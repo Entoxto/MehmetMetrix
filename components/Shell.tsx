@@ -65,7 +65,7 @@ export const Shell = ({ children, title, backHref }: ShellProps) => {
               ) : (
                 <div />
               )}
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
                 {BackButton}
               </div>
             </>
