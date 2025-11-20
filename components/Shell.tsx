@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { UpSector } from "@/app/home/UpSector";
 import { DownSector } from "@/app/home/DownSector";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { COLORS, SPACING, STYLES } from "@/constants/styles";
+import { STYLES } from "@/constants/styles";
 import { HOME_STYLES } from "@/app/home/styles";
 
 interface ShellProps {

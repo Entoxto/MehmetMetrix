@@ -8,6 +8,7 @@
  */
 import { createCardHoverHandlers } from "@/lib/utils";
 import { MENU_STYLES } from "./styles";
+import type { CSSProperties } from "react";
 
 export interface MenuItem {
   title: string;
@@ -23,8 +24,8 @@ interface MenuProps {
 
 export const Menu = ({ items }: MenuProps) => {
   const hoverHandlers = createCardHoverHandlers(
-    MENU_STYLES.cardHover as any, // Cast needed because CSSProperties is broader than the utility expects
-    MENU_STYLES.cardDefault as any
+    MENU_STYLES.cardHover as CSSProperties,
+    MENU_STYLES.cardDefault as CSSProperties
   );
 
   return (

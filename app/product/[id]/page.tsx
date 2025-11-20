@@ -1,16 +1,15 @@
 "use client";
 
 import { useMemo, Suspense } from "react";
-import { useRouter, useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
-import { STYLES, COLORS, SPACING } from "@/constants/styles";
+import { COLORS, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
 import { Shell } from "@/components/Shell";
 
 function ProductPageContent() {
-  const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
   const { isMobile, isTablet } = useBreakpoint();
@@ -105,5 +104,3 @@ export default function ProductPage() {
     </Suspense>
   );
 }
-
-
