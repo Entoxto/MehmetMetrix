@@ -38,15 +38,15 @@ export const PositionRow = ({
   const { isMobile } = useBreakpoint();
 
   const hasSizes = Object.values(position.sizes).some(count => count > 0);
-  const qtyLabel = position.sample ? `${position.qty} шт.` : `${position.qty} шт.`;
+  const qtyLabel = position.sample 
+    ? position.qty > 0 ? `${position.qty} шт.` : ""
+    : `${position.qty} шт.`;
 
   // клик по названию ведёт на карточку
   const handleLinkClick = () => {
-    // Сохраняем позицию скролла перед переходом
     if (typeof window !== "undefined") {
       sessionStorage.setItem("workScrollY", String(window.scrollY));
     }
-    // Не блокируем переход
   };
 
   return (
@@ -104,31 +104,33 @@ export const PositionRow = ({
             {position.title}
           </Link>
 
-          {/* Первая строка: размеры или "образец" */}
-          <div style={{ display: "flex", gap: isMobile ? 6 : 8, flexWrap: "wrap" }}>
-            {hasSizes ? (
+          {/* Строка 1: Размеры (если есть) */}
+          {hasSizes && (
+            <div style={{ display: "flex", gap: isMobile ? 6 : 8, flexWrap: "wrap" }}>
               <SizeChips sizes={position.sizes} />
-            ) : position.sample ? (
-              <SampleTag />
-            ) : null}
-          </div>
+            </div>
+          )}
 
-          {/* Вторая строка: подпись-статус (капсула) - только если noteEnabled */}
-          {position.noteEnabled && position.noteText && (
+          {/* Строка 2: Бейджи статусов и образца (под размерами) */}
+          {(position.sample || (position.noteEnabled && position.noteText)) && (
             <div
               style={{
                 display: "flex",
                 gap: isMobile ? 4 : 6,
                 flexWrap: "wrap",
-                marginTop: isMobile ? 6 : 8,
+                marginTop: hasSizes ? (isMobile ? 2 : 4) : 0, // Отступ только если были размеры
               }}
             >
-              <StatusBadge 
-                kind="info" 
-                icon={statusIcon[position.status]}
-              >
-                {position.noteText}
-              </StatusBadge>
+              {position.sample && <SampleTag />}
+              
+              {position.noteEnabled && position.noteText && (
+                <StatusBadge 
+                  kind="info" 
+                  icon={statusIcon[position.status]}
+                >
+                  {position.noteText}
+                </StatusBadge>
+              )}
             </div>
           )}
         </div>
@@ -203,4 +205,3 @@ export const PositionRow = ({
     </>
   );
 };
-

@@ -3,7 +3,7 @@
  * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
  */
 
-export type Size = 'XS' | 'S' | 'M' | 'L' | 'XL';
+export type Size = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'OneSize';
 
 export enum PositionStatus {
   inProduction = 'inProduction',
@@ -34,11 +34,3 @@ export interface Batch {
   receivedAt?: string;
   positions: Position[];
 }
-
-
-
-
-
-
-
-

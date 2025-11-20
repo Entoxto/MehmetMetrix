@@ -92,11 +92,19 @@ export const buildShipmentItems = (
       price != null && effectiveQuantity != null && !item.paidPreviously && !item.noPayment
         ? price * effectiveQuantity
         : null;
-    const quantityLabel = item.sample
-      ? effectiveQuantity
-        ? `${effectiveQuantity} шт.`
-        : "образец"
-      : `${effectiveQuantity ?? 0} шт.`;
+    
+    // Логика отображения количества:
+    // Если есть явные размеры -> показываем их (даже если это сэмпл, чтобы видеть OneSize x 1).
+    // Если размеров нет, но sample=true -> "образец" (если нет override) или "N шт." (если есть).
+    // Если ничего нет -> "N шт."
+    
+    let quantityLabel = "";
+    if (item.sample && sizeLabels.length === 0 && !item.quantityOverride) {
+        quantityLabel = "образец";
+    } else {
+        quantityLabel = effectiveQuantity ? `${effectiveQuantity} шт.` : "0 шт.";
+    }
+
     const statusKey: ShipmentStatusKey = item.inTransit
       ? "inTransit"
       : item.status ?? "in_progress";
@@ -163,4 +171,3 @@ export const buildShipments = (
       batch,
     };
   });
-

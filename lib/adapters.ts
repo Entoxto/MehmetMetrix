@@ -36,8 +36,9 @@ interface ShipmentConfig {
  * Преобразует размер из строки в тип Size
  */
 function toSize(size: string): Size {
-  const upper = size.toUpperCase();
-  if (upper === 'XS' || upper === 'S' || upper === 'M' || upper === 'L' || upper === 'XL') {
+  const upper = size === 'OneSize' ? 'OneSize' : size.toUpperCase();
+  
+  if (['XS', 'S', 'M', 'L', 'XL', 'OneSize'].includes(upper)) {
     return upper as Size;
   }
   return 'S'; // fallback
@@ -78,6 +79,7 @@ export function toPosition(
     M: 0,
     L: 0,
     XL: 0,
+    OneSize: 0,
   };
 
   if (item.sizes) {
@@ -101,8 +103,10 @@ export function toPosition(
     : null;
 
   // Примечание
-  const noteEnabled = item.showStatusTag ?? false;
-  const noteText = item.note && item.note !== 'образец' ? item.note : null;
+  // Теперь включаем noteEnabled, если есть текст заметки (и это не слово "образец", которое мы обрабатываем отдельно)
+  const hasNoteText = item.note && item.note.toLowerCase() !== 'образец';
+  const noteEnabled = item.showStatusTag || hasNoteText;
+  const noteText = item.note || null;
 
   return {
     id: `${item.productId}-${qty}-${JSON.stringify(item.sizes)}`,
@@ -114,7 +118,7 @@ export function toPosition(
     sum,
     sample: item.sample ?? false,
     status,
-    noteEnabled,
+    noteEnabled: !!noteEnabled,
     noteText,
   };
 }
@@ -131,4 +135,3 @@ export function toBatch(config: ShipmentConfig, products: Product[]): Batch {
     positions,
   };
 }
-

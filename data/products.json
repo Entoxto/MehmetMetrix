@@ -155,7 +155,8 @@
       "name": "Дублёнка таскана волк",
       "category": "Мех",
       "photo": "/images/products/Дублёнка таскана волк.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": ["xs", "s", "OneSize"],
+      "price": 360,
       "materials": {
         "outer": "100% мех таскана волк",
         "lining": "70% Acetate 30% Polyester",
@@ -241,4 +242,3 @@
     }
   ]
 }
-
