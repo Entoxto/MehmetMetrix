@@ -8,7 +8,6 @@
  */
 import { createCardHoverHandlers } from "@/lib/utils";
 import { MENU_STYLES } from "./styles";
-import type { CSSProperties } from "react";
 
 export interface MenuItem {
   title: string;
@@ -24,8 +23,8 @@ interface MenuProps {
 
 export const Menu = ({ items }: MenuProps) => {
   const hoverHandlers = createCardHoverHandlers(
-    MENU_STYLES.cardHover as CSSProperties,
-    MENU_STYLES.cardDefault as CSSProperties
+    MENU_STYLES.cardHover,
+    MENU_STYLES.cardDefault
   );
 
   return (

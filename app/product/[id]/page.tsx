@@ -3,7 +3,7 @@
 import { useMemo, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
-import { COLORS, SPACING } from "@/constants/styles";
+import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";

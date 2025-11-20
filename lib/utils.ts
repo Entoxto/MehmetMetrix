@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import type { MouseEvent, CSSProperties } from "react";
 
 /**
  * Утилиты для форматирования данных и обработки событий
@@ -22,22 +22,21 @@ export const formatCurrency = (amount: number): string => {
  * @returns Объект с обработчиками onMouseEnter и onMouseLeave
  */
 export const createCardHoverHandlers = (
-  hoverStyle: { transform?: string; boxShadow?: string; border?: string },
-  defaultStyle: { transform?: string; boxShadow?: string; border?: string }
+  hoverStyle: Partial<CSSProperties>,
+  defaultStyle: Partial<CSSProperties>
 ) => {
   return {
     onMouseEnter: (e: MouseEvent<HTMLElement>) => {
       const target = e.currentTarget;
-      if (hoverStyle.transform) target.style.transform = hoverStyle.transform;
-      if (hoverStyle.boxShadow) target.style.boxShadow = hoverStyle.boxShadow;
-      if (hoverStyle.border) target.style.border = hoverStyle.border;
+      if (hoverStyle.transform) target.style.transform = String(hoverStyle.transform);
+      if (hoverStyle.boxShadow) target.style.boxShadow = String(hoverStyle.boxShadow);
+      if (hoverStyle.border) target.style.border = String(hoverStyle.border);
     },
     onMouseLeave: (e: MouseEvent<HTMLElement>) => {
       const target = e.currentTarget;
-      if (defaultStyle.transform !== undefined) target.style.transform = defaultStyle.transform;
-      if (defaultStyle.boxShadow !== undefined) target.style.boxShadow = defaultStyle.boxShadow;
-      if (defaultStyle.border !== undefined) target.style.border = defaultStyle.border;
+      if (defaultStyle.transform !== undefined) target.style.transform = String(defaultStyle.transform);
+      if (defaultStyle.boxShadow !== undefined) target.style.boxShadow = String(defaultStyle.boxShadow);
+      if (defaultStyle.border !== undefined) target.style.border = String(defaultStyle.border);
     },
   };
 };
-
