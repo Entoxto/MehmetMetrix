@@ -1,29 +1,15 @@
 /**
- * Здесь лежат пороги ширины экрана для адаптации под размер экрана.
- * Функция вычисляет, мобильный сейчас экран или десктоп,
- * чтобы компоненты могли подобрать подходящие стили.
+ * Константы и утилиты для работы с брейкпоинтами экрана.
+ * Хук useBreakpoint теперь живёт в hooks/useBreakpoint.ts,
+ * но реэкспортируется здесь для обратной совместимости.
  */
 "use client";
 
-import { useContext } from "react";
-import { BreakpointContext } from "@/contexts/BreakpointContext";
-import type { BreakpointKey } from "@/lib/breakpoints";
+// Реэкспорт констант и утилит из lib/breakpoints
 export { BREAKPOINTS, resolveBreakpoint, detectBreakpointFromUserAgent } from "@/lib/breakpoints";
 
-/**
- * Возвращает текущий breakpoint из контекста и полезные флаги.
- * Само отслеживание размеров находится в BreakpointProvider.
- */
-export const useBreakpoint = () => {
-  const breakpoint = useContext(BreakpointContext);
-
-  return {
-    breakpoint,
-    isMobile: breakpoint === "mobile",
-    isTablet: breakpoint === "tablet",
-    isLaptop: breakpoint === "laptop",
-    isDesktop: breakpoint === "desktop",
-  } as const;
-};
+// Реэкспорт хука для обратной совместимости
+// Новый код должен импортировать из @/hooks/useBreakpoint
+export { useBreakpoint } from "@/hooks/useBreakpoint";
 
 

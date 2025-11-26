@@ -7,7 +7,12 @@ import type { Position, Batch } from '@/types/domain';
 import { PositionStatus } from '@/types/domain';
 
 /**
- * Вычисляет сумму позиции
+ * Вычисляет сумму позиции (цена × количество)
+ * 
+ * @remarks
+ * Используется в тестах и может применяться для перерасчёта.
+ * Не учитывает бизнес-логику (paidPreviously, noPayment) — 
+ * это делается в adapters.ts при создании Position.
  */
 export function calcSum(position: Position): number | null {
   if (position.price == null || position.qty == null) {

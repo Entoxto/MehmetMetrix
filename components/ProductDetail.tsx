@@ -7,7 +7,7 @@
  */
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {

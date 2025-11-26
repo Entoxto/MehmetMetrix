@@ -8,7 +8,8 @@
  */
 import type { MouseEvent } from "react";
 import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
-import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
+import { createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/lib/shipments";
 

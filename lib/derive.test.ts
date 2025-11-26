@@ -12,8 +12,9 @@ describe('calcSum', () => {
   it('должен вычислять сумму позиции', () => {
     const position: Position = {
       id: '1',
+      productId: 'test-1',
       title: 'Тест',
-      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
       qty: 5,
       price: 100,
       sum: null,
@@ -30,8 +31,9 @@ describe('calcSum', () => {
   it('должен возвращать null если цена отсутствует', () => {
     const position: Position = {
       id: '1',
+      productId: 'test-1',
       title: 'Тест',
-      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
       qty: 5,
       price: null,
       sum: null,
@@ -51,8 +53,9 @@ describe('groupByStatus', () => {
     const positions: Position[] = [
       {
         id: '1',
+        productId: 'test-1',
         title: 'Тест 1',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
         qty: 1,
         price: 100,
         sum: 100,
@@ -63,8 +66,9 @@ describe('groupByStatus', () => {
       },
       {
         id: '2',
+        productId: 'test-2',
         title: 'Тест 2',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
         qty: 1,
         price: 200,
         sum: 200,
@@ -75,8 +79,9 @@ describe('groupByStatus', () => {
       },
       {
         id: '3',
+        productId: 'test-3',
         title: 'Тест 3',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
         qty: 1,
         price: 300,
         sum: 300,
@@ -102,8 +107,9 @@ describe('toViewRows', () => {
       positions: [
         {
           id: '1',
+          productId: 'test-1',
           title: 'Тест 1',
-          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
           qty: 1,
           price: 100,
           sum: 100,
@@ -114,8 +120,9 @@ describe('toViewRows', () => {
         },
         {
           id: '2',
+          productId: 'test-2',
           title: 'Тест 2',
-          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
           qty: 1,
           price: 200,
           sum: 200,
@@ -152,11 +159,12 @@ describe('orderStatuses', () => {
   it('должен содержать фиксированный порядок статусов', () => {
     expect(orderStatuses).toEqual([
       PositionStatus.inProduction,
-      PositionStatus.inTransit,
       PositionStatus.done,
       PositionStatus.paid,
       PositionStatus.paidEarlier,
       PositionStatus.returned,
+      PositionStatus.receivedUnpaid,
+      PositionStatus.inTransit,
     ]);
   });
 });

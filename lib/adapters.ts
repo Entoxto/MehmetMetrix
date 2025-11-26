@@ -6,31 +6,7 @@
 import type { Position, Batch, Size } from '@/types/domain';
 import { PositionStatus } from '@/types/domain';
 import type { Product } from '@/types/product';
-
-// Старый формат данных из app/page.tsx
-interface ShipmentRawItem {
-  productId: string;
-  overrideName?: string;
-  sizes?: Record<string, number>;
-  quantityOverride?: number;
-  status?: string;
-  sample?: boolean;
-  note?: string;
-  paidPreviously?: boolean;
-  noPayment?: boolean;
-  inTransit?: boolean;
-  showStatusTag?: boolean;
-}
-
-interface ShipmentConfig {
-  id: string;
-  title: string;
-  status: { label: string; icon: string };
-  eta?: string;
-  receivedDate?: string;
-  groupByPayment?: boolean;
-  rawItems: readonly ShipmentRawItem[];
-}
+import type { ShipmentRawItem, ShipmentConfig } from '@/types/shipment';
 
 /**
  * Преобразует размер из строки в тип Size

@@ -1,19 +1,9 @@
 import type { MouseEvent, CSSProperties } from "react";
 
 /**
- * Утилиты для форматирования данных и обработки событий
+ * Утилиты для обработки событий UI
+ * Форматирование данных — см. lib/format.ts
  */
-
-/**
- * Форматирует сумму денег с тонким пробелом в качестве разделителя тысяч
- * @param amount - Сумма в долларах
- * @returns Отформатированная строка, например: "$45 970"
- * @example
- * formatCurrency(45970) // "$45 970"
- */
-export const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString("ru-RU").replace(/\s/g, "\u2009")}`;
-};
 
 /**
  * Создаёт обработчики hover-эффекта для карточек

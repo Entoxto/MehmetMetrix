@@ -2,35 +2,10 @@ import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
 import type { Batch } from "@/types/domain";
+import type { ShipmentConfig } from "@/types/shipment";
 
-// Типы, используемые в JSON (сырые данные)
-export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
-
-type SizeConfig = Record<string, number>;
-
-export interface ShipmentRawItem {
-  productId: string;
-  overrideName?: string;
-  sizes?: SizeConfig;
-  quantityOverride?: number;
-  status?: ShipmentStatusKey;
-  sample?: boolean;
-  note?: string;
-  paidPreviously?: boolean;
-  noPayment?: boolean;
-  inTransit?: boolean;
-  showStatusTag?: boolean;
-}
-
-export interface ShipmentConfig {
-  id: string;
-  title: string;
-  status: { label: string; icon: string };
-  eta?: string;
-  receivedDate?: string;
-  groupByPayment?: boolean;
-  rawItems: readonly ShipmentRawItem[];
-}
+// Реэкспорт типов для обратной совместимости
+export type { ShipmentStatusKey, ShipmentRawItem, ShipmentConfig } from "@/types/shipment";
 
 export interface ShipmentWithItems extends ShipmentConfig {
   totalAmount: number;

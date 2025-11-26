@@ -8,7 +8,8 @@
 import { Fragment, type MouseEvent, type CSSProperties } from "react";
 import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { formatCurrency, createCardHoverHandlers } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
+import { createCardHoverHandlers } from "@/lib/utils";
 
 interface MoneyStatusItem {
   id: string;
