@@ -34,6 +34,14 @@
           "s": 4
         },
         "status": "in_progress"
+      },
+      {
+        "productId": "python-008",
+        "overrideName": "Юбка из бежевого глянцевого питона",
+        "sample": true,
+        "quantityOverride": 1,
+        "note": "образец",
+        "status": "in_progress"
       }
     ]
   },

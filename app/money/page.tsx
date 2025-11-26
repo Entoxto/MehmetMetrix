@@ -47,9 +47,8 @@ export default function MoneyPage() {
           .filter((position) => position.sum !== null)
           .reduce((sum, position) => sum + (position.sum ?? 0), 0);
 
-        const isMarkedPaid = shipment.status?.label
-          ? shipment.status.label.toLowerCase().includes("оплач")
-          : false;
+        const statusLabel = shipment.status?.label?.toLowerCase() ?? "";
+        const isMarkedPaid = statusLabel.includes("оплач") && !statusLabel.includes("не оплач");
 
         if (isMarkedPaid || pendingAmount <= 0) {
           return null;
