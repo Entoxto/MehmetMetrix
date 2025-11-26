@@ -10,7 +10,7 @@
     "rawItems": [
       {
         "productId": "python-004",
-        "overrideName": "Жакет приталенный из кожи питона — бежевый глянец",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый",
         "sizes": {
           "xs": 5,
           "s": 5
@@ -28,7 +28,7 @@
       },
       {
         "productId": "python-007",
-        "overrideName": "Юбка из чёрного глянцевого питона",
+        "overrideName": "Юбка из кожи питона — чёрный глянцевый",
         "sizes": {
           "xs": 6,
           "s": 4
@@ -37,7 +37,7 @@
       },
       {
         "productId": "python-008",
-        "overrideName": "Юбка из бежевого глянцевого питона",
+        "overrideName": "Юбка из кожи питона — бежевый глянцевый",
         "sample": true,
         "quantityOverride": 1,
         "note": "образец",
@@ -55,7 +55,7 @@
     "rawItems": [
       {
         "productId": "pony-001",
-        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "overrideName": "Жакет приталенный из меха пони — чёрный",
         "sizes": {
           "xs": 1,
           "s": 3
@@ -64,7 +64,7 @@
       },
       {
         "productId": "suede-002",
-        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "overrideName": "Жакет из замши в стиле 80-х — бежевый",
         "sizes": {
           "s": 1
         },
@@ -72,7 +72,7 @@
       },
       {
         "productId": "merino-002",
-        "overrideName": "Штаны из бежевого мериноса",
+        "overrideName": "Штаны из мериноса — бежевый",
         "sizes": {
           "xs": 11,
           "s": 7,
@@ -82,7 +82,7 @@
       },
       {
         "productId": "merino-001",
-        "overrideName": "Дублёнка из бежевого мериноса",
+        "overrideName": "Дублёнка из мериноса — бежевый",
         "sizes": {
           "xs": 12,
           "s": 8
@@ -91,7 +91,7 @@
       },
       {
         "productId": "python-003",
-        "overrideName": "Жакет приталенный из кожи питона — чёрный глянец",
+        "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый",
         "sizes": {
           "xs": 3,
           "s": 3
@@ -100,7 +100,7 @@
       },
       {
         "productId": "python-002",
-        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый",
         "sizes": {
           "xs": 1,
           "s": 3
@@ -109,7 +109,7 @@
       },
       {
         "productId": "python-007",
-        "overrideName": "Юбка из чёрного глянцевого питона",
+        "overrideName": "Юбка из кожи питона — чёрный глянцевый",
         "sample": true,
         "quantityOverride": 1,
         "note": "образец",
@@ -117,7 +117,7 @@
       },
       {
         "productId": "fur-003",
-        "overrideName": "Дублёнка таскана волк",
+        "overrideName": "Дублёнка из тасканы — волк",
         "sample": true,
         "sizes": {
           "OneSize": 1
@@ -127,7 +127,7 @@
       },
       {
         "productId": "suede-002",
-        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "overrideName": "Жакет из замши в стиле 80-х — бежевый",
         "sizes": {},
         "quantityOverride": 1,
         "note": "вернулся с ремонта ♻️",
@@ -149,7 +149,7 @@
     "rawItems": [
       {
         "productId": "suede-003",
-        "overrideName": "Жакет из коричневой замши в стиле 80-х",
+        "overrideName": "Жакет из замши в стиле 80-х — коричневый",
         "sizes": {
           "xs": 5,
           "s": 5
@@ -158,7 +158,7 @@
       },
       {
         "productId": "suede-005",
-        "overrideName": "Брюки из коричневой замши",
+        "overrideName": "Брюки из замши — коричневый",
         "sizes": {
           "xs": 4,
           "s": 4,
@@ -168,7 +168,7 @@
       },
       {
         "productId": "suede-002",
-        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "overrideName": "Жакет из замши в стиле 80-х — бежевый",
         "sizes": {
           "xs": 3,
           "s": 3
@@ -177,7 +177,7 @@
       },
       {
         "productId": "suede-004",
-        "overrideName": "Брюки из бежевой замши",
+        "overrideName": "Брюки из замши — бежевый",
         "sizes": {
           "xs": 4,
           "s": 4,
@@ -196,7 +196,7 @@
       },
       {
         "productId": "python-002",
-        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый",
         "sizes": {
           "xs": 3,
           "s": 2
@@ -205,7 +205,7 @@
       },
       {
         "productId": "pony-001",
-        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "overrideName": "Жакет приталенный из меха пони — чёрный",
         "sizes": {
           "xs": 4,
           "s": 2
@@ -214,7 +214,7 @@
       },
       {
         "productId": "pony-001",
-        "overrideName": "Жакет приталенный из меха пони чёрный",
+        "overrideName": "Жакет приталенный из меха пони — чёрный",
         "sizes": {
           "xs": 1
         },
@@ -224,7 +224,7 @@
       },
       {
         "productId": "pony-002",
-        "overrideName": "Штаны из меха пони чёрный",
+        "overrideName": "Штаны из меха пони — чёрный",
         "sizes": {
           "xs": 6,
           "s": 4
@@ -233,7 +233,7 @@
       },
       {
         "productId": "leather-002",
-        "overrideName": "Жакет из кожи Ermes Mouse в стиле 80-х",
+        "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse",
         "sizes": {
           "xs": 3,
           "s": 1
@@ -242,7 +242,7 @@
       },
       {
         "productId": "python-002",
-        "overrideName": "Жакет приталенный из кожи питона — коричневый глянец",
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый",
         "sizes": {
           "xs": 1,
           "s": 2
@@ -253,7 +253,7 @@
       },
       {
         "productId": "suede-002",
-        "overrideName": "Жакет из бежевой замши в стиле 80-х",
+        "overrideName": "Жакет из замши в стиле 80-х — бежевый",
         "sizes": {},
         "quantityOverride": 2,
         "status": "received",
