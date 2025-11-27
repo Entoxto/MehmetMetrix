@@ -46,7 +46,8 @@ export function toPosition(
   products: Product[]
 ): Position {
   const product = products.find((p) => p.id === item.productId);
-  const price = typeof product?.price === 'number' ? product.price : null;
+  // Цена берётся из партии (историческая правда)
+  const price = typeof item.price === 'number' ? item.price : null;
 
   // Преобразуем размеры
   const sizes: Record<Size, number> = {

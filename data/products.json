@@ -6,7 +6,6 @@
       "category": "Кожа",
       "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
       "sizes": ["xs", "s"],
-      "price": 180,
       "materials": {
         "outer": "Кожа Hermes Mouse",
         "lining": "70% Acetate 30% Polyester",
@@ -21,7 +20,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 550,
       "materials": {
         "outer": "Натуральная кожа питона, коричневый глянцевый",
         "lining": "70% Acetate 30% Polyester",
@@ -36,7 +34,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 550,
       "materials": {
         "outer": "Натуральная кожа питона, чёрный глянцевый",
         "lining": "70% Acetate 30% Polyester",
@@ -51,7 +48,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — бежевый глянцевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 550,
       "materials": {
         "outer": "Натуральная кожа питона, бежевый глянцевый",
         "lining": "70% Acetate 30% Polyester",
@@ -66,7 +62,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — бежевый матовый.jpg",
       "sizes": ["xs", "s"],
-      "price": 550,
       "materials": {
         "outer": "Натуральная кожа питона, бежевый матовый",
         "lining": "70% Acetate 30% Polyester",
@@ -81,7 +76,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — чёрный матовый.jpg",
       "sizes": ["xs", "s"],
-      "price": 550,
       "materials": {
         "outer": "Натуральная кожа питона, чёрный матовый",
         "lining": "70% Acetate 30% Polyester",
@@ -96,7 +90,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Юбка из кожи питона — чёрный глянцевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 320,
       "materials": {
         "outer": "Натуральная кожа питона, чёрный глянцевый",
         "lining": "70% Acetate 30% Polyester",
@@ -111,7 +104,6 @@
       "category": "Экзотика",
       "photo": "/images/products/Юбка из кожи питона — бежевый глянцевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 320,
       "materials": {
         "outer": "Натуральная кожа питона, бежевый глянцевый",
         "lining": "70% Acetate 30% Polyester",
@@ -126,7 +118,6 @@
       "category": "Мех",
       "photo": "/images/products/Жакет приталенный из меха пони — чёрный.jpg",
       "sizes": ["xs", "s"],
-      "price": 300,
       "materials": {
         "outer": "100% мех пони, чёрный",
         "lining": "70% Acetate 30% Polyester",
@@ -141,7 +132,6 @@
       "category": "Мех",
       "photo": "/images/products/Штаны из меха пони — чёрный.jpg",
       "sizes": ["xs", "s"],
-      "price": 270,
       "materials": {
         "outer": "100% мех пони",
         "lining": "70% Acetate 30% Polyester",
@@ -156,7 +146,6 @@
       "category": "Мех",
       "photo": "/images/products/Дублёнка из мериноса — бежевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 260,
       "materials": {
         "outer": "100% мех мериноса",
         "lining": "70% Acetate 30% Polyester",
@@ -171,7 +160,6 @@
       "category": "Мех",
       "photo": "/images/products/Дублёнка из тасканы — волк.jpg",
       "sizes": ["xs", "s", "OneSize"],
-      "price": 360,
       "materials": {
         "outer": "100% мех таскана волк",
         "lining": "70% Acetate 30% Polyester",
@@ -186,7 +174,6 @@
       "category": "Мех",
       "photo": "/images/products/Штаны из мериноса — бежевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 215,
       "materials": {
         "outer": "100% мех мериноса",
         "lining": "70% Acetate 30% Polyester",
@@ -201,7 +188,6 @@
       "category": "Замша",
       "photo": "/images/products/Жакет из замши в стиле 80-х — бежевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 190,
       "materials": {
         "outer": "100% замша",
         "lining": "70% Acetate 30% Polyester",
@@ -216,7 +202,6 @@
       "category": "Замша",
       "photo": "/images/products/Жакет из замши в стиле 80-х — коричневый.jpg",
       "sizes": ["xs", "s"],
-      "price": 180,
       "materials": {
         "outer": "100% замша",
         "lining": "70% Acetate 30% Polyester",
@@ -231,7 +216,6 @@
       "category": "Замша",
       "photo": "/images/products/Брюки из замши — бежевый.jpg",
       "sizes": ["xs", "s"],
-      "price": 190,
       "materials": {
         "outer": "100% замша",
         "lining": "70% Acetate 30% Polyester",
@@ -246,7 +230,6 @@
       "category": "Замша",
       "photo": "/images/products/Брюки из замши — коричневый.jpg",
       "sizes": ["xs", "s"],
-      "price": 180,
       "materials": {
         "outer": "100% замша",
         "lining": "70% Acetate 30% Polyester",

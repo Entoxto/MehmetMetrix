@@ -12,6 +12,7 @@ export interface ShipmentRawItem {
   overrideName?: string;
   sizes?: SizeConfig;
   quantityOverride?: number;
+  price?: number;  // Цена на момент партии (историческая)
   status?: ShipmentStatusKey;
   sample?: boolean;
   note?: string;
@@ -30,4 +31,6 @@ export interface ShipmentConfig {
   groupByPayment?: boolean;
   rawItems: readonly ShipmentRawItem[];
 }
+
+
 

@@ -6,8 +6,11 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import productsData from "@/data/products.json";
+import shipmentsData from "@/data/shipments.json";
 import type { Product, ProductsData } from "@/types/product";
+import type { ShipmentConfig } from "@/types/shipment";
 import { Shell } from "@/components/Shell";
+import { getLatestPrice } from "@/lib/prices";
 
 function ProductPageContent() {
   const params = useParams();
@@ -26,8 +29,13 @@ function ProductPageContent() {
     }
   }, []);
 
+  // Обогащаем продукт актуальной ценой из партий
   const product = useMemo(() => {
-    return products.find((p) => p.id === productId);
+    const found = products.find((p) => p.id === productId);
+    if (!found) return undefined;
+    
+    const price = getLatestPrice(found.id, shipmentsData as readonly ShipmentConfig[]);
+    return { ...found, price: price ?? found.price };
   }, [products, productId]);
 
   // Determine back link logic
