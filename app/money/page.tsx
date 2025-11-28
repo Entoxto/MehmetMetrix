@@ -55,7 +55,7 @@ export default function MoneyPage() {
         }
 
         const normalizedTitle =
-          shipment.title?.replace(/^Партия/i, "партию") ?? `партию ${shipment.id}`;
+          shipment.title?.replace(/^Поставка/i, "поставку") ?? `поставку ${shipment.id}`;
 
         return {
           id: shipment.id,

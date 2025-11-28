@@ -1,7 +1,7 @@
 [
   {
     "id": "shipment-12",
-    "title": "Партия №12",
+    "title": "Поставка №12",
     "status": "inProgress",
     "eta": "Ожидаем отправку на этой неделе",
     "rawItems": [
@@ -48,7 +48,7 @@
   },
   {
     "id": "shipment-11",
-    "title": "Партия №11",
+    "title": "Поставка №11",
     "status": "receivedUnpaid",
     "rawItems": [
       {
@@ -146,7 +146,7 @@
   },
   {
     "id": "shipment-10",
-    "title": "Партия №10",
+    "title": "Поставка №10",
     "status": "receivedPaid",
     "receivedDate": "04.11.2025",
     "groupByPayment": false,
@@ -278,5 +278,12 @@
         "showStatusTag": true
       }
     ]
+  },
+  {
+    "id": "shipment-2024-empty",
+    "title": "Поставка для 2024 года",
+    "status": "inProgress",
+    "year": 2024,
+    "rawItems": []
   }
 ]

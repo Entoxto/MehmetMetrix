@@ -39,6 +39,7 @@ export interface ShipmentConfig {
   status: ShipmentStatus;
   eta?: string;
   receivedDate?: string;
+  year?: number;  // Год партии (если не указан, определяется из receivedDate или текущий год)
   groupByPayment?: boolean;
   rawItems: readonly ShipmentRawItem[];
 }

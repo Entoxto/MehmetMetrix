@@ -65,7 +65,9 @@ function CatalogPageContent() {
 
   const categoryProducts = useMemo(() => {
     if (!selectedCategory) return [];
-    return products.filter((product) => product.category === selectedCategory && product.inStock);
+    return products
+      .filter((product) => product.category === selectedCategory && product.inStock)
+      .sort((a, b) => a.name.localeCompare(b.name, 'ru', { sensitivity: 'base' }));
   }, [products, selectedCategory]);
 
   const handleSelectCategory = (category: string | null) => {
