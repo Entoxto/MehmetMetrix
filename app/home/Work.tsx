@@ -8,7 +8,7 @@
  */
 import type { MouseEvent } from "react";
 import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, shipmentStatusIcon, shipmentStatusLabel } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/lib/shipments";
@@ -128,7 +128,7 @@ export const Work = ({
               e.currentTarget.style.outline = "none";
             }}
             aria-expanded={isExpanded}
-            aria-label={`${shipment.title}, ${shipment.status.label}`}
+            aria-label={`${shipment.title}, ${shipmentStatusLabel[shipment.status]}`}
           >
             <div
               style={{
@@ -173,7 +173,7 @@ export const Work = ({
                   <div
                     style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
                     role="status"
-                    aria-label={`Статус: ${shipment.status.label}`}
+                    aria-label={`Статус: ${shipmentStatusLabel[shipment.status]}`}
                   >
                     <span
                       style={{
@@ -182,9 +182,9 @@ export const Work = ({
                       }}
                       aria-hidden="true"
                     >
-                      {shipment.status.icon}
+                      {shipmentStatusIcon[shipment.status]}
                     </span>
-                    <span style={{ textTransform: "uppercase" }}>{shipment.status.label}</span>
+                    <span style={{ textTransform: "uppercase" }}>{shipmentStatusLabel[shipment.status]}</span>
                   </div>
                 </div>
               </div>

@@ -5,6 +5,17 @@
 
 export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
 
+/**
+ * Статусы партий
+ */
+export enum ShipmentStatus {
+  inProgress = 'inProgress',
+  done = 'done',
+  inTransit = 'inTransit',
+  receivedUnpaid = 'receivedUnpaid',
+  receivedPaid = 'receivedPaid',
+}
+
 export type SizeConfig = Record<string, number>;
 
 export interface ShipmentRawItem {
@@ -25,12 +36,10 @@ export interface ShipmentRawItem {
 export interface ShipmentConfig {
   id: string;
   title: string;
-  status: { label: string; icon: string };
+  status: ShipmentStatus;
   eta?: string;
   receivedDate?: string;
   groupByPayment?: boolean;
   rawItems: readonly ShipmentRawItem[];
 }
-
-
 

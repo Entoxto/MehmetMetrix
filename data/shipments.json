@@ -2,10 +2,7 @@
   {
     "id": "shipment-12",
     "title": "Партия №12",
-    "status": {
-      "label": "В работе",
-      "icon": "🧵"
-    },
+    "status": "inProgress",
     "eta": "Ожидаем отправку на этой неделе",
     "rawItems": [
       {
@@ -52,10 +49,7 @@
   {
     "id": "shipment-11",
     "title": "Партия №11",
-    "status": {
-      "label": "Получено, не оплачено",
-      "icon": "📦"
-    },
+    "status": "receivedUnpaid",
     "rawItems": [
       {
         "productId": "pony-001",
@@ -153,10 +147,7 @@
   {
     "id": "shipment-10",
     "title": "Партия №10",
-    "status": {
-      "label": "Получено, оплачено",
-      "icon": "✅"
-    },
+    "status": "receivedPaid",
     "receivedDate": "04.11.2025",
     "groupByPayment": false,
     "rawItems": [

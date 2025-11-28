@@ -26,12 +26,14 @@ export function calcSum(position: Position): number | null {
  */
 export function groupByStatus(positions: Position[]): Record<PositionStatus, Position[]> {
   const grouped: Record<PositionStatus, Position[]> = {
+    [PositionStatus.waitingForMaterial]: [],
     [PositionStatus.inProduction]: [],
     [PositionStatus.inTransit]: [],
     [PositionStatus.receivedUnpaid]: [],
     [PositionStatus.done]: [],
     [PositionStatus.paid]: [],
     [PositionStatus.paidEarlier]: [],
+    [PositionStatus.receivedPaid]: [],
     [PositionStatus.returned]: [],
   };
 
@@ -46,13 +48,15 @@ export function groupByStatus(positions: Position[]): Record<PositionStatus, Pos
  * Фиксированный порядок вывода статусов
  */
 export const orderStatuses: PositionStatus[] = [
+  PositionStatus.waitingForMaterial,
   PositionStatus.inProduction,
   PositionStatus.done,
+  PositionStatus.inTransit,
+  PositionStatus.receivedUnpaid,
   PositionStatus.paid,
   PositionStatus.paidEarlier,
+  PositionStatus.receivedPaid,
   PositionStatus.returned,
-  PositionStatus.receivedUnpaid,
-  PositionStatus.inTransit,
 ];
 
 /**

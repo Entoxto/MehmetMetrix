@@ -6,12 +6,14 @@
 export type Size = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'OneSize';
 
 export enum PositionStatus {
+  waitingForMaterial = 'waitingForMaterial',
   inProduction = 'inProduction',
   inTransit = 'inTransit',
   receivedUnpaid = 'receivedUnpaid',
   done = 'done',
   paid = 'paid',
   paidEarlier = 'paidEarlier',
+  receivedPaid = 'receivedPaid',
   returned = 'returned',
 }
 

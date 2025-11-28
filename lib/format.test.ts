@@ -9,11 +9,14 @@ import { PositionStatus } from '@/types/domain';
 
 describe('statusIcon', () => {
   it('должен содержать иконку для каждого статуса', () => {
+    expect(statusIcon[PositionStatus.waitingForMaterial]).toBe('🧵');
     expect(statusIcon[PositionStatus.inProduction]).toBe('🛠️');
     expect(statusIcon[PositionStatus.inTransit]).toBe('🚚');
-    expect(statusIcon[PositionStatus.done]).toBe('✅');
+    expect(statusIcon[PositionStatus.receivedUnpaid]).toBe('📦');
+    expect(statusIcon[PositionStatus.done]).toBe('🕒');
     expect(statusIcon[PositionStatus.paid]).toBe('💵');
     expect(statusIcon[PositionStatus.paidEarlier]).toBe('☑️');
+    expect(statusIcon[PositionStatus.receivedPaid]).toBe('✅');
     expect(statusIcon[PositionStatus.returned]).toBe('♻️');
   });
 
@@ -29,12 +32,15 @@ describe('statusIcon', () => {
 
 describe('statusLabel', () => {
   it('должен содержать подпись для каждого статуса', () => {
-    expect(statusLabel[PositionStatus.inProduction]).toBe('в производстве');
-    expect(statusLabel[PositionStatus.inTransit]).toBe('уже в пути');
-    expect(statusLabel[PositionStatus.done]).toBe('готов');
-    expect(statusLabel[PositionStatus.paid]).toBe('оплачено');
-    expect(statusLabel[PositionStatus.paidEarlier]).toBe('оплачено ранее');
-    expect(statusLabel[PositionStatus.returned]).toBe('вернулись после ремонта');
+    expect(statusLabel[PositionStatus.waitingForMaterial]).toBe('Ожидаем материал');
+    expect(statusLabel[PositionStatus.inProduction]).toBe('В производстве');
+    expect(statusLabel[PositionStatus.inTransit]).toBe('В пути');
+    expect(statusLabel[PositionStatus.receivedUnpaid]).toBe('Получено, не оплачено');
+    expect(statusLabel[PositionStatus.done]).toBe('Готово, ожидает отправки');
+    expect(statusLabel[PositionStatus.paid]).toBe('Оплачено');
+    expect(statusLabel[PositionStatus.paidEarlier]).toBe('Оплачено ранее');
+    expect(statusLabel[PositionStatus.receivedPaid]).toBe('Получено, оплачено');
+    expect(statusLabel[PositionStatus.returned]).toBe('Вернулось после ремонта');
   });
 
   it('должен содержать все статусы из enum', () => {

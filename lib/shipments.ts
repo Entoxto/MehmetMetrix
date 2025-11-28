@@ -6,6 +6,7 @@ import type { ShipmentConfig } from "@/types/shipment";
 
 // Реэкспорт типов для обратной совместимости
 export type { ShipmentStatusKey, ShipmentRawItem, ShipmentConfig } from "@/types/shipment";
+export { ShipmentStatus } from "@/types/shipment";
 
 export interface ShipmentWithItems extends ShipmentConfig {
   totalAmount: number;

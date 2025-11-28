@@ -158,13 +158,15 @@ describe('toViewRows', () => {
 describe('orderStatuses', () => {
   it('должен содержать фиксированный порядок статусов', () => {
     expect(orderStatuses).toEqual([
+      PositionStatus.waitingForMaterial,
       PositionStatus.inProduction,
       PositionStatus.done,
+      PositionStatus.inTransit,
+      PositionStatus.receivedUnpaid,
       PositionStatus.paid,
       PositionStatus.paidEarlier,
+      PositionStatus.receivedPaid,
       PositionStatus.returned,
-      PositionStatus.receivedUnpaid,
-      PositionStatus.inTransit,
     ]);
   });
 });

@@ -7,6 +7,7 @@ import type { Product, ProductsData } from "@/types/product";
 import { buildShipments } from "@/lib/shipments";
 import { Money } from "@/app/home/Money";
 import { Shell } from "@/components/Shell";
+import { ShipmentStatus } from "@/types/shipment";
 
 type PendingItem = { id: string; title: string; amount: number };
 type DepositConfig = { id?: string; title?: string; lines?: string[]; amount?: number };
@@ -47,8 +48,7 @@ export default function MoneyPage() {
           .filter((position) => position.sum !== null)
           .reduce((sum, position) => sum + (position.sum ?? 0), 0);
 
-        const statusLabel = shipment.status?.label?.toLowerCase() ?? "";
-        const isMarkedPaid = statusLabel.includes("оплач") && !statusLabel.includes("не оплач");
+        const isMarkedPaid = (shipment.status === ShipmentStatus.receivedPaid);
 
         if (isMarkedPaid || pendingAmount <= 0) {
           return null;
