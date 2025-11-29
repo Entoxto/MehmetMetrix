@@ -4,25 +4,15 @@
  * DownSector — нижняя панель каркаса.
  * Даёт общий подвал с дефолтным текстом и принимает children для кастомизации.
  */
-import { COLORS } from "@/constants/styles";
 import type { ReactNode } from "react";
+import styles from "@/components/Shell.module.css";
 
 interface FooterProps {
   children?: ReactNode;
 }
 
 export const DownSector = ({ children }: FooterProps) => (
-  <footer
-    style={{
-      padding: 20,
-      textAlign: "center",
-      color: COLORS.text.muted,
-      borderTop: `1px solid rgba(102,102,102,0.2)`,
-      fontSize: 12,
-      fontStyle: "italic",
-      background: COLORS.background.footer,
-    }}
-  >
+  <footer className={styles.footer}>
     {children ?? <>Сделано с любовью и лёгким запахом кожи © {new Date().getFullYear()}</>}
   </footer>
 );

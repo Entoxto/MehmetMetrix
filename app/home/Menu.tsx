@@ -6,8 +6,7 @@
  * Рисует интерактивную сетку по данным с иконками, описанием и обработчиком клика.
  * По нажатию вызывает переданный onClick и переключает экран главной страницы.
  */
-import { createCardHoverHandlers } from "@/lib/utils";
-import { MENU_STYLES } from "./styles";
+import styles from "./Menu.module.css";
 
 export interface MenuItem {
   title: string;
@@ -22,37 +21,26 @@ interface MenuProps {
 }
 
 export const Menu = ({ items }: MenuProps) => {
-  const hoverHandlers = createCardHoverHandlers(
-    MENU_STYLES.cardHover,
-    MENU_STYLES.cardDefault
-  );
-
   return (
-    <main style={MENU_STYLES.main}>
-      {items.map((item, index) => (
-        <div
-          key={index}
+    <main className={styles.main}>
+      {items.map((item) => (
+        <button
+          key={item.title}
           onClick={item.onClick}
-          {...hoverHandlers}
-          style={MENU_STYLES.card}
+          className={styles.card}
+          type="button"
         >
-          <div style={MENU_STYLES.cardHeader}>
-            <span style={MENU_STYLES.icon}>{item.icon}</span>
-            <h2 style={MENU_STYLES.title}>{item.title}</h2>
+          <div className={styles.cardHeader}>
+            <span className={styles.icon}>{item.icon}</span>
+            <h2 className={styles.title}>{item.title}</h2>
           </div>
           {item.image && (
-            <div style={MENU_STYLES.imageContainer}>
-              <img
-                src={item.image}
-                alt={item.title}
-                style={MENU_STYLES.image}
-              />
+            <div className={styles.imageContainer}>
+              <img src={item.image} alt={item.title} className={styles.image} />
             </div>
           )}
-          <p style={MENU_STYLES.description}>
-            {item.description}
-          </p>
-        </div>
+          <p className={styles.description}>{item.description}</p>
+        </button>
       ))}
     </main>
   );

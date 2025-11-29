@@ -17,15 +17,26 @@ export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointPr
       return;
     }
 
+    const mediaQueries = [
+      window.matchMedia(`(min-width: 1280px)`),
+      window.matchMedia(`(min-width: 1024px)`),
+      window.matchMedia(`(min-width: 768px)`),
+    ];
+
     const update = () => {
-      setBreakpoint(resolveBreakpoint(window.innerWidth));
+      const next = resolveBreakpoint(window.innerWidth);
+      setBreakpoint((current) => (current === next ? current : next));
     };
 
+    const handleChange = () => requestAnimationFrame(update);
+
     update();
-    window.addEventListener("resize", update);
+    mediaQueries.forEach((query) => query.addEventListener("change", handleChange));
 
     return () => {
-      window.removeEventListener("resize", update);
+      mediaQueries.forEach((query) =>
+        query.removeEventListener("change", handleChange)
+      );
     };
   }, []);
 
