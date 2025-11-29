@@ -10,7 +10,7 @@ import { useState } from "react";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency } from "@/lib/format";
-import { getOptimizedImagePath, getBlurPlaceholder } from "@/lib/imageUtils";
+import { getOptimizedImagePath, getJpgFallbackPath, getBlurPlaceholder } from "@/lib/imageUtils";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {
@@ -20,8 +20,8 @@ interface ProductDetailProps {
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
+  const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(product.photo));
   const [imageError, setImageError] = useState(false);
-  const optimizedPhoto = getOptimizedImagePath(product.photo);
 
   // Адаптивная типографика на основе глобальной
   const responsiveTypography = {
@@ -87,7 +87,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           <span style={{ color: COLORS.text.muted, fontSize: isCompact ? 48 : 80 }}>📷</span>
         ) : (
           <Image
-            src={optimizedPhoto}
+            src={imageSrc}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -99,7 +99,16 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             placeholder="blur"
             blurDataURL={getBlurPlaceholder()}
             unoptimized={true}
-            onError={() => setImageError(true)}
+            onError={() => {
+              if (imageSrc.includes('/webp/')) {
+                // Пытаемся загрузить JPG fallback
+                const jpgPath = getJpgFallbackPath(imageSrc);
+                setImageSrc(jpgPath);
+              } else {
+                // И JPG не загрузился - показываем эмодзи
+                setImageError(true);
+              }
+            }}
           />
         )}
       </div>

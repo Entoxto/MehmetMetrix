@@ -13,6 +13,17 @@ export function getOptimizedImagePath(jpgPath: string): string {
 }
 
 /**
+ * Преобразует путь к WebP обратно в путь к JPG (fallback).
+ * Используется при ошибке загрузки WebP для автоматического переключения на JPG.
+ * 
+ * @param webpPath - Путь к WebP изображению (например: "/images/products/webp/фото.webp")
+ * @returns Путь к JPG (например: "/images/products/jpg/фото.jpg")
+ */
+export function getJpgFallbackPath(webpPath: string): string {
+  return webpPath.replace('/webp/', '/jpg/').replace(/\.webp$/i, '.jpg');
+}
+
+/**
  * Генерирует размытый placeholder для изображений.
  * Использует простой градиент на основе цвета фона карточки.
  * 

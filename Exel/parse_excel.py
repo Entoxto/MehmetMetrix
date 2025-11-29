@@ -4,6 +4,8 @@
 """
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 from excel_parser import ExcelParser
 
@@ -61,6 +63,27 @@ def main():
     except Exception as e:
         print(f"❌ Ошибка при сохранении JSON: {e}")
         return
+    
+    # Автоматически обновляем цены в каталоге
+    print("\n" + "="*50)
+    print("🔄 Автоматическое обновление цен в каталоге...")
+    try:
+        update_prices_script = script_dir / "update_prices.py"
+        result = subprocess.run(
+            [sys.executable, str(update_prices_script)],
+            capture_output=True,
+            text=True,
+            encoding='utf-8'
+        )
+        # Выводим результат без паузы (так как update_prices.py уже делает паузу)
+        print(result.stdout)
+        if result.stderr:
+            print(result.stderr, file=sys.stderr)
+        if result.returncode != 0:
+            print(f"⚠️  Обновление цен завершилось с кодом {result.returncode}")
+    except Exception as e:
+        print(f"⚠️  Не удалось автоматически обновить цены: {e}")
+        print(f"💡 Запустите вручную: python {script_dir / 'update_prices.py'}")
     
     print("\n" + "="*50)
     input("Нажмите Enter для выхода...")

@@ -3,14 +3,11 @@
 import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import productsData from "@/data/products.json";
-import shipmentsData from "@/data/shipments.json";
 import type { Product, ProductsData } from "@/types/product";
-import type { ShipmentConfig } from "@/types/shipment";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { Catalog } from "@/app/home/Catalog";
 import { Shell } from "@/components/Shell";
 import { COLORS } from "@/constants/styles";
-import { getPriceMap } from "@/lib/prices";
 
 function CatalogPageContent() {
   const router = useRouter();
@@ -19,23 +16,15 @@ function CatalogPageContent() {
 
   const selectedCategory = searchParams.get("category");
 
-  // Получаем карту актуальных цен из партий
-  const priceMap = useMemo(() => {
-    return getPriceMap(shipmentsData as readonly ShipmentConfig[]);
-  }, []);
-
-  // Обогащаем продукты актуальными ценами из партий
+  // Цены берутся напрямую из products.json (обновляются скриптом update_prices.py)
   const products: Product[] = useMemo(() => {
     try {
       const productsDataTyped = productsData as ProductsData;
-      return (productsDataTyped.products || []).map(product => ({
-        ...product,
-        price: priceMap.get(product.id) ?? product.price,
-      }));
+      return productsDataTyped.products || [];
     } catch {
       return [];
     }
-  }, [priceMap]);
+  }, []);
 
   const categoryDescriptions: Record<string, string> = useMemo(
     () => ({

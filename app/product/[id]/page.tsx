@@ -6,11 +6,8 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import productsData from "@/data/products.json";
-import shipmentsData from "@/data/shipments.json";
 import type { Product, ProductsData } from "@/types/product";
-import type { ShipmentConfig } from "@/types/shipment";
 import { Shell } from "@/components/Shell";
-import { getLatestPrice } from "@/lib/prices";
 
 function ProductPageContent() {
   const params = useParams();
@@ -29,13 +26,9 @@ function ProductPageContent() {
     }
   }, []);
 
-  // Обогащаем продукт актуальной ценой из партий
+  // Цена берётся напрямую из products.json (обновляется скриптом update_prices.py)
   const product = useMemo(() => {
-    const found = products.find((p) => p.id === productId);
-    if (!found) return undefined;
-    
-    const price = getLatestPrice(found.id, shipmentsData as readonly ShipmentConfig[]);
-    return { ...found, price: price ?? found.price };
+    return products.find((p) => p.id === productId);
   }, [products, productId]);
 
   // Determine back link logic

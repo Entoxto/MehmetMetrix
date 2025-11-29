@@ -11,7 +11,7 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
-import { getOptimizedImagePath, getBlurPlaceholder } from "@/lib/imageUtils";
+import { getOptimizedImagePath, getJpgFallbackPath, getBlurPlaceholder } from "@/lib/imageUtils";
 import type { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -19,8 +19,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(product.photo));
   const [imageError, setImageError] = useState(false);
-  const optimizedPhoto = getOptimizedImagePath(product.photo);
   
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
@@ -74,7 +74,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <span style={{ color: COLORS.text.muted, fontSize: 48 }}>📷</span>
           ) : (
             <Image
-              src={optimizedPhoto}
+              src={imageSrc}
               alt={product.name}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -85,7 +85,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               placeholder="blur"
               blurDataURL={getBlurPlaceholder()}
               unoptimized={true}
-              onError={() => setImageError(true)}
+              onError={() => {
+                if (imageSrc.includes('/webp/')) {
+                  // Пытаемся загрузить JPG fallback
+                  const jpgPath = getJpgFallbackPath(imageSrc);
+                  setImageSrc(jpgPath);
+                } else {
+                  // И JPG не загрузился - показываем эмодзи
+                  setImageError(true);
+                }
+              }}
             />
           )}
         </div>

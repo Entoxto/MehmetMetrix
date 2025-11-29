@@ -95,11 +95,10 @@ def update_prices_from_shipments():
     except Exception as e:
         print(f"❌ Ошибка при сохранении products.json: {e}")
         return
-    
-    print("\n" + "="*50)
-    input("Нажмите Enter для выхода...")
 
 
 if __name__ == "__main__":
     update_prices_from_shipments()
+    print("\n" + "="*50)
+    input("Нажмите Enter для выхода...")
 
