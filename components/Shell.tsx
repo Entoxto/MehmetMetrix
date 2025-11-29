@@ -18,7 +18,7 @@ export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  const showBackButton = !isHome || backHref;
+  const showBackButton = !isHome || Boolean(backHref);
   const targetHref = backHref || "/";
   return (
     <div className={styles.container}>
