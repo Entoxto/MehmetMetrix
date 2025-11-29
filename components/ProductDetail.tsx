@@ -150,7 +150,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{
-              objectFit: "contain", // Не обрезаем, показываем изображение полностью
+              objectFit: isCompact ? "cover" : "contain", // На мобильных растягиваем на всю ширину, на десктопе показываем полностью
+              objectPosition: isCompact ? "top center" : undefined, // На мобильных обрезаем снизу, сохраняя верх
             }}
             loading="eager"
             priority
