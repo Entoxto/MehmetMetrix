@@ -2,6 +2,7 @@ import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
 import type { Batch } from "@/types/domain";
+import { ShipmentStatus } from "@/types/shipment";
 
 // Типы, используемые в JSON (сырые данные)
 export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
@@ -25,7 +26,7 @@ export interface ShipmentRawItem {
 export interface ShipmentConfig {
   id: string;
   title: string;
-  status: { label: string; icon: string };
+  status: ShipmentStatus; // В JSON это строка, но TypeScript типизирует как enum
   eta?: string;
   receivedDate?: string;
   groupByPayment?: boolean;

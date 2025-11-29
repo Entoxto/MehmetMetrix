@@ -12,7 +12,7 @@ interface BreakpointProviderProps {
 /**
  * Throttle функция - ограничивает частоту вызовов
  */
-function throttle<T extends (...args: any[]) => any>(
+function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): (...args: Parameters<T>) => void {

@@ -13,6 +13,7 @@ import { formatCurrency, shipmentStatusIcon, shipmentStatusLabel } from "@/lib/f
 import { createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/lib/shipments";
+import { ShipmentStatus } from "@/types/shipment";
 
 interface YearGroupProps {
   year: number;
@@ -185,7 +186,7 @@ export const YearGroup = ({
             shipments.map((shipment) => {
               const isExpandedCard = expandedCards.has(shipment.id);
               const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
-              const highlightStatus = shipment.status === "receivedPaid";
+              const highlightStatus = shipment.status === ShipmentStatus.receivedPaid;
 
               return (
                 <div
