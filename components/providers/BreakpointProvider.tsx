@@ -9,6 +9,35 @@ interface BreakpointProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Throttle функция - ограничивает частоту вызовов
+ */
+function throttle<T extends (...args: any[]) => any>(
+  func: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  let lastCall = 0;
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    const now = Date.now();
+    const timeSinceLastCall = now - lastCall;
+
+    if (timeSinceLastCall >= delay) {
+      lastCall = now;
+      func(...args);
+    } else {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        lastCall = Date.now();
+        func(...args);
+      }, delay - timeSinceLastCall);
+    }
+  };
+}
+
 export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointProviderProps) => {
   const [breakpoint, setBreakpoint] = useState<BreakpointKey>(initialBreakpoint);
 
@@ -21,11 +50,16 @@ export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointPr
       setBreakpoint(resolveBreakpoint(window.innerWidth));
     };
 
+    // Первоначальное обновление
     update();
-    window.addEventListener("resize", update);
+
+    // Throttled версия для resize событий (обновление максимум раз в 100ms)
+    const throttledUpdate = throttle(update, 100);
+
+    window.addEventListener("resize", throttledUpdate);
 
     return () => {
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", throttledUpdate);
     };
   }, []);
 
