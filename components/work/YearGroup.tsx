@@ -185,7 +185,7 @@ export const YearGroup = ({
             shipments.map((shipment) => {
               const isExpandedCard = expandedCards.has(shipment.id);
               const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
-              const highlightStatus = shipment.id === "shipment-10";
+              const highlightStatus = shipment.status === "receivedPaid";
 
               return (
                 <div

@@ -5,504 +5,780 @@
       "name": "Жакет из кожи Hermes в стиле 80-х — mouse",
       "category": "Кожа",
       "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, стиль 80-х"
       },
       "inStock": true,
-      "tags": ["кожа", "стиль 80-х", "премиум"]
+      "tags": [
+        "кожа",
+        "стиль 80-х",
+        "премиум"
+      ],
+      "price": 180
     },
     {
       "id": "python-002",
       "name": "Жакет приталенный из кожи питона — коричневый глянцевый",
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "приталенный"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 550
     },
     {
       "id": "python-003",
       "name": "Жакет приталенный из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "приталенный"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 550
     },
     {
       "id": "python-004",
       "name": "Жакет приталенный из кожи питона — бежевый глянцевый",
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — бежевый глянцевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "приталенный"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 550
     },
     {
       "id": "python-005",
       "name": "Жакет приталенный из кожи питона — бежевый матовый",
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — бежевый матовый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "приталенный"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 550
     },
     {
       "id": "python-006",
       "name": "Жакет приталенный из кожи питона — чёрный матовый",
       "category": "Экзотика",
       "photo": "/images/products/Жакет приталенный из кожи питона — чёрный матовый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "приталенный"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 550
     },
     {
       "id": "python-007",
       "name": "Юбка из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
       "photo": "/images/products/Юбка из кожи питона — чёрный глянцевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "юбка"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "юбка"
+      ],
+      "price": 320
     },
     {
       "id": "python-008",
       "name": "Юбка из кожи питона — бежевый глянцевый",
       "category": "Экзотика",
       "photo": "/images/products/Юбка из кожи питона — бежевый глянцевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум", "юбка"]
+      "tags": [
+        "эксклюзив",
+        "премиум",
+        "юбка"
+      ],
+      "price": 320
     },
     {
       "id": "pony-001",
       "name": "Жакет приталенный из меха пони в стиле 80-х — чёрный",
       "category": "Мех",
       "photo": "/images/products/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "приталенный"]
+      "tags": [
+        "мех",
+        "премиум",
+        "приталенный"
+      ],
+      "price": 300
     },
     {
       "id": "pony-002",
       "name": "Штаны из меха пони — чёрный",
       "category": "Мех",
       "photo": "/images/products/Штаны из меха пони — чёрный.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "штаны"]
+      "tags": [
+        "мех",
+        "премиум",
+        "штаны"
+      ],
+      "price": 270
     },
     {
       "id": "merino-001",
       "name": "Дублёнка из меха мериноса — бежевый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка из меха мериноса — бежевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Натуральный мех мериноса",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех мериноса"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 260
     },
     {
       "id": "fur-003",
       "name": "Дублёнка из тасканы — волк",
       "category": "Мех",
       "photo": "/images/products/Дублёнка из тасканы — волк.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех таскана волк"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 360
     },
     {
       "id": "merino-002",
       "name": "Штаны из меха мериноса — бежевый",
       "category": "Мех",
       "photo": "/images/products/Штаны из меха мериноса — бежевый.jpg",
-      "sizes": ["xs", "s", "m"],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральный мех мериноса",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех мериноса"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "штаны"]
+      "tags": [
+        "мех",
+        "премиум",
+        "штаны"
+      ],
+      "price": 215
     },
     {
       "id": "suede-002",
       "name": "Жакет из замши в стиле 80-х — бежевый",
       "category": "Замша",
       "photo": "/images/products/Жакет из замши в стиле 80-х — бежевый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "приталенный"]
+      "tags": [
+        "осень",
+        "весна",
+        "приталенный"
+      ],
+      "price": 190
     },
     {
       "id": "suede-003",
       "name": "Жакет из замши в стиле 80-х — коричневый",
       "category": "Замша",
       "photo": "/images/products/Жакет из замши в стиле 80-х — коричневый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "приталенный"]
+      "tags": [
+        "осень",
+        "весна",
+        "приталенный"
+      ],
+      "price": 180
     },
     {
       "id": "suede-004",
       "name": "Брюки из замши — бежевый",
       "category": "Замша",
       "photo": "/images/products/Брюки из замши — бежевый.jpg",
-      "sizes": ["xs", "s", "m"],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "брюки"]
+      "tags": [
+        "осень",
+        "весна",
+        "брюки"
+      ],
+      "price": 190
     },
     {
       "id": "suede-005",
       "name": "Брюки из замши — коричневый",
       "category": "Замша",
       "photo": "/images/products/Брюки из замши — коричневый.jpg",
-      "sizes": ["xs", "s", "m"],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "брюки"]
+      "tags": [
+        "осень",
+        "весна",
+        "брюки"
+      ],
+      "price": 180
     },
     {
       "id": "suede-006",
       "name": "Плащ из замши — коричневый",
       "category": "Замша",
       "photo": "/images/products/Плащ из замши — коричневый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "плащ"]
+      "tags": [
+        "осень",
+        "весна",
+        "плащ"
+      ],
+      "price": 260
     },
     {
       "id": "suede-007",
       "name": "Юбка из замши — коричневый",
       "category": "Замша",
       "photo": "/images/products/Юбка из замши — коричневый.jpg",
-      "sizes": ["xs", "s", "m"],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "юбка"]
+      "tags": [
+        "осень",
+        "весна",
+        "юбка"
+      ],
+      "price": 165
     },
     {
       "id": "suede-008",
       "name": "Брюки из замши — чёрный",
       "category": "Замша",
       "photo": "/images/products/Брюки из замши — чёрный.jpg",
-      "sizes": ["xs", "s", "m"],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральная замша",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Требует аккуратного ухода, избегать воды"
       },
       "inStock": true,
-      "tags": ["осень", "весна", "брюки"]
+      "tags": [
+        "осень",
+        "весна",
+        "брюки"
+      ],
+      "price": 175
     },
     {
       "id": "leather-001",
       "name": "Жакет из кожи Hermes в стиле 80-х — brown",
       "category": "Кожа",
       "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, стиль 80-х"
       },
       "inStock": true,
-      "tags": ["кожа", "стиль 80-х", "премиум"]
+      "tags": [
+        "кожа",
+        "стиль 80-х",
+        "премиум"
+      ],
+      "price": 180
     },
     {
       "id": "leather-003",
       "name": "Жакет из кожи Hermes в стиле 80-х — taupe",
       "category": "Кожа",
       "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — taupe.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, стиль 80-х"
       },
       "inStock": true,
-      "tags": ["кожа", "стиль 80-х", "премиум"]
+      "tags": [
+        "кожа",
+        "стиль 80-х",
+        "премиум"
+      ],
+      "price": 180
     },
     {
       "id": "leather-004",
       "name": "Жакет из кожи Hermes в стиле 80-х — чёрный",
       "category": "Кожа",
       "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, стиль 80-х"
       },
       "inStock": true,
-      "tags": ["кожа", "стиль 80-х", "премиум"]
+      "tags": [
+        "кожа",
+        "стиль 80-х",
+        "премиум"
+      ],
+      "price": 180
     },
     {
       "id": "leather-005",
       "name": "Парка из кожи Hermes — mouse",
       "category": "Кожа",
       "photo": "/images/products/Парка из кожи Hermes — mouse.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество"
       },
       "inStock": true,
-      "tags": ["кожа", "премиум", "парка"]
+      "tags": [
+        "кожа",
+        "премиум",
+        "парка"
+      ],
+      "price": 195
     },
     {
       "id": "fur-001",
       "name": "Дублёнка длинная из тасканы — коричневый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка длинная из тасканы — коричневый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 400
     },
     {
       "id": "fur-002",
       "name": "Дублёнка короткая из меха кёрли — серый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка короткая из меха кёрли — серый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 260
     },
     {
       "id": "fur-004",
       "name": "Дублёнка длинная из меха кёрли — серый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка длинная из меха кёрли — серый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 315
     },
     {
       "id": "fur-005",
       "name": "Дублёнка двусторонняя из тасканы — etoupe",
       "category": "Мех",
       "photo": "/images/products/Дублёнка двусторонняя из тасканы — etoupe.jpg",
-      "sizes": ["s", "m"],
+      "sizes": [
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 390
     },
     {
       "id": "fur-006",
       "name": "Дублёнка мехом внутрь из тасканы с замшей — бежевый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 390
     },
     {
       "id": "fur-007",
       "name": "Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana",
       "category": "Мех",
       "photo": "/images/products/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 390
     },
     {
       "id": "fur-008",
       "name": "Дублёнка с мехом наружу из волка — бежевый",
       "category": "Мех",
       "photo": "/images/products/Дублёнка с мехом наружу из волка — бежевый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Мех волка",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех волка"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 390
     },
     {
       "id": "fur-009",
       "name": "Дублёнка двусторонняя из тасканы silk с мехом montana — camel",
       "category": "Мех",
       "photo": "/images/products/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Натуральная овчина",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральная овчина"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "дублёнка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "дублёнка"
+      ],
+      "price": 390
     },
     {
       "id": "fur-010",
       "name": "Парка из кожи коровы — леопард",
       "category": "Мех",
       "photo": "/images/products/Парка из кожи коровы — леопард.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "парка"]
+      "tags": [
+        "мех",
+        "премиум",
+        "парка"
+      ],
+      "price": 400
     },
     {
       "id": "pony-003",
       "name": "Жакет из меха пони в стиле 80-х — бежевый",
       "category": "Мех",
       "photo": "/images/products/Жакет из меха пони в стиле 80-х — бежевый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех"
       },
       "inStock": true,
-      "tags": ["мех", "премиум", "стиль 80-х"]
+      "tags": [
+        "мех",
+        "премиум",
+        "стиль 80-х"
+      ],
+      "price": 330
     },
     {
       "id": "pony-004",
       "name": "Жакет из меха пони по новым лекалам — бежевый",
       "category": "Мех",
       "photo": "/images/products/Жакет из меха пони по новым лекалам — бежевый.jpg",
-      "sizes": ["OneSize"],
+      "sizes": [
+        "OneSize"
+      ],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Премиум качество, натуральный мех"
       },
       "inStock": true,
-      "tags": ["мех", "премиум"]
+      "tags": [
+        "мех",
+        "премиум"
+      ],
+      "price": 310
     },
     {
       "id": "python-009",
       "name": "Куртка из кожи питона по новым лекалам — коричневый матовый",
       "category": "Экзотика",
       "photo": "/images/products/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
-      "sizes": ["xs", "s"],
+      "sizes": [
+        "xs",
+        "s"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "70% Acetate 30% Polyester",
         "comments": "Эксклюзивный материал, уникальная фактура кожи питона"
       },
       "inStock": true,
-      "tags": ["эксклюзив", "премиум"]
+      "tags": [
+        "эксклюзив",
+        "премиум"
+      ],
+      "price": 480
     }
   ]
 }

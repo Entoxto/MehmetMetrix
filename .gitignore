@@ -16,7 +16,10 @@ node_modules/
 # Misc
 .DS_Store
 *.pem
-Exel/
+
+# Excel files
+Exel/excel_preview.txt
+Exel/Расчёты с мехметом new.xlsx
 
 # Debug
 npm-debug.log*
