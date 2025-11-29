@@ -4,7 +4,7 @@
       "id": "leather-002",
       "name": "Жакет из кожи Hermes в стиле 80-х — mouse",
       "category": "Кожа",
-      "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
       "sizes": [
         "xs",
         "s"
@@ -26,7 +26,7 @@
       "id": "python-002",
       "name": "Жакет приталенный из кожи питона — коричневый глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -48,7 +48,7 @@
       "id": "python-003",
       "name": "Жакет приталенный из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -70,7 +70,7 @@
       "id": "python-004",
       "name": "Жакет приталенный из кожи питона — бежевый глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/Жакет приталенный из кожи питона — бежевый глянцевый.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый глянцевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -92,7 +92,7 @@
       "id": "python-005",
       "name": "Жакет приталенный из кожи питона — бежевый матовый",
       "category": "Экзотика",
-      "photo": "/images/products/Жакет приталенный из кожи питона — бежевый матовый.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый матовый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -114,7 +114,7 @@
       "id": "python-006",
       "name": "Жакет приталенный из кожи питона — чёрный матовый",
       "category": "Экзотика",
-      "photo": "/images/products/Жакет приталенный из кожи питона — чёрный матовый.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный матовый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -136,7 +136,7 @@
       "id": "python-007",
       "name": "Юбка из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/Юбка из кожи питона — чёрный глянцевый.jpg",
+      "photo": "/images/products/jpg/Юбка из кожи питона — чёрный глянцевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -158,7 +158,7 @@
       "id": "python-008",
       "name": "Юбка из кожи питона — бежевый глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/Юбка из кожи питона — бежевый глянцевый.jpg",
+      "photo": "/images/products/jpg/Юбка из кожи питона — бежевый глянцевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -180,7 +180,7 @@
       "id": "pony-001",
       "name": "Жакет приталенный из меха пони в стиле 80-х — чёрный",
       "category": "Мех",
-      "photo": "/images/products/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
+      "photo": "/images/products/jpg/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
       "sizes": [
         "xs",
         "s"
@@ -202,7 +202,7 @@
       "id": "pony-002",
       "name": "Штаны из меха пони — чёрный",
       "category": "Мех",
-      "photo": "/images/products/Штаны из меха пони — чёрный.jpg",
+      "photo": "/images/products/jpg/Штаны из меха пони — чёрный.jpg",
       "sizes": [
         "xs",
         "s"
@@ -224,7 +224,7 @@
       "id": "merino-001",
       "name": "Дублёнка из меха мериноса — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка из меха мериноса — бежевый.jpg",
+      "photo": "/images/products/jpg/Дублёнка из меха мериноса — бежевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -246,7 +246,7 @@
       "id": "fur-003",
       "name": "Дублёнка из тасканы — волк",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка из тасканы — волк.jpg",
+      "photo": "/images/products/jpg/Дублёнка из тасканы — волк.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -267,7 +267,7 @@
       "id": "merino-002",
       "name": "Штаны из меха мериноса — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Штаны из меха мериноса — бежевый.jpg",
+      "photo": "/images/products/jpg/Штаны из меха мериноса — бежевый.jpg",
       "sizes": [
         "xs",
         "s",
@@ -290,7 +290,7 @@
       "id": "suede-002",
       "name": "Жакет из замши в стиле 80-х — бежевый",
       "category": "Замша",
-      "photo": "/images/products/Жакет из замши в стиле 80-х — бежевый.jpg",
+      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — бежевый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -312,7 +312,7 @@
       "id": "suede-003",
       "name": "Жакет из замши в стиле 80-х — коричневый",
       "category": "Замша",
-      "photo": "/images/products/Жакет из замши в стиле 80-х — коричневый.jpg",
+      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — коричневый.jpg",
       "sizes": [
         "xs",
         "s"
@@ -334,7 +334,7 @@
       "id": "suede-004",
       "name": "Брюки из замши — бежевый",
       "category": "Замша",
-      "photo": "/images/products/Брюки из замши — бежевый.jpg",
+      "photo": "/images/products/jpg/Брюки из замши — бежевый.jpg",
       "sizes": [
         "xs",
         "s",
@@ -357,7 +357,7 @@
       "id": "suede-005",
       "name": "Брюки из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/Брюки из замши — коричневый.jpg",
+      "photo": "/images/products/jpg/Брюки из замши — коричневый.jpg",
       "sizes": [
         "xs",
         "s",
@@ -380,7 +380,7 @@
       "id": "suede-006",
       "name": "Плащ из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/Плащ из замши — коричневый.jpg",
+      "photo": "/images/products/jpg/Плащ из замши — коричневый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -401,7 +401,7 @@
       "id": "suede-007",
       "name": "Юбка из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/Юбка из замши — коричневый.jpg",
+      "photo": "/images/products/jpg/Юбка из замши — коричневый.jpg",
       "sizes": [
         "xs",
         "s",
@@ -424,7 +424,7 @@
       "id": "suede-008",
       "name": "Брюки из замши — чёрный",
       "category": "Замша",
-      "photo": "/images/products/Брюки из замши — чёрный.jpg",
+      "photo": "/images/products/jpg/Брюки из замши — чёрный.jpg",
       "sizes": [
         "xs",
         "s",
@@ -447,7 +447,7 @@
       "id": "leather-001",
       "name": "Жакет из кожи Hermes в стиле 80-х — brown",
       "category": "Кожа",
-      "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -468,7 +468,7 @@
       "id": "leather-003",
       "name": "Жакет из кожи Hermes в стиле 80-х — taupe",
       "category": "Кожа",
-      "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — taupe.jpg",
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — taupe.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -489,7 +489,7 @@
       "id": "leather-004",
       "name": "Жакет из кожи Hermes в стиле 80-х — чёрный",
       "category": "Кожа",
-      "photo": "/images/products/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
       "sizes": [
         "xs",
         "s"
@@ -511,7 +511,7 @@
       "id": "leather-005",
       "name": "Парка из кожи Hermes — mouse",
       "category": "Кожа",
-      "photo": "/images/products/Парка из кожи Hermes — mouse.jpg",
+      "photo": "/images/products/jpg/Парка из кожи Hermes — mouse.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -532,7 +532,7 @@
       "id": "fur-001",
       "name": "Дублёнка длинная из тасканы — коричневый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка длинная из тасканы — коричневый.jpg",
+      "photo": "/images/products/jpg/Дублёнка длинная из тасканы — коричневый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -553,7 +553,7 @@
       "id": "fur-002",
       "name": "Дублёнка короткая из меха кёрли — серый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка короткая из меха кёрли — серый.jpg",
+      "photo": "/images/products/jpg/Дублёнка короткая из меха кёрли — серый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -574,7 +574,7 @@
       "id": "fur-004",
       "name": "Дублёнка длинная из меха кёрли — серый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка длинная из меха кёрли — серый.jpg",
+      "photo": "/images/products/jpg/Дублёнка длинная из меха кёрли — серый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -595,7 +595,7 @@
       "id": "fur-005",
       "name": "Дублёнка двусторонняя из тасканы — etoupe",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка двусторонняя из тасканы — etoupe.jpg",
+      "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы — etoupe.jpg",
       "sizes": [
         "s",
         "m"
@@ -617,7 +617,7 @@
       "id": "fur-006",
       "name": "Дублёнка мехом внутрь из тасканы с замшей — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
+      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -638,7 +638,7 @@
       "id": "fur-007",
       "name": "Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
+      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -659,7 +659,7 @@
       "id": "fur-008",
       "name": "Дублёнка с мехом наружу из волка — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка с мехом наружу из волка — бежевый.jpg",
+      "photo": "/images/products/jpg/Дублёнка с мехом наружу из волка — бежевый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -680,7 +680,7 @@
       "id": "fur-009",
       "name": "Дублёнка двусторонняя из тасканы silk с мехом montana — camel",
       "category": "Мех",
-      "photo": "/images/products/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
+      "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -701,7 +701,7 @@
       "id": "fur-010",
       "name": "Парка из кожи коровы — леопард",
       "category": "Мех",
-      "photo": "/images/products/Парка из кожи коровы — леопард.jpg",
+      "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -722,7 +722,7 @@
       "id": "pony-003",
       "name": "Жакет из меха пони в стиле 80-х — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Жакет из меха пони в стиле 80-х — бежевый.jpg",
+      "photo": "/images/products/jpg/Жакет из меха пони в стиле 80-х — бежевый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -743,7 +743,7 @@
       "id": "pony-004",
       "name": "Жакет из меха пони по новым лекалам — бежевый",
       "category": "Мех",
-      "photo": "/images/products/Жакет из меха пони по новым лекалам — бежевый.jpg",
+      "photo": "/images/products/jpg/Жакет из меха пони по новым лекалам — бежевый.jpg",
       "sizes": [
         "OneSize"
       ],
@@ -763,7 +763,7 @@
       "id": "python-009",
       "name": "Куртка из кожи питона по новым лекалам — коричневый матовый",
       "category": "Экзотика",
-      "photo": "/images/products/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
       "sizes": [
         "xs",
         "s"

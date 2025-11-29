@@ -13,21 +13,21 @@ export default function HomePage() {
       description: "Финансы, депозиты и расчёты с Мехметом — где деньги, Лебовски?",
       onClick: () => router.push("/money"),
       icon: "💰",
-      image: "/images/products/что по бабкам.JPG",
+      image: "/images/products/jpg/что по бабкам.JPG",
     },
     {
       title: "Проконтролировать работу",
       description: "Посмотри, кто что шьёт, что готово, что на ремонте и у кого кофе закончился.",
       onClick: () => router.push("/work"),
       icon: "🧥",
-      image: "/images/products/Проконтролировать работу.jpg",
+      image: "/images/products/jpg/Проконтролировать работу.jpg",
     },
     {
       title: "Каталог изделий",
       description: "Листай, смотри, восхищайся",
       onClick: () => router.push("/catalog"),
       icon: "📦",
-      image: "/images/products/Каталог.JPG",
+      image: "/images/products/jpg/Каталог.JPG",
     },
   ];
 

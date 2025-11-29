@@ -8,6 +8,7 @@
  */
 import Image from "next/image";
 import { createCardHoverHandlers } from "@/lib/utils";
+import { getOptimizedImagePath, getBlurPlaceholder } from "@/lib/imageUtils";
 import { MENU_STYLES } from "./styles";
 
 export interface MenuItem {
@@ -30,37 +31,44 @@ export const Menu = ({ items }: MenuProps) => {
 
   return (
     <main style={MENU_STYLES.main}>
-      {items.map((item, index) => (
-        <div
-          key={index}
-          onClick={item.onClick}
-          {...hoverHandlers}
-          style={MENU_STYLES.card}
-        >
-          <div style={MENU_STYLES.cardHeader}>
-            <span style={MENU_STYLES.icon}>{item.icon}</span>
-            <h2 style={MENU_STYLES.title}>{item.title}</h2>
-          </div>
-          {item.image && (
-            <div style={{ ...MENU_STYLES.imageContainer, position: "relative" }}>
-              <Image
-                src={item.image}
-                alt={item.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                style={{
-                  objectFit: "cover",
-                  ...MENU_STYLES.image,
-                }}
-                loading="lazy"
-              />
+      {items.map((item, index) => {
+        const optimizedImage = item.image ? getOptimizedImagePath(item.image) : null;
+        
+        return (
+          <div
+            key={index}
+            onClick={item.onClick}
+            {...hoverHandlers}
+            style={MENU_STYLES.card}
+          >
+            <div style={MENU_STYLES.cardHeader}>
+              <span style={MENU_STYLES.icon}>{item.icon}</span>
+              <h2 style={MENU_STYLES.title}>{item.title}</h2>
             </div>
-          )}
-          <p style={MENU_STYLES.description}>
-            {item.description}
-          </p>
-        </div>
-      ))}
+            {optimizedImage && (
+              <div style={{ ...MENU_STYLES.imageContainer, position: "relative" }}>
+                <Image
+                  src={optimizedImage}
+                  alt={item.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{
+                    objectFit: "cover",
+                    ...MENU_STYLES.image,
+                  }}
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL={getBlurPlaceholder()}
+                  unoptimized={true}
+                />
+              </div>
+            )}
+            <p style={MENU_STYLES.description}>
+              {item.description}
+            </p>
+          </div>
+        );
+      })}
     </main>
   );
 };
