@@ -6,7 +6,7 @@
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency } from "@/lib/format";
@@ -17,11 +17,50 @@ interface ProductDetailProps {
   product: Product;
 }
 
+// Константы для ограничений размеров изображения
+const IMAGE_CONSTRAINTS = {
+  maxWidth: 650,
+  maxHeight: 450,
+  minWidth: 300, // Минимальная ширина для десктопа (используется в containerDimensions)
+  minHeight: 300,
+  mobileHeight: 300,
+};
+
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
   const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(product.photo));
   const [imageError, setImageError] = useState(false);
+  const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+
+  // Вычисляем оптимальные размеры контейнера на основе aspect-ratio с учетом всех ограничений
+  const containerDimensions = useMemo(() => {
+    if (isCompact || !imageAspectRatio) {
+      return { 
+        width: "100%", 
+        height: IMAGE_CONSTRAINTS.mobileHeight 
+      };
+    }
+
+    // Вычисляем оптимальные размеры, сохраняя пропорции
+    let width = IMAGE_CONSTRAINTS.maxWidth;
+    let height = width / imageAspectRatio;
+
+    // Если высота превышает максимум - ограничиваем по высоте
+    if (height > IMAGE_CONSTRAINTS.maxHeight) {
+      height = IMAGE_CONSTRAINTS.maxHeight;
+      width = height * imageAspectRatio;
+    }
+
+    // Применяем минимальные ограничения
+    width = Math.max(width, IMAGE_CONSTRAINTS.minWidth);
+    height = Math.max(height, IMAGE_CONSTRAINTS.minHeight);
+
+    return {
+      width: `${width}px`,
+      height: `${height}px`,
+    };
+  }, [isCompact, imageAspectRatio]);
 
   // Адаптивная типографика на основе глобальной
   const responsiveTypography = {
@@ -47,40 +86,59 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     background: COLORS.background.cardExpanded,
   };
 
+  // Единые стили для заголовков секций
+  const SECTION_HEADER_STYLE = {
+    ...responsiveTypography.caption,
+    color: COLORS.text.secondary,
+    textTransform: "uppercase" as const,
+    letterSpacing: 1,
+    margin: 0,
+    marginBottom: SPACING.sm,
+  };
+
+  // Единые стили для подзаголовков материалов (Верхний материал, Подкладка, Примечания)
+  const MATERIAL_SUBHEADER_STYLE = {
+    ...responsiveTypography.caption,
+    color: COLORS.text.secondary,
+    margin: 0,
+    marginBottom: SPACING.xs,
+  };
+
   return (
     <div
       style={{
         flex: 1,
-        padding: isCompact ? SPACING.md : SPACING.xl,
+        paddingLeft: isCompact ? SPACING.md : SPACING.xl, // Одинаковый padding слева с заголовком
+        paddingRight: isCompact ? SPACING.md : SPACING.xl, // Одинаковый padding справа с заголовком
+        paddingTop: isCompact ? SPACING.md : SPACING.md, // Одинаковый padding сверху с заголовком
         paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.xl, // Безопасный отступ для toast на мобиле
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
       }}
     >
-      <div
-        style={{
-          display: isCompact ? "flex" : "grid",
-          flexDirection: isCompact ? "column" : undefined,
-          gridTemplateColumns: isCompact ? undefined : "1fr 1fr",
-          gap: isCompact ? SPACING.lg : SPACING.xl,
-          alignItems: isCompact ? undefined : "stretch",
-          width: isCompact ? "100%" : "100%",
-          maxWidth: isCompact ? "100%" : "1200px", // Ограничиваем максимальную ширину на десктопе
-        }}
-      >
+       <div
+         style={{
+           display: isCompact ? "flex" : "grid", // Grid для десктопа: равное деление на две колонки
+           gridTemplateColumns: isCompact ? undefined : "1fr 1fr", // Две равные колонки на десктопе
+           flexDirection: isCompact ? "column" : undefined,
+           gap: isCompact ? SPACING.lg : SPACING.xl,
+           alignItems: isCompact ? undefined : "stretch", // Растягиваем на всю высоту
+           width: "auto", // Занимает только необходимую ширину контента
+           maxWidth: isCompact ? "100%" : "1400px", // Максимальная ширина контейнера
+         }}
+       >
       {/* Фото товара */}
       <div
         style={{
-          width: "100%",
-          height: isCompact ? 300 : "auto", // На десктопе grid выровняет высоту автоматически
-          minHeight: isCompact ? 300 : 400, // Минимальная высота для пропорциональности
+          width: isCompact ? "100%" : containerDimensions.width, // Вычисленная ширина с учетом всех ограничений
+          height: isCompact ? IMAGE_CONSTRAINTS.mobileHeight : containerDimensions.height, // Вычисленная высота с учетом всех ограничений
           ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          alignSelf: "stretch", // Растягивается на всю высоту строки grid
           position: "relative",
+          justifySelf: isCompact ? undefined : "center", // Центрируем внутри grid-колонки
         }}
       >
         {imageError ? (
@@ -92,14 +150,21 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{
-              objectFit: "cover",
-              objectPosition: "top center",
+              objectFit: "contain", // Не обрезаем, показываем изображение полностью
             }}
             loading="eager"
             priority
             placeholder="blur"
             blurDataURL={getBlurPlaceholder()}
             unoptimized={true}
+            onLoad={(e) => {
+              // Получаем реальные размеры изображения для расчета aspect-ratio
+              const img = e.currentTarget;
+              if (img.naturalWidth && img.naturalHeight) {
+                const aspectRatio = img.naturalWidth / img.naturalHeight;
+                setImageAspectRatio(aspectRatio);
+              }
+            }}
             onError={() => {
               if (imageSrc.includes('/webp/')) {
                 // Пытаемся загрузить JPG fallback
@@ -114,28 +179,19 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         )}
       </div>
 
-      {/* Информация о товаре - вертикальная раскладка */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: isCompact ? SPACING.lg : SPACING.xl,
-          flex: 1,
-          minHeight: isCompact ? "auto" : 0, // Для одинаковой высоты с фото на десктопе
-        }}
-      >
+       {/* Информация о товаре - вертикальная раскладка */}
+       <div
+         style={{
+           display: "flex",
+           flexDirection: "column",
+           gap: isCompact ? SPACING.lg : SPACING.xl,
+           width: "100%", // На десктопе grid автоматически задает ширину (50% через 1fr)
+           minHeight: isCompact ? "auto" : 0, // Для выравнивания высоты с фото на десктопе
+         }}
+       >
         {/* Размеры */}
         <div>
-          <p
-            style={{
-              ...responsiveTypography.caption,
-              color: COLORS.text.secondary,
-              textTransform: "uppercase",
-              letterSpacing: 1,
-              margin: 0,
-              marginBottom: SPACING.sm,
-            }}
-          >
+          <p style={SECTION_HEADER_STYLE}>
             Размеры
           </p>
           <div style={{ display: "flex", gap: SPACING.sm, flexWrap: "wrap" }}>
@@ -149,16 +205,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
         {/* Цена */}
         <div>
-          <p
-            style={{
-              ...responsiveTypography.caption,
-              color: COLORS.text.secondary,
-              textTransform: "uppercase",
-              letterSpacing: 1,
-              margin: 0,
-              marginBottom: SPACING.sm,
-            }}
-          >
+          <p style={SECTION_HEADER_STYLE}>
             {/* NOTE: All prices are in USD dollars only */}
             Цена
           </p>
@@ -183,12 +230,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           >
             <p
               style={{
-                ...responsiveTypography.caption,
-                color: COLORS.text.secondary,
-                textTransform: "uppercase",
-                letterSpacing: 1,
-                margin: 0,
-                marginBottom: SPACING.md,
+                ...SECTION_HEADER_STYLE,
+                marginBottom: SPACING.md, // Для секции материалов нужен больший отступ
               }}
             >
               Материалы
@@ -196,14 +239,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             <div style={{ display: "flex", flexDirection: "column", gap: SPACING.md }}>
               {product.materials.outer && (
                 <div>
-                  <p
-                    style={{
-                      ...responsiveTypography.caption,
-                      color: COLORS.text.secondary,
-                      margin: 0,
-                      marginBottom: SPACING.xs,
-                    }}
-                  >
+                  <p style={MATERIAL_SUBHEADER_STYLE}>
                     Верхний материал
                   </p>
                   <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
@@ -213,14 +249,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               )}
               {product.materials.lining && (
                 <div>
-                  <p
-                    style={{
-                      ...responsiveTypography.caption,
-                      color: COLORS.text.secondary,
-                      margin: 0,
-                      marginBottom: SPACING.xs,
-                    }}
-                  >
+                  <p style={MATERIAL_SUBHEADER_STYLE}>
                     Подкладка
                   </p>
                   <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
@@ -230,14 +259,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               )}
               {product.materials.comments && (
                 <div>
-                  <p
-                    style={{
-                      ...responsiveTypography.caption,
-                      color: COLORS.text.secondary,
-                      margin: 0,
-                      marginBottom: SPACING.xs,
-                    }}
-                  >
+                  <p style={MATERIAL_SUBHEADER_STYLE}>
                     Примечания
                   </p>
                   <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>

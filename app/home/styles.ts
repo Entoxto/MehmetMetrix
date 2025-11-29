@@ -59,18 +59,21 @@ export const HOME_STYLES = {
   pageHero: (isMobile: boolean): CSSProperties => ({
     display: "flex",
     justifyContent: "center",
-    padding: isMobile ? `${SPACING.sm}px ${SPACING.md}px` : `${SPACING.md}px ${SPACING.xl}px`,
+    paddingLeft: isMobile ? SPACING.md : SPACING.xl, // Одинаковый padding слева с контентом
+    paddingRight: isMobile ? SPACING.md : SPACING.xl, // Одинаковый padding справа с контентом
+    paddingTop: isMobile ? SPACING.sm : SPACING.md,
+    paddingBottom: isMobile ? SPACING.sm : SPACING.md,
     width: "100%",
     boxSizing: "border-box",
   }),
 
   heroContent: (isMobile: boolean): CSSProperties => ({
-    maxWidth: isMobile ? "100%" : 600,
-    width: "100%",
+    maxWidth: isMobile ? "100%" : 1400, // Максимальная ширина такая же, как у контента
+    width: "auto", // Не растягиваем на всю ширину, только до реальной ширины контента
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "center", // Центрируем содержимое по горизонтали
     gap: isMobile ? 4 : 6,
   }),
 
@@ -89,6 +92,8 @@ export const HOME_STYLES = {
     fontStyle: "italic",
     color: COLORS.text.secondary,
     opacity: 0.75,
+    textAlign: "center", // Явное центрирование текста
+    width: "100%", // Занимает всю ширину родителя для правильного центрирования
   }),
 
   errorContainer: {
