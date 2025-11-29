@@ -39,6 +39,26 @@ function toPositionStatus(
 }
 
 /**
+ * Очищает название товара от размеров в скобках
+ * Пример: "Жакет приталенный из кожи питона — бежевый глянцевый (XS-5, S-5)" → "Жакет приталенный из кожи питона — бежевый глянцевый"
+ */
+function cleanProductName(name: string): string {
+  if (!name) return '';
+  
+  // Находим последнюю открывающую скобку
+  const lastBracket = name.lastIndexOf('(');
+  if (lastBracket === -1) {
+    return name.trim();
+  }
+  
+  // Обрезаем до скобки и удаляем пробелы
+  const cleaned = name.substring(0, lastBracket).trim();
+  
+  // Нормализуем множественные пробелы
+  return cleaned.split(/\s+/).join(' ');
+}
+
+/**
  * Преобразует сырой элемент в Position
  */
 export function toPosition(
@@ -85,10 +105,15 @@ export function toPosition(
   const noteEnabled = item.showStatusTag || hasNoteText;
   const noteText = item.note || null;
 
+  // Очищаем overrideName от размеров, если он есть
+  const cleanOverrideName = item.overrideName 
+    ? cleanProductName(item.overrideName)
+    : null;
+
   return {
     id: `${item.productId}-${qty}-${JSON.stringify(item.sizes)}`,
     productId: item.productId,
-    title: item.overrideName || product?.name || 'Неизвестное изделие',
+    title: cleanOverrideName || product?.name || 'Неизвестное изделие',
     sizes,
     qty,
     price,
