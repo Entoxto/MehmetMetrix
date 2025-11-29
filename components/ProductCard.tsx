@@ -59,7 +59,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div
           style={{
             width: "100%",
-            height: 300,
+            height: 340,
             background: COLORS.background.cardExpanded,
             display: "flex",
             alignItems: "center",
@@ -80,6 +80,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{
                 objectFit: "cover",
+                objectPosition: "top center",
               }}
               loading="lazy"
               placeholder="blur"

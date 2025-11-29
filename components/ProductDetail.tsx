@@ -93,6 +93,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{
               objectFit: "cover",
+              objectPosition: "top center",
             }}
             loading="eager"
             priority

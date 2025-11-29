@@ -61,6 +61,7 @@ export const Menu = ({ items }: MenuProps) => {
                   sizes="(max-width: 768px) 100vw, 33vw"
                   style={{
                     objectFit: "cover",
+                    objectPosition: "top center",
                     ...MENU_STYLES.image,
                   }}
                   loading="lazy"

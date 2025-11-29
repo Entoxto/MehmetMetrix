@@ -2,11 +2,35 @@ import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
 import type { Batch } from "@/types/domain";
-import type { ShipmentConfig } from "@/types/shipment";
 
-// Реэкспорт типов для обратной совместимости
-export type { ShipmentStatusKey, ShipmentRawItem, ShipmentConfig } from "@/types/shipment";
-export { ShipmentStatus } from "@/types/shipment";
+// Типы, используемые в JSON (сырые данные)
+export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
+
+type SizeConfig = Record<string, number>;
+
+export interface ShipmentRawItem {
+  productId: string;
+  overrideName?: string;
+  sizes?: SizeConfig;
+  quantityOverride?: number;
+  status?: ShipmentStatusKey;
+  sample?: boolean;
+  note?: string;
+  paidPreviously?: boolean;
+  noPayment?: boolean;
+  inTransit?: boolean;
+  showStatusTag?: boolean;
+}
+
+export interface ShipmentConfig {
+  id: string;
+  title: string;
+  status: { label: string; icon: string };
+  eta?: string;
+  receivedDate?: string;
+  groupByPayment?: boolean;
+  rawItems: readonly ShipmentRawItem[];
+}
 
 export interface ShipmentWithItems extends ShipmentConfig {
   totalAmount: number;
@@ -16,51 +40,6 @@ export interface ShipmentWithItems extends ShipmentConfig {
 
 export const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
   shipmentsData as readonly ShipmentConfig[];
-
-/**
- * Определяет год поставки из конфигурации
- * Приоритет: явно указанный year > год из receivedDate > текущий год
- */
-export function getShipmentYear(shipment: ShipmentConfig): number {
-  // Если год явно указан, используем его
-  if (shipment.year != null) {
-    return shipment.year;
-  }
-
-  // Пытаемся извлечь год из receivedDate (формат: "DD.MM.YYYY")
-  if (shipment.receivedDate) {
-    const dateMatch = shipment.receivedDate.match(/(\d{4})$/);
-    if (dateMatch) {
-      return parseInt(dateMatch[1], 10);
-    }
-  }
-
-  // По умолчанию - текущий год
-  return new Date().getFullYear();
-}
-
-/**
- * Группирует поставки по годам
- * Возвращает Map, где ключ - год, значение - массив поставок этого года
- * Годы отсортированы по убыванию (новые сверху)
- */
-export function groupShipmentsByYear(
-  shipments: ShipmentWithItems[]
-): Map<number, ShipmentWithItems[]> {
-  const grouped = new Map<number, ShipmentWithItems[]>();
-
-  for (const shipment of shipments) {
-    const year = getShipmentYear(shipment);
-    if (!grouped.has(year)) {
-      grouped.set(year, []);
-    }
-    grouped.get(year)!.push(shipment);
-  }
-
-  // Сортируем годы по убыванию и создаем отсортированный Map
-  const sortedYears = Array.from(grouped.keys()).sort((a, b) => b - a);
-  return new Map(sortedYears.map(year => [year, grouped.get(year)!]));
-}
 
 export const buildShipments = (
   products: readonly Product[],
@@ -83,3 +62,50 @@ export const buildShipments = (
       batch,
     };
   });
+
+/**
+ * Определяет год поставки на основе приоритета:
+ * 1. Явное поле year (если указано)
+ * 2. Год из receivedDate (если есть)
+ * 3. Текущий год (по умолчанию)
+ */
+export function getShipmentYear(shipment: ShipmentConfig): number {
+  // Проверяем явное поле year (может быть в расширенном интерфейсе)
+  const shipmentWithYear = shipment as ShipmentConfig & { year?: number };
+  if (shipmentWithYear.year != null) {
+    return shipmentWithYear.year;
+  }
+  
+  // Пытаемся извлечь год из receivedDate
+  if (shipment.receivedDate) {
+    const dateMatch = shipment.receivedDate.match(/(\d{4})$/);
+    if (dateMatch) {
+      return parseInt(dateMatch[1], 10);
+    }
+  }
+  
+  // По умолчанию - текущий год
+  return new Date().getFullYear();
+}
+
+/**
+ * Группирует поставки по годам и возвращает отсортированную Map.
+ * Годы отсортированы по убыванию (новые сверху).
+ */
+export function groupShipmentsByYear(
+  shipments: ShipmentWithItems[]
+): Map<number, ShipmentWithItems[]> {
+  const grouped = new Map<number, ShipmentWithItems[]>();
+  
+  for (const shipment of shipments) {
+    const year = getShipmentYear(shipment);
+    if (!grouped.has(year)) {
+      grouped.set(year, []);
+    }
+    grouped.get(year)!.push(shipment);
+  }
+  
+  // Сортируем годы по убыванию (новые сверху)
+  const sortedEntries = Array.from(grouped.entries()).sort((a, b) => b[0] - a[0]);
+  return new Map(sortedEntries);
+}
