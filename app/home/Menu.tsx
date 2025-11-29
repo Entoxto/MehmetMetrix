@@ -6,6 +6,7 @@
  * Рисует интерактивную сетку по данным с иконками, описанием и обработчиком клика.
  * По нажатию вызывает переданный onClick и переключает экран главной страницы.
  */
+import Image from "next/image";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { MENU_STYLES } from "./styles";
 
@@ -41,11 +42,17 @@ export const Menu = ({ items }: MenuProps) => {
             <h2 style={MENU_STYLES.title}>{item.title}</h2>
           </div>
           {item.image && (
-            <div style={MENU_STYLES.imageContainer}>
-              <img
+            <div style={{ ...MENU_STYLES.imageContainer, position: "relative" }}>
+              <Image
                 src={item.image}
                 alt={item.title}
-                style={MENU_STYLES.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                style={{
+                  objectFit: "cover",
+                  ...MENU_STYLES.image,
+                }}
+                loading="lazy"
               />
             </div>
           )}

@@ -5,6 +5,8 @@
  * Показывает фото, описание, размеры и цену для экрана ProductCard/[id].
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
+import Image from "next/image";
+import { useState } from "react";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
 import { formatCurrency } from "@/lib/format";
@@ -17,6 +19,7 @@ interface ProductDetailProps {
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
+  const [imageError, setImageError] = useState(false);
 
   // Адаптивная типографика на основе глобальной
   const responsiveTypography = {
@@ -75,25 +78,25 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           alignItems: "center",
           justifyContent: "center",
           alignSelf: "stretch", // Растягивается на всю высоту строки grid
+          position: "relative",
         }}
       >
-        <img
-          src={product.photo}
-          alt={product.name}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = "none";
-            const parent = target.parentElement;
-            if (parent) {
-              parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: ${isCompact ? 48 : 80}px;">📷</span>`;
-            }
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
+        {imageError ? (
+          <span style={{ color: COLORS.text.muted, fontSize: isCompact ? 48 : 80 }}>📷</span>
+        ) : (
+          <Image
+            src={product.photo}
+            alt={product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            style={{
+              objectFit: "cover",
+            }}
+            loading="eager"
+            priority
+            onError={() => setImageError(true)}
+          />
+        )}
       </div>
 
       {/* Информация о товаре - вертикальная раскладка */}

@@ -6,6 +6,8 @@
  * Содержит картинку, цену, быстрые метки и hover-анимацию.
  */
 import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
@@ -16,6 +18,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
     CARD_HOVER_EFFECTS.product.default
@@ -61,25 +65,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
             overflow: "hidden",
+            position: "relative",
           }}
         >
-          <img
-            src={product.photo}
-            alt={product.name}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-              const parent = target.parentElement;
-              if (parent) {
-                parent.innerHTML = `<span style="color: ${COLORS.text.muted}; font-size: 48px;">📷</span>`;
-              }
-            }}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
+          {imageError ? (
+            <span style={{ color: COLORS.text.muted, fontSize: 48 }}>📷</span>
+          ) : (
+            <Image
+              src={product.photo}
+              alt={product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{
+                objectFit: "cover",
+              }}
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          )}
         </div>
         <div style={{ padding: SPACING.md + 4, display: "flex", flexDirection: "column", minHeight: 180 }}>
           <h3
