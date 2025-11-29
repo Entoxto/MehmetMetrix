@@ -124,7 +124,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
            flexDirection: isCompact ? "column" : undefined,
            gap: isCompact ? SPACING.lg : SPACING.xl,
            alignItems: isCompact ? undefined : "stretch", // Растягиваем на всю высоту
-           width: "auto", // Занимает только необходимую ширину контента
+           width: isCompact ? "100%" : "auto", // На мобильных растягиваем на всю ширину, на десктопе только необходимую
            maxWidth: isCompact ? "100%" : "1400px", // Максимальная ширина контейнера
          }}
        >
