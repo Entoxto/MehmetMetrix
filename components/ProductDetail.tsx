@@ -23,7 +23,6 @@ const IMAGE_CONSTRAINTS = {
   maxHeight: 450,
   minWidth: 300, // Минимальная ширина для десктопа (используется в containerDimensions)
   minHeight: 300,
-  mobileHeight: 300,
 };
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
@@ -35,14 +34,24 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   // Вычисляем оптимальные размеры контейнера на основе aspect-ratio с учетом всех ограничений
   const containerDimensions = useMemo(() => {
-    if (isCompact || !imageAspectRatio) {
+    if (!imageAspectRatio) {
+      // Если aspect-ratio ещё не загружен, возвращаем минимальные размеры
       return { 
-        width: "100%", 
-        height: IMAGE_CONSTRAINTS.mobileHeight 
+        width: isCompact ? "100%" : `${IMAGE_CONSTRAINTS.minWidth}px`, 
+        height: `${IMAGE_CONSTRAINTS.minHeight}px` 
       };
     }
 
-    // Вычисляем оптимальные размеры, сохраняя пропорции
+    if (isCompact) {
+      // На мобильных: ширина 100%, высота вычисляется динамически на основе aspect-ratio
+      return {
+        width: "100%",
+        height: "auto", // Динамическая высота
+        aspectRatio: imageAspectRatio.toString(), // Используем CSS aspect-ratio для автоматической высоты
+      };
+    }
+
+    // На десктопе: вычисляем оптимальные размеры, сохраняя пропорции
     let width = IMAGE_CONSTRAINTS.maxWidth;
     let height = width / imageAspectRatio;
 
@@ -108,10 +117,10 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     <div
       style={{
         flex: 1,
-        paddingLeft: isCompact ? SPACING.md : SPACING.xl, // Одинаковый padding слева с заголовком
-        paddingRight: isCompact ? SPACING.md : SPACING.xl, // Одинаковый padding справа с заголовком
+        paddingLeft: isCompact ? SPACING.md : SPACING.lg, // Уменьшенный padding для десктопа
+        paddingRight: isCompact ? SPACING.md : SPACING.lg, // Уменьшенный padding для десктопа
         paddingTop: isCompact ? SPACING.md : SPACING.md, // Одинаковый padding сверху с заголовком
-        paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.xl, // Безопасный отступ для toast на мобиле
+        paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.lg, // Уменьшенный padding для десктопа
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
@@ -122,7 +131,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
            display: isCompact ? "flex" : "grid", // Grid для десктопа: равное деление на две колонки
            gridTemplateColumns: isCompact ? undefined : "1fr 1fr", // Две равные колонки на десктопе
            flexDirection: isCompact ? "column" : undefined,
-           gap: isCompact ? SPACING.lg : SPACING.xl,
+           gap: isCompact ? SPACING.lg : SPACING.lg, // Уменьшенный gap для десктопа
            alignItems: isCompact ? undefined : "stretch", // Растягиваем на всю высоту
            width: isCompact ? "100%" : "auto", // На мобильных растягиваем на всю ширину, на десктопе только необходимую
            maxWidth: isCompact ? "100%" : "1400px", // Максимальная ширина контейнера
@@ -131,8 +140,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       {/* Фото товара */}
       <div
         style={{
-          width: isCompact ? "100%" : containerDimensions.width, // Вычисленная ширина с учетом всех ограничений
-          height: isCompact ? IMAGE_CONSTRAINTS.mobileHeight : containerDimensions.height, // Вычисленная высота с учетом всех ограничений
+          width: containerDimensions.width,
+          height: containerDimensions.height === "auto" ? undefined : containerDimensions.height,
+          ...(containerDimensions.aspectRatio ? { aspectRatio: containerDimensions.aspectRatio } : {}),
           ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
@@ -150,8 +160,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             style={{
-              objectFit: isCompact ? "cover" : "contain", // На мобильных растягиваем на всю ширину, на десктопе показываем полностью
-              objectPosition: isCompact ? "top center" : undefined, // На мобильных обрезаем снизу, сохраняя верх
+              objectFit: "contain", // Показываем изображение полностью без обрезки на всех устройствах
             }}
             loading="eager"
             priority
@@ -185,7 +194,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
          style={{
            display: "flex",
            flexDirection: "column",
-           gap: isCompact ? SPACING.lg : SPACING.xl,
+           gap: isCompact ? SPACING.lg : SPACING.lg, // Уменьшенный gap для десктопа
            width: "100%", // На десктопе grid автоматически задает ширину (50% через 1fr)
            minHeight: isCompact ? "auto" : 0, // Для выравнивания высоты с фото на десктопе
          }}
@@ -258,17 +267,24 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   </p>
                 </div>
               )}
-              {product.cost != null && (
-                <div>
-                  <p style={MATERIAL_SUBHEADER_STYLE}>
-                    Последняя себестоимость
-                  </p>
-                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
-                    {formatCurrencyRUB(product.cost)}
-                  </p>
-                </div>
-              )}
             </div>
+          </div>
+        )}
+
+        {/* Последняя себестоимость */}
+        {product.cost != null && (
+          <div
+            style={{
+              paddingTop: SPACING.lg,
+              borderTop: `1px solid ${COLORS.border.default}`,
+            }}
+          >
+            <p style={{ ...SECTION_HEADER_STYLE, color: COLORS.primary }}>
+              Последняя себестоимость
+            </p>
+            <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
+              {formatCurrencyRUB(product.cost)}
+            </p>
           </div>
         )}
       </div>
