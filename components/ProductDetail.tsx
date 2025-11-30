@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { getOptimizedImagePath, getJpgFallbackPath, getBlurPlaceholder } from "@/lib/imageUtils";
 import type { Product } from "@/types/product";
 
@@ -96,7 +96,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     marginBottom: SPACING.sm,
   };
 
-  // Единые стили для подзаголовков материалов (Верхний материал, Подкладка, Примечания)
+  // Единые стили для подзаголовков материалов (Верхний материал, Подкладка, Последняя себестоимость)
   const MATERIAL_SUBHEADER_STYLE = {
     ...responsiveTypography.caption,
     color: COLORS.text.secondary,
@@ -258,13 +258,13 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   </p>
                 </div>
               )}
-              {product.materials.comments && (
+              {product.cost != null && (
                 <div>
                   <p style={MATERIAL_SUBHEADER_STYLE}>
-                    Примечания
+                    Последняя себестоимость
                   </p>
                   <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
-                    {product.materials.comments}
+                    {formatCurrencyRUB(product.cost)}
                   </p>
                 </div>
               )}

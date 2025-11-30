@@ -11,6 +11,7 @@ export interface Product {
   photo: string;
   sizes: string[];
   price?: number;
+  cost?: number;  // Себестоимость в рублях (обновляется из поставок)
   materials?: ProductMaterials;
   inStock: boolean;
   tags?: string[];
