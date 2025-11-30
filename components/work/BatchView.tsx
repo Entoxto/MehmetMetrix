@@ -48,14 +48,14 @@ const getBaseCellStyle = (
   isMobile: boolean,
   cellBaseBackground: string,
   cellBaseBorder: string,
-  typography: React.CSSProperties
+  typography: { tableCell: React.CSSProperties }
 ): React.CSSProperties => ({
   padding: isMobile ? "8px 8px" : "12px 12px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   borderBottom: `1px solid ${cellBaseBorder}`,
-  ...typography,
+  ...typography.tableCell,
   background: cellBaseBackground,
   cursor: "pointer",
   transition: "background 0.2s ease, border 0.2s ease",

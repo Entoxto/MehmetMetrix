@@ -682,6 +682,7 @@ public/images/products/
     │    ├─ Преобразует sizes: {"xs": 5} → Record<Size, number>         │
     │    ├─ Вычисляет qty (сумма sizes или quantityOverride)            │
     │    ├─ Определяет status из item.status                             │
+    │    ├─ Преобразует price (доллары) и cost (рубли) из item          │
     │    ├─ Вычисляет sum = price × qty (если не paidPreviously)        │
     │    └─ Очищает название от размеров в скобках                       │
     │                                                                     │
@@ -952,7 +953,8 @@ public/images/products/
       • groupByStatus()  → Группирует позиции по статусам
 
     lib/format.ts:
-      • formatCurrency() → Форматирование валюты ($1,234)
+      • formatCurrency() → Форматирование валюты в долларах ($1,234)
+      • formatCurrencyRUB() → Форматирование валюты в рублях (1 234 ₽, округляет до целых)
       • getStatusIcon()  → Иконка для статуса
 
 ╔══════════════════════════════════════════════════════════════════════════════╗

@@ -18,7 +18,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { MouseEvent } from "react";
 import type { ColumnConfig } from "./BatchView";
 
-interface PositionRowProps {
+export interface PositionRowProps {
   position: Position;
   batchId?: string;
   onRowHover?: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
@@ -54,7 +54,7 @@ const getPositionCellStyle = (
 /**
  * Стили для ссылки на товар
  */
-const getProductLinkStyle = (typography: React.CSSProperties): React.CSSProperties => ({
+const getProductLinkStyle = (typography: { tableCell: React.CSSProperties }): React.CSSProperties => ({
   ...typography.tableCell,
   color: COLORS.text.primary,
   fontWeight: 600,
