@@ -118,6 +118,7 @@ export function toPosition(
     qty,
     price,
     sum,
+    cost: typeof item.cost === 'number' ? item.cost : null,
     sample: item.sample ?? false,
     status,
     noteEnabled: !!noteEnabled,

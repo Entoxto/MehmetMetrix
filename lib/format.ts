@@ -7,10 +7,18 @@ import { PositionStatus } from '@/types/domain';
 import { ShipmentStatus } from '@/types/shipment';
 
 /**
- * Форматирует валюту с тонким пробелом
+ * Форматирует валюту с тонким пробелом (доллары)
  */
 export function formatCurrency(n: number): string {
   return `$${n.toLocaleString('ru-RU').replace(/\s/g, '\u2009')}`;
+}
+
+/**
+ * Форматирует валюту в рублях с тонким пробелом (округляет до целых)
+ */
+export function formatCurrencyRUB(n: number): string {
+  const rounded = Math.round(n);
+  return `${rounded.toLocaleString('ru-RU').replace(/\s/g, '\u2009')} ₽`;
 }
 
 /**

@@ -16,6 +16,7 @@ from utils import (
     clean_eta_text,
     safe_get_cell,
     is_empty_value,
+    parse_numeric_value,
 )
 
 
@@ -28,7 +29,8 @@ class ExcelParser:
     COL_POSITION_STATUS = 4  # E: Статусы позиций
     COL_SHIPMENT_STATUS = 5  # F: Статусы поставок
     COL_QUANTITY = 6      # G: Кол-во в заказе
-    COL_PRICE = 7         # H: Стоймость 1 ед $
+    COL_PRICE_USD = 7     # H: Стоймость 1 ед $ (цена в долларах)
+    COL_COST_WITH_CARGO = 13  # N: Себестоимость с учётом карго (в рублях) - используется для cost
     COL_DATE = 15         # P: Дата поступления продукции
     
     def __init__(self, excel_file: str, products: List[Dict]):
@@ -52,6 +54,9 @@ class ExcelParser:
         """
         # Читаем Excel лист "Поставки"
         df = pd.read_excel(self.excel_file, sheet_name='Поставки', header=None)
+        
+        # Проверяем структуру файла
+        self._validate_excel_structure(df)
         
         shipments = []
         current_shipment: Optional[Dict] = None
@@ -111,18 +116,7 @@ class ExcelParser:
             self._finish_shipment(current_shipment, current_shipment_rows, shipments)
         
         # Сортируем поставки: сначала по году (по убыванию), затем по номеру поставки (по убыванию)
-        def get_sort_key(shipment: Dict) -> Tuple[int, int]:
-            """Возвращает ключ для сортировки: (год, номер_поставки)"""
-            year = shipment.get('year', 0)
-            # Извлекаем номер поставки из id: "shipment-12" -> 12
-            shipment_id = shipment.get('id', '')
-            try:
-                shipment_num = int(shipment_id.split('-')[-1])
-            except (ValueError, IndexError):
-                shipment_num = 0
-            return (-year, -shipment_num)  # Отрицательные для сортировки по убыванию
-        
-        shipments.sort(key=get_sort_key)
+        shipments.sort(key=self._get_shipment_sort_key)
         
         return shipments
     
@@ -243,6 +237,7 @@ class ExcelParser:
         
         shipment = {
             "id": f"shipment-{shipment_num}",
+            "number": shipment_num,
             "title": f"Поставка №{shipment_num}",
             "status": status,
             "rawItems": [],
@@ -278,15 +273,15 @@ class ExcelParser:
         if product_id:
             item["productId"] = product_id
         
-        # price (только если не пусто)
-        price = safe_get_cell(row, self.COL_PRICE)
-        if not is_empty_value(price):
-            try:
-                price_float = float(price)
-                if price_float > 0:
-                    item["price"] = int(price_float) if price_float.is_integer() else price_float
-            except (ValueError, TypeError):
-                pass
+        # price: берём из колонки H (Стоймость 1 ед $) - цена в долларах
+        price_value = self._parse_numeric_field(row, self.COL_PRICE_USD)
+        if price_value is not None and price_value > 0:
+            item["price"] = int(price_value) if price_value.is_integer() else price_value
+        
+        # cost: берём из колонки N (Себестоимость с учётом карго) - в рублях
+        cost_value = self._parse_numeric_field(row, self.COL_COST_WITH_CARGO)
+        if cost_value is not None and cost_value > 0:
+            item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
         
         # sizes из названия
         sizes = parse_sizes_from_name(name)
@@ -323,6 +318,80 @@ class ExcelParser:
         
         return item
     
+    def _parse_numeric_field(self, row: pd.Series, column_index: int) -> Optional[float]:
+        """
+        Парсит числовое значение из указанной колонки.
+        
+        Args:
+            row: Строка DataFrame
+            column_index: Индекс колонки
+            
+        Returns:
+            Число как float или None, если значение пустое или невалидное
+        """
+        if len(row) <= column_index:
+            return None
+        
+        value = safe_get_cell(row, column_index)
+        return parse_numeric_value(value)
+    
+    def _validate_excel_structure(self, df: pd.DataFrame) -> None:
+        """
+        Проверяет структуру Excel файла и выводит предупреждения при проблемах.
+        
+        Args:
+            df: DataFrame с данными Excel
+        """
+        num_cols = df.shape[1]
+        if num_cols <= self.COL_COST_WITH_CARGO:
+            print(f"⚠️  ВНИМАНИЕ: В Excel файле только {num_cols} колонок, а нужна колонка N (индекс {self.COL_COST_WITH_CARGO})")
+            print(f"   Возможно, структура файла изменилась или данные в других колонках")
+            return
+        
+        # Проверяем наличие данных в ключевых колонках
+        sample_rows = min(5, len(df) - 1)
+        if sample_rows == 0:
+            return
+        
+        found_prices = 0
+        found_costs = 0
+        for i in range(1, sample_rows + 1):
+            price_val = safe_get_cell(df.iloc[i], self.COL_PRICE_USD)
+            cost_val = safe_get_cell(df.iloc[i], self.COL_COST_WITH_CARGO)
+            if not is_empty_value(price_val):
+                found_prices += 1
+            if not is_empty_value(cost_val):
+                found_costs += 1
+        
+        if found_prices == 0:
+            print(f"⚠️  ВНИМАНИЕ: В первых {sample_rows} строках данных колонка H (индекс {self.COL_PRICE_USD}) пустая")
+            print(f"   Проверьте, что в Excel файле колонка 'Стоймость 1 ед $' заполнена")
+        
+        if found_costs == 0:
+            print(f"⚠️  ВНИМАНИЕ: В первых {sample_rows} строках данных колонка N (индекс {self.COL_COST_WITH_CARGO}) пустая")
+            print(f"   Проверьте, что в Excel файле колонка 'Себестоимость с учётом карго' заполнена")
+    
+    def _get_shipment_sort_key(self, shipment: Dict) -> Tuple[int, int]:
+        """
+        Возвращает ключ для сортировки поставок.
+        
+        Args:
+            shipment: Словарь поставки
+            
+        Returns:
+            Кортеж (год, номер_поставки) для сортировки по убыванию
+        """
+        year = shipment.get('year', 0)
+        # Используем поле number, если доступно, иначе извлекаем из id
+        shipment_num = shipment.get('number', 0)
+        if shipment_num == 0:
+            shipment_id = shipment.get('id', '')
+            try:
+                shipment_num = int(shipment_id.split('-')[-1])
+            except (ValueError, IndexError):
+                shipment_num = 0
+        return (-year, -shipment_num)  # Отрицательные для сортировки по убыванию
+    
     def _finalize_shipment(
         self, shipment: Dict, rows: List[pd.Series]
     ) -> Dict:
@@ -344,15 +413,15 @@ class ExcelParser:
         elif received_date:
             shipment["receivedDate"] = received_date
         
-        # Определение groupByPayment
-        # true если ВСЕ позиции без цены
-        all_items_no_price = all(
-            "price" not in item or item.get("price") is None
-            for item in shipment.get("rawItems", [])
-        )
-        
-        if all_items_no_price and len(shipment.get("rawItems", [])) > 0:
-            shipment["groupByPayment"] = True
+        # Определение groupByPayment: true если ВСЕ позиции без цены
+        raw_items = shipment.get("rawItems", [])
+        if raw_items:
+            all_items_no_price = all(
+                "price" not in item or item.get("price") is None
+                for item in raw_items
+            )
+            if all_items_no_price:
+                shipment["groupByPayment"] = True
         
         return shipment
     

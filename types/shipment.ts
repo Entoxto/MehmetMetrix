@@ -23,7 +23,8 @@ export interface ShipmentRawItem {
   overrideName?: string;
   sizes?: SizeConfig;
   quantityOverride?: number;
-  price?: number;  // Цена на момент партии (историческая)
+  price?: number;  // Цена на момент партии (историческая) - из колонки N (Себестоимость с учётом карго)
+  cost?: number;  // Себестоимость - из колонки K
   status?: ShipmentStatusKey;
   sample?: boolean;
   note?: string;

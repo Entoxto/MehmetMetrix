@@ -33,7 +33,7 @@ export const Work = ({
 }: WorkProps) => {
   const responsiveTypography = useMemo(
     () => ({
-      h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 22 : 30 },
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 22 : 30 },
     }),
     [isMobile]
   );

@@ -25,6 +25,7 @@ export interface Position {
   qty: number;
   price: number | null;
   sum: number | null;
+  cost?: number | null;
   sample: boolean;
   status: PositionStatus;
   noteEnabled: boolean;

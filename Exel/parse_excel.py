@@ -73,7 +73,8 @@ def main():
             [sys.executable, str(update_prices_script)],
             capture_output=True,
             text=True,
-            encoding='utf-8'
+            encoding='utf-8',
+            errors='replace'  # Заменяем невалидные символы вместо ошибки
         )
         # Выводим результат без паузы (так как update_prices.py уже делает паузу)
         print(result.stdout)

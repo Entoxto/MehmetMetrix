@@ -4,8 +4,19 @@
 """
 
 import json
+import sys
 from pathlib import Path
 from typing import Dict, List
+
+# Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
+if sys.platform == 'win32':
+    import io
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    except AttributeError:
+        # Если уже обёрнуто, пропускаем
+        pass
 
 
 def update_prices_from_shipments():

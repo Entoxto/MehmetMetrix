@@ -318,3 +318,34 @@ def is_empty_value(value: Any) -> bool:
     
     return False
 
+
+def parse_numeric_value(value: Any) -> Optional[float]:
+    """
+    Парсит числовое значение из различных форматов.
+    Обрабатывает int, float, строки с запятыми/точками, пробелами.
+    
+    Args:
+        value: Значение для парсинга
+        
+    Returns:
+        Число как float или None, если не удалось распарсить
+    """
+    if is_empty_value(value):
+        return None
+    
+    try:
+        if isinstance(value, (int, float)):
+            return float(value)
+        elif isinstance(value, str):
+            # Убираем пробелы, заменяем запятую на точку
+            cleaned = value.strip().replace(',', '.').replace(' ', '')
+            if cleaned:
+                return float(cleaned)
+        else:
+            # Пробуем преобразовать напрямую
+            return float(value)
+    except (ValueError, TypeError, AttributeError):
+        return None
+    
+    return None
+
