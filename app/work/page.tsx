@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useCallback, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState, useCallback, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import productsData from "@/data/products.json";
 import type { Product, ProductsData } from "@/types/product";
 import { buildShipments } from "@/lib/shipments";
@@ -13,6 +13,8 @@ export default function WorkPage() {
   const { isMobile, breakpoint } = useBreakpoint();
   const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const processedParamsRef = useRef<string>("");
 
   // Восстанавливаем состояние из sessionStorage
   const [expandedCards, setExpandedCards] = useState<Set<string>>(() => {
@@ -57,9 +59,26 @@ export default function WorkPage() {
     }
   }, [expandedYears]);
 
-  // Обрабатываем query параметры для открытия нужной карточки
+  // Обрабатываем query параметры для открытия нужной карточки и прокрутки (только один раз для каждого набора параметров)
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    
     const batch = searchParams.get("batch");
+    const pos = searchParams.get("pos");
+    
+    // Формируем ключ из параметров
+    const paramsKey = `${batch || ""}-${pos || ""}`;
+    
+    // Если нет параметров, сбрасываем флаг и выходим
+    if (!batch && !pos) {
+      processedParamsRef.current = "";
+      return;
+    }
+    
+    // Если эти параметры уже обработаны, не обрабатываем снова
+    if (processedParamsRef.current === paramsKey) return;
+    
+    // Открываем карточку, если указан batch
     if (batch && !expandedCards.has(batch)) {
       setExpandedCards((prev) => {
         const next = new Set(prev);
@@ -67,34 +86,36 @@ export default function WorkPage() {
         return next;
       });
     }
-  }, [searchParams, expandedCards]);
-
-  // Восстанавливаем позицию скролла
-  useEffect(() => {
-    if (typeof window === "undefined") return;
     
+    // Восстанавливаем позицию скролла из sessionStorage (если есть)
     const savedScrollY = sessionStorage.getItem("workScrollY");
     if (savedScrollY) {
       const scrollY = parseInt(savedScrollY, 10);
-      // Небольшая задержка для рендеринга контента
       setTimeout(() => {
         window.scrollTo(0, scrollY);
-        // Очищаем сохранённую позицию после восстановления
         sessionStorage.removeItem("workScrollY");
       }, 100);
     }
-
-    // Обрабатываем hash для прокрутки к позиции
-    const pos = searchParams.get("pos");
+    
+    // Прокручиваем к позиции, если указан pos
     if (pos) {
       setTimeout(() => {
         const element = document.getElementById(`pos-${pos}`);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-      }, 200);
+        // После прокрутки очищаем URL параметры
+        processedParamsRef.current = paramsKey;
+        router.replace("/work", { scroll: false });
+      }, 300);
+    } else {
+      // Если нет pos, очищаем URL сразу после небольшой задержки
+      processedParamsRef.current = paramsKey;
+      setTimeout(() => {
+        router.replace("/work", { scroll: false });
+      }, 100);
     }
-  }, [searchParams]);
+  }, [searchParams, expandedCards, router]);
 
   const toggleCard = useCallback((cardId: string) => {
     setExpandedCards((prev) => {

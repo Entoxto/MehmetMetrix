@@ -44,8 +44,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
     if (isCompact) {
       // На мобильных: ширина 100%, высота вычисляется динамически на основе aspect-ratio
-      return {
-        width: "100%",
+      return { 
+        width: "100%", 
         height: "auto", // Динамическая высота
         aspectRatio: imageAspectRatio.toString(), // Используем CSS aspect-ratio для автоматической высоты
       };

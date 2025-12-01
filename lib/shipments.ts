@@ -1,43 +1,7 @@
 import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
-import type { Batch } from "@/types/domain";
-import { ShipmentStatus } from "@/types/shipment";
-
-// Типы, используемые в JSON (сырые данные)
-export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
-
-type SizeConfig = Record<string, number>;
-
-export interface ShipmentRawItem {
-  productId: string;
-  overrideName?: string;
-  sizes?: SizeConfig;
-  quantityOverride?: number;
-  status?: ShipmentStatusKey;
-  sample?: boolean;
-  note?: string;
-  paidPreviously?: boolean;
-  noPayment?: boolean;
-  inTransit?: boolean;
-  showStatusTag?: boolean;
-}
-
-export interface ShipmentConfig {
-  id: string;
-  title: string;
-  status: ShipmentStatus; // В JSON это строка, но TypeScript типизирует как enum
-  eta?: string;
-  receivedDate?: string;
-  groupByPayment?: boolean;
-  rawItems: readonly ShipmentRawItem[];
-}
-
-export interface ShipmentWithItems extends ShipmentConfig {
-  totalAmount: number;
-  hasPriceGaps: boolean;
-  batch: Batch;
-}
+import type { ShipmentConfig, ShipmentWithItems } from "@/types/shipment";
 
 export const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
   shipmentsData as readonly ShipmentConfig[];
@@ -71,10 +35,9 @@ export const buildShipments = (
  * 3. Текущий год (по умолчанию)
  */
 export function getShipmentYear(shipment: ShipmentConfig): number {
-  // Проверяем явное поле year (может быть в расширенном интерфейсе)
-  const shipmentWithYear = shipment as ShipmentConfig & { year?: number };
-  if (shipmentWithYear.year != null) {
-    return shipmentWithYear.year;
+  // Проверяем явное поле year
+  if (shipment.year != null) {
+    return shipment.year;
   }
   
   // Пытаемся извлечь год из receivedDate

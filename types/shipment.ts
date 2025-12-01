@@ -45,3 +45,12 @@ export interface ShipmentConfig {
   rawItems: readonly ShipmentRawItem[];
 }
 
+/**
+ * Расширенный интерфейс поставки с вычисленными данными
+ */
+export interface ShipmentWithItems extends ShipmentConfig {
+  totalAmount: number;
+  hasPriceGaps: boolean;
+  batch: import('@/types/domain').Batch;
+}
+

@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { COLORS, SPACING, TYPOGRAPHY } from "@/constants/styles";
 import { groupShipmentsByYear } from "@/lib/shipments";
 import { YearGroup } from "@/components/work/YearGroup";
-import type { ShipmentWithItems } from "@/lib/shipments";
+import type { ShipmentWithItems } from "@/types/shipment";
 
 interface WorkProps {
   isMobile: boolean;

@@ -6,12 +6,12 @@
     "status": "inProgress",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-5, S-5)",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-3, S-3)",
         "productId": "python-004",
         "price": 550,
         "sizes": {
-          "xs": 5,
-          "s": 5
+          "xs": 3,
+          "s": 3
         },
         "status": "in_progress"
       },
@@ -34,8 +34,8 @@
         "status": "in_progress"
       },
       {
-        "overrideName": "Юбка из кожи питона — бежевый глянцевый (XS-6, S-4)",
-        "productId": "python-008",
+        "overrideName": "Юбка из кожи питона — чёрный глянцевый (XS-6, S-4)",
+        "productId": "python-007",
         "price": 320,
         "sizes": {
           "xs": 6,
@@ -407,8 +407,12 @@
         "productId": "python-004",
         "price": 550,
         "cost": 46561.02312,
-        "quantityOverride": 2,
-        "status": "received"
+        "sizes": {
+          "xs": 2
+        },
+        "status": "received",
+        "sample": true,
+        "quantityOverride": 1
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-2, S-1)",
@@ -426,24 +430,36 @@
         "productId": "python-006",
         "price": 550,
         "cost": 46561.02312,
-        "quantityOverride": 2,
-        "status": "received"
+        "sizes": {
+          "xs": 2
+        },
+        "status": "received",
+        "sample": true,
+        "quantityOverride": 1
       },
       {
         "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (образец XS-1)",
         "productId": "python-009",
         "price": 480,
         "cost": 40775.56423,
-        "quantityOverride": 1,
-        "status": "received"
+        "sizes": {
+          "xs": 1
+        },
+        "status": "received",
+        "sample": true,
+        "quantityOverride": 1
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (образец XS-1)",
         "productId": "python-002",
         "price": 550,
         "cost": 46561.02312,
-        "quantityOverride": 1,
-        "status": "received"
+        "sizes": {
+          "xs": 1
+        },
+        "status": "received",
+        "sample": true,
+        "quantityOverride": 1
       },
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (образец)",
@@ -618,7 +634,8 @@
         "price": 390,
         "cost": 43167.65267,
         "quantityOverride": 3,
-        "status": "received"
+        "status": "received",
+        "sample": true
       }
     ],
     "year": 2025,

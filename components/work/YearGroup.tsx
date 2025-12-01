@@ -12,7 +12,7 @@ import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS,
 import { formatCurrency, shipmentStatusIcon, shipmentStatusLabel } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
-import type { ShipmentWithItems } from "@/lib/shipments";
+import type { ShipmentWithItems } from "@/types/shipment";
 import { ShipmentStatus } from "@/types/shipment";
 
 interface YearGroupProps {
