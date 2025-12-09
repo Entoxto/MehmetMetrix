@@ -3,7 +3,7 @@
     "id": "shipment-12",
     "number": 12,
     "title": "Поставка №12",
-    "status": "inProgress",
+    "status": "receivedUnpaid",
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-3, S-3)",
@@ -45,7 +45,7 @@
       }
     ],
     "year": 2025,
-    "eta": "Ожидаем отправку на этой неделе"
+    "receivedDate": "09.12.2025"
   },
   {
     "id": "shipment-11",

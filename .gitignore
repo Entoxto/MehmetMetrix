@@ -18,8 +18,15 @@ node_modules/
 *.pem
 
 # Excel files
-Exel/excel_preview.txt
-Exel/Расчёты с мехметом new.xlsx
+Excel/excel_preview.txt
+Excel/Расчёты с мехметом new.xlsx
+Excel/__pycache__/
+*.pyc
+__pycache__/
+
+# Executable files
+*.exe
+public/images/products/*.exe
 
 # Debug
 npm-debug.log*
