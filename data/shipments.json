@@ -1,37 +1,56 @@
 [
   {
+    "id": "shipment-13",
+    "number": 13,
+    "title": "Поставка №13",
+    "status": "inProgress",
+    "rawItems": [
+      {
+        "overrideName": "Штаны из меха мериноса — бежевый (M-3)",
+        "productId": "merino-002",
+        "price": 215,
+        "sizes": {
+          "m": 3
+        },
+        "status": "in_progress"
+      }
+    ],
+    "year": 2025,
+    "eta": "Ожидаем отправку на текущей неделе"
+  },
+  {
     "id": "shipment-12",
     "number": 12,
     "title": "Поставка №12",
     "status": "receivedUnpaid",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-3, S-3)",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-2, S-2)",
         "productId": "python-004",
         "price": 550,
         "sizes": {
-          "xs": 3,
-          "s": 3
+          "xs": 2,
+          "s": 2
         },
-        "status": "in_progress"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Юбка из кожи питона — бежевый глянцевый (образец)",
         "productId": "python-008",
         "price": 320,
         "quantityOverride": 1,
-        "status": "in_progress",
+        "status": "received_unpaid",
         "sample": true
       },
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый матовый (XS-2, S-3)",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый матовый (XS-3, S-4)",
         "productId": "python-005",
         "price": 550,
         "sizes": {
-          "xs": 2,
-          "s": 3
+          "xs": 3,
+          "s": 4
         },
-        "status": "in_progress"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Юбка из кожи питона — чёрный глянцевый (XS-6, S-4)",
@@ -41,7 +60,7 @@
           "xs": 6,
           "s": 4
         },
-        "status": "in_progress"
+        "status": "received_unpaid"
       }
     ],
     "year": 2025,
@@ -61,7 +80,7 @@
           "xs": 1,
           "s": 3
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — бежевый (S-1)",
@@ -70,7 +89,7 @@
         "sizes": {
           "s": 1
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Штаны из меха мериноса — бежевый (XS-11, S-7, M-2)",
@@ -81,7 +100,7 @@
           "s": 7,
           "m": 2
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Дублёнка из меха мериноса — бежевый (XS-12, S-8)",
@@ -91,7 +110,7 @@
           "xs": 12,
           "s": 8
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-3, S-3)",
@@ -101,7 +120,7 @@
           "xs": 3,
           "s": 3
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (XS-1, S-3)",
@@ -111,14 +130,14 @@
           "xs": 1,
           "s": 3
         },
-        "status": "received"
+        "status": "received_unpaid"
       },
       {
         "overrideName": "Дублёнка из тасканы — волк (образец)",
         "productId": "fur-003",
         "price": 360,
         "quantityOverride": 1,
-        "status": "received",
+        "status": "received_unpaid",
         "sample": true
       },
       {
@@ -126,7 +145,7 @@
         "productId": "python-007",
         "price": 320,
         "quantityOverride": 1,
-        "status": "received",
+        "status": "received_unpaid",
         "sample": true
       }
     ],
