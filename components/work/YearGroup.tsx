@@ -159,6 +159,7 @@ export const YearGroup = ({
               flexDirection: "column",
               alignItems: "flex-end",
               gap: 2,
+              paddingRight: SPACING.md, // Выравнивание с "Дата получения" в карточках поставок
             }}
           >
             <span
