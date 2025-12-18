@@ -36,6 +36,7 @@ export const YearGroup = ({
   isMobile,
   isDesktop,
 }: YearGroupProps) => {
+  // Типографика с учётом брейкпоинтов
   const responsiveTypography = useMemo(
     () => ({
       h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 22 : 30 },
@@ -53,6 +54,12 @@ export const YearGroup = ({
       },
     }),
     [isMobile]
+  );
+
+  // Годовой оборот: сумма totalAmount по всем поставкам года
+  const yearlyTurnover = useMemo(
+    () => shipments.reduce((sum, shipment) => sum + shipment.totalAmount, 0),
+    [shipments]
   );
 
   const detailValueFontSize = isMobile ? 14 : 15;
@@ -145,17 +152,40 @@ export const YearGroup = ({
           >
             {year}
           </h2>
-          {!isExpanded && (
+          {/* Блок с годовым оборотом справа от года */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              gap: 2,
+            }}
+          >
             <span
               style={{
                 ...responsiveTypography.caption,
                 color: COLORS.text.secondary,
+                textTransform: "uppercase",
                 margin: 0,
+                lineHeight: 1.3,
+                whiteSpace: "nowrap",
               }}
             >
-              {shipments.length} {shipments.length === 1 ? "поставка" : shipments.length < 5 ? "поставки" : "поставок"}
+              Годовой оборот
             </span>
-          )}
+            <span
+              style={{
+                ...responsiveTypography.amount,
+                fontSize: isMobile ? 16 : 22,
+                margin: 0,
+                lineHeight: 1.2,
+                color: COLORS.primary,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {formatCurrency(yearlyTurnover)}
+            </span>
+          </div>
         </div>
       </div>
 
