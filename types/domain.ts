@@ -1,21 +1,11 @@
 /**
- * Доменные типы для проекта MehmetMetrix
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Доменные типы для проекта MehmetMetrix.
+ *
+ * Статусы позиций — произвольные строки из Excel (1 в 1).
+ * Логика «оплачен / не оплачен» определяется через isPaidStatus().
  */
 
 export type Size = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'OneSize';
-
-export enum PositionStatus {
-  waitingForMaterial = 'waitingForMaterial',
-  inProduction = 'inProduction',
-  inTransit = 'inTransit',
-  receivedUnpaid = 'receivedUnpaid',
-  done = 'done',
-  paid = 'paid',
-  paidEarlier = 'paidEarlier',
-  receivedPaid = 'receivedPaid',
-  returned = 'returned',
-}
 
 export interface Position {
   id: string;
@@ -27,7 +17,8 @@ export interface Position {
   sum: number | null;
   cost?: number | null;
   sample: boolean;
-  status: PositionStatus;
+  /** Текстовый статус позиции — ровно то, что выбрал менеджер в Excel. */
+  statusLabel: string;
   noteEnabled: boolean;
   noteText: string | null;
 }

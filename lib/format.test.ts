@@ -1,55 +1,62 @@
 /**
- * Тесты для форматирования и маппинга статусов
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Тесты для форматирования и функций работы со статусами.
+ *
+ * Статусы — текст из Excel (1 в 1). Функции getStatusIcon и getStatusLabel
+ * работают с текстовыми статусами и поддерживают обратную совместимость
+ * со старыми кодовыми статусами.
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { statusIcon, statusLabel } from './format';
-import { PositionStatus } from '@/types/domain';
+import { getStatusIcon, getStatusLabel } from './format';
 
-describe('statusIcon', () => {
-  it('должен содержать иконку для каждого статуса', () => {
-    expect(statusIcon[PositionStatus.waitingForMaterial]).toBe('🧵');
-    expect(statusIcon[PositionStatus.inProduction]).toBe('🛠️');
-    expect(statusIcon[PositionStatus.inTransit]).toBe('🚚');
-    expect(statusIcon[PositionStatus.receivedUnpaid]).toBe('📦');
-    expect(statusIcon[PositionStatus.done]).toBe('🕒');
-    expect(statusIcon[PositionStatus.paid]).toBe('💵');
-    expect(statusIcon[PositionStatus.paidEarlier]).toBe('☑️');
-    expect(statusIcon[PositionStatus.receivedPaid]).toBe('✅');
-    expect(statusIcon[PositionStatus.returned]).toBe('♻️');
+describe('getStatusIcon', () => {
+  it('должен возвращать правильные иконки для текстовых статусов', () => {
+    expect(getStatusIcon('В пути 🚚')).toBe('🚚');
+    expect(getStatusIcon('Готово, ожидает отправки 🕒')).toBe('🕒');
+    expect(getStatusIcon('Получено, не оплачено 📦')).toBe('📦');
+    expect(getStatusIcon('Получено, оплачено ✅')).toBe('✅');
+    expect(getStatusIcon('В производстве 🛠️')).toBe('🛠️');
+    expect(getStatusIcon('В работе 🧵')).toBe('🛠️');
   });
 
-  it('должен содержать все статусы из enum', () => {
-    const allStatuses = Object.values(PositionStatus);
-    for (const status of allStatuses) {
-      expect(statusIcon[status]).toBeDefined();
-      expect(typeof statusIcon[status]).toBe('string');
-      expect(statusIcon[status].length).toBeGreaterThan(0);
-    }
+  it('должен возвращать иконки для старых кодовых статусов', () => {
+    expect(getStatusIcon('inTransit')).toBe('🚚');
+    expect(getStatusIcon('done')).toBe('🕒');
+    expect(getStatusIcon('receivedUnpaid')).toBe('📦');
+    expect(getStatusIcon('receivedPaid')).toBe('✅');
+    expect(getStatusIcon('inProgress')).toBe('🛠️');
+  });
+
+  it('должен возвращать fallback-иконку для неизвестных статусов', () => {
+    expect(getStatusIcon('Какой-то новый статус')).toBe('🧵');
+    expect(getStatusIcon(null)).toBe('🧵');
+    expect(getStatusIcon(undefined)).toBe('🧵');
   });
 });
 
-describe('statusLabel', () => {
-  it('должен содержать подпись для каждого статуса', () => {
-    expect(statusLabel[PositionStatus.waitingForMaterial]).toBe('Ожидаем материал');
-    expect(statusLabel[PositionStatus.inProduction]).toBe('В производстве');
-    expect(statusLabel[PositionStatus.inTransit]).toBe('В пути');
-    expect(statusLabel[PositionStatus.receivedUnpaid]).toBe('Получено, не оплачено');
-    expect(statusLabel[PositionStatus.done]).toBe('Готово, ожидает отправки');
-    expect(statusLabel[PositionStatus.paid]).toBe('Оплачено');
-    expect(statusLabel[PositionStatus.paidEarlier]).toBe('Оплачено ранее');
-    expect(statusLabel[PositionStatus.receivedPaid]).toBe('Получено, оплачено');
-    expect(statusLabel[PositionStatus.returned]).toBe('Вернулось после ремонта');
+describe('getStatusLabel (text-based)', () => {
+  it('должен возвращать текст как есть из Excel (1 в 1)', () => {
+    expect(getStatusLabel('Получено, оплачено ✅')).toBe('Получено, оплачено ✅');
+    expect(getStatusLabel('В пути 🚚')).toBe('В пути 🚚');
+    expect(getStatusLabel('В производстве 🛠️')).toBe('В производстве 🛠️');
+    expect(getStatusLabel('Получено, не оплачено 📦')).toBe('Получено, не оплачено 📦');
   });
 
-  it('должен содержать все статусы из enum', () => {
-    const allStatuses = Object.values(PositionStatus);
-    for (const status of allStatuses) {
-      expect(statusLabel[status]).toBeDefined();
-      expect(typeof statusLabel[status]).toBe('string');
-      expect(statusLabel[status].length).toBeGreaterThan(0);
-    }
+  it('должен преобразовывать старые кодовые статусы в читаемый вид с эмодзи', () => {
+    expect(getStatusLabel('inProgress')).toBe('В работе 🧵');
+    expect(getStatusLabel('done')).toBe('Готово, ожидает отправки 🕒');
+    expect(getStatusLabel('inTransit')).toBe('В пути 🚚');
+    expect(getStatusLabel('receivedUnpaid')).toBe('Получено, не оплачено 📦');
+    expect(getStatusLabel('receivedPaid')).toBe('Получено, оплачено ✅');
+    expect(getStatusLabel('received')).toBe('Получено, оплачено ✅');
+    expect(getStatusLabel('in_progress')).toBe('В производстве 🛠️');
+    expect(getStatusLabel('received_unpaid')).toBe('Получено, не оплачено 📦');
+  });
+
+  it('должен возвращать "Неизвестный статус" для пустых значений', () => {
+    expect(getStatusLabel('')).toBe('Неизвестный статус');
+    expect(getStatusLabel(null)).toBe('Неизвестный статус');
+    expect(getStatusLabel(undefined)).toBe('Неизвестный статус');
   });
 });
 

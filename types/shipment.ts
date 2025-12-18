@@ -1,20 +1,10 @@
 /**
  * Типы для работы с партиями (shipments)
  * Общие интерфейсы для adapters.ts и shipments.ts
+ *
+ * Статусы партий и позиций — это произвольные строки из Excel.
+ * Логика «оплачен / не оплачен» определяется через lib/statusText.ts (isPaidStatus).
  */
-
-export type ShipmentStatusKey = "in_progress" | "ready" | "received" | "received_unpaid" | "inTransit";
-
-/**
- * Статусы партий
- */
-export enum ShipmentStatus {
-  inProgress = 'inProgress',
-  done = 'done',
-  inTransit = 'inTransit',
-  receivedUnpaid = 'receivedUnpaid',
-  receivedPaid = 'receivedPaid',
-}
 
 export type SizeConfig = Record<string, number>;
 
@@ -25,7 +15,8 @@ export interface ShipmentRawItem {
   quantityOverride?: number;
   price?: number;  // Цена на момент партии (историческая) - из колонки H (Стоймость 1 ед $) - доллары
   cost?: number;  // Себестоимость - из колонки N (Себестоимость с учётом карго) - рубли
-  status?: ShipmentStatusKey;
+  /** Статус позиции — текст из Excel (ровно то, что выбрал менеджер в выпадающем списке). */
+  status?: string;
   sample?: boolean;
   note?: string;
   paidPreviously?: boolean;
@@ -37,7 +28,8 @@ export interface ShipmentRawItem {
 export interface ShipmentConfig {
   id: string;
   title: string;
-  status: ShipmentStatus;
+  /** Статус партии — текст из Excel (ровно то, что выбрал менеджер в выпадающем списке). */
+  status: string;
   eta?: string;
   receivedDate?: string;
   year?: number;  // Год партии (если не указан, определяется из receivedDate или текущий год)

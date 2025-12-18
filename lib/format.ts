@@ -1,10 +1,11 @@
 /**
- * Форматирование данных для отображения
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Форматирование данных для отображения.
+ *
+ * Статусы партий и позиций — произвольные строки из Excel (1 в 1).
+ * Логика «оплачен / не оплачен» определяется через isPaidStatus().
  */
 
-import { PositionStatus } from '@/types/domain';
-import { ShipmentStatus } from '@/types/shipment';
+import { isPaidStatus } from '@/lib/statusText';
 
 /**
  * Форматирует валюту с тонким пробелом (доллары)
@@ -22,54 +23,48 @@ export function formatCurrencyRUB(n: number): string {
 }
 
 /**
- * Карта иконок для всех статусов
- * Карта иконок хранится здесь: lib/format.ts
+ * Определяет иконку для текстового статуса.
+ * Используется в StatusBadge для заметок позиций.
  */
-export const statusIcon: Record<PositionStatus, string> = {
-  [PositionStatus.waitingForMaterial]: '🧵',
-  [PositionStatus.inProduction]: '🛠️',
-  [PositionStatus.inTransit]: '🚚',
-  [PositionStatus.receivedUnpaid]: '📦',
-  [PositionStatus.done]: '🕒',
-  [PositionStatus.paid]: '💵',
-  [PositionStatus.paidEarlier]: '☑️',
-  [PositionStatus.receivedPaid]: '✅',
-  [PositionStatus.returned]: '♻️',
-};
+export function getStatusIcon(statusText: string | null | undefined): string {
+  const text = (statusText ?? '').toLowerCase();
+
+  if (text.includes('в пути') || text.includes('intransit')) return '🚚';
+  if (text.includes('готов') || text.includes('ожидает отправки') || text.includes('done') || text.includes('ready')) return '🕒';
+  if (text.includes('не оплачен') || text.includes('receivedunpaid') || text.includes('received_unpaid')) return '📦';
+  if (isPaidStatus(statusText)) return '✅';
+  if (text.includes('в работе') || text.includes('в производстве') || text.includes('inprogress') || text.includes('in_progress')) return '🛠️';
+
+  return '🧵';
+}
 
 /**
- * Подписи для всех статусов
+ * Возвращает текст статуса как есть (1 в 1 из Excel).
+ * Для старых кодовых статусов — делает маппинг в читаемую форму с эмодзи.
  */
-export const statusLabel: Record<PositionStatus, string> = {
-  [PositionStatus.waitingForMaterial]: 'Ожидаем материал',
-  [PositionStatus.inProduction]: 'В производстве',
-  [PositionStatus.inTransit]: 'В пути',
-  [PositionStatus.receivedUnpaid]: 'Получено, не оплачено',
-  [PositionStatus.done]: 'Готово, ожидает отправки',
-  [PositionStatus.paid]: 'Оплачено',
-  [PositionStatus.paidEarlier]: 'Оплачено ранее',
-  [PositionStatus.receivedPaid]: 'Получено, оплачено',
-  [PositionStatus.returned]: 'Вернулось после ремонта',
-};
+export function getStatusLabel(statusText: string | null | undefined): string {
+  const text = (statusText ?? '').trim();
+  if (!text) return 'Неизвестный статус';
 
-/**
- * Карта иконок для статусов партий
- */
-export const shipmentStatusIcon: Record<ShipmentStatus, string> = {
-  [ShipmentStatus.inProgress]: '🧵',
-  [ShipmentStatus.done]: '🕒',
-  [ShipmentStatus.inTransit]: '🚚',
-  [ShipmentStatus.receivedUnpaid]: '📦',
-  [ShipmentStatus.receivedPaid]: '✅',
-};
+  const lower = text.toLowerCase().replace(/[\s_]+/g, '');
 
-/**
- * Подписи для статусов партий
- */
-export const shipmentStatusLabel: Record<ShipmentStatus, string> = {
-  [ShipmentStatus.inProgress]: 'В работе',
-  [ShipmentStatus.done]: 'Готово, ожидает отправки',
-  [ShipmentStatus.inTransit]: 'В пути',
-  [ShipmentStatus.receivedUnpaid]: 'Получено, не оплачено',
-  [ShipmentStatus.receivedPaid]: 'Получено, оплачено',
-};
+  // Обратная совместимость: старые кодовые статусы → человекочитаемый вид с эмодзи
+  const legacyMap: Record<string, string> = {
+    inprogress: 'В работе 🧵',
+    done: 'Готово, ожидает отправки 🕒',
+    intransit: 'В пути 🚚',
+    receivedunpaid: 'Получено, не оплачено 📦',
+    receivedpaid: 'Получено, оплачено ✅',
+    received: 'Получено, оплачено ✅',
+    ready: 'Готово, ожидает отправки 🕒',
+    in_progress: 'В производстве 🛠️',
+    received_unpaid: 'Получено, не оплачено 📦',
+  };
+
+  if (legacyMap[lower]) {
+    return legacyMap[lower];
+  }
+
+  // Текст из Excel — возвращаем как есть
+  return text;
+}

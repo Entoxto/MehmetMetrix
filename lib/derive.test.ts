@@ -1,102 +1,57 @@
 /**
- * Тесты для бизнес-логики
- * Рефактор: логика вынесена в derive/format, компоненты унифицированы.
+ * Тесты для бизнес-логики.
+ * Группировка и сортировка работают по текстовым статусам (statusLabel).
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { calcSum, groupByStatus, toViewRows, orderStatuses } from './derive';
-import { PositionStatus } from '@/types/domain';
+import { calcSum, groupByStatusLabel, toViewRows } from './derive';
 import type { Position, Batch } from '@/types/domain';
+
+// Хелпер для создания позиции с дефолтными значениями
+function createPosition(overrides: Partial<Position>): Position {
+  return {
+    id: '1',
+    productId: 'test-1',
+    title: 'Тест',
+    sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
+    qty: 1,
+    price: 100,
+    sum: 100,
+    sample: false,
+    statusLabel: 'В производстве 🛠️',
+    noteEnabled: false,
+    noteText: null,
+    ...overrides,
+  };
+}
 
 describe('calcSum', () => {
   it('должен вычислять сумму позиции', () => {
-    const position: Position = {
-      id: '1',
-      productId: 'test-1',
-      title: 'Тест',
-      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-      qty: 5,
-      price: 100,
-      sum: null,
-      sample: false,
-      status: PositionStatus.inProduction,
-      noteEnabled: false,
-      noteText: null,
-    };
-
+    const position = createPosition({ qty: 5, price: 100, sum: null });
     const result = calcSum(position);
     expect(result).toBe(500);
   });
 
   it('должен возвращать null если цена отсутствует', () => {
-    const position: Position = {
-      id: '1',
-      productId: 'test-1',
-      title: 'Тест',
-      sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-      qty: 5,
-      price: null,
-      sum: null,
-      sample: false,
-      status: PositionStatus.inProduction,
-      noteEnabled: false,
-      noteText: null,
-    };
-
+    const position = createPosition({ qty: 5, price: null, sum: null });
     const result = calcSum(position);
     expect(result).toBeNull();
   });
 });
 
-describe('groupByStatus', () => {
-  it('должен группировать позиции по статусу', () => {
+describe('groupByStatusLabel', () => {
+  it('должен группировать позиции по текстовому статусу', () => {
     const positions: Position[] = [
-      {
-        id: '1',
-        productId: 'test-1',
-        title: 'Тест 1',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-        qty: 1,
-        price: 100,
-        sum: 100,
-        sample: false,
-        status: PositionStatus.inProduction,
-        noteEnabled: false,
-        noteText: null,
-      },
-      {
-        id: '2',
-        productId: 'test-2',
-        title: 'Тест 2',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-        qty: 1,
-        price: 200,
-        sum: 200,
-        sample: false,
-        status: PositionStatus.done,
-        noteEnabled: false,
-        noteText: null,
-      },
-      {
-        id: '3',
-        productId: 'test-3',
-        title: 'Тест 3',
-        sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-        qty: 1,
-        price: 300,
-        sum: 300,
-        sample: false,
-        status: PositionStatus.inProduction,
-        noteEnabled: false,
-        noteText: null,
-      },
+      createPosition({ id: '1', statusLabel: 'В производстве 🛠️' }),
+      createPosition({ id: '2', statusLabel: 'Получено, оплачено ✅' }),
+      createPosition({ id: '3', statusLabel: 'В производстве 🛠️' }),
     ];
 
-    const result = groupByStatus(positions);
+    const result = groupByStatusLabel(positions);
 
-    expect(result[PositionStatus.inProduction]).toHaveLength(2);
-    expect(result[PositionStatus.done]).toHaveLength(1);
-    expect(result[PositionStatus.inTransit]).toHaveLength(0);
+    expect(result.get('В производстве 🛠️')).toHaveLength(2);
+    expect(result.get('Получено, оплачено ✅')).toHaveLength(1);
+    expect(result.size).toBe(2);
   });
 });
 
@@ -105,42 +60,58 @@ describe('toViewRows', () => {
     const batch: Batch = {
       id: 'batch-1',
       positions: [
-        {
-          id: '1',
-          productId: 'test-1',
-          title: 'Тест 1',
-          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-          qty: 1,
-          price: 100,
-          sum: 100,
-          sample: false,
-          status: PositionStatus.inProduction,
-          noteEnabled: false,
-          noteText: null,
-        },
-        {
-          id: '2',
-          productId: 'test-2',
-          title: 'Тест 2',
-          sizes: { XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0 },
-          qty: 1,
-          price: 200,
-          sum: 200,
-          sample: false,
-          status: PositionStatus.done,
-          noteEnabled: false,
-          noteText: null,
-        },
+        createPosition({ id: '1', statusLabel: 'В производстве 🛠️' }),
+        createPosition({ id: '2', statusLabel: 'Получено, оплачено ✅' }),
       ],
     };
 
     const result = toViewRows(batch);
 
     expect(result).toHaveLength(2);
-    expect(result[0].status).toBe(PositionStatus.inProduction);
-    expect(result[0].items).toHaveLength(1);
-    expect(result[1].status).toBe(PositionStatus.done);
-    expect(result[1].items).toHaveLength(1);
+    const labels = result.map(r => r.statusLabel);
+    expect(labels).toContain('В производстве 🛠️');
+    expect(labels).toContain('Получено, оплачено ✅');
+  });
+
+  it('должен сортировать: не оплаченные выше оплаченных', () => {
+    const batch: Batch = {
+      id: 'batch-1',
+      positions: [
+        createPosition({ id: '1', statusLabel: 'Получено, оплачено ✅' }),
+        createPosition({ id: '2', statusLabel: 'В производстве 🛠️' }),
+        createPosition({ id: '3', statusLabel: 'Получено, не оплачено 📦' }),
+      ],
+    };
+
+    const result = toViewRows(batch);
+
+    const labels = result.map(r => r.statusLabel);
+    const paidIndex = labels.indexOf('Получено, оплачено ✅');
+    const unpaidIndex1 = labels.indexOf('В производстве 🛠️');
+    const unpaidIndex2 = labels.indexOf('Получено, не оплачено 📦');
+
+    expect(unpaidIndex1).toBeLessThan(paidIndex);
+    expect(unpaidIndex2).toBeLessThan(paidIndex);
+  });
+
+  it('должен сортировать: большие группы выше внутри категории', () => {
+    const batch: Batch = {
+      id: 'batch-1',
+      positions: [
+        createPosition({ id: '1', statusLabel: 'В производстве 🛠️' }),
+        createPosition({ id: '2', statusLabel: 'В пути 🚚' }),
+        createPosition({ id: '3', statusLabel: 'В пути 🚚' }),
+        createPosition({ id: '4', statusLabel: 'В пути 🚚' }),
+      ],
+    };
+
+    const result = toViewRows(batch);
+
+    const labels = result.map(r => r.statusLabel);
+    const inTransitIndex = labels.indexOf('В пути 🚚');
+    const inProductionIndex = labels.indexOf('В производстве 🛠️');
+
+    expect(inTransitIndex).toBeLessThan(inProductionIndex);
   });
 
   it('должен возвращать пустой список если позиций нет', () => {
@@ -152,22 +123,6 @@ describe('toViewRows', () => {
     const result = toViewRows(batch);
 
     expect(result).toHaveLength(0);
-  });
-});
-
-describe('orderStatuses', () => {
-  it('должен содержать фиксированный порядок статусов', () => {
-    expect(orderStatuses).toEqual([
-      PositionStatus.waitingForMaterial,
-      PositionStatus.inProduction,
-      PositionStatus.done,
-      PositionStatus.inTransit,
-      PositionStatus.receivedUnpaid,
-      PositionStatus.paid,
-      PositionStatus.paidEarlier,
-      PositionStatus.receivedPaid,
-      PositionStatus.returned,
-    ]);
   });
 });
 

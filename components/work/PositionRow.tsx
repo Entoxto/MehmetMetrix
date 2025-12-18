@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { statusIcon } from "@/lib/format";
+import { getStatusIcon } from "@/lib/format";
 import type { Position } from "@/types/domain";
 import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
@@ -151,7 +151,7 @@ export const PositionRow = ({
                     {position.noteEnabled && position.noteText && (
                       <StatusBadge 
                         kind="info" 
-                        icon={statusIcon[position.status]}
+                        icon={getStatusIcon(position.statusLabel)}
                       >
                         {position.noteText}
                       </StatusBadge>

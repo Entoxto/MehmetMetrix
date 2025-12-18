@@ -10,7 +10,7 @@
 import { Fragment, useMemo } from "react";
 import { COLORS, CARD_TEMPLATES, SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/constants/MonitorSize";
-import { statusLabel, statusIcon, formatCurrency, formatCurrencyRUB } from "@/lib/format";
+import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
 import { PositionRow } from "./PositionRow";
 import type { Batch, Position } from "@/types/domain";
@@ -271,7 +271,7 @@ export const BatchView = ({
 
       {/* Группы по статусам */}
       {viewRows.map((row) => (
-        <Fragment key={row.status}>
+        <Fragment key={row.statusLabel}>
           {/* Заголовок группы */}
           <div
             style={{
@@ -288,8 +288,7 @@ export const BatchView = ({
               margin: 0,
             }}
           >
-            <span style={{ fontSize: isMobile ? 12 : 14, lineHeight: 1 }}>{statusIcon[row.status]}</span>
-            <span>{statusLabel[row.status]}</span>
+            <span>{row.statusLabel}</span>
           </div>
 
           {/* Позиции в группе */}

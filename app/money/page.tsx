@@ -7,7 +7,7 @@ import type { Product, ProductsData } from "@/types/product";
 import { buildShipments } from "@/lib/shipments";
 import { Money } from "@/app/home/Money";
 import { Shell } from "@/components/Shell";
-import { ShipmentStatus } from "@/types/shipment";
+import { isPaidStatus } from "@/lib/statusText";
 
 type PendingItem = { id: string; title: string; amount: number };
 type DepositConfig = { id?: string; title?: string; lines?: string[]; amount?: number };
@@ -42,15 +42,23 @@ export default function MoneyPage() {
   const pendingItems: PendingItem[] = useMemo(() => {
     return shipments
       .map((shipment) => {
-        // В новой модели считаем сумму по позициям из batch
-        // Если position.sum !== null, значит позиция требует оплаты (и сумма уже посчитана с учетом цены и кол-ва)
+        // Партия считается оплаченной, если её статус содержит "оплачен" (и не "не оплачен" / "частично")
+        const isShipmentPaid = isPaidStatus(shipment.status);
+
+        // Если вся партия оплачена — пропускаем
+        if (isShipmentPaid) {
+          return null;
+        }
+
+        // Считаем сумму только по НЕ оплаченным позициям внутри партии
+        // Позиция учитывается, если:
+        // 1. У неё есть сумма (sum !== null)
+        // 2. Её статус НЕ считается оплаченным (isPaidStatus === false)
         const pendingAmount = shipment.batch.positions
-          .filter((position) => position.sum !== null)
+          .filter((position) => position.sum !== null && !isPaidStatus(position.statusLabel))
           .reduce((sum, position) => sum + (position.sum ?? 0), 0);
 
-        const isMarkedPaid = (shipment.status === ShipmentStatus.receivedPaid);
-
-        if (isMarkedPaid || pendingAmount <= 0) {
+        if (pendingAmount <= 0) {
           return null;
         }
 

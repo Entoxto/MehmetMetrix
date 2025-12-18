@@ -204,58 +204,22 @@ def is_date_value(value: Any) -> bool:
     return False
 
 
-def normalize_position_status(status: str) -> Optional[str]:
+def normalize_status_text(status: Any) -> Optional[str]:
     """
-    Нормализует статус позиции из Excel в формат JSON.
+    Нормализует текст статуса из Excel: обрезает пробелы, возвращает строку.
+    Не делает маппинг — прокидывает текст как есть.
     
     Args:
-        status: Статус из колонки E (Статусы позиций)
+        status: Значение статуса из ячейки Excel
         
     Returns:
-        Нормализованный статус или None
+        Текст статуса (без начальных/конечных пробелов) или None, если пусто
     """
-    if not status or pd.isna(status):
+    if status is None or pd.isna(status):
         return None
     
-    status = str(status).strip()
-    
-    # Маппинг статусов
-    status_map = {
-        "Получено, оплачено ✅": "received",
-        "Получено, не оплачено 📦": "received_unpaid",
-        "В производстве 🛠️": "in_progress",
-        "Готово, ожидает отправки 🕒": "ready",
-        "В пути 🚚": "in_progress",  # inTransit устанавливается отдельно
-    }
-    
-    return status_map.get(status)
-
-
-def normalize_shipment_status(status: str) -> str:
-    """
-    Нормализует статус поставки из Excel в формат JSON.
-    
-    Args:
-        status: Статус из колонки F (Статусы поставок)
-        
-    Returns:
-        Нормализованный статус (по умолчанию "inProgress")
-    """
-    if not status or pd.isna(status):
-        return "inProgress"
-    
-    status = str(status).strip()
-    
-    # Маппинг статусов
-    status_map = {
-        "Получено, оплачено ✅": "receivedPaid",
-        "Получено, не оплачено 📦": "receivedUnpaid",
-        "Готово, ожидает отправки 🕒": "done",
-        "В пути 🚚": "inTransit",
-        "В работе 🧵": "inProgress",
-    }
-    
-    return status_map.get(status, "inProgress")
+    text = str(status).strip()
+    return text if text else None
 
 
 def clean_eta_text(text: str) -> str:

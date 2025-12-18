@@ -9,11 +9,11 @@
 import { useMemo } from "react";
 import type { MouseEvent } from "react";
 import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
-import { formatCurrency, shipmentStatusIcon, shipmentStatusLabel } from "@/lib/format";
+import { formatCurrency, getStatusLabel } from "@/lib/format";
+import { isPaidStatus } from "@/lib/statusText";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/types/shipment";
-import { ShipmentStatus } from "@/types/shipment";
 
 interface YearGroupProps {
   year: number;
@@ -186,7 +186,10 @@ export const YearGroup = ({
             shipments.map((shipment) => {
               const isExpandedCard = expandedCards.has(shipment.id);
               const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
-              const highlightStatus = shipment.status === ShipmentStatus.receivedPaid;
+              // Подсветка статуса: если партия считается оплаченной по тексту статуса
+              const highlightStatus = isPaidStatus(shipment.status);
+              // Текст статуса — как есть из Excel (или преобразованный из старого кода)
+              const statusLabelText = getStatusLabel(shipment.status);
 
               return (
                 <div
@@ -210,7 +213,7 @@ export const YearGroup = ({
                     e.currentTarget.style.outline = "none";
                   }}
                   aria-expanded={isExpandedCard}
-                  aria-label={`${shipment.title}, ${shipmentStatusLabel[shipment.status]}`}
+                  aria-label={`${shipment.title}, ${statusLabelText}`}
                 >
                   <div
                     style={{
@@ -255,18 +258,9 @@ export const YearGroup = ({
                         <div
                           style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
                           role="status"
-                          aria-label={`Статус: ${shipmentStatusLabel[shipment.status]}`}
+                          aria-label={`Статус: ${statusLabelText}`}
                         >
-                          <span
-                            style={{
-                              fontSize: isMobile ? "clamp(12px, 2vw, 13px)" : "clamp(13px, 0.9vw, 14px)",
-                              lineHeight: 1,
-                            }}
-                            aria-hidden="true"
-                          >
-                            {shipmentStatusIcon[shipment.status]}
-                          </span>
-                          <span style={{ textTransform: "uppercase" }}>{shipmentStatusLabel[shipment.status]}</span>
+                          <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
                         </div>
                       </div>
                     </div>
@@ -471,15 +465,14 @@ export const YearGroup = ({
                               textTransform: "uppercase",
                             }}
                           >
-                            {shipment.receivedDate ? "Сумма поставки" : "Сумма к оплате"}
+                            Сумма поставки
                           </p>
                           <p
                             style={{
                               ...responsiveTypography.amount,
                               margin: 0,
-                              color: shipment.receivedDate || shipment.id === "shipment-10"
-                                ? COLORS.success
-                                : COLORS.primary,
+                              // Цвет определяется по статусу партии: оплачено → зелёный, иначе → акцентный
+                              color: highlightStatus ? COLORS.success : COLORS.primary,
                             }}
                           >
                             {formatCurrency(shipment.totalAmount)}

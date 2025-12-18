@@ -1,6 +1,9 @@
 """
 Основной парсер Excel файла для преобразования в JSON формат поставок.
 Реализует логику согласно документу "логика парсинга.txt"
+
+Статусы партий и позиций прокидываются как текст из Excel (без маппинга в коды).
+Логика «оплачен / не оплачен» определяется на стороне TypeScript (isPaidStatus).
 """
 
 import pandas as pd
@@ -12,8 +15,7 @@ from utils import (
     find_product_id,
     parse_date,
     is_date_value,
-    normalize_position_status,
-    normalize_shipment_status,
+    normalize_status_text,
     clean_eta_text,
     safe_get_cell,
     is_empty_value,
@@ -232,9 +234,9 @@ class ExcelParser:
         Returns:
             Словарь с данными поставки
         """
-        # Получаем статус поставки
-        status_str = safe_get_cell(row, self.COL_SHIPMENT_STATUS, "")
-        status = normalize_shipment_status(status_str)
+        # Получаем статус поставки как текст из Excel (без маппинга)
+        status_raw = safe_get_cell(row, self.COL_SHIPMENT_STATUS, "")
+        status = normalize_status_text(status_raw) or "В работе 🧵"
         
         shipment = {
             "id": f"shipment-{shipment_num}",
@@ -301,14 +303,14 @@ class ExcelParser:
             except (ValueError, TypeError):
                 pass
         
-        # status
-        status_str = safe_get_cell(row, self.COL_POSITION_STATUS, "")
-        status = normalize_position_status(status_str)
+        # status — текст из Excel как есть
+        status_raw = safe_get_cell(row, self.COL_POSITION_STATUS, "")
+        status = normalize_status_text(status_raw)
         if status:
             item["status"] = status
         
-        # inTransit (если статус "В пути 🚚")
-        if status_str and "В пути" in str(status_str) and "🚚" in str(status_str):
+        # inTransit (если статус содержит "В пути")
+        if status and "в пути" in status.lower():
             item["inTransit"] = True
         
         # sample (если в названии есть "(образец)" или "(образец ...)")
