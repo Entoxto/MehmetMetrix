@@ -1,0 +1,19 @@
+* text=auto
+
+# Основные исходники и конфиги — LF в репозитории
+*.js   text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.jsx  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.py   text eol=lf
+
+# Windows-скрипты — CRLF (для корректной работы в cmd/PowerShell)
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf
+
