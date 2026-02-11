@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { calcSum, groupByStatusLabel, toViewRows } from './derive';
+import { groupByStatusLabel, toViewRows } from './derive';
 import type { Position, Batch } from '@/types/domain';
 
 // Хелпер для создания позиции с дефолтными значениями
@@ -24,20 +24,6 @@ function createPosition(overrides: Partial<Position>): Position {
     ...overrides,
   };
 }
-
-describe('calcSum', () => {
-  it('должен вычислять сумму позиции', () => {
-    const position = createPosition({ qty: 5, price: 100, sum: null });
-    const result = calcSum(position);
-    expect(result).toBe(500);
-  });
-
-  it('должен возвращать null если цена отсутствует', () => {
-    const position = createPosition({ qty: 5, price: null, sum: null });
-    const result = calcSum(position);
-    expect(result).toBeNull();
-  });
-});
 
 describe('groupByStatusLabel', () => {
   it('должен группировать позиции по текстовому статусу', () => {

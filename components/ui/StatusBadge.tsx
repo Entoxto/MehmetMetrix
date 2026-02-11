@@ -5,7 +5,7 @@
  * Показывает капсулу с цветом, иконкой и адаптирует размеры под мобильный.
  */
 
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { COLORS } from "@/constants/styles";
 
 export type StatusBadgeKind = "default" | "info" | "success" | "warning" | "error";

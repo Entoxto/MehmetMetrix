@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import productsData from "@/data/products.json";
 import moneyData from "@/data/money.json";
-import type { Product, ProductsData } from "@/types/product";
+import { getProducts } from "@/lib/products";
 import { buildShipments } from "@/lib/shipments";
 import { Money } from "@/app/home/Money";
 import { Shell } from "@/components/Shell";
@@ -28,14 +27,7 @@ export default function MoneyPage() {
     });
   };
 
-  const products: Product[] = useMemo(() => {
-    try {
-      const productsDataTyped = productsData as ProductsData;
-      return productsDataTyped.products || [];
-    } catch {
-      return [];
-    }
-  }, []);
+  const products = useMemo(() => getProducts(), []);
 
   const shipments = useMemo(() => buildShipments(products), [products]);
 

@@ -83,8 +83,11 @@ export const STYLES = {
 // Таблица отступов, чтобы не размножать числа в компонентах
 export const SPACING = {
   xs: 4,
+  xsPlus: 6,
   sm: 8,
+  smPlus: 12,
   md: 16,
+  mdPlus: 20,
   lg: 24,
   xl: 32,
 } as const;

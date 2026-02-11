@@ -2,19 +2,18 @@
 
 import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import productsData from "@/data/products.json";
-import type { Product, ProductsData } from "@/types/product";
-import { buildShipments } from "@/lib/shipments";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { getProducts } from "@/lib/products";
+import { buildShipments, groupShipmentsByYear, getShipmentYear } from "@/lib/shipments";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Work } from "@/app/home/Work";
 import { Shell } from "@/components/Shell";
 
 export default function WorkPage() {
-  const { isMobile, breakpoint } = useBreakpoint();
-  const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
+  const { isMobile, isWide: isDesktop } = useBreakpoint();
   const searchParams = useSearchParams();
   const router = useRouter();
   const processedParamsRef = useRef<string>("");
+  const shipmentsRef = useRef<ReturnType<typeof buildShipments>>([]);
 
   // Восстанавливаем состояние из sessionStorage
   const [expandedCards, setExpandedCards] = useState<Set<string>>(() => {
@@ -31,9 +30,9 @@ export default function WorkPage() {
     return new Set();
   });
 
-  // По умолчанию 2025 год открыт
+  // По умолчанию открыт самый актуальный год (первый в списке по данным)
   const [expandedYears, setExpandedYears] = useState<Set<number>>(() => {
-    if (typeof window === "undefined") return new Set([2025]);
+    if (typeof window === "undefined") return new Set();
     try {
       const saved = sessionStorage.getItem("workExpandedYears");
       if (saved) {
@@ -43,7 +42,7 @@ export default function WorkPage() {
     } catch {
       // Игнорируем ошибки парсинга
     }
-    return new Set([2025]);
+    return new Set();
   });
 
   // Сохраняем состояние в sessionStorage при изменении
@@ -78,13 +77,25 @@ export default function WorkPage() {
     // Если эти параметры уже обработаны, не обрабатываем снова
     if (processedParamsRef.current === paramsKey) return;
     
-    // Открываем карточку, если указан batch
-    if (batch && !expandedCards.has(batch)) {
-      setExpandedCards((prev) => {
-        const next = new Set(prev);
-        next.add(batch);
-        return next;
-      });
+    // Открываем карточку и год, если указан batch
+    if (batch) {
+      const shipment = shipmentsRef.current.find((s) => s.id === batch);
+      if (shipment) {
+        const year = getShipmentYear(shipment);
+        setExpandedYears((prev) => {
+          if (prev.has(year)) return prev;
+          const next = new Set(prev);
+          next.add(year);
+          return next;
+        });
+      }
+      if (!expandedCards.has(batch)) {
+        setExpandedCards((prev) => {
+          const next = new Set(prev);
+          next.add(batch);
+          return next;
+        });
+      }
     }
     
     // Восстанавливаем позицию скролла из sessionStorage (если есть)
@@ -97,23 +108,22 @@ export default function WorkPage() {
       }, 100);
     }
     
-    // Прокручиваем к позиции, если указан pos
-    if (pos) {
+    // Прокручиваем к карточке поставки или позиции после раскрытия (ждём рендер)
+    const scrollDelay = 250;
+    const scrollTarget = pos ? `pos-${pos}` : batch ? `batch-${batch}` : null;
+
+    if (scrollTarget) {
       setTimeout(() => {
-        const element = document.getElementById(`pos-${pos}`);
+        const element = document.getElementById(scrollTarget);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-        // После прокрутки очищаем URL параметры
         processedParamsRef.current = paramsKey;
         router.replace("/work", { scroll: false });
-      }, 300);
+      }, scrollDelay);
     } else {
-      // Если нет pos, очищаем URL сразу после небольшой задержки
       processedParamsRef.current = paramsKey;
-      setTimeout(() => {
-        router.replace("/work", { scroll: false });
-      }, 100);
+      setTimeout(() => router.replace("/work", { scroll: false }), 100);
     }
   }, [searchParams, expandedCards, router]);
 
@@ -141,16 +151,35 @@ export default function WorkPage() {
     });
   }, []);
 
-  const products: Product[] = useMemo(() => {
-    try {
-      const productsDataTyped = productsData as ProductsData;
-      return productsDataTyped.products || [];
-    } catch {
-      return [];
-    }
-  }, []);
+  const products = useMemo(() => getProducts(), []);
 
   const shipments = useMemo(() => buildShipments(products), [products]);
+
+  shipmentsRef.current = shipments;
+
+  // Порядок годов (новые сверху) — для подстановки дефолта при первом заходе
+  const yearsOrdered = useMemo(
+    () => Array.from(groupShipmentsByYear(shipments).keys()),
+    [shipments]
+  );
+
+  // При первом заходе (нет сохранённого состояния) раскрываем самый актуальный год.
+  // Флаг workExpandedYearsInitialized отличает «первый визит» от «пользователь закрыл все годы»,
+  // чтобы при закрытии последнего года и при возврате на страницу не переоткрывать год.
+  useEffect(() => {
+    if (yearsOrdered.length === 0) return;
+    if (typeof window === "undefined") return;
+
+    if (sessionStorage.getItem("workExpandedYearsInitialized")) return;
+
+    if (expandedYears.size > 0) {
+      sessionStorage.setItem("workExpandedYearsInitialized", "true");
+      return;
+    }
+
+    sessionStorage.setItem("workExpandedYearsInitialized", "true");
+    setExpandedYears(new Set([yearsOrdered[0]]));
+  }, [yearsOrdered, expandedYears.size]);
 
   return (
     <Shell>

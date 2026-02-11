@@ -6,12 +6,10 @@
  * Содержит картинку, цену, быстрые метки и hover-анимацию.
  */
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
 import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
-import { getOptimizedImagePath, getJpgFallbackPath, getBlurPlaceholder } from "@/lib/imageUtils";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import type { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -19,9 +17,6 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(product.photo));
-  const [imageError, setImageError] = useState(false);
-  
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
     CARD_HOVER_EFFECTS.product.default
@@ -70,41 +65,22 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             position: "relative",
           }}
         >
-          {imageError ? (
-            <span style={{ color: COLORS.text.muted, fontSize: 48 }}>📷</span>
-          ) : (
-            <Image
-              src={imageSrc}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              style={{
-                objectFit: "cover",
-                objectPosition: "top center",
-              }}
-              loading="lazy"
-              placeholder="blur"
-              blurDataURL={getBlurPlaceholder()}
-              unoptimized={true}
-              onError={() => {
-                if (imageSrc.includes('/webp/')) {
-                  // Пытаемся загрузить JPG fallback
-                  const jpgPath = getJpgFallbackPath(imageSrc);
-                  setImageSrc(jpgPath);
-                } else {
-                  // И JPG не загрузился - показываем эмодзи
-                  setImageError(true);
-                }
-              }}
-            />
-          )}
+          <OptimizedImage
+            src={product.photo}
+            alt={product.name}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{
+              objectFit: "cover",
+              objectPosition: "top center",
+            }}
+          />
         </div>
-        <div style={{ padding: SPACING.md + 4, display: "flex", flexDirection: "column", minHeight: 180 }}>
+        <div style={{ padding: SPACING.mdPlus, display: "flex", flexDirection: "column", minHeight: 180 }}>
           <h3
             style={{
               fontSize: 20,
               fontWeight: 700,
-              marginBottom: SPACING.sm + 4,
+              marginBottom: SPACING.smPlus,
               color: COLORS.primary,
               minHeight: 60,
               maxHeight: 60,
@@ -114,7 +90,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           >
             {product.name}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.sm + 4, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.smPlus, alignItems: "start" }}>
             <div>
               {/* NOTE: All prices are in USD dollars only */}
               <p
@@ -152,7 +128,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               >
                 Размеры
               </p>
-              <div style={{ display: "flex", gap: SPACING.xs + 2, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: SPACING.xsPlus, flexWrap: "wrap" }}>
                 {product.sizes.map((size) => (
                   <span key={size} style={STYLES.sizeBadge}>
                     {size}

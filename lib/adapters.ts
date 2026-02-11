@@ -22,6 +22,9 @@ function toSize(size: string): Size {
   return 'S'; // fallback
 }
 
+/** Счётчик для генерации уникальных ID позиций внутри одной сессии */
+let positionCounter = 0;
+
 /**
  * Очищает название товара от размеров в скобках
  */
@@ -81,7 +84,7 @@ export function toPosition(
     : null;
 
   return {
-    id: `${item.productId}-${qty}-${JSON.stringify(item.sizes)}`,
+    id: `${item.productId}-${++positionCounter}`,
     productId: item.productId,
     title: cleanOverrideName || product?.name || 'Неизвестное изделие',
     sizes,

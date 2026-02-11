@@ -7,7 +7,7 @@
  */
 import type { ReactNode } from "react";
 import { HOME_STYLES } from "./styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface HeaderProps {
   children?: ReactNode;

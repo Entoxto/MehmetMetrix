@@ -6,8 +6,9 @@
  * Управляет раскрытием блоков и эффектами наведения под разные брейкпоинты.
  */
 import { Fragment, type MouseEvent, type CSSProperties } from "react";
+import Link from "next/link";
 import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 
@@ -42,8 +43,7 @@ export const Money = ({
   pending,
   deposits,
 }: MoneyProps) => {
-  const { isMobile, breakpoint } = useBreakpoint();
-  const isDesktop = breakpoint === "laptop" || breakpoint === "desktop";
+  const { isMobile, isWide: isDesktop } = useBreakpoint();
 
   const responsiveTypography = {
     h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 40 },
@@ -158,7 +158,9 @@ export const Money = ({
             return (
               <Fragment key={item.id}>
                 <div style={getCellStyle(isLast)} {...hoverHandlers}>
-                  <span
+                  <Link
+                    href={`/work?batch=${item.id}`}
+                    onClick={(e) => e.stopPropagation()}
                     style={{
                       ...responsiveTypography.body,
                       color: COLORS.text.primary,
@@ -166,10 +168,13 @@ export const Money = ({
                       overflowWrap: "break-word",
                       wordBreak: "break-word",
                       whiteSpace: "normal",
+                      textDecoration: "underline",
+                      textDecorationStyle: "dotted",
+                      textUnderlineOffset: 2,
                     }}
                   >
                     {item.title}
-                  </span>
+                  </Link>
                 </div>
                 <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
                   <span

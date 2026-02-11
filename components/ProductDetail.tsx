@@ -5,12 +5,11 @@
  * Показывает фото, описание, размеры и цену для экрана ProductCard/[id].
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
-import Image from "next/image";
 import { useState, useMemo } from "react";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
-import { getOptimizedImagePath, getJpgFallbackPath, getBlurPlaceholder } from "@/lib/imageUtils";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {
@@ -28,8 +27,6 @@ const IMAGE_CONSTRAINTS = {
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
-  const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(product.photo));
-  const [imageError, setImageError] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
 
   // Вычисляем оптимальные размеры контейнера на основе aspect-ratio с учетом всех ограничений
@@ -151,42 +148,20 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           justifySelf: isCompact ? undefined : "center", // Центрируем внутри grid-колонки
         }}
       >
-        {imageError ? (
-          <span style={{ color: COLORS.text.muted, fontSize: isCompact ? 48 : 80 }}>📷</span>
-        ) : (
-          <Image
-            src={imageSrc}
-            alt={product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            style={{
-              objectFit: "contain", // Показываем изображение полностью без обрезки на всех устройствах
-            }}
-            loading="eager"
-            priority
-            placeholder="blur"
-            blurDataURL={getBlurPlaceholder()}
-            unoptimized={true}
-            onLoad={(e) => {
-              // Получаем реальные размеры изображения для расчета aspect-ratio
-              const img = e.currentTarget;
-              if (img.naturalWidth && img.naturalHeight) {
-                const aspectRatio = img.naturalWidth / img.naturalHeight;
-                setImageAspectRatio(aspectRatio);
-              }
-            }}
-            onError={() => {
-              if (imageSrc.includes('/webp/')) {
-                // Пытаемся загрузить JPG fallback
-                const jpgPath = getJpgFallbackPath(imageSrc);
-                setImageSrc(jpgPath);
-              } else {
-                // И JPG не загрузился - показываем эмодзи
-                setImageError(true);
-              }
-            }}
-          />
-        )}
+        <OptimizedImage
+          src={product.photo}
+          alt={product.name}
+          sizes="(max-width: 768px) 100vw, 50vw"
+          style={{ objectFit: "contain" }}
+          priority
+          fallbackSize={isCompact ? 48 : 80}
+          onLoad={(e) => {
+            const img = e.currentTarget as HTMLImageElement;
+            if (img.naturalWidth && img.naturalHeight) {
+              setImageAspectRatio(img.naturalWidth / img.naturalHeight);
+            }
+          }}
+        />
       </div>
 
        {/* Информация о товаре - вертикальная раскладка */}

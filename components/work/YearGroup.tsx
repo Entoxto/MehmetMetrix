@@ -8,11 +8,10 @@
 
 import { useMemo } from "react";
 import type { MouseEvent } from "react";
-import { COLORS, SPACING, CARD_TEMPLATES, STATUS_CHIP_STYLE, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
-import { formatCurrency, getStatusLabel } from "@/lib/format";
-import { isPaidStatus } from "@/lib/statusText";
+import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
+import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
-import { BatchView } from "@/components/work/BatchView";
+import { ShipmentCard } from "@/components/work/ShipmentCard";
 import type { ShipmentWithItems } from "@/types/shipment";
 
 interface YearGroupProps {
@@ -61,8 +60,6 @@ export const YearGroup = ({
     () => shipments.reduce((sum, shipment) => sum + shipment.totalAmount, 0),
     [shipments]
   );
-
-  const detailValueFontSize = isMobile ? 14 : 15;
 
   const shipmentCellBaseBackground = COLORS.background.card;
   const shipmentCellHoverBackground = COLORS.background.cardExpanded;
@@ -159,7 +156,7 @@ export const YearGroup = ({
               flexDirection: "column",
               alignItems: "flex-end",
               gap: 2,
-              paddingRight: SPACING.md, // Выравнивание с "Дата получения" в карточках поставок
+              paddingRight: SPACING.md,
             }}
           >
             <span
@@ -214,329 +211,25 @@ export const YearGroup = ({
               Нет поставок в этом году
             </div>
           ) : (
-            shipments.map((shipment) => {
-              const isExpandedCard = expandedCards.has(shipment.id);
-              const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
-              // Подсветка статуса: если партия считается оплаченной по тексту статуса
-              const highlightStatus = isPaidStatus(shipment.status);
-              // Текст статуса — как есть из Excel (или преобразованный из старого кода)
-              const statusLabelText = getStatusLabel(shipment.status);
-
-              return (
-                <div
-                  key={shipment.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => onToggleCard(shipment.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onToggleCard(shipment.id);
-                    }
-                  }}
-                  style={{ ...cardStyle, cursor: "pointer", outline: "none" }}
-                  {...(isMobile ? {} : hoverHandlers)}
-                  onFocus={(e) => {
-                    e.currentTarget.style.outline = `2px solid ${COLORS.primary}`;
-                    e.currentTarget.style.outlineOffset = "2px";
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.outline = "none";
-                  }}
-                  aria-expanded={isExpandedCard}
-                  aria-label={`${shipment.title}, ${statusLabelText}`}
-                >
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
-                      gap: isDesktop ? SPACING.lg : SPACING.md,
-                      alignItems: "center",
-                      minHeight: isDesktop ? 60 : "auto",
-                    }}
-                  >
-                    <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: SPACING.md }}>
-                        <span
-                          style={{
-                            fontSize: isMobile ? 14 : 18,
-                            color: COLORS.primary,
-                            transition: "transform 0.3s ease",
-                            transform: isExpandedCard ? "rotate(90deg)" : "rotate(0deg)",
-                            flexShrink: 0,
-                            lineHeight: 1,
-                          }}
-                          aria-hidden="true"
-                        >
-                          ▶
-                        </span>
-                        <h3
-                          style={{
-                            ...responsiveTypography.h3,
-                            color: COLORS.primary,
-                            margin: 0,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            flex: 1,
-                          }}
-                        >
-                          {titleWithNonBreakingSpace}
-                        </h3>
-                      </div>
-
-                      <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-                        <div
-                          style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
-                          role="status"
-                          aria-label={`Статус: ${statusLabelText}`}
-                        >
-                          <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {isDesktop && (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-end",
-                          justifyContent: "center",
-                          gap: 4,
-                          minHeight: 60,
-                          paddingRight: SPACING.md,
-                        }}
-                      >
-                        {shipment.receivedDate ? (
-                          <>
-                            <p
-                              style={{
-                                ...responsiveTypography.caption,
-                                color: "rgba(212, 212, 212, 0.6)",
-                                textTransform: "uppercase",
-                                margin: 0,
-                                lineHeight: 1.4,
-                                textAlign: "right",
-                              }}
-                            >
-                              Дата получения
-                            </p>
-                            <p
-                              style={{
-                                fontSize: detailValueFontSize,
-                                lineHeight: 1.4,
-                                color: COLORS.text.primary,
-                                fontWeight: 600,
-                                margin: 0,
-                                textAlign: "right",
-                              }}
-                              aria-label={`Дата получения: ${shipment.receivedDate}`}
-                            >
-                              {shipment.receivedDate}
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p
-                              style={{
-                                ...responsiveTypography.caption,
-                                color: "rgba(212, 212, 212, 0.6)",
-                                textTransform: "uppercase",
-                                margin: 0,
-                                lineHeight: 1.4,
-                                textAlign: "right",
-                              }}
-                            >
-                              План доставки
-                            </p>
-                            <p
-                              style={{
-                                fontSize: detailValueFontSize,
-                                lineHeight: 1.4,
-                                color: COLORS.text.primary,
-                                fontWeight: 600,
-                                margin: 0,
-                                textAlign: "right",
-                              }}
-                              aria-label={`План доставки: ${shipment.eta}`}
-                            >
-                              {shipment.eta}
-                            </p>
-                          </>
-                        )}
-                      </div>
-                    )}
-
-                    {!isDesktop && (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: SPACING.xs,
-                          marginTop: SPACING.xs,
-                          paddingTop: SPACING.sm,
-                          borderTop: `1px solid ${COLORS.border.default}`,
-                        }}
-                      >
-                        {shipment.receivedDate ? (
-                          <>
-                            <p
-                              style={{
-                                ...responsiveTypography.caption,
-                                color: COLORS.text.muted,
-                                textTransform: "uppercase",
-                                margin: 0,
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              Дата получения
-                            </p>
-                            <p
-                              style={{
-                                fontSize: detailValueFontSize,
-                                lineHeight: 1.4,
-                                color: COLORS.text.primary,
-                                fontWeight: 600,
-                                margin: 0,
-                              }}
-                              aria-label={`Дата получения: ${shipment.receivedDate}`}
-                            >
-                              {shipment.receivedDate}
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p
-                              style={{
-                                ...responsiveTypography.caption,
-                                color: COLORS.text.muted,
-                                textTransform: "uppercase",
-                                margin: 0,
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              План доставки
-                            </p>
-                            <p
-                              style={{
-                                fontSize: detailValueFontSize,
-                                lineHeight: 1.4,
-                                color: COLORS.text.primary,
-                                fontWeight: 600,
-                                margin: 0,
-                              }}
-                              aria-label={`План доставки: ${shipment.eta}`}
-                            >
-                              {shipment.eta}
-                            </p>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {isExpandedCard && (
-                    <>
-                      <div
-                        style={{
-                          width: "100%",
-                          height: 1,
-                          background: COLORS.border.default,
-                          marginTop: SPACING.md,
-                          marginBottom: SPACING.md,
-                        }}
-                        aria-hidden="true"
-                      />
-                      <BatchView
-                        batch={shipment.batch}
-                        onRowHover={handleShipmentRowHover}
-                        cellBaseBackground={shipmentCellBaseBackground}
-                        cellBaseBorder={shipmentCellBaseBorder}
-                        typography={responsiveTypography}
-                      />
-
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                          alignItems: "flex-start",
-                          gap: SPACING.md,
-                          borderTop: `1px solid ${COLORS.border.default}`,
-                          paddingTop: SPACING.md,
-                        }}
-                      >
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ ...responsiveTypography.body, margin: 0, color: COLORS.text.secondary }}>
-                            Итого по поставке
-                          </p>
-                          {shipment.hasPriceGaps && (
-                            <p
-                              style={{
-                                ...responsiveTypography.caption,
-                                margin: 0,
-                                marginTop: 4,
-                                color: COLORS.text.muted,
-                                overflowWrap: "break-word",
-                                wordBreak: "break-word",
-                                whiteSpace: "normal",
-                              }}
-                            >
-                              Без учёта позиций с уточняемой стоимостью, оплаченных ранее или без оплаты
-                            </p>
-                          )}
-                        </div>
-                        <div style={{ textAlign: "right", flexShrink: 0 }}>
-                          <p
-                            style={{
-                              ...responsiveTypography.caption,
-                              margin: 0,
-                              color: COLORS.text.secondary,
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            Сумма поставки
-                          </p>
-                          <p
-                            style={{
-                              ...responsiveTypography.amount,
-                              margin: 0,
-                              // Цвет определяется по статусу партии: оплачено → зелёный, иначе → акцентный
-                              color: highlightStatus ? COLORS.success : COLORS.primary,
-                            }}
-                          >
-                            {formatCurrency(shipment.totalAmount)}
-                          </p>
-                        </div>
-                      </div>
-
-                      {shipment.hasPriceGaps && (
-                        <p
-                          style={{
-                            ...responsiveTypography.body,
-                            margin: 0,
-                            marginTop: SPACING.sm,
-                            color: COLORS.text.secondary,
-                            fontStyle: "italic",
-                            overflowWrap: "break-word",
-                            wordBreak: "break-word",
-                            whiteSpace: "normal",
-                          }}
-                        >
-                          Стоимость по отдельным образцам, оплаченным ранее или возвращённым после ремонта
-                          не включена.
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })
+            shipments.map((shipment) => (
+              <ShipmentCard
+                key={shipment.id}
+                shipment={shipment}
+                isExpanded={expandedCards.has(shipment.id)}
+                onToggle={() => onToggleCard(shipment.id)}
+                isMobile={isMobile}
+                isDesktop={isDesktop}
+                cardStyle={cardStyle}
+                hoverHandlers={hoverHandlers}
+                onRowHover={handleShipmentRowHover}
+                cellBaseBackground={shipmentCellBaseBackground}
+                cellBaseBorder={shipmentCellBaseBorder}
+                typography={responsiveTypography}
+              />
+            ))
           )}
         </div>
       )}
     </div>
   );
 };
-

@@ -18,6 +18,8 @@ export const useBreakpoint = () => {
     isTablet: breakpoint === "tablet",
     isLaptop: breakpoint === "laptop",
     isDesktop: breakpoint === "desktop",
+    /** laptop или desktop — для layout-решений, где нужен «широкий» экран */
+    isWide: breakpoint === "laptop" || breakpoint === "desktop",
   } as const;
 };
 

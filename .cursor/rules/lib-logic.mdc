@@ -1,0 +1,30 @@
+---
+description: Реестр модулей lib/ — существующая бизнес-логика, запрет дублирования
+globs: lib/**
+alwaysApply: false
+---
+
+# Бизнес-логика (lib/)
+
+Это **единственное место** для бизнес-логики. Не добавляй её в компоненты или страницы.
+
+## Реестр модулей
+
+| Модуль | Назначение | Ключевые функции |
+|--------|-----------|-----------------|
+| `adapters.ts` | JSON → доменная модель | `toPosition()`, `toBatch()` |
+| `shipments.ts` | Сборка и группировка поставок | `buildShipments()`, `groupShipmentsByYear()`, `getShipmentYear()` |
+| `products.ts` | Единая точка загрузки каталога | `getProducts()` |
+| `derive.ts` | Группировка позиций по статусам | `groupByStatusLabel()`, `toViewRows()` |
+| `format.ts` | Форматирование для UI | `formatCurrency()`, `formatCurrencyRUB()`, `getStatusIcon()`, `getStatusLabel()` |
+| `statusText.ts` | Логика оплаты по тексту статуса | `isPaidStatus()`, `normalizeStatusText()` |
+| `imageUtils.ts` | Пути к изображениям, WebP/JPG | `getOptimizedImagePath()`, `getJpgFallbackPath()`, `getBlurPlaceholder()` |
+| `utils.ts` | UI-утилиты | `createCardHoverHandlers()` |
+| `breakpoints.ts` | Пороги адаптивности | `resolveBreakpoint()`, `detectBreakpointFromUserAgent()` |
+
+## Правила
+
+1. **Перед созданием новой функции** — проверь таблицу выше. Если функционал уже существует — используй его.
+2. **Новый модуль в lib/** — обнови эту таблицу и README.md.
+3. **Статусы** — всегда строки из Excel. Используй `isPaidStatus()` для проверки оплаты. Не создавай enum.
+4. **Валюты** — доллары через `formatCurrency()`, рубли через `formatCurrencyRUB()`. Не пиши свои форматтеры.

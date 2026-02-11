@@ -2,9 +2,9 @@
 
 import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import productsData from "@/data/products.json";
-import type { Product, ProductsData } from "@/types/product";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import type { Product } from "@/types/product";
+import { getProducts } from "@/lib/products";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Catalog } from "@/app/home/Catalog";
 import { Shell } from "@/components/Shell";
 import { COLORS } from "@/constants/styles";
@@ -17,14 +17,7 @@ function CatalogPageContent() {
   const selectedCategory = searchParams.get("category");
 
   // Цены берутся напрямую из products.json (обновляются скриптом update_prices.py)
-  const products: Product[] = useMemo(() => {
-    try {
-      const productsDataTyped = productsData as ProductsData;
-      return productsDataTyped.products || [];
-    } catch {
-      return [];
-    }
-  }, []);
+  const products: Product[] = useMemo(() => getProducts(), []);
 
   const categoryDescriptions: Record<string, string> = useMemo(
     () => ({

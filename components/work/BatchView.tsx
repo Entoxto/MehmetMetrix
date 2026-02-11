@@ -9,7 +9,7 @@
 
 import { Fragment, useMemo } from "react";
 import { COLORS, CARD_TEMPLATES, SPACING } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { toViewRows } from "@/lib/derive";
 import { PositionRow } from "./PositionRow";

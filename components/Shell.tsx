@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UpSector } from "@/app/home/UpSector";
 import { DownSector } from "@/app/home/DownSector";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { STYLES, SPACING } from "@/constants/styles";
 import { HOME_STYLES } from "@/app/home/styles";
 
@@ -38,7 +38,7 @@ export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
         fontSize: isMobile ? 11 : STYLES.button.fontSize,
         display: "inline-flex",
         alignItems: "center",
-        gap: SPACING.xs + 2,
+        gap: SPACING.xsPlus,
       }}
     >
       Назад

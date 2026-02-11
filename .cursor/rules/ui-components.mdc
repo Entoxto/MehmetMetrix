@@ -1,0 +1,52 @@
+---
+description: Правила для UI-компонентов и страниц — стили, адаптивность, разделение ответственности
+globs: "{components/**,app/**}"
+alwaysApply: false
+---
+
+# UI-компоненты и страницы
+
+## Разделение ответственности
+
+- **`components/`** — только отображение. Бизнес-логика — в `lib/`.
+- **`app/`** — страницы: загрузка данных, вызов `lib/`, передача в компоненты.
+- **`app/home/`** — UI-части главной страницы (Menu, Work, Money, Catalog, UpSector, DownSector).
+
+## Стили
+
+Inline CSS с константами из `constants/styles.ts`:
+
+- **Цвета**: `COLORS.primary`, `COLORS.success`, `COLORS.error`, `COLORS.text.*`, `COLORS.background.*`, `COLORS.border.*`
+- **Отступы**: `SPACING.xs` (4), `SPACING.sm` (8), `SPACING.md` (16), `SPACING.lg` (24), `SPACING.xl` (32)
+- **Типографика**: `TYPOGRAPHY.h1`, `.h2`, `.h3`, `.body`, `.caption`, `.amount`
+- **Карточки**: `STYLES.card`, `STYLES.cardExpanded`, `STYLES.button`, `STYLES.sizeBadge`
+- **Hover**: `CARD_HOVER_EFFECTS.category`, `.product`, `.money`, `.work` + `createCardHoverHandlers()`
+
+Никаких magic numbers. Никаких внешних CSS-библиотек.
+
+## Адаптивность
+
+Используй хук `useBreakpoint()` из `hooks/useBreakpoint.ts`:
+
+```typescript
+const { isMobile, isTablet, isDesktop, breakpoint } = useBreakpoint();
+```
+
+Брейкпоинты: mobile (<768), tablet (768–1024), laptop (1024–1280), desktop (≥1280).
+
+Не создавай свои хуки для media queries.
+
+## Изображения
+
+Используй компонент `<OptimizedImage>` из `components/ui/OptimizedImage.tsx` — он инкапсулирует всю цепочку fallback (WebP → JPG → 📷). Не дублируй эту логику вручную.
+
+```tsx
+<OptimizedImage src={product.photo} alt={product.name} />
+```
+
+Низкоуровневые утилиты (если нужны вне компонента): `lib/imageUtils.ts`.
+
+## Импорт useBreakpoint
+
+Канонический путь: `import { useBreakpoint } from "@/hooks/useBreakpoint"`.
+Файл `constants/MonitorSize.ts` удалён — не используй его.

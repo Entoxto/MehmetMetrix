@@ -6,7 +6,7 @@
  */
 
 import { STYLES } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import type { Size } from "@/types/domain";
 
 interface SizeChipsProps {

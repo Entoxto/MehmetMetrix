@@ -4,9 +4,9 @@ import { useMemo, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
 import { COLORS } from "@/constants/styles";
-import { useBreakpoint } from "@/constants/MonitorSize";
-import productsData from "@/data/products.json";
-import type { Product, ProductsData } from "@/types/product";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { getProducts } from "@/lib/products";
+import type { Product } from "@/types/product";
 import { Shell } from "@/components/Shell";
 
 function ProductPageContent() {
@@ -17,14 +17,7 @@ function ProductPageContent() {
 
   const productId = params.id as string;
 
-  const products: Product[] = useMemo(() => {
-    try {
-      const productsDataTyped = productsData as ProductsData;
-      return productsDataTyped.products || [];
-    } catch {
-      return [];
-    }
-  }, []);
+  const products = useMemo(() => getProducts(), []);
 
   // Цена берётся напрямую из products.json (обновляется скриптом update_prices.py)
   const product = useMemo(() => {

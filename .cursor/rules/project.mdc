@@ -1,0 +1,57 @@
+---
+description: Глобальные правила проекта Mehmet Metrics — архитектура, инварианты, документация, среда
+alwaysApply: true
+---
+
+# Mehmet Metrics — правила проекта
+
+## Среда разработки
+
+- ОС: **Windows**. Все shell-команды пиши для **PowerShell** (не bash, не cmd).
+- Пути: обратный слэш `\` или слэш `/` — PowerShell принимает оба, но избегай одинарных обратных слэшей в строках.
+- Кодировка: файлы в UTF-8.
+
+## Обязательное обновление документации
+
+**После ЛЮБОГО изменения кода** обнови соответствующую документацию:
+
+1. **README.md** (корень) — если изменение затрагивает архитектуру, добавляет страницу/компонент/модуль, меняет скрипты, типы или поток данных.
+2. **data/README.md** — если изменение затрагивает формат JSON, добавляет поля или меняет порядок данных.
+3. **Excel/логика парсинга.txt** — если изменение затрагивает парсер Excel или маппинг колонок.
+
+Документация должна **всегда соответствовать текущему состоянию кода**. Не откладывай обновление — делай его в том же коммите, что и изменение кода.
+
+## Карта проекта
+
+```
+types/          — доменные типы (Position, Batch, Product, ShipmentWithItems)
+lib/            — бизнес-логика (adapters, shipments, format, derive, statusText, imageUtils)
+constants/      — стили (COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_HOVER_EFFECTS)
+hooks/          — React-хуки (useBreakpoint)
+contexts/       — React-контексты (BreakpointContext)
+components/     — UI-компоненты (только отображение, без бизнес-логики)
+app/            — страницы Next.js App Router
+data/           — JSON-данные (генерируются из Excel, не редактируй цены вручную)
+Excel/          — Python-пайплайн: Google Sheets → Excel → JSON
+scripts/        — вспомогательные Python-скрипты (конвертация изображений)
+```
+
+## Архитектурные инварианты
+
+1. **Цены живут в поставках.** `products.json` обновляется автоматически через `update_prices.py`. Никогда не записывай price/cost напрямую в products.json.
+2. **Статусы — строки из Excel, не enum.** Логика оплаты — `isPaidStatus()` в `lib/statusText.ts`. Не создавай enum для статусов.
+3. **Стили — из констант.** Используй `COLORS`, `SPACING`, `TYPOGRAPHY`, `STYLES` из `constants/styles.ts`. Не используй magic numbers.
+4. **Адаптивность — через `useBreakpoint()`.** Хук `hooks/useBreakpoint.ts` + контекст `BreakpointContext`. Импорт: `@/hooks/useBreakpoint`. Для layout-решений используй `isWide` (laptop || desktop). Не создавай свои media-query хуки.
+5. **Загрузка каталога** — `getProducts()` из `lib/products.ts`. Не дублируй загрузку products.json в страницах.
+6. **Форматирование валют** — `formatCurrency()` (доллары) и `formatCurrencyRUB()` (рубли) из `lib/format.ts`.
+7. **Изображения** — компонент `<OptimizedImage>` из `components/ui/OptimizedImage.tsx`. Не дублируй WebP → JPG fallback вручную.
+8. **Hover-эффекты** — `CARD_HOVER_EFFECTS` из `constants/styles.ts` + `createCardHoverHandlers()` из `lib/utils.ts`.
+
+## Перед созданием нового файла или функции
+
+- Проверь `lib/` — функция может уже существовать.
+- Проверь `constants/styles.ts` — константа может быть определена.
+- Проверь `types/` — тип может быть уже описан.
+- Проверь `hooks/` и `contexts/` — хук или контекст могут быть готовы.
+
+Не дублируй существующий функционал. Переиспользуй.

@@ -9,17 +9,6 @@ import type { Position, Batch } from '@/types/domain';
 import { isPaidStatus } from '@/lib/statusText';
 
 /**
- * Вычисляет сумму позиции (цена × количество).
- * Не учитывает бизнес-логику (paidPreviously, noPayment) — это делается в adapters.ts.
- */
-export function calcSum(position: Position): number | null {
-  if (position.price == null || position.qty == null) {
-    return null;
-  }
-  return position.price * position.qty;
-}
-
-/**
  * Строка для отображения в таблице партии.
  */
 export interface ViewRow {
