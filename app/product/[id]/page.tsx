@@ -6,7 +6,6 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { COLORS } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { getProducts } from "@/lib/products";
-import type { Product } from "@/types/product";
 import { Shell } from "@/components/Shell";
 
 function ProductPageContent() {
