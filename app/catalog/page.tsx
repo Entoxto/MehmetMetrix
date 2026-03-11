@@ -61,14 +61,8 @@ function CatalogPageContent() {
   };
 
   const backHref = selectedCategory ? "/catalog" : "/";
-  const subtitle = selectedCategory ? categoryDescriptions[selectedCategory] : null;
-
   return (
-    <Shell
-      title={selectedCategory}
-      subtitle={subtitle}
-      backHref={backHref}
-    >
+    <Shell backHref={backHref}>
       <Catalog
         isMobile={isMobile}
         selectedCategory={selectedCategory}

@@ -7,7 +7,7 @@
  */
 import { Fragment, type MouseEvent, type CSSProperties } from "react";
 import Link from "next/link";
-import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
+import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
@@ -46,21 +46,16 @@ export const Money = ({
   const { isMobile, isWide: isDesktop } = useBreakpoint();
 
   const responsiveTypography = {
-    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 40 },
-    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : TYPOGRAPHY.body.fontSize },
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 32 },
+    body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : 14 },
     caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 10 : 11 },
     amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 28 : 36 },
   } as const;
 
   const CARD_STYLE = {
-    background: isMobile ? COLORS.background.card : "rgba(38,38,38,0.4)",
+    ...CARD_TEMPLATES.metricCard(isMobile),
     border: `1px solid ${COLORS.border.default}`,
-    borderRadius: isMobile ? 16 : 24,
-    boxShadow: isMobile
-      ? "0 2px 8px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05)"
-      : "0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(251,191,36,0.1)",
-    backdropFilter: isMobile ? "none" : "blur(10px)",
-    transition: "all 0.3s ease",
+    transition: "all 0.25s ease",
   } as const;
 
   const toggleRowHighlight = (element: HTMLDivElement, active: boolean) => {
@@ -72,7 +67,7 @@ export const Money = ({
     const rowIndex = Math.floor(index / 2);
     const start = rowIndex * 2;
     for (let i = start; i < start + 2 && i < cells.length; i++) {
-      cells[i].style.background = active ? "rgba(251,191,36,0.05)" : "transparent";
+      cells[i].style.background = active ? COLORS.background.soft : "transparent";
     }
   };
 
@@ -97,9 +92,10 @@ export const Money = ({
     display: "grid",
     gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
     gap: 0,
-    borderRadius: 8,
+    borderRadius: 16,
     overflow: "hidden",
     border: `1px solid ${COLORS.border.default}`,
+    background: COLORS.background.soft,
   } as const;
 
   const getCellStyle = (isLast: boolean, alignRight = false): CSSProperties => ({
@@ -291,24 +287,20 @@ export const Money = ({
         gap: isMobile ? SPACING.md : SPACING.xl * 2,
       }}
     >
-      <div style={{ marginBottom: isMobile ? 8 : SPACING.md, textAlign: "center" }}>
+      <div style={CARD_TEMPLATES.introCard(isMobile)}>
+        <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>Финансы</p>
         <h2
           style={{
             ...responsiveTypography.h2,
-            color: COLORS.primary,
-            marginBottom: 6,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 12,
-            textShadow: isMobile
-              ? "none"
-              : `0 0 20px rgba(251,191,36,0.3), 0 0 40px rgba(251,191,36,0.15), 0 0 60px rgba(251,191,36,0.1)`,
-            letterSpacing: isMobile ? 0 : -1,
+            color: COLORS.text.primary,
+            margin: 0,
           }}
         >
-          Надвигающаяся расплата <span style={{ fontSize: isMobile ? 20 : 36 }}>💸</span>
+          Надвигающаяся расплата
         </h2>
+        <p style={{ ...STYLES.sectionDescription, margin: 0 }}>
+          Слева то, что ещё нужно оплатить, справа уже внесённые депозиты и предоплаты.
+        </p>
       </div>
 
       <div
@@ -349,12 +341,8 @@ export const Money = ({
             >
               <p
                 style={{
-                  ...responsiveTypography.caption,
-                  color: COLORS.text.secondary,
-                  textTransform: "uppercase",
-                  letterSpacing: 1.5,
+                  ...STYLES.metricLabel,
                   margin: 0,
-                  fontSize: isMobile ? 10 : 11,
                 }}
               >
                 Всего к оплате
@@ -379,9 +367,7 @@ export const Money = ({
             </p>
             <p
               style={{
-                ...responsiveTypography.body,
-                color: COLORS.text.muted,
-                fontStyle: "italic",
+                ...STYLES.metricHint,
                 margin: 0,
                 marginTop: isMobile ? 0 : SPACING.xs,
               }}
@@ -455,12 +441,8 @@ export const Money = ({
             >
               <p
                 style={{
-                  ...responsiveTypography.caption,
-                  color: COLORS.text.secondary,
-                  textTransform: "uppercase",
-                  letterSpacing: 1.5,
+                  ...STYLES.metricLabel,
                   margin: 0,
-                  fontSize: isMobile ? 10 : 11,
                 }}
               >
                 Депозитов внесено
@@ -485,9 +467,7 @@ export const Money = ({
             </p>
             <p
               style={{
-                ...responsiveTypography.body,
-                color: COLORS.text.muted,
-                fontStyle: "italic",
+                ...STYLES.metricHint,
                 margin: 0,
                 marginTop: isMobile ? 0 : SPACING.xs,
               }}

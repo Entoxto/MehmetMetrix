@@ -31,9 +31,10 @@ export const SizeChips = ({ sizes }: SizeChipsProps) => {
             ...STYLES.sizeBadge,
             fontSize: isMobile ? 10 : 12,
             padding: isMobile ? "3px 8px" : "4px 10px",
+            color: STYLES.sizeBadge.color,
           }}
         >
-          {size} × {count}
+          {size.toUpperCase()} × {count}
         </span>
       ))}
     </div>

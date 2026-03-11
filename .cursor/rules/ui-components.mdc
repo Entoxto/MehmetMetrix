@@ -18,11 +18,23 @@ Inline CSS с константами из `constants/styles.ts`:
 
 - **Цвета**: `COLORS.primary`, `COLORS.success`, `COLORS.error`, `COLORS.text.*`, `COLORS.background.*`, `COLORS.border.*`
 - **Отступы**: `SPACING.xs` (4), `SPACING.sm` (8), `SPACING.md` (16), `SPACING.lg` (24), `SPACING.xl` (32)
-- **Типографика**: `TYPOGRAPHY.h1`, `.h2`, `.h3`, `.body`, `.caption`, `.amount`
-- **Карточки**: `STYLES.card`, `STYLES.cardExpanded`, `STYLES.button`, `STYLES.sizeBadge`
+- **Типографика**: `TYPOGRAPHY.h1`, `.h2`, `.h3`, `.body`, `.bodyLg`, `.caption`, `.amount`
+- **Карточки**: `STYLES.card`, `STYLES.cardExpanded`, `STYLES.button`, `STYLES.sizeBadge`, `STYLES.categoryBadge`
+- **Иерархия секций**: `STYLES.sectionEyebrow`, `STYLES.sectionTitle`, `STYLES.sectionDescription`
+- **Сводка и метрики**: `STYLES.metricLabel`, `STYLES.metricHint`, `CARD_TEMPLATES.introCard()`, `CARD_TEMPLATES.metricCard()`
 - **Hover**: `CARD_HOVER_EFFECTS.category`, `.product`, `.money`, `.work` + `createCardHoverHandlers()`
 
 Никаких magic numbers. Никаких внешних CSS-библиотек.
+
+## Принципы визуальных изменений
+
+- Сначала проверяй, можно ли выразить изменение через существующие токены и шаблоны.
+- Не добавляй новый helper, если он не убирает реальное дублирование.
+- Не размножай локальные цвета, тени, радиусы и `fontSize` по компонентам.
+- Акцентный цвет должен выделять важное, а не заменять обычную типографику.
+- Любое улучшение дизайна должно упрощать чтение интерфейса и не усложнять логику компонента.
+- Не дублируй контекст экрана: если страница уже объясняет себя внутри контента, не добавляй второй верхний hero-блок с тем же смыслом.
+- UI-текст должен быть пользовательским: не выводи в интерфейс объяснения вроде «этот экран должен читаться быстро», «сетка намеренно спокойная» и другие внутренние комментарии о дизайне.
 
 ## Адаптивность
 

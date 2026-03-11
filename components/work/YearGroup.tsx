@@ -8,7 +8,7 @@
 
 import { useMemo } from "react";
 import type { MouseEvent } from "react";
-import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY } from "@/constants/styles";
+import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES } from "@/constants/styles";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { ShipmentCard } from "@/components/work/ShipmentCard";
@@ -60,6 +60,10 @@ export const YearGroup = ({
     () => shipments.reduce((sum, shipment) => sum + shipment.totalAmount, 0),
     [shipments]
   );
+  const totalPositions = useMemo(
+    () => shipments.reduce((sum, shipment) => sum + shipment.batch.positions.length, 0),
+    [shipments]
+  );
 
   const shipmentCellBaseBackground = COLORS.background.card;
   const shipmentCellHoverBackground = COLORS.background.cardExpanded;
@@ -109,8 +113,8 @@ export const YearGroup = ({
         style={yearHeaderStyle}
         {...(isMobile ? {} : hoverHandlers)}
         onFocus={(e) => {
-          e.currentTarget.style.outline = `2px solid ${COLORS.primary}`;
-          e.currentTarget.style.outlineOffset = "2px";
+          e.currentTarget.style.outline = STYLES.focusRing.outline;
+          e.currentTarget.style.outlineOffset = STYLES.focusRing.outlineOffset;
         }}
         onBlur={(e) => {
           e.currentTarget.style.outline = "none";
@@ -120,52 +124,57 @@ export const YearGroup = ({
       >
         <div
           style={{
-            display: "flex",
+            display: "grid",
+            gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
+            gap: isDesktop ? SPACING.lg : SPACING.md,
             alignItems: "center",
-            gap: SPACING.md,
-            minHeight: isDesktop ? 50 : "auto",
+            minHeight: isDesktop ? 56 : "auto",
           }}
         >
-          <span
-            style={{
-              fontSize: isMobile ? 16 : 20,
-              color: COLORS.primary,
-              transition: "transform 0.3s ease",
-              transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-              flexShrink: 0,
-              lineHeight: 1,
-            }}
-            aria-hidden="true"
-          >
-            ▶
-          </span>
-          <h2
-            style={{
-              ...responsiveTypography.h2,
-              color: COLORS.primary,
-              margin: 0,
-              flex: 1,
-            }}
-          >
-            {year}
-          </h2>
-          {/* Блок с годовым оборотом справа от года */}
+          <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
+            <div style={{ display: "flex", alignItems: "center", gap: SPACING.md }}>
+              <span
+                style={{
+                  fontSize: isMobile ? 16 : 20,
+                  color: COLORS.primary,
+                  transition: "transform 0.3s ease",
+                  transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                  flexShrink: 0,
+                  lineHeight: 1,
+                }}
+                aria-hidden="true"
+              >
+                ▶
+              </span>
+              <h2
+                style={{
+                  ...responsiveTypography.h2,
+                  color: COLORS.text.primary,
+                  margin: 0,
+                  flex: 1,
+                }}
+              >
+                {year}
+              </h2>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: SPACING.sm }}>
+              <span style={STYLES.categoryBadge}>{shipments.length} поставок</span>
+              <span style={STYLES.sizeBadge}>{totalPositions} позиций</span>
+            </div>
+          </div>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-end",
-              gap: 2,
-              paddingRight: SPACING.md,
+              gap: 4,
+              paddingRight: isDesktop ? SPACING.md : 0,
             }}
           >
             <span
               style={{
-                ...responsiveTypography.caption,
-                color: COLORS.text.secondary,
-                textTransform: "uppercase",
+                ...STYLES.metricLabel,
                 margin: 0,
-                lineHeight: 1.3,
                 whiteSpace: "nowrap",
               }}
             >
@@ -177,7 +186,7 @@ export const YearGroup = ({
                 fontSize: isMobile ? 16 : 22,
                 margin: 0,
                 lineHeight: 1.2,
-                color: COLORS.primary,
+                color: COLORS.text.primary,
                 whiteSpace: "nowrap",
               }}
             >
@@ -205,7 +214,6 @@ export const YearGroup = ({
                 padding: SPACING.lg,
                 textAlign: "center",
                 color: COLORS.text.secondary,
-                fontStyle: "italic",
               }}
             >
               Нет поставок в этом году

@@ -5,7 +5,7 @@
  * Показывает название, короткое описание и бейдж с количеством.
  * Используется на главной для выбора категории.
  */
-import { STYLES, COLORS, CARD_HOVER_EFFECTS } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 
 interface CategoryCardProps {
@@ -32,23 +32,51 @@ export const CategoryCard = ({
       {...hoverHandlers}
       style={{
         ...STYLES.card,
-        padding: 20,
+        padding: 24,
         cursor: "pointer",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        transition: "all 0.3s ease",
+        gap: SPACING.lg,
+        minHeight: 220,
+        transition: "all 0.25s ease",
       }}
     >
-      <div>
-        <h3 style={{ fontSize: 20, fontWeight: 600, marginBottom: 4 }}>{title}</h3>
-        <p style={{ color: COLORS.text.primary, fontSize: 12, marginBottom: 12, lineHeight: 1.4 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
+        <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>
+          Категория
+        </p>
+        <h3
+          style={{
+            fontSize: 24,
+            fontWeight: 800,
+            lineHeight: 1.2,
+            letterSpacing: -0.4,
+            margin: 0,
+            color: COLORS.text.primary,
+          }}
+        >
+          {title}
+        </h3>
+        <p style={{ color: COLORS.text.secondary, fontSize: 14, margin: 0, lineHeight: 1.6 }}>
           {description}
         </p>
       </div>
-      <span style={{ display: "inline-flex", width: "max-content", ...STYLES.categoryBadge }}>
-        {badge}
-      </span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: SPACING.md }}>
+        <span style={{ display: "inline-flex", width: "max-content", ...STYLES.categoryBadge }}>
+          {badge}
+        </span>
+        <span
+          style={{
+            color: COLORS.primary,
+            fontSize: 14,
+            fontWeight: 700,
+            whiteSpace: "nowrap",
+          }}
+        >
+          Смотреть
+        </span>
+      </div>
     </div>
   );
 };

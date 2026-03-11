@@ -8,6 +8,7 @@
  */
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
+import { COLORS, STYLES } from "@/constants/styles";
 import { MENU_STYLES } from "./styles";
 
 export interface MenuItem {
@@ -37,9 +38,14 @@ export const Menu = ({ items }: MenuProps) => {
           {...hoverHandlers}
           style={MENU_STYLES.card}
         >
-          <div style={MENU_STYLES.cardHeader}>
-            <span style={MENU_STYLES.icon}>{item.icon}</span>
-            <h2 style={MENU_STYLES.title}>{item.title}</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>
+              Раздел {String(index + 1).padStart(2, "0")}
+            </p>
+            <div style={MENU_STYLES.cardHeader}>
+              <span style={MENU_STYLES.icon}>{item.icon}</span>
+              <h2 style={MENU_STYLES.title}>{item.title}</h2>
+            </div>
           </div>
           {item.image && (
             <div style={{ ...MENU_STYLES.imageContainer, position: "relative" }}>
@@ -55,9 +61,33 @@ export const Menu = ({ items }: MenuProps) => {
               />
             </div>
           )}
-          <p style={MENU_STYLES.description}>
-            {item.description}
-          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <p style={MENU_STYLES.description}>{item.description}</p>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 12,
+                paddingTop: 16,
+                borderTop: `1px solid ${COLORS.border.default}`,
+              }}
+            >
+              <span style={{ ...STYLES.sectionEyebrow, color: COLORS.text.secondary, margin: 0 }}>
+                Быстрый переход
+              </span>
+              <span
+                style={{
+                  color: COLORS.primary,
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: 0.2,
+                }}
+              >
+                Открыть раздел
+              </span>
+            </div>
+          </div>
         </div>
       ))}
     </main>

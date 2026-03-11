@@ -7,7 +7,7 @@
  * Адаптируется под мобильный и десктоп.
  */
 import { useMemo } from "react";
-import { COLORS, SPACING, TYPOGRAPHY } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
 import { groupShipmentsByYear } from "@/lib/shipments";
 import { YearGroup } from "@/components/work/YearGroup";
 import type { ShipmentWithItems } from "@/types/shipment";
@@ -33,7 +33,7 @@ export const Work = ({
 }: WorkProps) => {
   const responsiveTypography = useMemo(
     () => ({
-    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 22 : 30 },
+      h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 32 },
     }),
     [isMobile]
   );
@@ -51,27 +51,24 @@ export const Work = ({
         gap: isMobile ? SPACING.md : SPACING.lg,
       }}
     >
-      <div>
+      <div style={CARD_TEMPLATES.introCard(isMobile)}>
+        <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>Работа</p>
         <h2
           style={{
             ...responsiveTypography.h2,
-            color: COLORS.primary,
-            marginBottom: 6,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
+            color: COLORS.text.primary,
+            margin: 0,
           }}
         >
-          Что сейчас в работе <span style={{ fontSize: isMobile ? 20 : 28 }}>🧵</span>
+          Что сейчас в работе
         </h2>
         <p
           style={{
-            color: COLORS.text.secondary,
-            fontSize: isMobile ? 12 : 13,
-            fontStyle: "italic",
+            ...STYLES.sectionDescription,
+            margin: 0,
           }}
         >
-          Актуальные поставки, статусы и суммы по поставкам.
+          Сводка по активным изделиям, статусам и партиям, которые ещё не закрыты по оплате.
         </p>
       </div>
 

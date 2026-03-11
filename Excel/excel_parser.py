@@ -13,6 +13,8 @@ from typing import List, Dict, Optional, Tuple, Any
 from utils import (
     parse_sizes_from_name,
     find_or_create_product_id,
+    parse_product_materials,
+    apply_product_materials,
     parse_date,
     is_date_value,
     normalize_status_text,
@@ -29,6 +31,7 @@ class ExcelParser:
     # Индексы колонок
     COL_SHIPMENT_NUM = 0  # A: № Поставки
     COL_NAME = 2          # C: Наименование
+    COL_COMPOSITION = 3   # D: Состав
     COL_POSITION_STATUS = 4  # E: Статусы позиций
     COL_SHIPMENT_STATUS = 5  # F: Статусы поставок
     COL_QUANTITY = 6      # G: Кол-во в заказе
@@ -273,6 +276,12 @@ class ExcelParser:
         
         # productId: найти в каталоге или создать новый товар
         item["productId"] = find_or_create_product_id(name, self.products)
+
+        # materials: забираем из колонки D ("Состав") и сохраняем в каталог товара
+        composition = safe_get_cell(row, self.COL_COMPOSITION)
+        materials = parse_product_materials(composition)
+        if materials:
+            apply_product_materials(item["productId"], materials, self.products)
         
         # price: берём из колонки H (Стоймость 1 ед $) - цена в долларах
         price_value = self._parse_numeric_field(row, self.COL_PRICE_USD)

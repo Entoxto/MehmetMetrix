@@ -6,17 +6,15 @@ import { usePathname } from "next/navigation";
 import { UpSector } from "@/app/home/UpSector";
 import { DownSector } from "@/app/home/DownSector";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
-import { STYLES, SPACING } from "@/constants/styles";
+import { STYLES, SPACING, COLORS } from "@/constants/styles";
 import { HOME_STYLES } from "@/app/home/styles";
 
 interface ShellProps {
   children: ReactNode;
-  title?: string | null;
-  subtitle?: string | null;
   backHref?: string;
 }
 
-export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
+export const Shell = ({ children, backHref }: ShellProps) => {
   const { isMobile } = useBreakpoint();
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -34,11 +32,12 @@ export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
       style={{
         textDecoration: "none",
         ...STYLES.button,
-        padding: isMobile ? "6px 12px" : STYLES.button.padding,
+        padding: isMobile ? "8px 12px" : STYLES.button.padding,
         fontSize: isMobile ? 11 : STYLES.button.fontSize,
         display: "inline-flex",
         alignItems: "center",
         gap: SPACING.xsPlus,
+        color: COLORS.text.primary,
       }}
     >
       Назад
@@ -62,15 +61,6 @@ export const Shell = ({ children, title, subtitle, backHref }: ShellProps) => {
           </div>
         </div>
       </UpSector>
-
-      {title && (
-        <div style={HOME_STYLES.pageHero(isMobile)}>
-          <div style={HOME_STYLES.heroContent(isMobile)}>
-            <h2 style={HOME_STYLES.heroTitle(isMobile)}>{title}</h2>
-            {subtitle && <p style={HOME_STYLES.heroSubtitle(isMobile)}>{subtitle}</p>}
-          </div>
-        </div>
-      )}
 
       {children}
 

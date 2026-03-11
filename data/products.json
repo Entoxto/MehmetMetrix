@@ -8,7 +8,10 @@
       "sizes": [
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 260,
@@ -24,7 +27,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 165,
@@ -41,7 +47,10 @@
         "m",
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 180,
@@ -55,7 +64,10 @@
       "sizes": [
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 180,
@@ -67,7 +79,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка длинная из меха тасканы — коричневый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 400,
@@ -81,7 +96,10 @@
       "sizes": [
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 260,
@@ -95,7 +113,10 @@
       "sizes": [
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 180,
@@ -111,7 +132,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 260,
@@ -123,7 +147,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка длинная из меха кёрли — серый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 315,
@@ -139,7 +166,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 180,
@@ -155,7 +185,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 175,
@@ -170,7 +203,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 390,
@@ -186,7 +222,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 550,
@@ -198,7 +237,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 390,
@@ -210,7 +252,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 390,
@@ -225,7 +270,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 190,
@@ -237,7 +285,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка с мехом наружу из волка — бежевый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Мех волка",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 390,
@@ -249,7 +300,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 390,
@@ -264,7 +318,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 180,
@@ -280,7 +337,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 550,
@@ -295,7 +355,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 550,
@@ -310,7 +373,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 480,
@@ -325,7 +391,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 550,
@@ -340,7 +409,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа коровы с мехом",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 300,
@@ -352,7 +424,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Жакет из меха пони по новым лекалам — бежевый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа коровы с мехом",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 310,
@@ -364,7 +439,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Жакет из меха пони в стиле 80-х — бежевый.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа коровы с мехом",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 330,
@@ -376,7 +454,10 @@
       "category": "Кожа",
       "photo": "/images/products/jpg/Парка из кожи Hermes — mouse.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 195,
@@ -388,7 +469,10 @@
       "category": "Кожа",
       "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа коровы с мехом",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 400,
@@ -403,7 +487,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа коровы с мехом",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 270,
@@ -419,7 +506,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 215,
@@ -435,7 +525,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 260,
@@ -451,7 +544,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 190,
@@ -463,7 +559,10 @@
       "category": "Мех",
       "photo": "/images/products/jpg/Дублёнка из меха тасканы — волк.jpg",
       "sizes": [],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная овчина",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 360,
@@ -479,7 +578,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 320,
@@ -495,7 +597,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 320,
@@ -510,7 +615,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 550,
@@ -525,7 +633,10 @@
         "xs",
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 310
@@ -540,7 +651,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 320
@@ -553,7 +667,10 @@
       "sizes": [
         "OneSize"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 310
@@ -568,7 +685,10 @@
         "s",
         "m"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 320
@@ -582,7 +702,10 @@
         "xs",
         "s"
       ],
-      "materials": {},
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
       "inStock": true,
       "tags": [],
       "price": 480

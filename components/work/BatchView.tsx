@@ -57,7 +57,6 @@ const getBaseCellStyle = (
   borderBottom: `1px solid ${cellBaseBorder}`,
   ...typography.tableCell,
   background: cellBaseBackground,
-  cursor: "pointer",
   transition: "background 0.2s ease, border 0.2s ease",
   margin: 0,
 });
@@ -150,7 +149,7 @@ export const COLUMNS_CONFIG: ColumnConfig[] = [
         <div
           style={{
             ...getBaseCellStyle(isMobile, cellBaseBackground, cellBaseBorder, typography),
-            color: position.price != null ? COLORS.text.primary : COLORS.primary,
+            color: position.price != null ? COLORS.text.primary : COLORS.text.muted,
             fontWeight: position.price != null ? 600 : 500,
           }}
           {...cellEventHandlers}
@@ -178,7 +177,7 @@ export const COLUMNS_CONFIG: ColumnConfig[] = [
         <div
           style={{
             ...getBaseCellStyle(isMobile, cellBaseBackground, cellBaseBorder, typography),
-            color: position.sum != null ? COLORS.success : COLORS.primary,
+            color: position.sum != null ? COLORS.success : COLORS.text.muted,
             fontWeight: 700,
             textAlign: "right",
           }}
@@ -276,16 +275,11 @@ export const BatchView = ({
           <div
             style={{
               gridColumn: `1 / ${COLUMNS_CONFIG.length + 1}`,
-              background: COLORS.background.cardExpanded,
-              borderBottom: `1px solid ${COLORS.border.default}`,
-              padding: isMobile ? "10px 12px" : "12px 18px",
+              ...CARD_TEMPLATES.dataGroupHeader(isMobile),
               ...typography.tableCell,
-              fontWeight: 600,
-              color: COLORS.primary,
               display: "flex",
               alignItems: "center",
               gap: SPACING.sm,
-              margin: 0,
             }}
           >
             <span>{row.statusLabel}</span>
@@ -319,7 +313,8 @@ export const BatchView = ({
           overflowY: "hidden",
           WebkitOverflowScrolling: "touch", // Плавная прокрутка на iOS
           border: `1px solid ${COLORS.border.default}`,
-          borderRadius: 12,
+          borderRadius: 16,
+          background: COLORS.background.card,
         }}
       >
         {tableContent}
@@ -332,8 +327,9 @@ export const BatchView = ({
     <div
       style={{
         border: `1px solid ${COLORS.border.default}`,
-        borderRadius: 12,
+        borderRadius: 16,
         overflow: "hidden",
+        background: COLORS.background.card,
       }}
     >
       {tableContent}

@@ -169,6 +169,87 @@ def find_or_create_product_id(name: str, products: List[Dict]) -> str:
     return new_id
 
 
+def parse_product_materials(raw_value: Any) -> Dict[str, str]:
+    """
+    Преобразует колонку "Состав" из Excel в структуру materials каталога.
+    Формат в Excel может быть свободным, поэтому используем мягкий парсинг:
+    - первая содержательная строка -> outer
+    - строка с "подклад" -> lining
+    - всё остальное -> comments
+    """
+    if pd.isna(raw_value) or raw_value is None:
+        return {}
+
+    text = str(raw_value).strip()
+    if not text:
+        return {}
+
+    lines = [" ".join(line.split()) for line in re.split(r'[\r\n]+', text) if line and line.strip()]
+    if not lines:
+        return {}
+
+    outer = ""
+    lining = ""
+    comments: List[str] = []
+
+    for line in lines:
+        lower = line.lower()
+        if "подклад" in lower:
+            cleaned = re.sub(r'^\s*подкладк?[аи]?\s*[:\-]?\s*', '', line, flags=re.IGNORECASE).strip()
+            cleaned = cleaned or line
+            if not lining:
+                lining = cleaned
+            elif cleaned != lining and cleaned not in comments:
+                comments.append(cleaned)
+            continue
+
+        if not outer:
+            outer = line
+        elif line != outer and line not in comments:
+            comments.append(line)
+
+    materials: Dict[str, str] = {}
+    if outer:
+        materials["outer"] = outer
+    if lining:
+        materials["lining"] = lining
+    if comments:
+        materials["comments"] = "\n".join(comments)
+
+    return materials
+
+
+def apply_product_materials(product_id: str, materials: Dict[str, str], products: List[Dict]) -> None:
+    """
+    Записывает materials в товар каталога, не затирая уже заполненные поля пустыми значениями.
+    Если один и тот же товар встречается в нескольких строках Excel, объединяем данные аккуратно.
+    """
+    if not product_id or not materials:
+        return
+
+    for product in products:
+        if product.get("id") != product_id:
+            continue
+
+        current = product.get("materials")
+        if not isinstance(current, dict):
+            current = {}
+
+        merged = dict(current)
+        for key, value in materials.items():
+            if not value:
+                continue
+
+            existing = merged.get(key)
+            if not existing:
+                merged[key] = value
+            elif key == "comments" and value not in str(existing):
+                merged[key] = f"{existing}\n{value}"
+
+        product["materials"] = merged
+        return
+
+
 def aggregate_product_sizes(shipments: List[Dict], products: List[Dict]) -> None:
     """
     Заполняет product["sizes"] для каждого товара: объединение всех размеров,

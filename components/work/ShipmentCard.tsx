@@ -6,7 +6,7 @@
  */
 
 import type { CSSProperties, MouseEvent } from "react";
-import { COLORS, SPACING, STATUS_CHIP_STYLE } from "@/constants/styles";
+import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES } from "@/constants/styles";
 import { formatCurrency, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
 import { BatchView } from "@/components/work/BatchView";
@@ -123,6 +123,7 @@ export const ShipmentCard = ({
   const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
   const highlightStatus = isPaidStatus(shipment.status);
   const statusLabelText = getStatusLabel(shipment.status);
+  const positionsCount = shipment.batch.positions.length;
 
   return (
     <div
@@ -139,8 +140,8 @@ export const ShipmentCard = ({
       style={{ ...cardStyle, cursor: "pointer", outline: "none" }}
       {...(isMobile ? {} : hoverHandlers)}
       onFocus={(e) => {
-        e.currentTarget.style.outline = `2px solid ${COLORS.primary}`;
-        e.currentTarget.style.outlineOffset = "2px";
+        e.currentTarget.style.outline = STYLES.focusRing.outline;
+        e.currentTarget.style.outlineOffset = STYLES.focusRing.outlineOffset;
       }}
       onBlur={(e) => {
         e.currentTarget.style.outline = "none";
@@ -175,7 +176,7 @@ export const ShipmentCard = ({
             <h3
               style={{
                 ...typography.h3,
-                color: COLORS.primary,
+                color: COLORS.text.primary,
                 margin: 0,
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -195,6 +196,15 @@ export const ShipmentCard = ({
             >
               <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
             </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: SPACING.sm }}>
+            <span style={STYLES.sizeBadge}>{positionsCount} позиций</span>
+            <span style={STYLES.sizeBadge}>{formatCurrency(shipment.totalAmount)}</span>
+            {shipment.hasPriceGaps && (
+              <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted }}>
+                есть уточнения
+              </span>
+            )}
           </div>
         </div>
 
@@ -283,7 +293,7 @@ export const ShipmentCard = ({
                 style={{
                   ...typography.amount,
                   margin: 0,
-                  color: highlightStatus ? COLORS.success : COLORS.primary,
+                  color: highlightStatus ? COLORS.success : COLORS.text.primary,
                 }}
               >
                 {formatCurrency(shipment.totalAmount)}
@@ -298,7 +308,6 @@ export const ShipmentCard = ({
                 margin: 0,
                 marginTop: SPACING.sm,
                 color: COLORS.text.secondary,
-                fontStyle: "italic",
                 overflowWrap: "break-word",
                 wordBreak: "break-word",
                 whiteSpace: "normal",

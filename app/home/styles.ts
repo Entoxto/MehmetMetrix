@@ -5,7 +5,7 @@ export const HOME_STYLES = {
   container: {
     minHeight: "100vh",
     background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
-    color: "white",
+    color: COLORS.text.primary,
     display: "flex",
     flexDirection: "column",
   } as CSSProperties,
@@ -16,8 +16,8 @@ export const HOME_STYLES = {
     alignItems: "flex-start",
     gap: SPACING.sm,
     padding: isMobile
-      ? `8px ${SPACING.md}px 8px ${SPACING.sm}px`
-      : `12px ${SPACING.lg}px 12px ${SPACING.md}px`,
+      ? `${SPACING.sm}px ${SPACING.md}px`
+      : `${SPACING.md}px ${SPACING.xl}px`,
     width: "100%",
     boxSizing: "border-box",
   }),
@@ -48,52 +48,12 @@ export const HOME_STYLES = {
   }),
 
   headerTitle: (isMobile: boolean): CSSProperties => ({
-    fontSize: isMobile ? 26 : 44,
+    fontSize: isMobile ? 24 : 40,
     fontWeight: 900,
-    letterSpacing: -1.5,
+    letterSpacing: -1.2,
     color: COLORS.primary,
-    textShadow: "0 0 20px rgba(251,191,36,0.5)",
+    textShadow: "0 0 18px rgba(244,195,77,0.18)",
     margin: 0,
-  }),
-
-  pageHero: (isMobile: boolean): CSSProperties => ({
-    display: "flex",
-    justifyContent: "center",
-    paddingLeft: isMobile ? SPACING.md : SPACING.xl, // Одинаковый padding слева с контентом
-    paddingRight: isMobile ? SPACING.md : SPACING.xl, // Одинаковый padding справа с контентом
-    paddingTop: isMobile ? SPACING.sm : SPACING.md,
-    paddingBottom: isMobile ? SPACING.sm : SPACING.md,
-    width: "100%",
-    boxSizing: "border-box",
-  }),
-
-  heroContent: (isMobile: boolean): CSSProperties => ({
-    maxWidth: isMobile ? "100%" : 1400, // Максимальная ширина такая же, как у контента
-    width: "auto", // Не растягиваем на всю ширину, только до реальной ширины контента
-    textAlign: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center", // Центрируем содержимое по горизонтали
-    gap: isMobile ? 4 : 6,
-  }),
-
-  heroTitle: (isMobile: boolean): CSSProperties => ({
-    margin: 0,
-    fontSize: isMobile ? 22 : 28,
-    fontWeight: 700,
-    color: COLORS.primary,
-    letterSpacing: -0.3,
-  }),
-
-  heroSubtitle: (isMobile: boolean): CSSProperties => ({
-    margin: 0,
-    fontSize: isMobile ? 11 : 13,
-    lineHeight: 1.4,
-    fontStyle: "italic",
-    color: COLORS.text.secondary,
-    opacity: 0.75,
-    textAlign: "center", // Явное центрирование текста
-    width: "100%", // Занимает всю ширину родителя для правильного центрирования
   }),
 
   errorContainer: {
@@ -133,50 +93,60 @@ export const HOME_STYLES = {
 export const MENU_STYLES = {
   main: {
     flex: 1,
+    width: "100%",
+    maxWidth: 1400,
+    margin: "0 auto",
     padding: 12,
     display: "grid",
     gap: SPACING.lg,
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+    boxSizing: "border-box",
   } as CSSProperties,
 
   card: {
     ...STYLES.card,
-    padding: 20,
+    padding: 24,
     display: "flex",
     flexDirection: "column",
+    gap: SPACING.md,
     justifyContent: "space-between",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
     cursor: "pointer",
-    transition: "all 0.3s ease",
+    minHeight: 520,
+    transition: "all 0.25s ease",
   } as CSSProperties,
 
   cardHeader: {
     display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 5,
+    alignItems: "flex-start",
+    gap: 12,
   } as CSSProperties,
 
   icon: {
-    fontSize: 20,
+    fontSize: 18,
+    lineHeight: 1,
+    color: COLORS.primary,
+    marginTop: 2,
   } as CSSProperties,
 
   title: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 800,
-    color: COLORS.primary,
+    lineHeight: 1.2,
+    letterSpacing: -0.4,
+    color: COLORS.text.primary,
+    margin: 0,
   } as CSSProperties,
 
   imageContainer: {
     width: "100%",
-    aspectRatio: "1",
-    marginBottom: 6,
-    borderRadius: 8,
+    aspectRatio: "5 / 6",
+    borderRadius: 16,
     overflow: "hidden",
-    background: COLORS.background.card,
+    background: COLORS.background.cardExpanded,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    border: `1px solid ${COLORS.border.default}`,
   } as CSSProperties,
 
   image: {
@@ -186,21 +156,21 @@ export const MENU_STYLES = {
   } as CSSProperties,
 
   description: {
-    color: COLORS.text.primary,
-    fontSize: 12,
-    fontStyle: "italic",
-    lineHeight: 1.5,
+    color: COLORS.text.secondary,
+    fontSize: 14,
+    lineHeight: 1.6,
+    margin: 0,
   } as CSSProperties,
 
   cardHover: {
-    transform: "translateY(-4px)",
-    boxShadow: "0 8px 32px rgba(251,191,36,0.3)",
+    transform: "translateY(-3px)",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.28)",
     border: `1px solid ${COLORS.border.primaryHover}`,
   } as CSSProperties,
 
   cardDefault: {
     transform: "translateY(0)",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+    boxShadow: STYLES.card.boxShadow,
     border: `1px solid ${COLORS.border.default}`,
   } as CSSProperties,
 };

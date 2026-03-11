@@ -25,7 +25,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const cardStyle: CSSProperties = {
     ...STYLES.card,
     padding: 0,
-    transition: "all 0.3s ease",
+    overflow: "hidden",
+    transition: "all 0.25s ease",
   };
 
   if (CARD_HOVER_EFFECTS.product.default.boxShadow !== undefined) {
@@ -42,7 +43,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       onMouseLeave={hoverHandlers.onMouseLeave}
     >
       <Link
-        href={{ pathname: `/product/${product.id}`, query: { from: "catalog" } }}
+        href={`/product/${product.id}?from=catalog&category=${encodeURIComponent(product.category)}`}
         prefetch={false}
         style={{
           cursor: "pointer",
@@ -54,13 +55,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div
           style={{
             width: "100%",
-            height: 340,
+            height: 360,
             background: COLORS.background.cardExpanded,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
             overflow: "hidden",
             position: "relative",
           }}
@@ -75,42 +74,57 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             }}
           />
         </div>
-        <div style={{ padding: SPACING.mdPlus, display: "flex", flexDirection: "column", minHeight: 180 }}>
+        <div
+          style={{
+            padding: SPACING.lg,
+            display: "flex",
+            flexDirection: "column",
+            gap: SPACING.md,
+            minHeight: 220,
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: SPACING.md }}>
+            <span style={STYLES.categoryBadge}>{product.category}</span>
+            <span style={{ ...STYLES.sectionEyebrow, color: COLORS.text.tertiary }}>
+              {product.sizes.length > 0 ? `${product.sizes.length} размеров` : "Размеры уточняются"}
+            </span>
+          </div>
           <h3
             style={{
-              fontSize: 20,
-              fontWeight: 700,
-              marginBottom: SPACING.smPlus,
-              color: COLORS.primary,
-              minHeight: 60,
-              maxHeight: 60,
+              fontSize: 22,
+              fontWeight: 800,
+              margin: 0,
+              color: COLORS.text.primary,
+              minHeight: 58,
               overflow: "hidden",
-              lineHeight: "1.3",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              lineHeight: "1.25",
+              letterSpacing: -0.3,
             }}
           >
             {product.name}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.smPlus, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.md, alignItems: "start" }}>
             <div>
-              {/* NOTE: All prices are in USD dollars only */}
               <p
                 style={{
-                  color: COLORS.text.secondary,
+                  ...STYLES.metricLabel,
+                  color: COLORS.text.muted,
                   fontSize: 11,
-                  textTransform: "uppercase",
                   marginBottom: SPACING.xs,
-                  height: 15,
-                  lineHeight: "15px",
+                  marginTop: 0,
                 }}
               >
                 Цена
               </p>
               {product.price ? (
-                <p style={{ color: COLORS.success, fontSize: 20, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
+                <p style={{ color: COLORS.success, fontSize: 24, fontWeight: 800, margin: 0, lineHeight: "28px" }}>
                   ${product.price.toLocaleString()}
                 </p>
               ) : (
-                <p style={{ color: COLORS.primary, fontSize: 20, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
+                <p style={{ color: COLORS.text.secondary, fontSize: 18, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
                   уточняется
                 </p>
               )}
@@ -118,22 +132,27 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <div>
               <p
                 style={{
-                  color: COLORS.text.secondary,
+                  ...STYLES.metricLabel,
+                  color: COLORS.text.muted,
                   fontSize: 11,
-                  textTransform: "uppercase",
                   marginBottom: SPACING.xs,
-                  height: 15,
-                  lineHeight: "15px",
+                  marginTop: 0,
                 }}
               >
                 Размеры
               </p>
               <div style={{ display: "flex", gap: SPACING.xsPlus, flexWrap: "wrap" }}>
-                {product.sizes.map((size) => (
+                {product.sizes.slice(0, 4).map((size) => (
                   <span key={size} style={STYLES.sizeBadge}>
-                    {size}
+                    {size.toUpperCase()}
                   </span>
                 ))}
+                {product.sizes.length > 4 && (
+                  <span style={STYLES.sizeBadge}>+{product.sizes.length - 4}</span>
+                )}
+                {product.sizes.length === 0 && (
+                  <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted }}>нет данных</span>
+                )}
               </div>
             </div>
           </div>

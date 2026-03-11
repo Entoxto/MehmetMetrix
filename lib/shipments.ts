@@ -2,6 +2,7 @@ import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toBatch } from "./adapters";
 import type { ShipmentConfig, ShipmentWithItems } from "@/types/shipment";
+import { isPaidStatus } from "./statusText";
 
 export const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
   shipmentsData as readonly ShipmentConfig[];
@@ -27,6 +28,48 @@ export const buildShipments = (
       batch,
     };
   });
+
+export interface PendingShipmentSummary {
+  id: string;
+  title: string;
+  amount: number;
+  unpaidUnits: number;
+}
+
+/**
+ * Возвращает только те партии, где реально есть сумма к оплате по не оплаченным позициям.
+ * Используется в сводках Money и Work, чтобы не дублировать финансовую логику.
+ */
+export function getPendingShipmentSummaries(
+  shipments: readonly ShipmentWithItems[]
+): PendingShipmentSummary[] {
+  return shipments
+    .map((shipment) => {
+      if (isPaidStatus(shipment.status)) {
+        return null;
+      }
+
+      const unpaidPositions = shipment.batch.positions.filter(
+        (position) => position.sum !== null && !isPaidStatus(position.statusLabel)
+      );
+
+      const amount = unpaidPositions.reduce((sum, position) => sum + (position.sum ?? 0), 0);
+      if (amount <= 0) {
+        return null;
+      }
+
+      const normalizedTitle =
+        shipment.title?.replace(/^Поставка/i, "поставку") ?? `поставку ${shipment.id}`;
+
+      return {
+        id: shipment.id,
+        title: `Оплата за ${normalizedTitle}`,
+        amount,
+        unpaidUnits: unpaidPositions.reduce((sum, position) => sum + position.qty, 0),
+      };
+    })
+    .filter((item): item is PendingShipmentSummary => Boolean(item));
+}
 
 /**
  * Определяет год поставки на основе приоритета:

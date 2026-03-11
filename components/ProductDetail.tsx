@@ -6,7 +6,7 @@
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
 import { useState, useMemo } from "react";
-import { COLORS, SPACING, TYPOGRAPHY, STYLES } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
@@ -28,6 +28,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+  const hasMaterials = Boolean(
+    product.materials?.outer || product.materials?.lining || product.materials?.comments
+  );
 
   // Вычисляем оптимальные размеры контейнера на основе aspect-ratio с учетом всех ограничений
   const containerDimensions = useMemo(() => {
@@ -110,6 +113,16 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     marginBottom: SPACING.xs,
   };
 
+  const MATERIAL_BODY_STYLE = {
+    ...responsiveTypography.body,
+    color: COLORS.text.primary,
+    margin: 0,
+    fontSize: isCompact ? responsiveTypography.body.fontSize : TYPOGRAPHY.body.fontSize,
+    lineHeight: isCompact ? 1.55 : 1.45,
+  };
+
+  const desktopColumnMinHeight = 560;
+
   return (
     <div
       style={{
@@ -137,8 +150,12 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       {/* Фото товара */}
       <div
         style={{
-          width: containerDimensions.width,
-          height: containerDimensions.height === "auto" ? undefined : containerDimensions.height,
+          width: isCompact ? containerDimensions.width : "100%",
+          height: isCompact
+            ? containerDimensions.height === "auto"
+              ? undefined
+              : containerDimensions.height
+            : `${desktopColumnMinHeight}px`,
           ...(containerDimensions.aspectRatio ? { aspectRatio: containerDimensions.aspectRatio } : {}),
           ...PHOTO_STYLE,
           display: "flex",
@@ -146,13 +163,18 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           justifyContent: "center",
           position: "relative",
           justifySelf: isCompact ? undefined : "center", // Центрируем внутри grid-колонки
+          minHeight: isCompact ? undefined : `${desktopColumnMinHeight}px`,
         }}
       >
         <OptimizedImage
           src={product.photo}
           alt={product.name}
           sizes="(max-width: 768px) 100vw, 50vw"
-          style={{ objectFit: "contain" }}
+          style={{
+            objectFit: isCompact ? "contain" : "cover",
+            objectPosition: "center center",
+            transform: isCompact ? undefined : "scale(1.02)",
+          }}
           priority
           fallbackSize={isCompact ? 48 : 80}
           onLoad={(e) => {
@@ -167,101 +189,143 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
        {/* Информация о товаре - вертикальная раскладка */}
        <div
          style={{
-           display: "flex",
-           flexDirection: "column",
-           gap: isCompact ? SPACING.lg : SPACING.lg, // Уменьшенный gap для десктопа
-           width: "100%", // На десктопе grid автоматически задает ширину (50% через 1fr)
-           minHeight: isCompact ? "auto" : 0, // Для выравнивания высоты с фото на десктопе
+           ...CARD_TEMPLATES.introCard(isCompact),
+           gap: isCompact ? SPACING.lg : SPACING.lg,
+           width: "100%",
+          minHeight: isCompact ? "auto" : `${desktopColumnMinHeight}px`,
+           justifyContent: "space-between",
          }}
        >
-        {/* Размеры */}
-        <div>
-          <p style={SECTION_HEADER_STYLE}>
-            Размеры
-          </p>
-          <div style={{ display: "flex", gap: SPACING.sm, flexWrap: "wrap" }}>
-            {product.sizes.map((size) => (
-              <span key={size} style={SIZE_CHIP_STYLE}>
-                {size.toUpperCase()}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Цена */}
-        <div>
-          <p style={SECTION_HEADER_STYLE}>
-            {/* NOTE: All prices are in USD dollars only */}
-            Цена
-          </p>
-          {product.price ? (
-            <p style={{ ...responsiveTypography.price, color: COLORS.success, margin: 0 }}>
-              {formatCurrency(product.price)}
-            </p>
-          ) : (
-            <p style={{ ...responsiveTypography.price, color: COLORS.primary, margin: 0 }}>
-              уточняется
-            </p>
-          )}
-        </div>
-
-        {/* Материалы */}
-        {product.materials && (
-          <div
-            style={{
-              paddingTop: SPACING.lg,
-              borderTop: `1px solid ${COLORS.border.default}`,
-            }}
-          >
-            <p
+        <div style={{ display: "flex", flexDirection: "column", gap: isCompact ? SPACING.lg : SPACING.md, minHeight: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: SPACING.sm }}>
+              <span style={STYLES.categoryBadge}>{product.category}</span>
+            </div>
+            <h1
               style={{
-                ...SECTION_HEADER_STYLE,
-                marginBottom: SPACING.md, // Для секции материалов нужен больший отступ
+                ...responsiveTypography.h1,
+                color: COLORS.text.primary,
+                margin: 0,
+                fontSize: isCompact ? 24 : 28,
+                lineHeight: 1.15,
+                letterSpacing: -0.6,
               }}
             >
-              Материалы
+              {product.name}
+            </h1>
+          </div>
+
+          {/* Размеры */}
+          <div>
+            <p style={SECTION_HEADER_STYLE}>
+              Размеры
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: SPACING.md }}>
-              {product.materials.outer && (
-                <div>
-                  <p style={MATERIAL_SUBHEADER_STYLE}>
-                    Верхний материал
-                  </p>
-                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
-                    {product.materials.outer}
-                  </p>
-                </div>
-              )}
-              {product.materials.lining && (
-                <div>
-                  <p style={MATERIAL_SUBHEADER_STYLE}>
-                    Подкладка
-                  </p>
-                  <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
-                    {product.materials.lining}
-                  </p>
-                </div>
+            <div style={{ display: "flex", gap: SPACING.sm, flexWrap: "wrap" }}>
+              {product.sizes.length > 0 ? product.sizes.map((size) => (
+                <span key={size} style={SIZE_CHIP_STYLE}>
+                  {size.toUpperCase()}
+                </span>
+              )) : (
+                <span style={{ ...SIZE_CHIP_STYLE, color: COLORS.text.muted }}>
+                  нет данных
+                </span>
               )}
             </div>
           </div>
-        )}
+
+          {/* Цена */}
+          <div>
+            <p style={SECTION_HEADER_STYLE}>
+              {/* NOTE: All prices are in USD dollars only */}
+              Цена
+            </p>
+            {product.price ? (
+              <p style={{ ...responsiveTypography.price, color: COLORS.success, margin: 0 }}>
+                {formatCurrency(product.price)}
+              </p>
+            ) : (
+              <p style={{ ...responsiveTypography.price, color: COLORS.primary, margin: 0 }}>
+                уточняется
+              </p>
+            )}
+          </div>
+
+          {/* Материалы */}
+          {hasMaterials && (
+            <div
+              style={{
+                paddingTop: isCompact ? SPACING.lg : SPACING.md,
+                borderTop: `1px solid ${COLORS.border.default}`,
+                minHeight: 0,
+              }}
+            >
+              <p
+                style={{
+                  ...SECTION_HEADER_STYLE,
+                  marginBottom: isCompact ? SPACING.md : SPACING.sm,
+                }}
+              >
+                Материалы
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: isCompact ? SPACING.md : SPACING.smPlus }}>
+                {product.materials.outer && (
+                  <div>
+                    <p style={MATERIAL_SUBHEADER_STYLE}>
+                      Верхний материал
+                    </p>
+                    <p style={MATERIAL_BODY_STYLE}>
+                      {product.materials.outer}
+                    </p>
+                  </div>
+                )}
+                {product.materials.lining && (
+                  <div>
+                    <p style={MATERIAL_SUBHEADER_STYLE}>
+                      Подкладка
+                    </p>
+                    <p style={MATERIAL_BODY_STYLE}>
+                      {product.materials.lining}
+                    </p>
+                  </div>
+                )}
+                {product.materials.comments && (
+                  <div>
+                    <p style={MATERIAL_SUBHEADER_STYLE}>
+                      Состав
+                    </p>
+                    <p
+                      style={{
+                        ...MATERIAL_BODY_STYLE,
+                        whiteSpace: "pre-line",
+                        maxHeight: isCompact ? undefined : 72,
+                        overflowY: isCompact ? undefined : "auto",
+                        paddingRight: isCompact ? undefined : 4,
+                      }}
+                    >
+                      {product.materials.comments}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Последняя себестоимость */}
-        {product.cost != null && (
-          <div
-            style={{
-              paddingTop: SPACING.lg,
-              borderTop: `1px solid ${COLORS.border.default}`,
-            }}
-          >
-            <p style={{ ...SECTION_HEADER_STYLE, color: COLORS.primary }}>
-              Последняя себестоимость
-            </p>
-            <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
-              {formatCurrencyRUB(product.cost)}
-            </p>
-          </div>
-        )}
+        <div
+          style={{
+            paddingTop: SPACING.lg,
+            borderTop: `1px solid ${COLORS.border.default}`,
+            marginTop: isCompact ? 0 : "auto",
+          }}
+        >
+          <p style={{ ...SECTION_HEADER_STYLE, color: COLORS.primary }}>
+            Последняя себестоимость
+          </p>
+          <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
+            {product.cost != null ? formatCurrencyRUB(product.cost) : "—"}
+          </p>
+        </div>
       </div>
       </div>
     </div>
