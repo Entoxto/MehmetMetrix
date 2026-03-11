@@ -268,7 +268,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 Материалы
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: isCompact ? SPACING.md : SPACING.smPlus }}>
-                {product.materials.outer && (
+                {product.materials?.outer && (
                   <div>
                     <p style={MATERIAL_SUBHEADER_STYLE}>
                       Верхний материал
@@ -278,7 +278,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                     </p>
                   </div>
                 )}
-                {product.materials.lining && (
+                {product.materials?.lining && (
                   <div>
                     <p style={MATERIAL_SUBHEADER_STYLE}>
                       Подкладка
@@ -288,7 +288,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                     </p>
                   </div>
                 )}
-                {product.materials.comments && (
+                {product.materials?.comments && (
                   <div>
                     <p style={MATERIAL_SUBHEADER_STYLE}>
                       Состав
