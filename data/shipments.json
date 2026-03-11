@@ -1,34 +1,212 @@
 [
   {
-    "id": "shipment-3",
-    "number": 3,
-    "title": "Поставка №3",
+    "id": "shipment-5",
+    "number": 5,
+    "title": "Поставка №5",
     "status": "В работе 🧵",
     "rawItems": [
       {
+        "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (образец XS-1)",
+        "productId": "auto-022",
+        "price": 480,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true,
+        "quantityOverride": 1
+      },
+      {
+        "overrideName": "Юбка из кожи питона — чёрный глянцевый (образец XS-1)",
+        "productId": "auto-034",
+        "price": 320,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true,
+        "quantityOverride": 1
+      },
+      {
+        "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-4, S-2, M-1)",
+        "productId": "auto-013",
+        "price": 550,
+        "sizes": {
+          "xs": 4,
+          "s": 2,
+          "m": 1
+        },
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Юбка из кожи питона — чёрный глянцевый (XS-7, S-6, M-2)",
+        "productId": "auto-034",
+        "price": 320,
+        "sizes": {
+          "xs": 7,
+          "s": 6,
+          "m": 2
+        },
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (XS-4)",
+        "productId": "auto-023",
+        "price": 550,
+        "sizes": {
+          "xs": 4
+        },
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Юбка из кожи питона — коричневый глянцевый (XS-5, S-3, M-2)",
+        "productId": "auto-038",
+        "price": 320,
+        "sizes": {
+          "xs": 5,
+          "s": 3,
+          "m": 2
+        },
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый ( XS-7, S-4)",
+        "productId": "auto-022",
+        "price": 480,
+        "sizes": {
+          "xs": 7,
+          "s": 4
+        },
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (one size-10)",
+        "productId": "auto-037",
+        "price": 310,
+        "sizes": {
+          "OneSize": 10
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (one size-15)",
+        "productId": "auto-039",
+        "price": 310,
+        "sizes": {
+          "OneSize": 15
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Юбка из кожи питона — Etope (XS-5, S-4, M-1)",
+        "productId": "auto-040",
+        "price": 320,
+        "sizes": {
+          "xs": 5,
+          "s": 4,
+          "m": 1
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Жакет приталенный из кожи питона — Etope (XS-4, S-3)",
+        "productId": "auto-036",
+        "price": 550,
+        "sizes": {
+          "xs": 4,
+          "s": 3
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Куртка из кожи питона по новым лекалам — Etope (XS-5, S-3)",
+        "productId": "auto-041",
+        "price": 480,
+        "sizes": {
+          "xs": 5,
+          "s": 3
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Жакет приталенный из кожи питона — бежевый светлый (XS-5, S-4, M-1)",
+        "productId": "auto-020",
+        "price": 550,
+        "sizes": {
+          "xs": 5,
+          "s": 4,
+          "m": 1
+        },
+        "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Юбка из кожи питона — бежевый светлый (XS-6, S-4, M-2)",
+        "productId": "auto-035",
+        "price": 320,
+        "sizes": {
+          "xs": 6,
+          "s": 4,
+          "m": 2
+        },
+        "status": "Ожидаем материал 🧵"
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-4",
+    "number": 4,
+    "title": "Поставка №4",
+    "status": "В пути 🚚",
+    "rawItems": [
+      {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (XS-8, S-8, M-4)",
-        "productId": "leather-002",
+        "productId": "auto-008",
         "price": 260,
         "sizes": {
           "xs": 8,
           "s": 8,
           "m": 4
         },
-        "status": "В производстве 🛠️"
+        "status": "В пути 🚚",
+        "inTransit": true
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-10, S-10, M-5)",
-        "productId": "suede-003",
+        "productId": "auto-003",
         "price": 180,
         "sizes": {
           "xs": 10,
           "s": 10,
           "m": 5
         },
-        "status": "Ожидаем материал 🧵"
+        "status": "В пути 🚚",
+        "inTransit": true
       }
     ],
-    "year": 2026
+    "year": 2026,
+    "eta": "на следующей неделе"
+  },
+  {
+    "id": "shipment-3",
+    "number": 3,
+    "title": "Поставка №3",
+    "status": "Получено, не оплачено 📦",
+    "rawItems": [
+      {
+        "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (образец XS-1)",
+        "productId": "auto-037",
+        "price": 310,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
+        "sample": true,
+        "quantityOverride": 1
+      }
+    ],
+    "year": 2026,
+    "receivedDate": "12.03.2026"
   },
   {
     "id": "shipment-2",
@@ -38,9 +216,9 @@
     "rawItems": [
       {
         "overrideName": "Дублёнка из меха мериноса — бежевый (XS-2, S-4, M-1)",
-        "productId": "merino-001",
+        "productId": "auto-031",
         "price": 260,
-        "cost": 23194,
+        "cost": 22937,
         "sizes": {
           "xs": 2,
           "s": 4,
@@ -50,7 +228,7 @@
       }
     ],
     "year": 2026,
-    "receivedDate": "21.02.2026"
+    "receivedDate": "24.02.2026"
   },
   {
     "id": "shipment-1",
@@ -60,7 +238,7 @@
     "rawItems": [
       {
         "overrideName": "Дублёнка из меха мериноса — бежевый (S-3)",
-        "productId": "merino-001",
+        "productId": "auto-031",
         "price": 260,
         "cost": 23191,
         "sizes": {
@@ -80,7 +258,7 @@
     "rawItems": [
       {
         "overrideName": "Штаны из меха мериноса — бежевый (M-3)",
-        "productId": "merino-002",
+        "productId": "auto-030",
         "price": 215,
         "cost": 19598,
         "sizes": {
@@ -99,8 +277,8 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый (XS-2, S-2)",
-        "productId": "python-004",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый светлый (XS-2, S-2)",
+        "productId": "auto-020",
         "price": 550,
         "cost": 46684,
         "sizes": {
@@ -110,8 +288,8 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Юбка из кожи питона — бежевый глянцевый (образец)",
-        "productId": "python-008",
+        "overrideName": "Юбка из кожи питона — бежевый светлый (образец)",
+        "productId": "auto-035",
         "price": 320,
         "cost": 27644,
         "quantityOverride": 1,
@@ -119,8 +297,8 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый матовый (XS-3, S-4)",
-        "productId": "python-005",
+        "overrideName": "Жакет приталенный из кожи питона — Etope (XS-3, S-4)",
+        "productId": "auto-036",
         "price": 550,
         "cost": 46684,
         "sizes": {
@@ -131,7 +309,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — чёрный глянцевый (XS-6, S-4)",
-        "productId": "python-007",
+        "productId": "auto-034",
         "price": 320,
         "cost": 26518,
         "sizes": {
@@ -152,7 +330,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-1, S-3)",
-        "productId": "pony-001",
+        "productId": "auto-024",
         "price": 300,
         "cost": 27345,
         "sizes": {
@@ -163,7 +341,7 @@
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — бежевый (S-1)",
-        "productId": "suede-002",
+        "productId": "auto-016",
         "price": 190,
         "cost": 18239,
         "sizes": {
@@ -173,7 +351,7 @@
       },
       {
         "overrideName": "Штаны из меха мериноса — бежевый (XS-11, S-7, M-2)",
-        "productId": "merino-002",
+        "productId": "auto-030",
         "price": 215,
         "cost": 20308,
         "sizes": {
@@ -185,7 +363,7 @@
       },
       {
         "overrideName": "Дублёнка из меха мериноса — бежевый (XS-12, S-8)",
-        "productId": "merino-001",
+        "productId": "auto-031",
         "price": 260,
         "cost": 24034,
         "sizes": {
@@ -196,7 +374,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-3, S-3)",
-        "productId": "python-003",
+        "productId": "auto-013",
         "price": 550,
         "cost": 48040,
         "sizes": {
@@ -207,7 +385,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (XS-1, S-3)",
-        "productId": "python-002",
+        "productId": "auto-023",
         "price": 550,
         "cost": 48040,
         "sizes": {
@@ -217,8 +395,8 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Дублёнка из тасканы — волк (образец)",
-        "productId": "fur-003",
+        "overrideName": "Дублёнка из меха тасканы — волк (образец)",
+        "productId": "auto-033",
         "price": 360,
         "cost": 32312,
         "quantityOverride": 1,
@@ -227,7 +405,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — чёрный глянцевый (образец)",
-        "productId": "python-007",
+        "productId": "auto-034",
         "price": 320,
         "cost": 30740,
         "quantityOverride": 1,
@@ -246,7 +424,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-5, S-5)",
-        "productId": "suede-003",
+        "productId": "auto-003",
         "price": 180,
         "cost": 16487,
         "sizes": {
@@ -257,7 +435,7 @@
       },
       {
         "overrideName": "Брюки из замши — коричневый (XS-4, S-4, M-2)",
-        "productId": "suede-005",
+        "productId": "auto-010",
         "price": 180,
         "cost": 16487,
         "sizes": {
@@ -269,7 +447,7 @@
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — бежевый (XS-3, S-3)",
-        "productId": "suede-002",
+        "productId": "auto-016",
         "price": 190,
         "cost": 17314,
         "sizes": {
@@ -280,7 +458,7 @@
       },
       {
         "overrideName": "Брюки из замши — бежевый (XS-4, S-4, M-2)",
-        "productId": "suede-004",
+        "productId": "auto-032",
         "price": 190,
         "cost": 17314,
         "sizes": {
@@ -292,7 +470,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный матовый (XS-3, S-3)",
-        "productId": "python-006",
+        "productId": "auto-021",
         "price": 550,
         "cost": 47113,
         "sizes": {
@@ -303,7 +481,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (XS-4, S-4)",
-        "productId": "python-002",
+        "productId": "auto-023",
         "price": 550,
         "cost": 47113,
         "sizes": {
@@ -314,7 +492,7 @@
       },
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-5, S-2)",
-        "productId": "pony-001",
+        "productId": "auto-024",
         "price": 300,
         "cost": 26420,
         "sizes": {
@@ -325,7 +503,7 @@
       },
       {
         "overrideName": "Штаны из меха пони — чёрный (XS-6, S-4)",
-        "productId": "pony-002",
+        "productId": "auto-029",
         "price": 270,
         "cost": 23936,
         "sizes": {
@@ -336,7 +514,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (XS-3, S-1)",
-        "productId": "leather-002",
+        "productId": "auto-008",
         "price": 180,
         "cost": 16487,
         "sizes": {
@@ -357,7 +535,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-1, S-1)",
-        "productId": "pony-001",
+        "productId": "auto-024",
         "price": 300,
         "cost": 27905,
         "sizes": {
@@ -368,7 +546,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — чёрный (XS-10, S-10)",
-        "productId": "leather-004",
+        "productId": "auto-019",
         "price": 180,
         "cost": 17972,
         "sizes": {
@@ -379,7 +557,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (S-2)",
-        "productId": "leather-002",
+        "productId": "auto-008",
         "price": 180,
         "cost": 17972,
         "sizes": {
@@ -399,7 +577,7 @@
     "rawItems": [
       {
         "overrideName": "Парка из кожи коровы — леопард (образец)",
-        "productId": "fur-010",
+        "productId": "auto-028",
         "price": 400,
         "cost": 35160,
         "quantityOverride": 1,
@@ -408,7 +586,7 @@
       },
       {
         "overrideName": "Штаны из меха пони — чёрный (образец)",
-        "productId": "pony-002",
+        "productId": "auto-029",
         "price": 270,
         "cost": 24399,
         "quantityOverride": 1,
@@ -417,7 +595,7 @@
       },
       {
         "overrideName": "Штаны из меха мериноса — бежевый (образец)",
-        "productId": "merino-002",
+        "productId": "auto-030",
         "price": 200,
         "cost": 18605,
         "quantityOverride": 1,
@@ -426,7 +604,7 @@
       },
       {
         "overrideName": "Дублёнка из меха мериноса — бежевый (образец)",
-        "productId": "merino-001",
+        "productId": "auto-031",
         "price": 260,
         "cost": 23571,
         "quantityOverride": 1,
@@ -445,7 +623,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-3, S-4)",
-        "productId": "pony-001",
+        "productId": "auto-024",
         "price": 300,
         "cost": 25948,
         "sizes": {
@@ -466,7 +644,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (XS-2, S-2)",
-        "productId": "python-002",
+        "productId": "auto-023",
         "price": 550,
         "cost": 46340,
         "sizes": {
@@ -477,7 +655,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-2, S-2)",
-        "productId": "python-003",
+        "productId": "auto-013",
         "price": 550,
         "cost": 46340,
         "sizes": {
@@ -488,7 +666,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный матовый (XS-2, S-2)",
-        "productId": "python-006",
+        "productId": "auto-021",
         "price": 550,
         "cost": 46340,
         "sizes": {
@@ -508,8 +686,8 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из кожи питона — бежевый глянцевый  (образец XS-2)",
-        "productId": "python-004",
+        "overrideName": "Жакет приталенный из кожи питона — бежевый светлый (образец XS-2)",
+        "productId": "auto-020",
         "price": 550,
         "cost": 46561,
         "sizes": {
@@ -521,7 +699,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-2, S-1)",
-        "productId": "python-003",
+        "productId": "auto-013",
         "price": 550,
         "cost": 46561,
         "sizes": {
@@ -532,7 +710,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный матовый (образец XS-2)",
-        "productId": "python-006",
+        "productId": "auto-021",
         "price": 550,
         "cost": 46561,
         "sizes": {
@@ -544,7 +722,7 @@
       },
       {
         "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (образец XS-1)",
-        "productId": "python-009",
+        "productId": "auto-022",
         "price": 480,
         "cost": 40776,
         "sizes": {
@@ -556,7 +734,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — коричневый глянцевый (образец XS-1)",
-        "productId": "python-002",
+        "productId": "auto-023",
         "price": 550,
         "cost": 46561,
         "sizes": {
@@ -568,7 +746,7 @@
       },
       {
         "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (образец)",
-        "productId": "pony-001",
+        "productId": "auto-024",
         "price": 300,
         "cost": 25899,
         "quantityOverride": 1,
@@ -577,7 +755,7 @@
       },
       {
         "overrideName": "Жакет из меха пони по новым лекалам — бежевый (образец)",
-        "productId": "pony-004",
+        "productId": "auto-025",
         "price": 310,
         "cost": 26725,
         "quantityOverride": 1,
@@ -586,7 +764,7 @@
       },
       {
         "overrideName": "Жакет из меха пони в стиле 80-х — бежевый (образец)",
-        "productId": "pony-003",
+        "productId": "auto-026",
         "price": 330,
         "cost": 28378,
         "quantityOverride": 1,
@@ -595,7 +773,7 @@
       },
       {
         "overrideName": "Парка из кожи Hermes — mouse (образец)",
-        "productId": "leather-005",
+        "productId": "auto-027",
         "price": 195,
         "cost": 17220,
         "quantityOverride": 1,
@@ -614,7 +792,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-17, S-8)",
-        "productId": "suede-003",
+        "productId": "auto-003",
         "price": 180,
         "cost": 16806,
         "sizes": {
@@ -635,7 +813,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — чёрный (XS-10, S-20)",
-        "productId": "leather-004",
+        "productId": "auto-019",
         "price": 180,
         "cost": 17751,
         "sizes": {
@@ -656,7 +834,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из замши в стиле 80-х — бежевый (XS-23, S-10)",
-        "productId": "suede-002",
+        "productId": "auto-016",
         "price": 190,
         "cost": 20767,
         "sizes": {
@@ -667,7 +845,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (XS-5, S-1)",
-        "productId": "python-003",
+        "productId": "auto-013",
         "price": 550,
         "cost": 57864,
         "sizes": {
@@ -678,7 +856,7 @@
       },
       {
         "overrideName": "Дублёнка с мехом наружу из волка — бежевый (образец)",
-        "productId": "fur-008",
+        "productId": "auto-017",
         "price": 390,
         "cost": 41376,
         "quantityOverride": 1,
@@ -687,7 +865,7 @@
       },
       {
         "overrideName": "Дублёнка двусторонняя из тасканы silk с мехом montana — camel (образец)",
-        "productId": "fur-009",
+        "productId": "auto-018",
         "price": 390,
         "cost": 41376,
         "quantityOverride": 1,
@@ -706,7 +884,7 @@
     "rawItems": [
       {
         "overrideName": "Дублёнка мехом внутрь из тасканы с замшей — бежевый (образец)",
-        "productId": "fur-006",
+        "productId": "auto-014",
         "price": 390,
         "cost": 43168,
         "quantityOverride": 1,
@@ -715,7 +893,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-28)",
-        "productId": "leather-001",
+        "productId": "auto-004",
         "price": 180,
         "cost": 20917,
         "sizes": {
@@ -725,7 +903,7 @@
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (one size-17)",
-        "productId": "suede-003",
+        "productId": "auto-003",
         "price": 180,
         "cost": 20917,
         "sizes": {
@@ -735,7 +913,7 @@
       },
       {
         "overrideName": "Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana (образец-3)",
-        "productId": "fur-007",
+        "productId": "auto-015",
         "price": 390,
         "cost": 43168,
         "quantityOverride": 3,
@@ -753,8 +931,8 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Дублёнка двусторонняя из тасканы — etoupe (S-8, M-5)",
-        "productId": "fur-005",
+        "overrideName": "Дублёнка двусторонняя из меха тасканы — etoupe (S-8, M-5)",
+        "productId": "auto-012",
         "price": 390,
         "cost": 44705,
         "sizes": {
@@ -765,7 +943,7 @@
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый  (образец)",
-        "productId": "python-003",
+        "productId": "auto-013",
         "price": 550,
         "cost": 61814,
         "quantityOverride": 1,
@@ -784,7 +962,7 @@
     "rawItems": [
       {
         "overrideName": "Брюки из замши — коричневый (XS-8, S-5, M-2)",
-        "productId": "suede-005",
+        "productId": "auto-010",
         "price": 175,
         "cost": 18882,
         "sizes": {
@@ -796,7 +974,7 @@
       },
       {
         "overrideName": "Брюки из замши — чёрный (XS-10, S-7, M-3)",
-        "productId": "suede-008",
+        "productId": "auto-011",
         "price": 175,
         "cost": 18882,
         "sizes": {
@@ -818,7 +996,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (образец)",
-        "productId": "leather-002",
+        "productId": "auto-008",
         "price": 180,
         "cost": 20723,
         "quantityOverride": 1,
@@ -827,7 +1005,7 @@
       },
       {
         "overrideName": "Дублёнка короткая из меха  кёрли — серый (образец)",
-        "productId": "fur-002",
+        "productId": "auto-006",
         "price": 260,
         "cost": 29100,
         "quantityOverride": 1,
@@ -836,7 +1014,7 @@
       },
       {
         "overrideName": "Дублёнка короткая из меха  кёрли — серый (one size-20)",
-        "productId": "fur-002",
+        "productId": "auto-006",
         "price": 260,
         "cost": 27816,
         "sizes": {
@@ -846,7 +1024,7 @@
       },
       {
         "overrideName": "Дублёнка длинная из меха кёрли — серый (образец)",
-        "productId": "fur-004",
+        "productId": "auto-009",
         "price": 315,
         "cost": 33231,
         "quantityOverride": 1,
@@ -865,7 +1043,7 @@
     "rawItems": [
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-10)",
-        "productId": "leather-001",
+        "productId": "auto-004",
         "price": 180,
         "cost": 18900,
         "sizes": {
@@ -875,7 +1053,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — taupe (one size-14)",
-        "productId": "leather-003",
+        "productId": "auto-007",
         "price": 180,
         "cost": 18900,
         "sizes": {
@@ -894,8 +1072,8 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Дублёнка длинная из тасканы — коричневый (образец)",
-        "productId": "fur-001",
+        "overrideName": "Дублёнка длинная из меха тасканы — коричневый (образец)",
+        "productId": "auto-005",
         "price": 400,
         "cost": 41999,
         "quantityOverride": 1,
@@ -904,7 +1082,7 @@
       },
       {
         "overrideName": "Дублёнка короткая из меха кёрли — серый (образец)",
-        "productId": "fur-002",
+        "productId": "auto-006",
         "price": 280,
         "cost": 30489,
         "quantityOverride": 1,
@@ -913,7 +1091,7 @@
       },
       {
         "overrideName": "Плащ из замши — коричневый (образец)",
-        "productId": "suede-006",
+        "productId": "auto-001",
         "price": 260,
         "cost": 28571,
         "quantityOverride": 1,
@@ -932,7 +1110,7 @@
     "rawItems": [
       {
         "overrideName": "Плащ из замши — коричневый  (one size-5)",
-        "productId": "suede-006",
+        "productId": "auto-001",
         "price": 280,
         "cost": 27413,
         "sizes": {
@@ -942,7 +1120,7 @@
       },
       {
         "overrideName": "Юбка из замши — коричневый (XS-5, S-7, M-5)",
-        "productId": "suede-007",
+        "productId": "auto-002",
         "price": 165,
         "cost": 16582,
         "sizes": {
@@ -954,7 +1132,7 @@
       },
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (one size-20)",
-        "productId": "suede-003",
+        "productId": "auto-003",
         "price": 180,
         "cost": 17995,
         "sizes": {
@@ -964,7 +1142,7 @@
       },
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-6)",
-        "productId": "leather-001",
+        "productId": "auto-004",
         "price": 180,
         "cost": 17995,
         "sizes": {

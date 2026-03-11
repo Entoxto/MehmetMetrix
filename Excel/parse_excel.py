@@ -8,6 +8,7 @@ import sys
 import subprocess
 from pathlib import Path
 from excel_parser import ExcelParser
+from utils import infer_category, aggregate_product_sizes
 
 # Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
 if sys.platform == 'win32':
@@ -35,22 +36,11 @@ def parse_excel():
         print(f"   Убедитесь, что файл 'Расчёты с мехметом new.xlsx' находится в папке Excel/")
         return
     
-    # Проверка существования products.json
-    if not products_file.exists():
-        print(f"❌ Файл products.json не найден: {products_file}")
-        return
-    
-    print(f"📖 Загружаю каталог товаров из {products_file}...")
-    # Загружаем каталог товаров
-    try:
-        with open(products_file, 'r', encoding='utf-8') as f:
-            products_data = json.load(f)
-        products = products_data.get('products', products_data)
-        print(f"✅ Загружено {len(products)} товаров")
-    except Exception as e:
-        print(f"❌ Ошибка при загрузке products.json: {e}")
-        return
-    
+    # Каталог каждый раз собирается заново из Excel (полная пересборка)
+    print(f"📂 Собираю каталог заново из Excel...")
+    products_data = {"products": []}
+    products = products_data["products"]
+
     print(f"\n📊 Парсинг Excel файла: {excel_file}...")
     # Создаём парсер и парсим
     try:
@@ -68,16 +58,35 @@ def parse_excel():
         traceback.print_exc()
         return
     
-    # Сохраняем результат
+    # Сохраняем поставки
     print(f"\n💾 Сохраняю результат в {shipments_file}...")
     try:
         with open(shipments_file, 'w', encoding='utf-8') as f:
             json.dump(shipments, f, ensure_ascii=False, indent=2)
-        print(f"✅ Результат успешно сохранён!")
+        print(f"✅ Поставки сохранены!")
     except Exception as e:
         print(f"❌ Ошибка при сохранении shipments.json: {e}")
         return
-    
+
+    # Собираем размеры каталога из всех позиций поставок (один проход)
+    aggregate_product_sizes(shipments, products)
+
+    # Обновляем категорию у всех товаров по названию (при каждом парсинге — полное обновление)
+    for product in products:
+        name = product.get("name", "")
+        if name:
+            product["category"] = infer_category(name)
+
+    # Сохраняем каталог (полностью собранный из текущего Excel)
+    print(f"💾 Сохраняю каталог в {products_file}...")
+    try:
+        with open(products_file, 'w', encoding='utf-8') as f:
+            json.dump(products_data, f, ensure_ascii=False, indent=2)
+        print(f"✅ Каталог сохранён!")
+    except Exception as e:
+        print(f"❌ Ошибка при сохранении products.json: {e}")
+        return
+
     # Автоматически запускаем обновление цен и себестоимости
     print(f"\n" + "="*50)
     print(f"🔄 Автоматическое обновление цен и себестоимости в каталоге...")

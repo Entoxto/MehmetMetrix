@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
 from utils import (
     parse_sizes_from_name,
-    find_product_id,
+    find_or_create_product_id,
     parse_date,
     is_date_value,
     normalize_status_text,
@@ -271,10 +271,8 @@ class ExcelParser:
             "overrideName": name,
         }
         
-        # productId
-        product_id = find_product_id(name, self.products)
-        if product_id:
-            item["productId"] = product_id
+        # productId: найти в каталоге или создать новый товар
+        item["productId"] = find_or_create_product_id(name, self.products)
         
         # price: берём из колонки H (Стоймость 1 ед $) - цена в долларах
         price_value = self._parse_numeric_field(row, self.COL_PRICE_USD)

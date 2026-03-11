@@ -4,9 +4,13 @@
 """
 
 import re
+from collections import defaultdict
 from datetime import datetime
 from typing import Any, Optional, Dict, List
 import pandas as pd
+
+# Порядок размеров для каталога (product.sizes)
+SIZE_ORDER = ["xs", "s", "m", "l", "xl", "onesize"]
 
 
 def parse_sizes_from_name(name: str) -> Dict[str, int]:
@@ -86,35 +90,110 @@ def extract_product_name(full_name: str) -> str:
     return cleaned
 
 
-def find_product_id(name: str, products: List[Dict]) -> Optional[str]:
+def infer_category(name: str) -> str:
     """
-    Находит productId в каталоге товаров по названию.
-    
-    Args:
-        name: Полное название из Excel
-        products: Список товаров из products.json
-        
-    Returns:
-        product.id или None, если не найден
+    Определяет категорию товара по названию (по корням слов).
+    Приоритет: Экзотика (питон) > Кожа > Мех > Замша, иначе «Прочее».
     """
-    if not name or not products:
-        return None
-    
-    # Очищаем название от размеров и нормализуем пробелы
+    if not name or not name.strip():
+        return "Прочее"
+    s = name.lower().strip()
+    if "питон" in s:
+        return "Экзотика"
+    if "кож" in s:
+        return "Кожа"
+    if "мех" in s:
+        return "Мех"
+    if "замш" in s:
+        return "Замша"
+    return "Прочее"
+
+
+def get_next_auto_id(products: List[Dict]) -> str:
+    """
+    Возвращает следующий уникальный id вида auto-NNN для нового товара в каталоге.
+    Ищет среди product['id'] совпадения с шаблоном auto-(\\d+), берёт максимум, +1.
+    """
+    auto_numbers = []
+    for p in products:
+        pid = p.get('id') or ''
+        m = re.match(r'^auto-(\d+)$', pid, re.IGNORECASE)
+        if m:
+            auto_numbers.append(int(m.group(1)))
+    next_num = max(auto_numbers, default=0) + 1
+    return f"auto-{next_num:03d}"
+
+
+def find_or_create_product_id(name: str, products: List[Dict]) -> str:
+    """
+    Находит productId в каталоге по названию или создаёт новый товар и возвращает его id.
+    Каталог (products) мутируется при создании нового товара.
+    """
     clean_name = extract_product_name(name)
-    
-    # Нормализуем пробелы в названиях из каталога для сравнения
+    if not clean_name:
+        new_id = get_next_auto_id(products)
+        new_product = {
+            "id": new_id,
+            "name": name.strip()[:200] or "Без названия",
+            "category": infer_category(name),
+            "photo": "",
+            "sizes": [],
+            "materials": {},
+            "inStock": True,
+            "tags": [],
+        }
+        products.append(new_product)
+        print(f"  + Добавлен в каталог: {new_product['name']}")
+        return new_id
+
+    normalized_clean = ' '.join(clean_name.split())
     for product in products:
         product_name = product.get('name', '')
-        # Нормализуем пробелы в названии из каталога
-        normalized_product_name = ' '.join(product_name.split())
-        
-        if normalized_product_name == clean_name:
-            return product.get('id')
-    
-    # Логируем предупреждение
-    print(f"⚠️  Товар не найден в каталоге: {clean_name}")
-    return None
+        if ' '.join(product_name.split()) == normalized_clean:
+            return product.get('id', '')
+
+    new_id = get_next_auto_id(products)
+    photo_path = f"/images/products/jpg/{clean_name}.jpg"
+    new_product = {
+        "id": new_id,
+        "name": clean_name,
+        "category": infer_category(clean_name),
+        "photo": photo_path,
+        "sizes": [],
+        "materials": {},
+        "inStock": True,
+        "tags": [],
+    }
+    products.append(new_product)
+    print(f"  + Добавлен в каталог: {clean_name}")
+    return new_id
+
+
+def aggregate_product_sizes(shipments: List[Dict], products: List[Dict]) -> None:
+    """
+    Заполняет product["sizes"] для каждого товара: объединение всех размеров,
+    встречающихся у этого товара в позициях поставок (rawItems).
+    Один проход по поставкам, без повторного парсинга Excel.
+    """
+    by_id = defaultdict(set)
+    for shipment in shipments:
+        for item in shipment.get("rawItems", []):
+            pid = item.get("productId")
+            if not pid:
+                continue
+            for size_key in item.get("sizes", {}).keys():
+                by_id[pid].add(size_key)
+
+    def _size_sort_key(s: str) -> tuple:
+        norm = s.lower() if s != "OneSize" else "onesize"
+        idx = SIZE_ORDER.index(norm) if norm in SIZE_ORDER else 99
+        return (idx, s)
+
+    for product in products:
+        pid = product.get("id")
+        if not pid:
+            continue
+        product["sizes"] = sorted(by_id.get(pid, set()), key=_size_sort_key)
 
 
 def parse_date(value: Any) -> Optional[str]:
