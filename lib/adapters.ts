@@ -22,8 +22,18 @@ function toSize(size: string): Size {
   return 'S'; // fallback
 }
 
-/** Счётчик для генерации уникальных ID позиций внутри одной сессии */
-let positionCounter = 0;
+/**
+ * Генерирует стабильный ID позиции внутри поставки.
+ * Использует shipmentId + индекс, чтобы ID не "плавали" между рендерами.
+ */
+function buildPositionId(
+  shipmentId: string | undefined,
+  productId: string,
+  index: number
+): string {
+  const base = shipmentId && shipmentId.trim().length > 0 ? shipmentId : productId;
+  return `${base}-pos-${index + 1}`;
+}
 
 /**
  * Очищает название товара от размеров в скобках
@@ -43,12 +53,14 @@ function cleanProductName(name: string): string {
 /**
  * Преобразует сырой элемент в Position
  */
-export function toPosition(
+function toPosition(
   item: ShipmentRawItem,
-  products: Product[]
+  products: Product[],
+  options?: { shipmentId?: string; index?: number }
 ): Position {
   const product = products.find((p) => p.id === item.productId);
   const price = typeof item.price === 'number' ? item.price : null;
+  const index = options?.index ?? 0;
 
   // Преобразуем размеры
   const sizes: Record<Size, number> = {
@@ -69,8 +81,10 @@ export function toPosition(
   // Текстовый статус — 1 в 1 из Excel
   const statusLabel = getStatusLabel(item.status);
 
+  const isPayable = !item.paidPreviously && !item.noPayment;
+
   // Сумма — отображается у всех позиций, кроме paidPreviously и noPayment
-  const sum = price != null && qty != null && !item.paidPreviously && !item.noPayment
+  const sum = price != null && qty != null && isPayable
     ? price * qty
     : null;
 
@@ -84,7 +98,7 @@ export function toPosition(
     : null;
 
   return {
-    id: `${item.productId}-${++positionCounter}`,
+    id: buildPositionId(options?.shipmentId, item.productId, index),
     productId: item.productId,
     title: cleanOverrideName || product?.name || 'Неизвестное изделие',
     sizes,
@@ -94,6 +108,7 @@ export function toPosition(
     cost: typeof item.cost === 'number' ? item.cost : null,
     sample: item.sample ?? false,
     statusLabel,
+    isPayable,
     noteEnabled: !!noteEnabled,
     noteText,
   };
@@ -103,7 +118,9 @@ export function toPosition(
  * Преобразует конфигурацию партии в Batch
  */
 export function toBatch(config: ShipmentConfig, products: Product[]): Batch {
-  const positions: Position[] = config.rawItems.map((item) => toPosition(item, products));
+  const positions: Position[] = config.rawItems.map((item, index) =>
+    toPosition(item, products, { shipmentId: config.id, index })
+  );
 
   return {
     id: config.id,

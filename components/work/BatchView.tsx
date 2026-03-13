@@ -31,7 +31,7 @@ interface BatchViewProps {
 /**
  * Конфигурация колонки таблицы
  */
-export interface ColumnConfig {
+interface ColumnConfig {
   id: string;
   label: string;
   widthMobile: string;
@@ -78,23 +78,26 @@ const getNumericHeaderStyle = (isMobile: boolean, typography: React.CSSPropertie
   textTransform: "uppercase",
 });
 
+const getLeadingHeaderStyle = (isMobile: boolean, typography: React.CSSProperties): React.CSSProperties => ({
+  ...CARD_TEMPLATES.tableValue(isMobile, "left"),
+  ...typography,
+  textTransform: "uppercase",
+  justifyContent: "flex-start",
+  color: COLORS.text.muted,
+});
+
 /**
  * Конфигурация всех колонок таблицы
  */
-export const COLUMNS_CONFIG: ColumnConfig[] = [
+const COLUMNS_CONFIG: ColumnConfig[] = [
   {
     id: "position",
     label: "Позиция",
-    widthMobile: "1.8fr", // Уменьшена с 2.2fr, чтобы все 4 колонки поместились в 100% ширины
+    widthMobile: "1.7fr",
     widthDesktop: "2.2fr",
     visibleOnMobile: true,
     renderHeader: (isMobile, typography) => (
-      <div
-        style={{
-          ...CARD_TEMPLATES.tableHeader(isMobile),
-          ...typography,
-        }}
-      >
+      <div style={getLeadingHeaderStyle(isMobile, typography)}>
         Позиция
       </div>
     ),
@@ -103,7 +106,7 @@ export const COLUMNS_CONFIG: ColumnConfig[] = [
   {
     id: "quantity",
     label: "Кол-во",
-    widthMobile: "0.55fr", // Сохраняем пропорции
+    widthMobile: "0.72fr",
     widthDesktop: "0.75fr",
     visibleOnMobile: true,
     renderHeader: (isMobile, typography) => (
@@ -134,7 +137,7 @@ export const COLUMNS_CONFIG: ColumnConfig[] = [
   {
     id: "price",
     label: "Цена",
-    widthMobile: "0.55fr", // Сохраняем пропорции
+    widthMobile: "0.82fr",
     widthDesktop: "0.75fr",
     visibleOnMobile: true,
     renderHeader: (isMobile, typography) => (
@@ -162,7 +165,7 @@ export const COLUMNS_CONFIG: ColumnConfig[] = [
   {
     id: "sum",
     label: "Сумма",
-    widthMobile: "0.55fr", // Сохраняем пропорции
+    widthMobile: "0.9fr",
     widthDesktop: "0.75fr",
     visibleOnMobile: true,
     renderHeader: (isMobile, typography) => (
@@ -228,24 +231,28 @@ export const BatchView = ({
 }: BatchViewProps) => {
   const { isMobile } = useBreakpoint();
   const viewRows = toViewRows(batch);
+  const mobileVisibleColumns = useMemo(
+    () => COLUMNS_CONFIG.filter((column) => column.visibleOnMobile),
+    []
+  );
+  const mobileHiddenColumns = useMemo(
+    () => COLUMNS_CONFIG.filter((column) => !column.visibleOnMobile),
+    []
+  );
+  const activeColumns = useMemo(
+    () => (isMobile ? [...mobileVisibleColumns, ...mobileHiddenColumns] : COLUMNS_CONFIG),
+    [isMobile, mobileHiddenColumns, mobileVisibleColumns]
+  );
+  const mobileHiddenWidth = useMemo(
+    () => mobileHiddenColumns.map((column) => column.widthMobile).join(" + "),
+    [mobileHiddenColumns]
+  );
 
-  // Вычисляем gridTemplateColumns на основе конфигурации
-  // На мобильных: видимые колонки (1.8fr 0.55fr 0.55fr 0.55fr = 3.45fr) занимают 100% ширины
-  // Скрытая колонка (120px) добавляется справа для прокрутки
-  // На десктопе: все колонки видны сразу
   const gridTemplateColumns = useMemo(() => {
-    if (isMobile) {
-      // На мобильных: видимые колонки используют fr единицы, скрытая - фиксированная ширина
-      const visibleColumns = COLUMNS_CONFIG.filter(col => col.visibleOnMobile);
-      const hiddenColumns = COLUMNS_CONFIG.filter(col => !col.visibleOnMobile);
-      const visibleWidths = visibleColumns.map(col => col.widthMobile).join(" ");
-      const hiddenWidths = hiddenColumns.map(col => col.widthMobile).join(" ");
-      return `${visibleWidths} ${hiddenWidths}`;
-    } else {
-      // На десктопе: все колонки
-      return COLUMNS_CONFIG.map(col => col.widthDesktop).join(" ");
-    }
-  }, [isMobile]);
+    return activeColumns
+      .map((column) => (isMobile ? column.widthMobile : column.widthDesktop))
+      .join(" ");
+  }, [activeColumns, isMobile]);
 
   // Контент таблицы
   const tableContent = (
@@ -254,15 +261,12 @@ export const BatchView = ({
         display: "grid",
         gridTemplateColumns: gridTemplateColumns,
         gap: 0,
-        // На мобильных: видимые колонки (fr единицы) занимают 100% ширины экрана
-        // Скрытая колонка (120px) добавляется справа для прокрутки
-        // Используем calc для вычисления минимальной ширины: 100% + 120px
-        minWidth: isMobile ? "calc(100% + 120px)" : "auto",
+        minWidth: isMobile && mobileHiddenWidth ? `calc(100% + ${mobileHiddenWidth})` : "100%",
         fontSize: isMobile ? 11 : 12,
       }}
     >
       {/* Заголовки колонок */}
-      {COLUMNS_CONFIG.map((column) => (
+      {activeColumns.map((column) => (
         <Fragment key={column.id}>
           {column.renderHeader(isMobile, typography.tableHeader)}
         </Fragment>
@@ -274,7 +278,7 @@ export const BatchView = ({
           {/* Заголовок группы */}
           <div
             style={{
-              gridColumn: `1 / ${COLUMNS_CONFIG.length + 1}`,
+              gridColumn: `1 / ${activeColumns.length + 1}`,
               ...CARD_TEMPLATES.dataGroupHeader(isMobile),
               ...typography.tableCell,
               display: "flex",
@@ -295,7 +299,7 @@ export const BatchView = ({
               cellBaseBackground={cellBaseBackground}
               cellBaseBorder={cellBaseBorder}
               typography={typography}
-              columnsConfig={COLUMNS_CONFIG}
+              columnsConfig={activeColumns}
             />
           ))}
         </Fragment>
@@ -303,21 +307,42 @@ export const BatchView = ({
     </div>
   );
 
-  // На мобильных оборачиваем в scrollable контейнер
   if (isMobile) {
     return (
       <div
         style={{
+          position: "relative",
           width: "100%",
-          overflowX: "auto",
-          overflowY: "hidden",
-          WebkitOverflowScrolling: "touch", // Плавная прокрутка на iOS
+          overflow: "hidden",
           border: `1px solid ${COLORS.border.default}`,
-          borderRadius: 16,
-          background: COLORS.background.card,
+          borderRadius: 14,
+          background: "rgba(13,13,16,0.98)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
-        {tableContent}
+        <div
+          style={{
+            width: "100%",
+            overflowX: "auto",
+            overflowY: "hidden",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "thin",
+          }}
+        >
+          {tableContent}
+        </div>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: 22,
+            pointerEvents: "none",
+            background: "linear-gradient(90deg, rgba(13,13,16,0) 0%, rgba(13,13,16,0.88) 100%)",
+          }}
+        />
       </div>
     );
   }
@@ -336,4 +361,3 @@ export const BatchView = ({
     </div>
   );
 };
-

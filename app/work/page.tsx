@@ -4,6 +4,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getProducts } from "@/lib/products";
 import { buildShipments, groupShipmentsByYear, getShipmentYear } from "@/lib/shipments";
+import { getDataMeta } from "@/lib/meta";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Work } from "@/app/home/Work";
 import { Shell } from "@/components/Shell";
@@ -152,6 +153,7 @@ export default function WorkPage() {
   }, []);
 
   const products = useMemo(() => getProducts(), []);
+  const dataMeta = useMemo(() => getDataMeta(), []);
 
   const shipments = useMemo(() => buildShipments(products), [products]);
 
@@ -182,7 +184,7 @@ export default function WorkPage() {
   }, [yearsOrdered, expandedYears.size]);
 
   return (
-    <Shell>
+    <Shell updatedAt={dataMeta.updatedAt}>
       <Work
         isMobile={isMobile}
         isDesktop={isDesktop}
@@ -195,5 +197,3 @@ export default function WorkPage() {
     </Shell>
   );
 }
-
-

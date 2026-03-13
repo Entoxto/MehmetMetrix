@@ -242,7 +242,7 @@ class ExcelParser:
         status = normalize_status_text(status_raw) or "В работе 🧵"
         
         shipment = {
-            "id": f"shipment-{shipment_num}",
+            "id": self._build_shipment_id(shipment_num),
             "number": shipment_num,
             "title": f"Поставка №{shipment_num}",
             "status": status,
@@ -254,6 +254,16 @@ class ExcelParser:
             shipment["year"] = self.current_year
         
         return shipment
+
+    def _build_shipment_id(self, shipment_num: int) -> str:
+        """
+        Строит стабильный и уникальный id поставки.
+
+        Номер поставки может повторяться между годами, поэтому год включается в id.
+        """
+        if self.current_year is not None:
+            return f"shipment-{self.current_year}-{shipment_num}"
+        return f"shipment-{shipment_num}"
     
     def _parse_item(self, row: pd.Series) -> Optional[Dict]:
         """
@@ -491,4 +501,3 @@ class ExcelParser:
                 return parsed_dates[0][1], None
         
         return None, None
-

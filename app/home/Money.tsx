@@ -5,7 +5,7 @@
  * Суммирует партии, показывает детализацию и карточки с оплатами.
  * Управляет раскрытием блоков и эффектами наведения под разные брейкпоинты.
  */
-import { Fragment, type MouseEvent, type CSSProperties } from "react";
+import { Fragment, type MouseEvent, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -37,6 +37,25 @@ interface MoneyProps {
   };
 }
 
+interface DetailTableConfig<TItem> {
+  cardId: string;
+  items: TItem[];
+  emptyText: string;
+  amountColor: string;
+  getKey: (item: TItem) => string;
+  renderLabel: (item: TItem) => ReactNode;
+  getAmount: (item: TItem) => number;
+}
+
+interface MetricCardConfig<TItem> {
+  cardId: string;
+  label: string;
+  total: number;
+  summary: string;
+  amountColor: string;
+  details: DetailTableConfig<TItem>;
+}
+
 export const Money = ({
   expandedCards,
   onToggleCard,
@@ -44,17 +63,26 @@ export const Money = ({
   deposits,
 }: MoneyProps) => {
   const { isMobile, isWide: isDesktop } = useBreakpoint();
+  const introDescription = isMobile
+    ? "Сколько ещё нужно оплатить и сколько уже внесено депозитами и предоплатами."
+    : "Слева то, что ещё нужно оплатить, справа уже внесённые депозиты и предоплаты.";
+  const introCopyStyle = STYLES.pageIntroCopy(isMobile);
 
   const responsiveTypography = {
-    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 32 },
+    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 20 : 28 },
     body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : 14 },
     caption: { ...TYPOGRAPHY.caption, fontSize: isMobile ? 10 : 11 },
-    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 28 : 36 },
+    amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 30 : 36 },
   } as const;
 
   const CARD_STYLE = {
     ...CARD_TEMPLATES.metricCard(isMobile),
     border: `1px solid ${COLORS.border.default}`,
+    borderRadius: isMobile ? 20 : 20,
+    background: isMobile
+      ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
+      : CARD_TEMPLATES.metricCard(isMobile).background,
+    boxShadow: isMobile ? "0 14px 30px rgba(0, 0, 0, 0.22)" : CARD_TEMPLATES.metricCard(isMobile).boxShadow,
     transition: "all 0.25s ease",
   } as const;
 
@@ -82,41 +110,60 @@ export const Money = ({
         };
 
   const detailContainerStyle = {
-    marginTop: isMobile ? SPACING.md : SPACING.lg,
-    paddingTop: isMobile ? SPACING.md : SPACING.lg,
+    marginTop: isMobile ? SPACING.smPlus : SPACING.lg,
+    paddingTop: isMobile ? SPACING.smPlus : SPACING.lg,
     borderTop: `1px solid ${COLORS.border.default}`,
     animation: "fadeIn 0.3s ease",
   } as const;
 
   const detailGridStyle = {
     display: "grid",
-    gridTemplateColumns: isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
+    gridTemplateColumns: isMobile ? "minmax(0, 1fr) auto" : isDesktop ? "2.5fr 1fr" : "1.5fr 1fr",
     gap: 0,
-    borderRadius: 16,
+    borderRadius: isMobile ? 14 : 16,
     overflow: "hidden",
     border: `1px solid ${COLORS.border.default}`,
-    background: COLORS.background.soft,
+    background: isMobile ? "rgba(13,13,16,0.98)" : COLORS.background.soft,
   } as const;
 
   const getCellStyle = (isLast: boolean, alignRight = false): CSSProperties => ({
-    padding: isMobile ? SPACING.sm : SPACING.md,
+    padding: isMobile ? "10px 10px" : SPACING.md,
     borderBottom: isLast ? undefined : `1px solid ${COLORS.border.default}`,
     borderLeft: alignRight ? `1px solid ${COLORS.border.default}` : undefined,
     textAlign: alignRight ? "right" : "left",
-    background: "transparent",
+    background: isMobile ? "rgba(13,13,16,0.98)" : "transparent",
     transition: "background 0.2s ease",
     display: "flex",
     alignItems: "center",
     justifyContent: alignRight ? "flex-end" : "flex-start",
-    minHeight: isMobile ? 40 : 48,
+    minHeight: isMobile ? 44 : 48,
   });
 
-  const renderPendingDetails = () => {
-    if (!expandedCards.has("total_payment")) {
+  const rowHoverHandlers = getHoverHandlers();
+
+  const detailHeadingStyle = {
+    ...responsiveTypography.body,
+    color: COLORS.text.secondary,
+    marginBottom: isMobile ? SPACING.md : SPACING.lg,
+    marginTop: 0,
+    fontSize: isMobile ? 12 : 13,
+    fontWeight: 600,
+  } as const;
+
+  const renderDetailsTable = <TItem,>({
+    cardId,
+    items,
+    emptyText,
+    amountColor,
+    getKey,
+    renderLabel,
+    getAmount,
+  }: DetailTableConfig<TItem>) => {
+    if (!expandedCards.has(cardId)) {
       return null;
     }
 
-    if (pending.items.length === 0) {
+    if (items.length === 0) {
       return (
         <div style={detailContainerStyle}>
           <p
@@ -126,63 +173,34 @@ export const Money = ({
               margin: 0,
             }}
           >
-            Все партии оплачены
+            {emptyText}
           </p>
         </div>
       );
     }
 
-    const hoverHandlers = getHoverHandlers();
-
     return (
       <div style={detailContainerStyle}>
-        <p
-          style={{
-            ...responsiveTypography.body,
-            color: COLORS.text.secondary,
-            marginBottom: isMobile ? SPACING.md : SPACING.lg,
-            marginTop: 0,
-            fontSize: isMobile ? 12 : 13,
-            fontWeight: 600,
-          }}
-        >
-          Детализация:
-        </p>
+        <p style={detailHeadingStyle}>Детализация:</p>
         <div style={detailGridStyle}>
-          {pending.items.map((item, index) => {
-            const isLast = index === pending.items.length - 1;
+          {items.map((item, index) => {
+            const isLast = index === items.length - 1;
             return (
-              <Fragment key={item.id}>
-                <div style={getCellStyle(isLast)} {...hoverHandlers}>
-                  <Link
-                    href={`/work?batch=${item.id}`}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      ...responsiveTypography.body,
-                      color: COLORS.text.primary,
-                      margin: 0,
-                      overflowWrap: "break-word",
-                      wordBreak: "break-word",
-                      whiteSpace: "normal",
-                      textDecoration: "underline",
-                      textDecorationStyle: "dotted",
-                      textUnderlineOffset: 2,
-                    }}
-                  >
-                    {item.title}
-                  </Link>
+              <Fragment key={getKey(item)}>
+                <div style={getCellStyle(isLast)} {...rowHoverHandlers}>
+                  {renderLabel(item)}
                 </div>
-                <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
+                <div style={getCellStyle(isLast, true)} {...rowHoverHandlers}>
                   <span
                     style={{
                       ...responsiveTypography.body,
-                      color: COLORS.error,
+                      color: amountColor,
                       fontWeight: 600,
                       whiteSpace: "nowrap",
                       margin: 0,
                     }}
                   >
-                    {formatCurrency(item.amount)}
+                    {formatCurrency(getAmount(item))}
                   </span>
                 </div>
               </Fragment>
@@ -193,102 +211,92 @@ export const Money = ({
     );
   };
 
-  const renderDepositDetails = () => {
-    if (!expandedCards.has("deposits")) {
-      return null;
-    }
-
-    if (deposits.items.length === 0) {
-      return (
-        <div style={detailContainerStyle}>
-          <p
+  const renderMetricCard = <TItem,>({
+    cardId,
+    label,
+    total,
+    summary,
+    amountColor,
+    details,
+  }: MetricCardConfig<TItem>) => (
+    <div
+      onClick={() => onToggleCard(cardId)}
+      style={{
+        ...CARD_STYLE,
+        padding: isMobile ? SPACING.smPlus : SPACING.xl,
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        gap: isMobile ? SPACING.xsPlus : SPACING.md,
+      }}
+      {...(isMobile
+        ? {}
+        : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
+            boxShadow: CARD_STYLE.boxShadow,
+            transform: "translateY(0)",
+          }))}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: SPACING.md,
+          marginBottom: isMobile ? 0 : SPACING.xs,
+        }}
+      >
+        <p
           style={{
-            ...responsiveTypography.body,
-            color: COLORS.text.secondary,
+            ...STYLES.metricLabel,
             margin: 0,
           }}
-          >
-            Нет активных депозитов
-          </p>
-        </div>
-      );
-    }
-
-    const hoverHandlers = getHoverHandlers();
-
-    return (
-      <div style={detailContainerStyle}>
-        <p
-          style={{
-            ...responsiveTypography.body,
-            color: COLORS.text.secondary,
-            marginBottom: isMobile ? SPACING.md : SPACING.lg,
-            marginTop: 0,
-            fontSize: isMobile ? 12 : 13,
-            fontWeight: 600,
-          }}
         >
-          Детализация:
+          {label}
         </p>
-        <div style={detailGridStyle}>
-          {deposits.items.map((item, index) => {
-            const isLast = index === deposits.items.length - 1;
-            return (
-              <Fragment key={item.id}>
-                <div style={getCellStyle(isLast)} {...hoverHandlers}>
-                  <span
-                    style={{
-                      ...responsiveTypography.body,
-                      color: COLORS.text.primary,
-                      margin: 0,
-                      overflowWrap: "break-word",
-                      wordBreak: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    {item.lines.map((line, lineIndex) => (
-                      <Fragment key={lineIndex}>
-                        {line}
-                        {lineIndex < item.lines.length - 1 && <br />}
-                      </Fragment>
-                    ))}
-                  </span>
-                </div>
-                <div style={getCellStyle(isLast, true)} {...hoverHandlers}>
-                  <span
-                    style={{
-                      ...responsiveTypography.body,
-                      color: COLORS.success,
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                      margin: 0,
-                    }}
-                  >
-                    {formatCurrency(item.amount)}
-                  </span>
-                </div>
-              </Fragment>
-            );
-          })}
+        <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
+          {expandedCards.has(cardId) ? (
+            <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
+          ) : (
+            <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
+          )}
         </div>
       </div>
-    );
-  };
+      <p
+        style={{
+          ...responsiveTypography.amount,
+          color: amountColor,
+          letterSpacing: -1,
+          margin: 0,
+        }}
+      >
+        {formatCurrency(total)}
+      </p>
+      <p
+        style={{
+          ...STYLES.metricHint,
+          margin: 0,
+          marginTop: isMobile ? 0 : SPACING.xs,
+        }}
+      >
+        {summary}
+      </p>
+      {renderDetailsTable(details)}
+    </div>
+  );
 
   return (
     <div
       style={{
         flex: 1,
-        padding: isMobile ? SPACING.md : SPACING.xl,
-        paddingTop: isMobile ? SPACING.md : SPACING.lg,
-        paddingBottom: isMobile ? SPACING.md : SPACING.lg,
+        padding: isMobile ? SPACING.smPlus : SPACING.xl,
+        paddingTop: isMobile ? SPACING.smPlus : SPACING.lg,
+        paddingBottom: isMobile ? SPACING.smPlus : SPACING.lg,
         display: "flex",
         flexDirection: "column",
-        gap: isMobile ? SPACING.md : SPACING.xl * 2,
+        gap: isMobile ? SPACING.smPlus : SPACING.xl * 2,
       }}
     >
-      <div style={CARD_TEMPLATES.introCard(isMobile)}>
-        <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>Финансы</p>
+      <div style={CARD_TEMPLATES.pageIntro(isMobile)}>
         <h2
           style={{
             ...responsiveTypography.h2,
@@ -298,8 +306,8 @@ export const Money = ({
         >
           Надвигающаяся расплата
         </h2>
-        <p style={{ ...STYLES.sectionDescription, margin: 0 }}>
-          Слева то, что ещё нужно оплатить, справа уже внесённые депозиты и предоплаты.
+        <p style={introCopyStyle}>
+          {introDescription}
         </p>
       </div>
 
@@ -313,69 +321,40 @@ export const Money = ({
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
-          <div
-            onClick={() => onToggleCard("total_payment")}
-            style={{
-              ...CARD_STYLE,
-              padding: isMobile ? SPACING.md : SPACING.xl,
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              gap: isMobile ? SPACING.sm : SPACING.md,
-            }}
-            {...(isMobile
-              ? {}
-              : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
-                  boxShadow: CARD_STYLE.boxShadow,
-                  transform: "translateY(0)",
-                }))}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: SPACING.md,
-                marginBottom: isMobile ? 0 : SPACING.xs,
-              }}
-            >
-              <p
-                style={{
-                  ...STYLES.metricLabel,
-                  margin: 0,
-                }}
-              >
-                Всего к оплате
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-                {expandedCards.has("total_payment") ? (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
-                ) : (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
-                )}
-              </div>
-            </div>
-            <p
-              style={{
-                ...responsiveTypography.amount,
-                color: COLORS.error,
-                letterSpacing: -1,
-                margin: 0,
-              }}
-            >
-              {formatCurrency(pending.total)}
-            </p>
-            <p
-              style={{
-                ...STYLES.metricHint,
-                margin: 0,
-                marginTop: isMobile ? 0 : SPACING.xs,
-              }}
-            >
-              По данным из партий и предоплат
-            </p>
-            {renderPendingDetails()}
-          </div>
+          {renderMetricCard({
+            cardId: "total_payment",
+            label: "Всего к оплате",
+            total: pending.total,
+            summary: "По данным из партий и предоплат",
+            amountColor: COLORS.error,
+            details: {
+              cardId: "total_payment",
+              items: pending.items,
+              emptyText: "Все партии оплачены",
+              amountColor: COLORS.error,
+              getKey: (item) => item.id,
+              getAmount: (item) => item.amount,
+              renderLabel: (item) => (
+                <Link
+                  href={`/work?batch=${item.id}`}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    ...responsiveTypography.body,
+                    color: COLORS.text.primary,
+                    margin: 0,
+                    overflowWrap: "break-word",
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                    textDecoration: "underline",
+                    textDecorationStyle: "dotted",
+                    textUnderlineOffset: 2,
+                  }}
+                >
+                  {item.title}
+                </Link>
+              ),
+            },
+          })}
         </div>
 
         {!isMobile && (
@@ -413,71 +392,44 @@ export const Money = ({
         )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
-          <div
-            onClick={() => onToggleCard("deposits")}
-            style={{
-              ...CARD_STYLE,
-              padding: isMobile ? SPACING.md : SPACING.xl,
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              gap: isMobile ? SPACING.sm : SPACING.md,
-            }}
-            {...(isMobile
-              ? {}
-              : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
-                  boxShadow: CARD_STYLE.boxShadow,
-                  transform: "translateY(0)",
-                }))}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: SPACING.md,
-                marginBottom: isMobile ? 0 : SPACING.xs,
-              }}
-            >
-              <p
-                style={{
-                  ...STYLES.metricLabel,
-                  margin: 0,
-                }}
-              >
-                Депозитов внесено
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-                {expandedCards.has("deposits") ? (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
-                ) : (
-                  <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
-                )}
-              </div>
-            </div>
-            <p
-              style={{
-                ...responsiveTypography.amount,
-                color: COLORS.success,
-                letterSpacing: -1,
-                margin: 0,
-              }}
-            >
-              {formatCurrency(deposits.total)}
-            </p>
-            <p
-              style={{
-                ...STYLES.metricHint,
-                margin: 0,
-                marginTop: isMobile ? 0 : SPACING.xs,
-              }}
-            >
-              Депозиты и предоплаты
-            </p>
-            {renderDepositDetails()}
-          </div>
+          {renderMetricCard({
+            cardId: "deposits",
+            label: "Депозитов внесено",
+            total: deposits.total,
+            summary: "Депозиты и предоплаты",
+            amountColor: COLORS.success,
+            details: {
+              cardId: "deposits",
+              items: deposits.items,
+              emptyText: "Нет активных депозитов",
+              amountColor: COLORS.success,
+              getKey: (item) => item.id,
+              getAmount: (item) => item.amount,
+              renderLabel: (item) => (
+                <span
+                  style={{
+                    ...responsiveTypography.body,
+                    color: COLORS.text.primary,
+                    margin: 0,
+                    overflowWrap: "break-word",
+                    wordBreak: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  {item.lines.map((line, lineIndex) => (
+                    <Fragment key={lineIndex}>
+                      {line}
+                      {lineIndex < item.lines.length - 1 && <br />}
+                    </Fragment>
+                  ))}
+                </span>
+              ),
+            },
+          })}
         </div>
       </div>
     </div>
   );
 };
+
+

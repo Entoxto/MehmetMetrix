@@ -9,6 +9,7 @@ export const COLORS = {
   error: "#f87171",
   text: {
     primary: "#f5f5f5",
+    softTitle: "rgba(245, 239, 227, 0.9)",
     secondary: "#c7c7c7",
     muted: "#8a8a8a",
     tertiary: "#686868",
@@ -18,7 +19,6 @@ export const COLORS = {
     darker: "#111113",
     card: "rgba(24,24,27,0.78)",
     cardExpanded: "rgba(30,30,34,0.94)",
-    header: "rgba(15,15,18,0.84)",
     footer: "rgba(9,9,11,0.64)",
     soft: "rgba(255,255,255,0.03)",
     accent: "rgba(244,195,77,0.08)",
@@ -45,25 +45,6 @@ export const STYLES = {
   cardExpanded: {
     background: COLORS.background.cardExpanded,
     border: `1px solid ${COLORS.border.hover}`,
-  },
-  // Основная кнопка
-  button: {
-    border: `1px solid ${COLORS.border.primary}`,
-    color: COLORS.primary,
-    padding: "12px 18px",
-    borderRadius: 12,
-    background: COLORS.background.accent,
-    cursor: "pointer",
-    transition: "all 0.25s ease",
-    fontWeight: 600,
-    fontSize: 14,
-    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.18)",
-  },
-  // Ховер-состояние для основной кнопки
-  buttonHover: {
-    background: "rgba(244,195,77,0.15)",
-    border: `1px solid ${COLORS.border.primaryHover}`,
-    transform: "translateY(-1px)",
   },
   // Чип размеров у позиций
   sizeBadge: {
@@ -105,6 +86,13 @@ export const STYLES = {
     fontSize: 14,
     lineHeight: 1.6,
   },
+  pageIntroCopy: (isMobile: boolean) => ({
+    color: isMobile ? COLORS.text.muted : COLORS.text.secondary,
+    fontSize: isMobile ? 11 : 13,
+    lineHeight: isMobile ? 1.45 : 1.5,
+    maxWidth: isMobile ? 520 : 620,
+    margin: 0,
+  }),
   metricLabel: {
     color: COLORS.text.muted,
     fontSize: 11,
@@ -117,6 +105,19 @@ export const STYLES = {
     color: COLORS.text.muted,
     fontSize: 13,
     lineHeight: 1.5,
+  },
+  metaBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 6,
+    padding: "5px 10px",
+    borderRadius: 999,
+    border: `1px solid ${COLORS.border.default}`,
+    background: COLORS.background.soft,
+    color: COLORS.text.muted,
+    fontSize: 11,
+    lineHeight: 1.4,
+    fontWeight: 600,
   },
   divider: {
     width: "100%",
@@ -184,6 +185,16 @@ export const CARD_TEMPLATES = {
     display: "flex",
     flexDirection: "column" as const,
     gap: isMobile ? SPACING.sm : SPACING.md,
+  }),
+  pageIntro: (isMobile: boolean) => ({
+    ...STYLES.card,
+    width: "100%",
+    padding: isMobile ? SPACING.smPlus : SPACING.md,
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: isMobile ? SPACING.xsPlus : SPACING.sm,
+    boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
+    background: "linear-gradient(180deg, rgba(24,24,27,0.82) 0%, rgba(21,21,24,0.94) 100%)",
   }),
   metricCard: (isMobile: boolean) => ({
     ...STYLES.card,
@@ -281,5 +292,10 @@ export const CARD_HOVER_EFFECTS = {
     },
   },
 } as const;
+
+
+
+
+
 
 

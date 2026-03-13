@@ -11,7 +11,7 @@ import { isPaidStatus } from '@/lib/statusText';
 /**
  * Строка для отображения в таблице партии.
  */
-export interface ViewRow {
+interface ViewRow {
   /** Текстовый статус для отображения (1 в 1 из Excel) */
   statusLabel: string;
   /** Позиции в группе */
@@ -20,8 +20,9 @@ export interface ViewRow {
 
 /**
  * Группирует позиции по текстовому статусу (statusLabel).
+ * Внутренний helper для подготовки строк таблицы.
  */
-export function groupByStatusLabel(positions: Position[]): Map<string, Position[]> {
+function groupByStatusLabel(positions: Position[]): Map<string, Position[]> {
   const grouped = new Map<string, Position[]>();
 
   for (const position of positions) {
@@ -70,4 +71,3 @@ export function toViewRows(batch: Batch): ViewRow[] {
 
   return rows;
 }
-

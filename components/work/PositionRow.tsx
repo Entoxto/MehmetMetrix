@@ -16,7 +16,15 @@ import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { MouseEvent } from "react";
-import type { ColumnConfig } from "./BatchView";
+
+interface PositionRowColumn {
+  id: string;
+  renderCell: (
+    position: Position,
+    isMobile: boolean,
+    props: PositionRowProps
+  ) => React.ReactNode;
+}
 
 export interface PositionRowProps {
   position: Position;
@@ -27,7 +35,7 @@ export interface PositionRowProps {
   typography: {
     tableCell: React.CSSProperties;
   };
-  columnsConfig: ColumnConfig[];
+  columnsConfig: PositionRowColumn[];
 }
 
 /**
@@ -38,12 +46,12 @@ const getPositionCellStyle = (
   cellBaseBackground: string,
   cellBaseBorder: string
 ): React.CSSProperties => ({
-  padding: isMobile ? "12px 12px 10px 12px" : "18px 18px 14px 18px",
+  padding: isMobile ? "10px 10px 9px 10px" : "18px 18px 14px 18px",
   display: "flex",
   flexDirection: "column",
   gap: isMobile ? 6 : 8,
   borderBottom: `1px solid ${cellBaseBorder}`,
-  background: cellBaseBackground,
+  background: isMobile ? "rgba(13,13,16,0.98)" : cellBaseBackground,
   transition: "background 0.2s ease, border 0.2s ease",
   overflowWrap: "anywhere",
   minWidth: 0,

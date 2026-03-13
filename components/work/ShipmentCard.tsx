@@ -7,7 +7,7 @@
 
 import type { CSSProperties, MouseEvent } from "react";
 import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES } from "@/constants/styles";
-import { formatCurrency, getStatusLabel } from "@/lib/format";
+import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/types/shipment";
@@ -36,9 +36,6 @@ interface ShipmentCardProps {
   };
 }
 
-/**
- * Блок даты/ETA поставки — единый для десктопа и мобильных.
- */
 const ShipmentDateInfo = ({
   shipment,
   isDesktop,
@@ -123,7 +120,23 @@ export const ShipmentCard = ({
   const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
   const highlightStatus = isPaidStatus(shipment.status);
   const statusLabelText = getStatusLabel(shipment.status);
-  const positionsCount = shipment.batch.positions.length;
+  const modelsCount = shipment.batch.positions.length;
+  const unitsCount = shipment.batch.positions.reduce((sum, position) => sum + position.qty, 0);
+
+  const cardContainerStyle: CSSProperties = {
+    ...cardStyle,
+    padding: isMobile ? SPACING.smPlus : cardStyle.padding,
+    cursor: "pointer",
+    outline: "none",
+    position: "relative",
+    overflow: "hidden",
+    background: isExpanded
+      ? "linear-gradient(180deg, rgba(244,195,77,0.12) 0%, rgba(29,29,33,0.96) 16%, rgba(20,20,24,0.96) 100%)"
+      : cardStyle.background,
+    border: isExpanded ? `1px solid ${COLORS.border.primary}` : cardStyle.border,
+    boxShadow: isExpanded ? "0 18px 36px rgba(0, 0, 0, 0.26)" : cardStyle.boxShadow,
+    animation: isExpanded ? "fadeIn 220ms ease-out" : undefined,
+  };
 
   return (
     <div
@@ -137,8 +150,8 @@ export const ShipmentCard = ({
           onToggle();
         }
       }}
-      style={{ ...cardStyle, cursor: "pointer", outline: "none" }}
-      {...(isMobile ? {} : hoverHandlers)}
+      style={cardContainerStyle}
+      {...(isMobile || isExpanded ? {} : hoverHandlers)}
       onFocus={(e) => {
         e.currentTarget.style.outline = STYLES.focusRing.outline;
         e.currentTarget.style.outlineOffset = STYLES.focusRing.outlineOffset;
@@ -150,16 +163,32 @@ export const ShipmentCard = ({
       aria-label={`${shipment.title}, ${statusLabelText}`}
     >
       <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: isExpanded ? 4 : 2,
+          background: isExpanded
+            ? "linear-gradient(180deg, rgba(244,195,77,0.9) 0%, rgba(244,195,77,0.25) 100%)"
+            : "linear-gradient(180deg, rgba(244,195,77,0.55) 0%, rgba(244,195,77,0.12) 100%)",
+        }}
+      />
+
+      <div
         style={{
           display: "grid",
           gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
-          gap: isDesktop ? SPACING.lg : SPACING.md,
+          gap: isDesktop ? SPACING.lg : SPACING.smPlus,
           alignItems: "center",
           minHeight: isDesktop ? 60 : "auto",
+          position: "relative",
+          zIndex: 1,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
-          <div style={{ display: "flex", alignItems: "center", gap: SPACING.md }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? SPACING.sm : SPACING.md }}>
             <span
               style={{
                 fontSize: isMobile ? 14 : 18,
@@ -178,9 +207,21 @@ export const ShipmentCard = ({
                 ...typography.h3,
                 color: COLORS.text.primary,
                 margin: 0,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
+                ...(isMobile
+                  ? {
+                      fontSize: 17,
+                      lineHeight: 1.2,
+                      whiteSpace: "normal",
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }
+                  : {
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }),
                 flex: 1,
               }}
             >
@@ -197,11 +238,18 @@ export const ShipmentCard = ({
               <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
             </div>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: SPACING.sm }}>
-            <span style={STYLES.sizeBadge}>{positionsCount} позиций</span>
-            <span style={STYLES.sizeBadge}>{formatCurrency(shipment.totalAmount)}</span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>
+            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
+              {formatModelCount(modelsCount)}
+            </span>
+            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
+              {formatUnitCount(unitsCount)}
+            </span>
+            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
+              {formatCurrency(shipment.totalAmount)}
+            </span>
             {shipment.hasPriceGaps && (
-              <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted }}>
+              <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
                 есть уточнения
               </span>
             )}
@@ -233,7 +281,8 @@ export const ShipmentCard = ({
             style={{
               width: "100%",
               height: 1,
-              background: COLORS.border.default,
+              background:
+                "linear-gradient(90deg, rgba(244,195,77,0.4) 0%, rgba(255,255,255,0.08) 35%, rgba(255,255,255,0.08) 100%)",
               marginTop: SPACING.md,
               marginBottom: SPACING.md,
             }}
@@ -322,3 +371,5 @@ export const ShipmentCard = ({
     </div>
   );
 };
+
+

@@ -1,6 +1,6 @@
 [
   {
-    "id": "shipment-5",
+    "id": "shipment-2026-5",
     "number": 5,
     "title": "Поставка №5",
     "status": "В работе 🧵",
@@ -89,11 +89,11 @@
         "status": "Ожидаем материал 🧵"
       },
       {
-        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (one size-15)",
+        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (one size-10)",
         "productId": "auto-039",
         "price": 310,
         "sizes": {
-          "OneSize": 15
+          "OneSize": 10
         },
         "status": "Ожидаем материал 🧵"
       },
@@ -154,7 +154,7 @@
     "year": 2026
   },
   {
-    "id": "shipment-4",
+    "id": "shipment-2026-4",
     "number": 4,
     "title": "Поставка №4",
     "status": "В пути 🚚",
@@ -162,7 +162,7 @@
       {
         "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (XS-8, S-8, M-4)",
         "productId": "auto-008",
-        "price": 260,
+        "price": 180,
         "sizes": {
           "xs": 8,
           "s": 8,
@@ -174,7 +174,7 @@
       {
         "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-10, S-10, M-5)",
         "productId": "auto-003",
-        "price": 180,
+        "price": 190,
         "sizes": {
           "xs": 10,
           "s": 10,
@@ -188,7 +188,7 @@
     "eta": "на следующей неделе"
   },
   {
-    "id": "shipment-3",
+    "id": "shipment-2026-3",
     "number": 3,
     "title": "Поставка №3",
     "status": "Получено, не оплачено 📦",
@@ -209,7 +209,7 @@
     "receivedDate": "12.03.2026"
   },
   {
-    "id": "shipment-2",
+    "id": "shipment-2026-2",
     "number": 2,
     "title": "Поставка №2",
     "status": "Получено, оплачено ✅",
@@ -231,7 +231,7 @@
     "receivedDate": "24.02.2026"
   },
   {
-    "id": "shipment-1",
+    "id": "shipment-2026-1",
     "number": 1,
     "title": "Поставка №1",
     "status": "Получено, оплачено ✅",
@@ -251,7 +251,7 @@
     "receivedDate": "04.02.2026"
   },
   {
-    "id": "shipment-13",
+    "id": "shipment-2025-13",
     "number": 13,
     "title": "Поставка №13",
     "status": "Получено, оплачено ✅",
@@ -271,7 +271,7 @@
     "receivedDate": "25.12.2025"
   },
   {
-    "id": "shipment-12",
+    "id": "shipment-2025-12",
     "number": 12,
     "title": "Поставка №12",
     "status": "Получено, оплачено ✅",
@@ -323,7 +323,7 @@
     "receivedDate": "09.12.2025"
   },
   {
-    "id": "shipment-11",
+    "id": "shipment-2025-11",
     "number": 11,
     "title": "Поставка №11",
     "status": "Получено, оплачено ✅",
@@ -417,7 +417,7 @@
     "receivedDate": "24.11.2025"
   },
   {
-    "id": "shipment-10",
+    "id": "shipment-2025-10",
     "number": 10,
     "title": "Поставка №10",
     "status": "Получено, оплачено ✅",
@@ -528,7 +528,7 @@
     "receivedDate": "04.11.2025"
   },
   {
-    "id": "shipment-9",
+    "id": "shipment-2025-9",
     "number": 9,
     "title": "Поставка №9",
     "status": "Получено, оплачено ✅",
@@ -570,7 +570,7 @@
     "receivedDate": "30.10.2025"
   },
   {
-    "id": "shipment-8",
+    "id": "shipment-2025-8",
     "number": 8,
     "title": "Поставка №8",
     "status": "Получено, оплачено ✅",
@@ -616,7 +616,7 @@
     "receivedDate": "03.09.2025"
   },
   {
-    "id": "shipment-7",
+    "id": "shipment-2025-7",
     "number": 7,
     "title": "Поставка №7",
     "status": "Получено, оплачено ✅",
@@ -637,7 +637,7 @@
     "receivedDate": "28.08.2025"
   },
   {
-    "id": "shipment-6",
+    "id": "shipment-2025-6",
     "number": 6,
     "title": "Поставка №6",
     "status": "Получено, оплачено ✅",
@@ -680,7 +680,7 @@
     "receivedDate": "16.08.2025"
   },
   {
-    "id": "shipment-5",
+    "id": "shipment-2025-5",
     "number": 5,
     "title": "Поставка №5",
     "status": "Получено, оплачено ✅",
@@ -785,7 +785,7 @@
     "receivedDate": "03.07.2025"
   },
   {
-    "id": "shipment-4",
+    "id": "shipment-2025-4",
     "number": 4,
     "title": "Поставка №4",
     "status": "Получено, оплачено ✅",
@@ -806,7 +806,7 @@
     "receivedDate": "01.05.2025"
   },
   {
-    "id": "shipment-3",
+    "id": "shipment-2025-3",
     "number": 3,
     "title": "Поставка №3",
     "status": "Получено, оплачено ✅",
@@ -827,7 +827,7 @@
     "receivedDate": "23.03.2025"
   },
   {
-    "id": "shipment-2",
+    "id": "shipment-2025-2",
     "number": 2,
     "title": "Поставка №2",
     "status": "Получено, оплачено ✅",
@@ -877,7 +877,7 @@
     "receivedDate": "05.02.2025"
   },
   {
-    "id": "shipment-1",
+    "id": "shipment-2025-1",
     "number": 1,
     "title": "Поставка №1",
     "status": "Получено, оплачено ✅",
@@ -925,7 +925,7 @@
     "receivedDate": "20.01.2024"
   },
   {
-    "id": "shipment-6",
+    "id": "shipment-2024-6",
     "number": 6,
     "title": "Поставка №6",
     "status": "Получено, оплачено ✅",
@@ -955,7 +955,7 @@
     "receivedDate": "10.12.2024"
   },
   {
-    "id": "shipment-5",
+    "id": "shipment-2024-5",
     "number": 5,
     "title": "Поставка №5",
     "status": "Получено, оплачено ✅",
@@ -989,7 +989,7 @@
     "receivedDate": "10.12.2024"
   },
   {
-    "id": "shipment-4",
+    "id": "shipment-2024-4",
     "number": 4,
     "title": "Поставка №4",
     "status": "Получено, оплачено ✅",
@@ -1036,7 +1036,7 @@
     "receivedDate": "26.11.2024"
   },
   {
-    "id": "shipment-3",
+    "id": "shipment-2024-3",
     "number": 3,
     "title": "Поставка №3",
     "status": "Получено, оплачено ✅",
@@ -1066,7 +1066,7 @@
     "receivedDate": "21.10.2024"
   },
   {
-    "id": "shipment-2",
+    "id": "shipment-2024-2",
     "number": 2,
     "title": "Поставка №2",
     "status": "Получено, оплачено ✅",
@@ -1103,7 +1103,7 @@
     "receivedDate": "10.10.2024"
   },
   {
-    "id": "shipment-1",
+    "id": "shipment-2024-1",
     "number": 1,
     "title": "Поставка №1",
     "status": "Получено, оплачено ✅",

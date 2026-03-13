@@ -15,6 +15,8 @@ export interface Position {
   qty: number;
   price: number | null;
   sum: number | null;
+  /** Учитывается ли позиция в оплате (false для paidPreviously/noPayment). */
+  isPayable: boolean;
   cost?: number | null;
   sample: boolean;
   /** Текстовый статус позиции — ровно то, что выбрал менеджер в Excel. */

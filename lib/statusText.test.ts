@@ -4,25 +4,14 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { isPaidStatus, normalizeStatusText } from './statusText';
-
-describe('normalizeStatusText', () => {
-  it('должен обрезать пробелы', () => {
-    expect(normalizeStatusText('  текст  ')).toBe('текст');
-  });
-
-  it('должен возвращать пустую строку для null/undefined', () => {
-    expect(normalizeStatusText(null)).toBe('');
-    expect(normalizeStatusText(undefined)).toBe('');
-  });
-
-  it('должен преобразовывать числа в строки', () => {
-    expect(normalizeStatusText(123 as unknown as string)).toBe('123');
-  });
-});
+import { isPaidStatus } from './statusText';
 
 describe('isPaidStatus', () => {
   describe('статусы считающиеся оплаченными', () => {
+    it('обрезает пробелы вокруг статуса', () => {
+      expect(isPaidStatus('  Получено, оплачено ✅  ')).toBe(true);
+    });
+
     it('статус "Получено, оплачено ✅" → оплачено', () => {
       expect(isPaidStatus('Получено, оплачено ✅')).toBe(true);
     });
@@ -103,9 +92,12 @@ describe('isPaidStatus', () => {
       expect(isPaidStatus(undefined)).toBe(false);
     });
 
+    it('нестроковое значение безопасно приводится к строке', () => {
+      expect(isPaidStatus(123 as unknown as string)).toBe(false);
+    });
+
     it('неизвестный статус без "оплачен" → не оплачено', () => {
       expect(isPaidStatus('Какой-то новый статус')).toBe(false);
     });
   });
 });
-

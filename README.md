@@ -32,6 +32,23 @@ npm start
 
 ---
 
+## 🤖 Контекст для агентов и редакторов
+
+Перед правками лучше читать файлы в таком порядке:
+
+1. `README.md` — архитектура, команды, поток данных
+2. `AGENTS.md` — быстрые правила редактирования и инварианты проекта
+3. `docs/AI_CONTEXT.md` — терминология, источник правды, частые ловушки
+4. `data/README.md` — что можно редактировать вручную, а что перезаписывается парсером
+
+Коротко:
+- `data/shipments.json`, `data/products.json`, `data/meta.json` — генерируются из Excel / Google Sheet
+- `data/money.json` — ручной файл
+- статусы хранятся как текст из Excel 1 в 1
+- визуально неинтерактивные элементы не должны выглядеть как кнопки
+
+---
+
 ## 📁 Структура проекта
 
 ```
@@ -72,7 +89,8 @@ npm start
 ├── data/                   # JSON-данные
 │   ├── products.json       # Каталог изделий (цены обновляются из поставок)
 │   ├── shipments.json      # Поставки и позиции с историческими ценами
-│   └── money.json          # Депозиты и предоплаты
+│   ├── money.json          # Ручные финансовые строки: депозиты и служебные подписи
+│   └── meta.json           # Метаданные обновления данных
 │
 ├── scripts/                # Скрипты оптимизации изображений
 │   └── convert_to_webp.py  # Конвертация JPG → WebP (пропускает уже существующие)
@@ -99,6 +117,7 @@ npm start
 ├── lib/                    # Бизнес-логика
 │   ├── adapters.ts         # Преобразование JSON → доменная модель
 │   ├── shipments.ts        # buildShipments() — сборка поставок, группировка по годам (типы из types/shipment.ts)
+│   ├── meta.ts             # Чтение метаданных обновления data/meta.json
 │   ├── products.ts         # getProducts() — единая точка загрузки каталога товаров
 │   ├── derive.ts           # Группировка позиций по статусам
 │   ├── format.ts           # Форматирование: валюта, иконки статусов
@@ -113,6 +132,8 @@ npm start
 ├── constants/              # Константы
 │   └── styles.ts           # Цвета, отступы, типографика
 │
+├── tsconfig.strict-check.json # Строгая статическая проверка без зависимости от .next/types
+│
 └── contexts/
     └── BreakpointContext.tsx  # Контекст для размера экрана
 ```
@@ -126,7 +147,7 @@ npm start
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         JSON-файлы                              │
-│  products.json    shipments.json    money.json                  │
+│  products.json    shipments.json    money.json    meta.json     │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
@@ -166,7 +187,7 @@ npm start
 **Position** — единица изделия в поставке:
 ```typescript
 interface Position {
-  id: string;
+  id: string;              // Стабильный ID внутри поставки (shipmentId + index)
   productId: string;       // Ссылка на товар в каталоге
   title: string;           // Название позиции
   sizes: Record<Size, number>;  // Количество по размерам
@@ -174,6 +195,7 @@ interface Position {
   price: number | null;    // Цена за единицу в долларах (из колонки H Excel)
   cost: number | null;     // Себестоимость в рублях (из колонки N Excel)
   sum: number | null;      // Сумма к оплате (price × qty) или null
+  isPayable: boolean;     // Учитывается ли позиция в оплате
   sample: boolean;         // Это образец?
   statusLabel: string;     // Текстовый статус (1 в 1 из Excel)
   noteEnabled: boolean;    // Показывать примечание?
@@ -207,9 +229,9 @@ interface Batch {
 
 **Обновление цен и себестоимости в каталоге:**
 - Цены и себестоимость в `products.json` обновляются автоматически из `shipments.json`
-- Скрипт `Excel/update_prices.py` проходит по поставкам от новых к старым
+- Во время `Excel/parse_excel.py` актуализация каталога происходит в памяти, до записи файлов на диск
 - Для каждого товара записывается самая актуальная цена (в долларах) и себестоимость (в рублях) из последней поставки
-- Скрипт `Excel/parse_excel.py` автоматически запускает `update_prices.py` после парсинга
+- Перед сохранением пайплайн валидирует `shipments.json`, `products.json` и `meta.json`
 - Приложение использует цены и себестоимость напрямую из `products.json` (без дополнительной обработки)
 
 ```
@@ -222,7 +244,7 @@ interface Batch {
 └─────────────────────────────────────────────────────────┘
                                     │
                                     ▼
-                    update_prices.py обновляет
+                шаг актуализации каталога обновляет
                                     │
                                     ▼
                           products.json
@@ -365,18 +387,70 @@ python parse_excel.py
 3. Извлекает `price` из колонки H ("Стоймость 1 ед $") — цена в долларах
 4. Извлекает `cost` из колонки N ("Себестоимость с учётом карго") — себестоимость в рублях
 5. Переносит колонку `Состав` в `products.json` → `materials` (с мягким разбором на `outer`, `lining`, `comments`)
-5. Сохраняет результат в `data/shipments.json`
+6. Обновляет `products.json` актуальными `price` / `cost` прямо в памяти
+7. Валидирует `shipments.json`, `products.json` и `meta.json`
+8. Атомарно сохраняет результат в `data/shipments.json`, `data/products.json`, `data/meta.json`
 
-**Обновление цен в каталоге:**
+**Повторная синхронизация цен в каталоге:**
 ```bash
 cd Excel
 python update_prices.py
 ```
 
 Скрипт:
-1. Читает `data/shipments.json` (поставки отсортированы от новых к старым)
+1. Читает `data/shipments.json`
 2. Проходит по всем позициям и находит самую актуальную цену для каждого товара
-3. Обновляет поле `price` в `data/products.json`
+3. Валидирует итоговый `products.json`
+4. Атомарно обновляет поля `price` и `cost` в `data/products.json`
+
+**Smoke-check generated data:**
+```bash
+python validate_generated_data.py
+```
+
+Скрипт проверяет:
+1. структуру `shipments.json`
+2. структуру `products.json`
+3. целостность ссылок `productId`
+4. соответствие актуальных `price` / `cost` данным из поставок
+5. корректность `meta.json`
+
+**Проверка ассетов каталога:**
+```bash
+npm run validate:images
+```
+
+Скрипт проверяет:
+1. что каждый `product.photo` задан и ведет в `/images/products/jpg/...`
+2. что соответствующий JPG реально существует
+3. что рядом есть WebP-версия
+4. что в папках с изображениями нет лишних файлов без ссылок из каталога
+
+Отсутствующий JPG считается ошибкой. Лишние файлы выводятся как предупреждение, чтобы их можно было подчистить отдельно от основного деплой-потока.
+
+**Полный preflight перед деплоем:**
+```bash
+npm run preflight
+```
+
+Прогоняет одной командой:
+1. `npm run lint`
+2. `npm run typecheck`
+3. `npm run typecheck:strict`
+4. `npm run validate:data`
+5. `npm run validate:images`
+6. `npm run build`
+
+**Быстрый preflight для ежедневного запуска:**
+```bash
+npm run preflight:fast
+```
+
+Прогоняет только то, что важно для сценария обновления данных:
+1. `npm run validate:data`
+2. `npm run validate:images`
+
+Именно этот быстрый прогон теперь вызывается внутри `Запустить с обновлением.bat` перед запуском dev-сервера.
 
 **Документация:**
 - Подробная логика парсинга описана в `Excel/логика парсинга.txt`
@@ -415,7 +489,7 @@ const isMarkedPaid = isPaidStatus(shipment.status);
 
 ### Новый товар в каталог
 
-Каталог `data/products.json` при каждом парсинге собирается заново из Excel (в нём только товары из текущего файла). Добавьте строку в таблицу и запустите парсинг («Запустить с обновлением»). Категория по названию: питон → Экзотика, кож → Кожа, мех → Мех, замш → Замша (приоритет у экзотики, мех выше замши); размеры (`sizes`) заполняются автоматически — объединение всех размеров по позициям поставок; колонка `Состав` переносится в `materials`; цену и себестоимость подставит `update_prices.py` из поставок.
+Каталог `data/products.json` при каждом парсинге собирается заново из Excel (в нём только товары из текущего файла). Добавьте строку в таблицу и запустите парсинг («Запустить с обновлением»). Категория по названию: питон → Экзотика, кож → Кожа, мех → Мех, замш → Замша (приоритет у экзотики, мех выше замши). Если категория не определяется, парсер падает с ошибкой: состояния `Прочее` в пайплайне быть не должно. Размеры (`sizes`) заполняются автоматически — объединение всех размеров по позициям поставок; колонка `Состав` переносится в `materials`; цену и себестоимость подставляет шаг актуализации каталога из поставок.
 
 При необходимости можно вручную добавить объект в `data/products.json` (файл создаётся при первом парсинге, если его нет). Цена и себестоимость не указываются — они берутся из поставок автоматически.
 
@@ -430,14 +504,18 @@ const isMarkedPaid = isPaidStatus(shipment.status);
 
 ### Новая позиция в поставку
 
-Добавьте объект в `rawItems` нужной поставки в `data/shipments.json`:
+Предпочтительный путь: добавить строку в Excel / Google Sheet и запустить парсинг.
+
+Ручная правка `data/shipments.json` допустима только как временный локальный обходной путь: следующий парсинг перезапишет файл.
+
+Если нужна точечная ручная проверка, добавьте объект в `rawItems` нужной поставки:
 ```json
 {
   "productId": "unique-id",
   "overrideName": "Название для отображения",
   "price": 320,
   "sizes": { "xs": 5, "s": 3 },
-  "status": "in_progress"
+  "status": "В производстве 🛠️"
 }
 ```
 
@@ -458,12 +536,14 @@ const isMarkedPaid = isPaidStatus(shipment.status);
 
 ### Новая поставка
 
-Добавьте объект в начало массива `data/shipments.json`:
+Предпочтительный путь: завести новую поставку в Excel и снова прогнать парсер.
+
+Для локальной отладки можно временно добавить объект в начало массива `data/shipments.json`:
 ```json
 {
-  "id": "shipment-13",
+  "id": "shipment-2025-13",
   "title": "Поставка №13",
-  "status": "inProgress",
+  "status": "В работе 🧵",
   "eta": "Ожидаем через 2 недели",
   "year": 2025,
   "rawItems": [...]
@@ -529,9 +609,10 @@ SPACING.xl      // 32px
 
 - `STYLES.card` — базовая поверхность карточек
 - `STYLES.sectionEyebrow` / `STYLES.sectionTitle` / `STYLES.sectionDescription` — единая иерархия секций
+- `STYLES.pageIntroCopy()` — компактный вторичный текст для верхних intro-блоков
 - `STYLES.metricLabel` / `STYLES.metricHint` — подписи и вторичные тексты для summary-блоков
 - `STYLES.sizeBadge` / `STYLES.categoryBadge` — компактные бейджи
-- `CARD_TEMPLATES.introCard()` / `metricCard()` / `sectionGrid()` — повторяемые layout-паттерны экранов
+- `CARD_TEMPLATES.pageIntro()` / `introCard()` / `metricCard()` / `sectionGrid()` — повторяемые layout-паттерны экранов
 
 Hover-эффекты для карточек определены в `CARD_HOVER_EFFECTS` и применяются через `createCardHoverHandlers()`.
 
@@ -556,6 +637,11 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | `npm run start` | Запуск собранного приложения |
 | `npm run lint` | Проверка ESLint |
 | `npm run typecheck` | Проверка TypeScript |
+| `npm run typecheck:strict` | Строгая проверка TypeScript с `noUnusedLocals` и `noUnusedParameters` |
+| `npm run validate:data` | Smoke-check generated data (`shipments.json`, `products.json`, `meta.json`) |
+| `npm run validate:images` | Проверка photo-path каталога, JPG/WebP ассетов и лишних файлов |
+| `npm run preflight:fast` | Быстрый ежедневный прогон: generated data + изображения |
+| `npm run preflight` | Полный pre-deploy прогон: lint + typecheck + data + images + build |
 | `npm run build:full` | Lint + TypeCheck + Build |
 
 ### Python скрипты
@@ -565,6 +651,7 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | Команда | Описание |
 |---------|----------|
 | `python scripts/convert_to_webp.py` | Конвертация всех JPG в WebP (пропускает уже существующие) |
+| `node scripts/validate_catalog_images.mjs` | Проверка каталожных photo-path, JPG/WebP ассетов и лишних файлов |
 
 **Требования:**
 - Python 3.x
@@ -580,8 +667,9 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | Команда | Описание |
 |---------|----------|
 | `python Excel/fetch_google_sheet.py` | Загрузка таблицы из Google Sheets |
-| `python Excel/parse_excel.py` | Парсинг Excel файла в `data/shipments.json` |
-| `python Excel/update_prices.py` | Обновление цен в `data/products.json` из поставок |
+| `python Excel/parse_excel.py` | Парсинг Excel, актуализация каталога и валидация generated data |
+| `python Excel/update_prices.py` | Повторная синхронизация цен каталога из уже готовых поставок |
+| `python Excel/validate_generated_data.py` | Отдельная проверка `shipments.json` / `products.json` / `meta.json` |
 
 #### Быстрый запуск с обновлением данных
 
@@ -593,7 +681,14 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 1. Загружает таблицу из Google Sheets (если доступна)
 2. Парсит Excel в JSON
 3. Конвертирует изображения в WebP
-4. Запускает сервер разработки и открывает браузер
+4. Прогоняет `npm run preflight:fast`
+5. Запускает сервер разработки и открывает браузер
+
+#### Windows bat-обёртки
+
+- `Запустить проект.bat` — быстрый запуск без обновления данных; перед стартом прогоняет `npm run preflight:fast`
+- `Запустить с обновлением.bat` — полный ежедневный сценарий: fetch → parse → webp → `preflight:fast` → `dev`
+- `Собрать проект.bat` — запускает полный `npm run preflight` и оставляет готовую production-сборку в `.next/`
 
 ---
 
@@ -778,12 +873,13 @@ pip install -r requirements.txt
              │
              ▼
     ┌─────────────────────────────────────────────────────────────────────┐
-    │ update_prices.py (автоматически вызывается из parse_excel.py)      │
+    │ Внутренний шаг актуализации каталога и валидации                   │
     │                                                                     │
-    │  Обновление цен в products.json                                    │
+    │  Обновление цен и проверка generated data                          │
     │    ├─ Проходит по поставкам от новых к старым                     │
     │    ├─ Для каждого productId записывает первую встреченную цену    │
-    │    └─ Сохраняет в products.json                                    │
+    │    ├─ Валидирует shipments/products/meta                          │
+    │    └─ Атомарно сохраняет JSON                                      │
     └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -905,7 +1001,9 @@ pip install -r requirements.txt
     │    ├─ cost: из колонки N (Себестоимость с учётом карго) — рубли  │
     │    ├─ Обрабатывает колонку P (receivedDate/eta)                    │
     │    ├─ Определяет groupByPayment (все без цены?)                    │
-    │    └─ Сохраняет в shipments.json (сортировка: год↓, номер↓)       │
+    │    ├─ Актуализирует products.json в памяти                         │
+    │    ├─ Валидирует shipments/products/meta                           │
+    │    └─ Атомарно сохраняет JSON (сортировка: год↓, номер↓)          │
     └─────────────────────────────────────────────────────────────────────┘
              │
              │
@@ -914,10 +1012,11 @@ pip install -r requirements.txt
     │ Excel/update_prices.py                                                │
     │                                                                     │
     │  update_prices_from_shipments()                                    │
-    │    ├─ Читает shipments.json (уже отсортированы от новых к старым)│
-    │    ├─ Проходит по всем позициям                                    │
-    │    ├─ Для каждого productId записывает первую встреченную цену    │
-    │    └─ Обновляет products.json (поле price)                          │
+    │    ├─ Читает shipments.json и products.json                        │
+    │    ├─ Сам сортирует поставки от новых к старым                     │
+    │    ├─ Пересобирает актуальные price/cost                           │
+    │    ├─ Валидирует результат                                           │
+    │    └─ Атомарно сохраняет products.json                              │
     └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -926,6 +1025,9 @@ pip install -r requirements.txt
 
     ┌─────────────────────────────────────────────────────────────────────┐
     │ components/providers/BreakpointProvider.tsx                         │
+    │                                                                     │
+    │  Получает initialBreakpoint из RootLayout (SSR)                     │
+    │  и затем синхронизируется с реальной шириной окна на клиенте.       │
     │                                                                     │
     │  Определяет брейкпоинт по window.innerWidth:                       │
     │    • mobile   < 768px                                              │
@@ -954,19 +1056,19 @@ pip install -r requirements.txt
 
     shipments.json
          │
-         │ { "id": "shipment-12", "rawItems": [...] }
+         │ { "id": "shipment-2025-12", "rawItems": [...] }
          ▼
     buildShipments(products)
          │
          │ ShipmentWithItems[]
-         │   ├─ id: "shipment-12"
+         │   ├─ id: "shipment-2025-12"
          │   ├─ positions: Position[]
          │   └─ totalAmount: 5500
          ▼
     groupShipmentsByYear(shipments)
          │
-         │ Map<2025, [shipment-12, shipment-11, ...]>
-         │ Map<2024, [shipment-10, ...]>
+         │ Map<2025, [shipment-2025-12, shipment-2025-11, ...]>
+         │ Map<2024, [shipment-2024-10, ...]>
          ▼
     WorkPage → YearGroup → BatchView → PositionRow
          │
@@ -997,16 +1099,17 @@ pip install -r requirements.txt
 
     lib/adapters.ts:
       • toPosition()     → Преобразует сырой item в Position
-      • toBatch()        → Собирает Batch из позиций с группировкой
+      • toBatch()        → Собирает Batch из позиций
 
     lib/shipments.ts:
       • buildShipments() → Создаёт ShipmentWithItems[] из JSON
       • getShipmentYear() → Определяет год поставки
       • groupShipmentsByYear() → Группирует по годам
+      • getPendingShipmentSummaries() → Единая сводка неоплаченных партий для Money/Work
 
     update_prices.py:
-      • Обновляет цены в products.json из shipments.json
-      • Автоматически вызывается из parse_excel.py
+      • Повторно синхронизирует price/cost каталога из shipments.json
+      • Используется как отдельный repair-скрипт для уже готовых JSON
 
     lib/imageUtils.ts:
       • getOptimizedImagePath() → JPG путь → WebP путь
@@ -1014,7 +1117,7 @@ pip install -r requirements.txt
       • getBlurPlaceholder() → Base64 placeholder для blur эффекта
 
     lib/derive.ts:
-      • groupByStatus()  → Группирует позиции по статусам
+      • toViewRows()     → Группирует и сортирует позиции по статусам для таблицы
 
     lib/format.ts:
       • formatCurrency() → Форматирование валюты в долларах ($1,234)

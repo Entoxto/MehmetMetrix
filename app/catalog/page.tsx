@@ -4,6 +4,8 @@ import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Product } from "@/types/product";
 import { getProducts } from "@/lib/products";
+import { getDataMeta } from "@/lib/meta";
+import { formatModelCount } from "@/lib/format";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Catalog } from "@/app/home/Catalog";
 import { Shell } from "@/components/Shell";
@@ -18,6 +20,7 @@ function CatalogPageContent() {
 
   // Цены берутся напрямую из products.json (обновляются скриптом update_prices.py)
   const products: Product[] = useMemo(() => getProducts(), []);
+  const dataMeta = useMemo(() => getDataMeta(), []);
 
   const categoryDescriptions: Record<string, string> = useMemo(
     () => ({
@@ -41,7 +44,7 @@ function CatalogPageContent() {
     return Object.entries(categoryMap).map(([cat, count]) => ({
       title: cat,
       desc: categoryDescriptions[cat] || "",
-      badge: `${count} ${count === 1 ? "позиция" : "позиций"}`,
+      badge: formatModelCount(count),
     }));
   }, [categoryDescriptions, products]);
 
@@ -62,7 +65,7 @@ function CatalogPageContent() {
 
   const backHref = selectedCategory ? "/catalog" : "/";
   return (
-    <Shell backHref={backHref}>
+    <Shell backHref={backHref} updatedAt={dataMeta.updatedAt}>
       <Catalog
         isMobile={isMobile}
         selectedCategory={selectedCategory}
@@ -96,4 +99,3 @@ export default function CatalogPage() {
     </Suspense>
   );
 }
-

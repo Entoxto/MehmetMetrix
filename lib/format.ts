@@ -23,6 +23,46 @@ export function formatCurrencyRUB(n: number): string {
 }
 
 /**
+ * Форматирует дату обновления данных (ISO) для отображения.
+ */
+export function formatUpdatedAt(iso?: string | null): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'medium',
+  }).format(date);
+}
+
+/**
+ * Склоняет русское существительное по числу.
+ */
+export function formatCountLabel(
+  count: number,
+  one: string,
+  few: string,
+  many: string
+): string {
+  const normalized = Math.abs(count);
+  const mod100 = normalized % 100;
+  const mod10 = mod100 % 10;
+
+  if (mod100 >= 11 && mod100 <= 19) return `${count} ${many}`;
+  if (mod10 === 1) return `${count} ${one}`;
+  if (mod10 >= 2 && mod10 <= 4) return `${count} ${few}`;
+  return `${count} ${many}`;
+}
+
+export function formatModelCount(count: number): string {
+  return formatCountLabel(count, 'модель', 'модели', 'моделей');
+}
+
+export function formatUnitCount(count: number): string {
+  return `${count} шт.`;
+}
+
+/**
  * Определяет иконку для текстового статуса.
  * Используется в StatusBadge для заметок позиций.
  */
@@ -68,3 +108,4 @@ export function getStatusLabel(statusText: string | null | undefined): string {
   // Текст из Excel — возвращаем как есть
   return text;
 }
+

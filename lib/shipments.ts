@@ -4,7 +4,7 @@ import { toBatch } from "./adapters";
 import type { ShipmentConfig, ShipmentWithItems } from "@/types/shipment";
 import { isPaidStatus } from "./statusText";
 
-export const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
+const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
   shipmentsData as readonly ShipmentConfig[];
 
 export const buildShipments = (
@@ -19,7 +19,9 @@ export const buildShipments = (
     const totalAmount = batch.positions.reduce((sum, position) => sum + (position.sum ?? 0), 0);
     
     // Проверяем пропуски цен (есть кол-во, но нет цены, и это не оплачено ранее)
-    const hasPriceGaps = batch.positions.some(p => p.qty > 0 && p.price === null);
+    const hasPriceGaps = batch.positions.some(
+      (p) => p.qty > 0 && p.price === null && p.isPayable
+    );
 
     return {
       ...config,
@@ -29,7 +31,7 @@ export const buildShipments = (
     };
   });
 
-export interface PendingShipmentSummary {
+interface PendingShipmentSummary {
   id: string;
   title: string;
   amount: number;

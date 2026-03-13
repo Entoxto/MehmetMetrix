@@ -8,7 +8,7 @@
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { COLORS } from "@/constants/styles";
 
-export type StatusBadgeKind = "default" | "info" | "success" | "warning" | "error";
+type StatusBadgeKind = "default" | "info" | "success" | "warning" | "error";
 
 interface StatusBadgeProps {
   children: React.ReactNode;
@@ -92,4 +92,3 @@ export const StatusBadge = ({ children, kind = "default", icon }: StatusBadgePro
     </span>
   );
 };
-

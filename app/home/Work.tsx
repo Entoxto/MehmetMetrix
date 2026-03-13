@@ -33,10 +33,11 @@ export const Work = ({
 }: WorkProps) => {
   const responsiveTypography = useMemo(
     () => ({
-      h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 24 : 32 },
+      h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 20 : 28 },
     }),
     [isMobile]
   );
+  const introCopyStyle = useMemo(() => STYLES.pageIntroCopy(isMobile), [isMobile]);
 
   // Группируем поставки по годам
   const shipmentsByYear = useMemo(() => groupShipmentsByYear(shipments), [shipments]);
@@ -45,14 +46,13 @@ export const Work = ({
     <div
       style={{
         flex: 1,
-        padding: isMobile ? SPACING.md : SPACING.xl,
+        padding: isMobile ? SPACING.smPlus : SPACING.xl,
         display: "flex",
         flexDirection: "column",
-        gap: isMobile ? SPACING.md : SPACING.lg,
+        gap: isMobile ? SPACING.smPlus : SPACING.lg,
       }}
     >
-      <div style={CARD_TEMPLATES.introCard(isMobile)}>
-        <p style={{ ...STYLES.sectionEyebrow, margin: 0 }}>Работа</p>
+      <div style={CARD_TEMPLATES.pageIntro(isMobile)}>
         <h2
           style={{
             ...responsiveTypography.h2,
@@ -60,15 +60,12 @@ export const Work = ({
             margin: 0,
           }}
         >
-          Что сейчас в работе
+          Все партии и их статусы
         </h2>
         <p
-          style={{
-            ...STYLES.sectionDescription,
-            margin: 0,
-          }}
+          style={introCopyStyle}
         >
-          Сводка по активным изделиям, статусам и партиям, которые ещё не закрыты по оплате.
+          История поставок по годам: текущие партии, завершенные отгрузки и состояние оплаты в одном месте.
         </p>
       </div>
 
@@ -88,4 +85,5 @@ export const Work = ({
     </div>
   );
 };
+
 

@@ -1,24 +1,38 @@
 @echo off
-echo ========================================
-echo Сборка проекта Mehmet Metrics
-echo ========================================
-echo.
-echo Запускаю сборку...
-npm run build
-echo.
-if %ERRORLEVEL% EQU 0 (
-    echo ========================================
-    echo ✅ Сборка завершена успешно!
-    echo ========================================
-    echo.
-    echo Собранный проект находится в папке .next/
-    echo Для запуска используйте: npm start
-) else (
-    echo ========================================
-    echo ❌ Сборка завершилась с ошибкой
-    echo ========================================
+setlocal EnableExtensions
+chcp 65001 >nul
+
+pushd "%~dp0" >nul || (
+    echo ERROR: failed to enter project root
+    exit /b 1
 )
+
+echo ========================================
+echo Building Mehmet Metrics
+echo ========================================
 echo.
-pause
+
+echo [1/1] Running full preflight...
+call npm run preflight
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: full preflight failed
+    if /I not "%MM_DRY_RUN%"=="1" pause
+    popd >nul
+    exit /b 1
+)
+
+echo.
+echo ========================================
+echo Build and checks completed successfully
+echo ========================================
+echo.
+echo Production build is ready in .next/
+echo Start it with: npm start
+echo.
+
+if /I not "%MM_DRY_RUN%"=="1" pause
+popd >nul
+exit /b 0
 
 

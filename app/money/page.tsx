@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import moneyData from "@/data/money.json";
 import { getProducts } from "@/lib/products";
 import { buildShipments, getPendingShipmentSummaries } from "@/lib/shipments";
+import { getDataMeta } from "@/lib/meta";
 import { Money } from "@/app/home/Money";
 import { Shell } from "@/components/Shell";
 
@@ -27,6 +28,7 @@ export default function MoneyPage() {
   };
 
   const products = useMemo(() => getProducts(), []);
+  const dataMeta = useMemo(() => getDataMeta(), []);
 
   const shipments = useMemo(() => buildShipments(products), [products]);
 
@@ -60,7 +62,7 @@ export default function MoneyPage() {
   const depositTotal = depositItems.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <Shell>
+    <Shell updatedAt={dataMeta.updatedAt}>
       <Money
         expandedCards={expandedCards}
         onToggleCard={toggleCard}

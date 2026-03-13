@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useLayoutEffect, type ReactNode } from "react";
 import { BreakpointContext } from "@/contexts/BreakpointContext";
 import { resolveBreakpoint, type BreakpointKey } from "@/lib/breakpoints";
 
@@ -40,6 +40,21 @@ function throttle<T extends (...args: unknown[]) => unknown>(
 
 export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointProviderProps) => {
   const [breakpoint, setBreakpoint] = useState<BreakpointKey>(initialBreakpoint);
+  const resolveClientBreakpoint = () => {
+    const measuredWidth = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+    return resolveBreakpoint(measuredWidth);
+  };
+
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const nextBreakpoint = resolveClientBreakpoint();
+    setBreakpoint((currentBreakpoint) =>
+      currentBreakpoint === nextBreakpoint ? currentBreakpoint : nextBreakpoint
+    );
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -47,7 +62,7 @@ export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointPr
     }
 
     const update = () => {
-      setBreakpoint(resolveBreakpoint(window.innerWidth));
+      setBreakpoint(resolveClientBreakpoint());
     };
 
     // Первоначальное обновление
@@ -69,5 +84,3 @@ export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointPr
     </BreakpointContext.Provider>
   );
 };
-
-

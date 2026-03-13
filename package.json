@@ -8,6 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "typecheck:strict": "tsc -p tsconfig.strict-check.json",
+    "validate:data": "python Excel/validate_generated_data.py",
+    "validate:images": "node scripts/validate_catalog_images.mjs",
+    "preflight:fast": "node scripts/preflight.mjs --fast",
+    "preflight": "node scripts/preflight.mjs",
     "build:full": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {

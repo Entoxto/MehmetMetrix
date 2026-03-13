@@ -1,16 +1,47 @@
 @echo off
-echo Запуск проекта Mehmet Metrics...
+setlocal EnableExtensions
+chcp 65001 >nul
+
+pushd "%~dp0" >nul || (
+    echo ERROR: failed to enter project root
+    exit /b 1
+)
+
+echo ========================================
+echo Starting Mehmet Metrics
+echo ========================================
 echo.
-echo Запускаю сервер разработки...
-start cmd /k "npm run dev"
+
+echo [1/2] Running fast startup checks...
+call npm run preflight:fast
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: fast startup checks failed
+    goto :fail
+)
 echo.
-echo Ожидание запуска сервера...
-timeout /t 5 /nobreak >nul
+
+echo [2/2] Starting dev server...
+call "%~dp0scripts\windows\start_dev_server.bat" "%CD%" "http://localhost:3000" "npm run dev"
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: failed to start dev server
+    goto :fail
+)
+
+echo ========================================
+echo Project is up and running
+echo ========================================
 echo.
-echo Открываю браузер...
-start http://localhost:3000
-echo.
-echo Готово! Проект должен открыться в браузере.
-echo Окно сервера останется открытым - закройте его, когда закончите работу.
-pause
+goto :success
+
+:fail
+if /I not "%MM_DRY_RUN%"=="1" pause
+popd >nul
+exit /b 1
+
+:success
+if /I not "%MM_DRY_RUN%"=="1" pause
+popd >nul
+exit /b 0
 

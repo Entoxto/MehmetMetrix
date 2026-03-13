@@ -10,6 +10,7 @@ import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 import type { Product } from "@/types/product";
 
 interface ProductCardProps {
@@ -17,6 +18,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
+  const { isMobile } = useBreakpoint();
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
     CARD_HOVER_EFFECTS.product.default
@@ -26,6 +28,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     ...STYLES.card,
     padding: 0,
     overflow: "hidden",
+    borderRadius: isMobile ? 20 : 20,
+    background: isMobile
+      ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
+      : STYLES.card.background,
     transition: "all 0.25s ease",
   };
 
@@ -55,7 +61,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div
           style={{
             width: "100%",
-            height: 360,
+            height: isMobile ? 260 : 360,
             background: COLORS.background.cardExpanded,
             display: "flex",
             alignItems: "center",
@@ -76,43 +82,45 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
         <div
           style={{
-            padding: SPACING.lg,
+            padding: isMobile ? SPACING.smPlus : SPACING.lg,
             display: "flex",
             flexDirection: "column",
-            gap: SPACING.md,
-            minHeight: 220,
+            gap: isMobile ? SPACING.smPlus : SPACING.md,
+            minHeight: isMobile ? "auto" : 220,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: SPACING.md }}>
-            <span style={STYLES.categoryBadge}>{product.category}</span>
-            <span style={{ ...STYLES.sectionEyebrow, color: COLORS.text.tertiary }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: SPACING.sm, flexWrap: "wrap" }}>
+            <span style={{ ...STYLES.categoryBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 10px" : STYLES.categoryBadge.padding }}>
+              {product.category}
+            </span>
+            <span style={{ ...STYLES.sectionEyebrow, color: COLORS.text.tertiary, fontSize: isMobile ? 9 : STYLES.sectionEyebrow.fontSize }}>
               {product.sizes.length > 0 ? `${product.sizes.length} размеров` : "Размеры уточняются"}
             </span>
           </div>
           <h3
             style={{
-              fontSize: 22,
+              fontSize: isMobile ? 17 : 22,
               fontWeight: 800,
               margin: 0,
-              color: COLORS.text.primary,
-              minHeight: 58,
+              color: isMobile ? COLORS.text.softTitle : COLORS.text.primary,
+              minHeight: isMobile ? "auto" : 58,
               overflow: "hidden",
               display: "-webkit-box",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
-              lineHeight: "1.25",
-              letterSpacing: -0.3,
+              lineHeight: isMobile ? "1.18" : "1.25",
+              letterSpacing: isMobile ? -0.15 : -0.3,
             }}
           >
             {product.name}
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: SPACING.md, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: isMobile ? SPACING.smPlus : SPACING.md, alignItems: "start" }}>
             <div>
               <p
                 style={{
                   ...STYLES.metricLabel,
                   color: COLORS.text.muted,
-                  fontSize: 11,
+                  fontSize: isMobile ? 10 : 11,
                   marginBottom: SPACING.xs,
                   marginTop: 0,
                 }}
@@ -120,11 +128,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 Цена
               </p>
               {product.price ? (
-                <p style={{ color: COLORS.success, fontSize: 24, fontWeight: 800, margin: 0, lineHeight: "28px" }}>
+                <p style={{ color: COLORS.success, fontSize: isMobile ? 20 : 24, fontWeight: 800, margin: 0, lineHeight: isMobile ? "24px" : "28px" }}>
                   ${product.price.toLocaleString()}
                 </p>
               ) : (
-                <p style={{ color: COLORS.text.secondary, fontSize: 18, fontWeight: 700, margin: 0, lineHeight: "24px" }}>
+                <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 15 : 18, fontWeight: 700, margin: 0, lineHeight: isMobile ? "20px" : "24px" }}>
                   уточняется
                 </p>
               )}
@@ -143,15 +151,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </p>
               <div style={{ display: "flex", gap: SPACING.xsPlus, flexWrap: "wrap" }}>
                 {product.sizes.slice(0, 4).map((size) => (
-                  <span key={size} style={STYLES.sizeBadge}>
+                  <span key={size} style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : STYLES.sizeBadge.padding }}>
                     {size.toUpperCase()}
                   </span>
                 ))}
                 {product.sizes.length > 4 && (
-                  <span style={STYLES.sizeBadge}>+{product.sizes.length - 4}</span>
+                  <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : STYLES.sizeBadge.padding }}>+{product.sizes.length - 4}</span>
                 )}
                 {product.sizes.length === 0 && (
-                  <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted }}>нет данных</span>
+                  <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted, fontSize: isMobile ? 10 : 12, padding: isMobile ? "3px 8px" : STYLES.sizeBadge.padding }}>нет данных</span>
                 )}
               </div>
             </div>
@@ -161,4 +169,3 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     </div>
   );
 };
-

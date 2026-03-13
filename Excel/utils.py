@@ -93,10 +93,11 @@ def extract_product_name(full_name: str) -> str:
 def infer_category(name: str) -> str:
     """
     Определяет категорию товара по названию (по корням слов).
-    Приоритет: Экзотика (питон) > Кожа > Мех > Замша, иначе «Прочее».
+    Приоритет: Экзотика (питон) > Кожа > Мех > Замша.
+    Если категория не определяется, это считается ошибкой входных данных.
     """
     if not name or not name.strip():
-        return "Прочее"
+        raise ValueError("Нельзя определить категорию для пустого названия товара")
     s = name.lower().strip()
     if "питон" in s:
         return "Экзотика"
@@ -106,7 +107,10 @@ def infer_category(name: str) -> str:
         return "Мех"
     if "замш" in s:
         return "Замша"
-    return "Прочее"
+    raise ValueError(
+        "Не удалось определить категорию по названию "
+        f"{name!r}. Допустимые корни: питон / кож / мех / замш."
+    )
 
 
 def get_next_auto_id(products: List[Dict]) -> str:
@@ -131,20 +135,10 @@ def find_or_create_product_id(name: str, products: List[Dict]) -> str:
     """
     clean_name = extract_product_name(name)
     if not clean_name:
-        new_id = get_next_auto_id(products)
-        new_product = {
-            "id": new_id,
-            "name": name.strip()[:200] or "Без названия",
-            "category": infer_category(name),
-            "photo": "",
-            "sizes": [],
-            "materials": {},
-            "inStock": True,
-            "tags": [],
-        }
-        products.append(new_product)
-        print(f"  + Добавлен в каталог: {new_product['name']}")
-        return new_id
+        raise ValueError(
+            "Не удалось извлечь нормальное название товара из строки "
+            f"{name!r}. Проверьте формат наименования в Excel."
+        )
 
     normalized_clean = ' '.join(clean_name.split())
     for product in products:
@@ -479,4 +473,3 @@ def parse_numeric_value(value: Any) -> Optional[float]:
         return None
     
     return None
-

@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { groupByStatusLabel, toViewRows } from './derive';
+import { toViewRows } from './derive';
 import type { Position, Batch } from '@/types/domain';
 
 // Хелпер для создания позиции с дефолтными значениями
@@ -17,6 +17,7 @@ function createPosition(overrides: Partial<Position>): Position {
     qty: 1,
     price: 100,
     sum: 100,
+    isPayable: true,
     sample: false,
     statusLabel: 'В производстве 🛠️',
     noteEnabled: false,
@@ -25,23 +26,26 @@ function createPosition(overrides: Partial<Position>): Position {
   };
 }
 
-describe('groupByStatusLabel', () => {
-  it('должен группировать позиции по текстовому статусу', () => {
-    const positions: Position[] = [
-      createPosition({ id: '1', statusLabel: 'В производстве 🛠️' }),
-      createPosition({ id: '2', statusLabel: 'Получено, оплачено ✅' }),
-      createPosition({ id: '3', statusLabel: 'В производстве 🛠️' }),
-    ];
-
-    const result = groupByStatusLabel(positions);
-
-    expect(result.get('В производстве 🛠️')).toHaveLength(2);
-    expect(result.get('Получено, оплачено ✅')).toHaveLength(1);
-    expect(result.size).toBe(2);
-  });
-});
-
 describe('toViewRows', () => {
+  it('должен группировать позиции с одинаковым текстовым статусом в одну строку', () => {
+    const batch: Batch = {
+      id: 'batch-1',
+      positions: [
+        createPosition({ id: '1', statusLabel: 'В производстве 🛠️' }),
+        createPosition({ id: '2', statusLabel: 'Получено, оплачено ✅' }),
+        createPosition({ id: '3', statusLabel: 'В производстве 🛠️' }),
+      ],
+    };
+
+    const result = toViewRows(batch);
+    const inProductionRow = result.find((row) => row.statusLabel === 'В производстве 🛠️');
+    const paidRow = result.find((row) => row.statusLabel === 'Получено, оплачено ✅');
+
+    expect(result).toHaveLength(2);
+    expect(inProductionRow?.items).toHaveLength(2);
+    expect(paidRow?.items).toHaveLength(1);
+  });
+
   it('должен преобразовывать партию в список строк для отображения', () => {
     const batch: Batch = {
       id: 'batch-1',
@@ -111,4 +115,3 @@ describe('toViewRows', () => {
     expect(result).toHaveLength(0);
   });
 });
-

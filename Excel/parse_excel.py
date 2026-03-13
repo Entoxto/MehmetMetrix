@@ -1,13 +1,15 @@
 """
 Главный скрипт парсинга Excel файла для преобразования в JSON формат поставок.
-Автоматически запускает update_prices.py после парсинга для обновления цен и себестоимости.
+После парсинга обновляет каталог в памяти, валидирует generated data и только потом пишет JSON на диск.
 """
 
-import json
 import sys
-import subprocess
 from pathlib import Path
+from datetime import datetime, timezone
+from catalog_pricing import apply_latest_prices
+from data_validator import validate_generated_outputs
 from excel_parser import ExcelParser
+from json_storage import write_json_atomic
 from utils import infer_category, aggregate_product_sizes
 
 # Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
@@ -21,22 +23,27 @@ if sys.platform == 'win32':
         pass
 
 
-def parse_excel():
-    """Парсит Excel файл и сохраняет результат в shipments.json"""
-    
-    # Определяем пути
+def build_meta() -> dict:
+    """Формирует метаданные об обновлении данных."""
+    return {
+        "updatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": "excel",
+    }
+
+
+def parse_excel() -> bool:
+    """Парсит Excel файл, собирает generated data и сохраняет её только после валидации."""
     script_dir = Path(__file__).parent
     excel_file = script_dir / "Расчёты с мехметом new.xlsx"
     products_file = script_dir.parent / "data" / "products.json"
     shipments_file = script_dir.parent / "data" / "shipments.json"
-    
-    # Проверка существования Excel файла
+    meta_file = script_dir.parent / "data" / "meta.json"
+
     if not excel_file.exists():
         print(f"❌ Excel файл не найден: {excel_file}")
         print(f"   Убедитесь, что файл 'Расчёты с мехметом new.xlsx' находится в папке Excel/")
-        return
-    
-    # Каталог каждый раз собирается заново из Excel (полная пересборка)
+        return False
+
     print(f"📂 Собираю каталог заново из Excel...")
     products_data = {"products": []}
     products = products_data["products"]
@@ -56,17 +63,7 @@ def parse_excel():
         print(f"❌ Ошибка при парсинге Excel файла: {e}")
         import traceback
         traceback.print_exc()
-        return
-    
-    # Сохраняем поставки
-    print(f"\n💾 Сохраняю результат в {shipments_file}...")
-    try:
-        with open(shipments_file, 'w', encoding='utf-8') as f:
-            json.dump(shipments, f, ensure_ascii=False, indent=2)
-        print(f"✅ Поставки сохранены!")
-    except Exception as e:
-        print(f"❌ Ошибка при сохранении shipments.json: {e}")
-        return
+        return False
 
     # Собираем размеры каталога из всех позиций поставок (один проход)
     aggregate_product_sizes(shipments, products)
@@ -77,41 +74,40 @@ def parse_excel():
         if name:
             product["category"] = infer_category(name)
 
-    # Сохраняем каталог (полностью собранный из текущего Excel)
-    print(f"💾 Сохраняю каталог в {products_file}...")
-    try:
-        with open(products_file, 'w', encoding='utf-8') as f:
-            json.dump(products_data, f, ensure_ascii=False, indent=2)
-        print(f"✅ Каталог сохранён!")
-    except Exception as e:
-        print(f"❌ Ошибка при сохранении products.json: {e}")
-        return
-
-    # Автоматически запускаем обновление цен и себестоимости
     print(f"\n" + "="*50)
-    print(f"🔄 Автоматическое обновление цен и себестоимости в каталоге...")
+    print(f"🔄 Обновляю цены и себестоимость каталога в памяти...")
+    pricing_stats = apply_latest_prices(products_data, shipments, log=print)
+    meta = build_meta()
+
+    errors = validate_generated_outputs(shipments, products_data, meta)
+    if errors:
+        print("\n❌ Generated data не прошли валидацию:")
+        for error in errors:
+            print(f"   - {error}")
+        return False
+
+    print(f"\n💾 Сохраняю validated data...")
     try:
-        update_script = script_dir / "update_prices.py"
-        if update_script.exists():
-            result = subprocess.run(
-                [sys.executable, str(update_script), "--auto"],
-                cwd=str(script_dir),
-                capture_output=False,
-                text=True
+        write_json_atomic(shipments_file, shipments)
+        print(f"✅ Поставки сохранены: {shipments_file}")
+        write_json_atomic(products_file, products_data)
+        print(f"✅ Каталог сохранён: {products_file}")
+        write_json_atomic(meta_file, meta)
+        print(f"✅ Метаданные сохранены: {meta_file}")
+        print(f"\n✅ Парсинг, обновление цен и валидация завершены успешно!")
+        if pricing_stats["missingProductIds"]:
+            print(
+                "⚠️  Обнаружены productId без карточки каталога: "
+                + ", ".join(pricing_stats["missingProductIds"])
             )
-            if result.returncode == 0:
-                print(f"\n✅ Парсинг и обновление цен и себестоимости завершены успешно!")
-            else:
-                print(f"\n⚠️  Парсинг завершён, но обновление цен и себестоимости завершилось с ошибкой")
-        else:
-            print(f"⚠️  Скрипт update_prices.py не найден, пропускаю обновление цен и себестоимости")
+        return True
     except Exception as e:
-        print(f"⚠️  Ошибка при запуске update_prices.py: {e}")
-        print(f"   Вы можете запустить его вручную: python Excel/update_prices.py")
+        print(f"❌ Ошибка при сохранении generated data: {e}")
+        return False
 
 
 if __name__ == "__main__":
-    parse_excel()
+    success = parse_excel()
     # Показываем сообщение только при интерактивном запуске (не при автоматическом вызове)
     import sys
     # Проверяем, запущен ли скрипт автоматически (через параметр --auto)
@@ -122,4 +118,4 @@ if __name__ == "__main__":
         except (EOFError, KeyboardInterrupt):
             # Скрипт запущен неинтерактивно
             pass
-
+    sys.exit(0 if success else 1)

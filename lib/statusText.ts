@@ -18,7 +18,7 @@
 /**
  * Нормализует строку статуса: приводит к строке, обрезает пробелы.
  */
-export function normalizeStatusText(raw: string | null | undefined): string {
+function normalizeStatusText(raw: string | null | undefined): string {
   if (raw == null) return "";
   return String(raw).trim();
 }
@@ -60,5 +60,4 @@ export function isPaidStatus(raw: string | null | undefined): boolean {
   // По умолчанию считаем, что статус не даёт нам сигнала "оплачен" → не оплачен.
   return false;
 }
-
 
