@@ -79,13 +79,16 @@ const getProductLinkStyle = (typography: { tableCell: React.CSSProperties }): Re
   width: "100%",
 });
 
-/**
- * Обработчики событий для предотвращения всплытия
- */
-const positionEventHandlers = {
-  onClick: (event: React.MouseEvent) => event.stopPropagation(),
-  onTouchStart: (event: React.TouchEvent) => event.stopPropagation(),
-};
+const getPositionLinkAreaStyle = (
+  isMobile: boolean,
+  cellBaseBackground: string,
+  cellBaseBorder: string
+): React.CSSProperties => ({
+  ...getPositionCellStyle(isMobile, cellBaseBackground, cellBaseBorder),
+  textDecoration: "none",
+  color: "inherit",
+  cursor: "pointer",
+});
 
 export const PositionRow = ({
   position,
@@ -116,26 +119,19 @@ export const PositionRow = ({
           return (
             <div
               key={column.id}
-              id={`pos-${position.id}`}
               style={{ display: "contents" }}
               onMouseEnter={onRowHover ? (event) => onRowHover(event, true) : undefined}
               onMouseLeave={onRowHover ? (event) => onRowHover(event, false) : undefined}
-              {...positionEventHandlers}
             >
-              <div style={getPositionCellStyle(isMobile, cellBaseBackground, cellBaseBorder)}>
-                {/* Ссылка из 'work' с query from/batch/pos */}
-                <Link
-                  href={`/product/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
-                  prefetch={false}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleLinkClick();
-                  }}
-                  onTouchStart={(event) => event.stopPropagation()}
-                  style={getProductLinkStyle(typography)}
-                >
+              <Link
+                id={`pos-${position.id}`}
+                href={`/product/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
+                onClick={handleLinkClick}
+                style={getPositionLinkAreaStyle(isMobile, cellBaseBackground, cellBaseBorder)}
+              >
+                <span style={getProductLinkStyle(typography)}>
                   {position.title}
-                </Link>
+                </span>
 
                 {/* Строка 1: Размеры (если есть) */}
                 {hasSizes && (
@@ -166,7 +162,7 @@ export const PositionRow = ({
                     )}
                   </div>
                 )}
-              </div>
+              </Link>
             </div>
           );
         }

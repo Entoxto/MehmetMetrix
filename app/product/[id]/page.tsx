@@ -69,7 +69,7 @@ function ProductPageContent() {
   }
 
   return (
-    <Shell backHref={backHref}>
+    <Shell backHref={backHref} backMode="explicit">
       <ProductDetail product={product} />
     </Shell>
   );

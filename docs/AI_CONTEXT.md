@@ -54,6 +54,9 @@ Excel / Google Sheet
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
+- In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.
+- In `Work`, the full first position cell is the click target for opening the product page.
+- The category pill in `ProductDetail` is a real link to the matching catalog category and should read as interactive.
 
 ## Known Project Choices
 
@@ -65,12 +68,16 @@ Excel / Google Sheet
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
+- `Shell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
+- Entering `/` resets in-app navigation memory, so later back actions start from the main menu again.
+- Product pages use explicit back behavior to preserve `Work` / `Catalog` context, while other screens prefer the in-app history stack first and fallback second.
 
 ## Safe Refactoring Directions
 
 - Collapse duplicated UI patterns into local helpers or shared style tokens.
 - Narrow module exports when helpers are only used internally.
 - Prefer updating README / data docs / AGENTS whenever domain or UI terminology changes.
+- If you touch navigation, update both the code contract (`Shell`, `navigationHistory`) and the docs in the same pass.
 
 ## Avoid
 

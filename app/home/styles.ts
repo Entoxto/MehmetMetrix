@@ -38,6 +38,14 @@ export const HOME_STYLES = {
     minWidth: 0,
   }),
 
+  headerBrandLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    minWidth: 0,
+    textDecoration: "none",
+    color: "inherit",
+  } as CSSProperties,
+
   headerBackSlot: (isMobile: boolean): CSSProperties => ({
     marginLeft: "auto",
     display: "flex",
@@ -105,7 +113,6 @@ export const HOME_STYLES = {
   }),
 
   headerBackButton: (isMobile: boolean): CSSProperties => ({
-    textDecoration: "none",
     display: "inline-flex",
     alignItems: "center",
     gap: isMobile ? SPACING.xs : SPACING.sm,
@@ -120,6 +127,9 @@ export const HOME_STYLES = {
     lineHeight: 1,
     boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
     whiteSpace: "nowrap",
+    cursor: "pointer",
+    fontFamily: "inherit",
+    appearance: "none",
   }),
 
   headerBackIcon: (isMobile: boolean): CSSProperties => ({

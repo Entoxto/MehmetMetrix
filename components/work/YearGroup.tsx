@@ -210,13 +210,6 @@ export const YearGroup = ({
         }}
         style={yearHeaderStyle}
         {...(isMobile || isExpanded ? {} : hoverHandlers)}
-        onFocus={(e) => {
-          e.currentTarget.style.outline = STYLES.focusRing.outline;
-          e.currentTarget.style.outlineOffset = STYLES.focusRing.outlineOffset;
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.outline = "none";
-        }}
         aria-expanded={isExpanded}
         aria-label={`Год ${year}, поставок: ${shipments.length}`}
       >

@@ -6,6 +6,7 @@
  * Подстраивает макет под мобильный и планшет через useBreakpoint.
  */
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
@@ -28,6 +29,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+  const [isCategoryLinkHovered, setIsCategoryLinkHovered] = useState(false);
   const hasMaterials = Boolean(
     product.materials?.outer || product.materials?.lining || product.materials?.comments
   );
@@ -122,6 +124,29 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   };
 
   const desktopColumnMinHeight = 560;
+  const categoryHref = `/catalog?category=${encodeURIComponent(product.category)}`;
+  const categoryLinkStyle = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    width: "max-content",
+    textDecoration: "none",
+    cursor: "pointer",
+    background: isCategoryLinkHovered ? "rgba(244,195,77,0.14)" : COLORS.background.accent,
+    color: COLORS.primary,
+    padding: isCompact ? "8px 16px" : "9px 18px",
+    borderRadius: 999,
+    border: `1px solid ${isCategoryLinkHovered ? COLORS.border.primaryHover : COLORS.border.primary}`,
+    fontSize: isCompact ? 12 : 13,
+    fontWeight: 700,
+    lineHeight: 1,
+    boxShadow: isCategoryLinkHovered
+      ? "0 10px 24px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.05)"
+      : "inset 0 1px 0 rgba(255,255,255,0.04)",
+    transform: isCategoryLinkHovered ? "translateY(-1px)" : "translateY(0)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease",
+  } as const;
 
   return (
     <div
@@ -199,7 +224,27 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div style={{ display: "flex", flexDirection: "column", gap: isCompact ? SPACING.lg : SPACING.md, minHeight: 0 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: SPACING.sm }}>
-              <span style={STYLES.categoryBadge}>{product.category}</span>
+              <Link
+                href={categoryHref}
+                style={categoryLinkStyle}
+                aria-label={`Открыть категорию ${product.category} в каталоге`}
+                onMouseEnter={() => setIsCategoryLinkHovered(true)}
+                onMouseLeave={() => setIsCategoryLinkHovered(false)}
+                onTouchStart={() => setIsCategoryLinkHovered(true)}
+                onTouchEnd={() => setIsCategoryLinkHovered(false)}
+              >
+                {product.category}
+                <span
+                  aria-hidden="true"
+                  style={{
+                    fontSize: isCompact ? 12 : 13,
+                    transform: isCategoryLinkHovered ? "translateX(1px)" : "translateX(0)",
+                    transition: "transform 0.2s ease",
+                  }}
+                >
+                  →
+                </span>
+              </Link>
             </div>
             <h1
               style={{
@@ -331,4 +376,3 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     </div>
   );
 };
-

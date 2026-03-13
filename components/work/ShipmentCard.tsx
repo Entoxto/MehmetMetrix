@@ -126,8 +126,6 @@ export const ShipmentCard = ({
   const cardContainerStyle: CSSProperties = {
     ...cardStyle,
     padding: isMobile ? SPACING.smPlus : cardStyle.padding,
-    cursor: "pointer",
-    outline: "none",
     position: "relative",
     overflow: "hidden",
     background: isExpanded
@@ -141,26 +139,8 @@ export const ShipmentCard = ({
   return (
     <div
       id={`batch-${shipment.id}`}
-      role="button"
-      tabIndex={0}
-      onClick={onToggle}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onToggle();
-        }
-      }}
       style={cardContainerStyle}
       {...(isMobile || isExpanded ? {} : hoverHandlers)}
-      onFocus={(e) => {
-        e.currentTarget.style.outline = STYLES.focusRing.outline;
-        e.currentTarget.style.outlineOffset = STYLES.focusRing.outlineOffset;
-      }}
-      onBlur={(e) => {
-        e.currentTarget.style.outline = "none";
-      }}
-      aria-expanded={isExpanded}
-      aria-label={`${shipment.title}, ${statusLabelText}`}
     >
       <div
         aria-hidden="true"
@@ -177,6 +157,17 @@ export const ShipmentCard = ({
       />
 
       <div
+        role="button"
+        tabIndex={0}
+        onClick={onToggle}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onToggle();
+          }
+        }}
+        aria-expanded={isExpanded}
+        aria-label={`${shipment.title}, ${statusLabelText}`}
         style={{
           display: "grid",
           gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
@@ -185,6 +176,8 @@ export const ShipmentCard = ({
           minHeight: isDesktop ? 60 : "auto",
           position: "relative",
           zIndex: 1,
+          cursor: "pointer",
+          outline: "none",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>

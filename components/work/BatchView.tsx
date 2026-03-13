@@ -62,14 +62,6 @@ const getBaseCellStyle = (
 });
 
 /**
- * Обработчики событий для ячеек (предотвращают всплытие)
- */
-const cellEventHandlers = {
-  onClick: (event: React.MouseEvent) => event.stopPropagation(),
-  onTouchStart: (event: React.TouchEvent) => event.stopPropagation(),
-};
-
-/**
  * Создает стили для заголовка числовой колонки
  */
 const getNumericHeaderStyle = (isMobile: boolean, typography: React.CSSProperties): React.CSSProperties => ({
@@ -127,7 +119,6 @@ const COLUMNS_CONFIG: ColumnConfig[] = [
             fontWeight: 600,
             color: COLORS.text.primary,
           }}
-          {...cellEventHandlers}
         >
           {qtyLabel}
         </div>
@@ -155,7 +146,6 @@ const COLUMNS_CONFIG: ColumnConfig[] = [
             color: position.price != null ? COLORS.text.primary : COLORS.text.muted,
             fontWeight: position.price != null ? 600 : 500,
           }}
-          {...cellEventHandlers}
         >
           {position.price != null ? formatCurrency(position.price) : "уточняется"}
         </div>
@@ -184,7 +174,6 @@ const COLUMNS_CONFIG: ColumnConfig[] = [
             fontWeight: 700,
             textAlign: "right",
           }}
-          {...cellEventHandlers}
         >
           {position.sum != null ? formatCurrency(position.sum) : "—"}
         </div>
@@ -213,7 +202,6 @@ const COLUMNS_CONFIG: ColumnConfig[] = [
             fontWeight: position.cost != null ? 600 : 400,
             textAlign: "right",
           }}
-          {...cellEventHandlers}
         >
           {position.cost != null ? formatCurrencyRUB(position.cost) : "—"}
         </div>

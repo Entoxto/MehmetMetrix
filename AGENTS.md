@@ -46,6 +46,12 @@ If you need a production build, stop any active dev server first. A running dev 
 - Mobile UI should be calmer and denser, not just a squeezed desktop.
 - Reuse tokens from `constants/styles.ts` before adding local inline styles.
 - If a pattern repeats across screens, extract it.
+- Brand in `Shell` (`MM` / `Mehmet Metrics`) always routes to `/`.
+- Back navigation is stateful: `Shell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
+- Product pages may use explicit back behavior (`backMode="explicit"`) to preserve origin context from `Work` / `Catalog`.
+- In `Work`, only year headers and shipment headers toggle expansion.
+- In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
+- The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
 
 ## Editing Rules
 
