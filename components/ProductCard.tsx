@@ -7,7 +7,7 @@
  */
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -15,9 +15,10 @@ import type { Product } from "@/types/product";
 
 interface ProductCardProps {
   product: Product;
+  animationIndex?: number;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) => {
   const { isMobile } = useBreakpoint();
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
@@ -32,7 +33,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     background: isMobile
       ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
       : STYLES.card.background,
-    transition: "all 0.25s ease",
+    transition: MOTION.interactiveTransition,
+    animation: MOTION.staggerEnter(animationIndex, isMobile ? 65 : 85),
   };
 
   if (CARD_HOVER_EFFECTS.product.default.boxShadow !== undefined) {

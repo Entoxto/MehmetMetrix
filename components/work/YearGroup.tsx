@@ -9,7 +9,7 @@
 
 import { useMemo } from "react";
 import type { MouseEvent } from "react";
-import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES } from "@/constants/styles";
+import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, MOTION } from "@/constants/styles";
 import { formatCurrency, formatModelCount, formatUnitCount } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { ShipmentCard } from "@/components/work/ShipmentCard";
@@ -18,6 +18,7 @@ import type { ShipmentWithItems } from "@/types/shipment";
 interface YearGroupProps {
   year: number;
   shipments: ShipmentWithItems[];
+  animationIndex?: number;
   isExpanded: boolean;
   onToggle: () => void;
   expandedCards: Set<string>;
@@ -29,6 +30,7 @@ interface YearGroupProps {
 export const YearGroup = ({
   year,
   shipments,
+  animationIndex = 0,
   isExpanded,
   onToggle,
   expandedCards,
@@ -197,7 +199,14 @@ export const YearGroup = ({
   );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: SPACING.md }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: SPACING.md,
+        animation: MOTION.staggerEnter(animationIndex, isMobile ? 55 : 80),
+      }}
+    >
       <div
         role="button"
         tabIndex={0}
@@ -416,10 +425,11 @@ export const YearGroup = ({
                 Нет поставок в этом году
               </div>
             ) : (
-              shipments.map((shipment) => (
+              shipments.map((shipment, index) => (
                 <ShipmentCard
                   key={shipment.id}
                   shipment={shipment}
+                  animationIndex={index}
                   isExpanded={expandedCards.has(shipment.id)}
                   onToggle={() => onToggleCard(shipment.id)}
                   isMobile={isMobile}

@@ -62,6 +62,37 @@ export default function RootLayout({
               transform: translateY(0);
             }
           }
+
+          @keyframes fadeUp {
+            from {
+              opacity: 0;
+              transform: translateY(18px) scale(0.985);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+
+          @keyframes shimmerSweep {
+            from {
+              transform: translateX(-140%);
+            }
+            to {
+              transform: translateX(160%);
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+              animation-duration: 0.01ms !important;
+              animation-iteration-count: 1 !important;
+              transition-duration: 0.01ms !important;
+              scroll-behavior: auto !important;
+            }
+          }
         `}</style>
       </head>
       <body>
@@ -72,5 +103,4 @@ export default function RootLayout({
     </html>
   );
 }
-
 

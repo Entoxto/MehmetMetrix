@@ -8,7 +8,7 @@
 import type { Product } from "@/types/product";
 import { CategoryCard } from "@/components/CategoryCard";
 import { ProductCard } from "@/components/ProductCard";
-import { SPACING, STYLES, CARD_TEMPLATES, COLORS } from "@/constants/styles";
+import { SPACING, STYLES, CARD_TEMPLATES, COLORS, MOTION } from "@/constants/styles";
 import { formatCountLabel, formatModelCount } from "@/lib/format";
 
 interface CatalogGroup {
@@ -96,7 +96,7 @@ export const Catalog = ({
   if (selectedCategory) {
     return (
       <div style={pageStyle}>
-        <div style={categoryIntroStyle}>
+        <div style={{ ...categoryIntroStyle, animation: MOTION.softEnter }}>
           <div style={introAccentLineStyle} />
           <h2 style={{ ...STYLES.sectionTitle, fontSize: isMobile ? 22 : 28, margin: 0 }}>
             {selectedCategory}
@@ -113,8 +113,8 @@ export const Catalog = ({
             alignItems: "stretch",
           }}
         >
-          {categoryProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {categoryProducts.map((product, index) => (
+            <ProductCard key={product.id} product={product} animationIndex={index} />
           ))}
         </div>
       </div>
@@ -123,7 +123,7 @@ export const Catalog = ({
 
   return (
     <div style={pageStyle}>
-      <div style={catalogIntroStyle}>
+      <div style={{ ...catalogIntroStyle, animation: MOTION.softEnter }}>
         <div style={introAccentLineStyle} />
         <h2 style={{ ...STYLES.sectionTitle, fontSize: isMobile ? 22 : 28, margin: 0 }}>
           Каталог изделий
@@ -148,6 +148,7 @@ export const Catalog = ({
             title={group.title}
             description={group.desc}
             badge={group.badge}
+            animationIndex={index}
             onClick={() => onSelectCategory(group.title)}
           />
         ))}

@@ -52,6 +52,9 @@ If you need a production build, stop any active dev server first. A running dev 
 - In `Work`, only year headers and shipment headers toggle expansion.
 - In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
 - The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
+- Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
+- New animations must stay subtle and respect `prefers-reduced-motion`.
+- Staggered entrance is acceptable for lists and page sections, but avoid decorative motion that competes with data.
 
 ## Editing Rules
 
@@ -60,3 +63,4 @@ If you need a production build, stop any active dev server first. A running dev 
 - If you change visible terminology, update docs and nearby UI consistently.
 - Prefer smaller public APIs: do not export helpers unless another module really needs them.
 - After changing source-of-truth rules, visible wording, or adaptive behavior, sync `README.md`, `data/README.md`, and `docs/AI_CONTEXT.md` in the same pass.
+- If you change navigation or motion behavior, document both the UX intent and the technical contract in the same pass.

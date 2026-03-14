@@ -7,7 +7,7 @@
  */
 import { Fragment, type MouseEvent, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
-import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
+import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, CARD_TEMPLATES, MOTION } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
@@ -48,6 +48,7 @@ interface DetailTableConfig<TItem> {
 }
 
 interface MetricCardConfig<TItem> {
+  animationIndex: number;
   cardId: string;
   label: string;
   total: number;
@@ -212,6 +213,7 @@ export const Money = ({
   };
 
   const renderMetricCard = <TItem,>({
+    animationIndex,
     cardId,
     label,
     total,
@@ -228,6 +230,7 @@ export const Money = ({
         display: "flex",
         flexDirection: "column",
         gap: isMobile ? SPACING.xsPlus : SPACING.md,
+        animation: MOTION.staggerEnter(animationIndex, isMobile ? 90 : 120),
       }}
       {...(isMobile
         ? {}
@@ -296,7 +299,7 @@ export const Money = ({
         gap: isMobile ? SPACING.smPlus : SPACING.xl * 2,
       }}
     >
-      <div style={CARD_TEMPLATES.pageIntro(isMobile)}>
+      <div style={{ ...CARD_TEMPLATES.pageIntro(isMobile), animation: MOTION.softEnter }}>
         <h2
           style={{
             ...responsiveTypography.h2,
@@ -322,6 +325,7 @@ export const Money = ({
       >
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
           {renderMetricCard({
+            animationIndex: 0,
             cardId: "total_payment",
             label: "Всего к оплате",
             total: pending.total,
@@ -393,6 +397,7 @@ export const Money = ({
 
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
           {renderMetricCard({
+            animationIndex: 1,
             cardId: "deposits",
             label: "Депозитов внесено",
             total: deposits.total,

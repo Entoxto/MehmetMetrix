@@ -6,7 +6,7 @@
  */
 
 import type { CSSProperties, MouseEvent } from "react";
-import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES } from "@/constants/styles";
+import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES, MOTION } from "@/constants/styles";
 import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
 import { BatchView } from "@/components/work/BatchView";
@@ -14,6 +14,7 @@ import type { ShipmentWithItems } from "@/types/shipment";
 
 interface ShipmentCardProps {
   shipment: ShipmentWithItems;
+  animationIndex?: number;
   isExpanded: boolean;
   onToggle: () => void;
   isMobile: boolean;
@@ -106,6 +107,7 @@ const ShipmentDateInfo = ({
 
 export const ShipmentCard = ({
   shipment,
+  animationIndex = 0,
   isExpanded,
   onToggle,
   isMobile,
@@ -133,7 +135,7 @@ export const ShipmentCard = ({
       : cardStyle.background,
     border: isExpanded ? `1px solid ${COLORS.border.primary}` : cardStyle.border,
     boxShadow: isExpanded ? "0 18px 36px rgba(0, 0, 0, 0.26)" : cardStyle.boxShadow,
-    animation: isExpanded ? "fadeIn 220ms ease-out" : undefined,
+    animation: isExpanded ? "fadeIn 220ms ease-out" : MOTION.staggerEnter(animationIndex, isMobile ? 40 : 55),
   };
 
   return (

@@ -8,7 +8,7 @@
  */
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
-import { COLORS, STYLES } from "@/constants/styles";
+import { COLORS, MOTION, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MENU_STYLES } from "./styles";
 
@@ -55,6 +55,8 @@ export const Menu = ({ items }: MenuProps) => {
             background: isMobile
               ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
               : MENU_STYLES.card.background,
+            animation: MOTION.staggerEnter(index, isMobile ? 70 : 90),
+            transition: MOTION.interactiveTransition,
           }}
         >
           <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12 }}>

@@ -7,7 +7,7 @@
  */
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES, MOTION } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
@@ -189,6 +189,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           position: "relative",
           justifySelf: isCompact ? undefined : "center", // Центрируем внутри grid-колонки
           minHeight: isCompact ? undefined : `${desktopColumnMinHeight}px`,
+          animation: MOTION.staggerEnter(0, 0),
         }}
       >
         <OptimizedImage
@@ -219,6 +220,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
            width: "100%",
           minHeight: isCompact ? "auto" : `${desktopColumnMinHeight}px`,
            justifyContent: "space-between",
+           animation: MOTION.staggerEnter(1, 110),
          }}
        >
         <div style={{ display: "flex", flexDirection: "column", gap: isCompact ? SPACING.lg : SPACING.md, minHeight: 0 }}>

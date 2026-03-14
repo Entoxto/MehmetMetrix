@@ -130,6 +130,22 @@ export const STYLES = {
   },
 } as const;
 
+export const MOTION = {
+  easing: {
+    smooth: "cubic-bezier(0.22, 1, 0.36, 1)",
+  },
+  duration: {
+    fast: "180ms",
+    base: "260ms",
+    slow: "520ms",
+  },
+  interactiveTransition:
+    "transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, background 0.24s ease, opacity 0.24s ease",
+  staggerEnter: (index = 0, delayStep = 70) =>
+    `fadeUp 520ms cubic-bezier(0.22, 1, 0.36, 1) both ${Math.max(index, 0) * delayStep}ms`,
+  softEnter: "fadeUp 420ms cubic-bezier(0.22, 1, 0.36, 1) both",
+} as const;
+
 // Таблица отступов, чтобы не размножать числа в компонентах
 export const SPACING = {
   xs: 4,

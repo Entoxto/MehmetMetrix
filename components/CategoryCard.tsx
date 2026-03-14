@@ -5,7 +5,7 @@
  * Показывает название, короткое описание и бейдж с количеством.
  * Используется на главной для выбора категории.
  */
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
@@ -13,6 +13,7 @@ interface CategoryCardProps {
   title: string;
   description: string;
   badge: string;
+  animationIndex?: number;
   onClick: () => void;
 }
 
@@ -20,6 +21,7 @@ export const CategoryCard = ({
   title,
   description,
   badge,
+  animationIndex = 0,
   onClick,
 }: CategoryCardProps) => {
   const { isMobile } = useBreakpoint();
@@ -45,7 +47,8 @@ export const CategoryCard = ({
         background: isMobile
           ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
           : STYLES.card.background,
-        transition: "all 0.25s ease",
+        transition: MOTION.interactiveTransition,
+        animation: MOTION.staggerEnter(animationIndex, isMobile ? 70 : 90),
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>

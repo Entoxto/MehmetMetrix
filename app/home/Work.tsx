@@ -7,7 +7,7 @@
  * Адаптируется под мобильный и десктоп.
  */
 import { useMemo } from "react";
-import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES, MOTION } from "@/constants/styles";
 import { groupShipmentsByYear } from "@/lib/shipments";
 import { YearGroup } from "@/components/work/YearGroup";
 import type { ShipmentWithItems } from "@/types/shipment";
@@ -52,7 +52,7 @@ export const Work = ({
         gap: isMobile ? SPACING.smPlus : SPACING.lg,
       }}
     >
-      <div style={CARD_TEMPLATES.pageIntro(isMobile)}>
+      <div style={{ ...CARD_TEMPLATES.pageIntro(isMobile), animation: MOTION.softEnter }}>
         <h2
           style={{
             ...responsiveTypography.h2,
@@ -69,11 +69,12 @@ export const Work = ({
         </p>
       </div>
 
-      {Array.from(shipmentsByYear.entries()).map(([year, yearShipments]) => (
+      {Array.from(shipmentsByYear.entries()).map(([year, yearShipments], index) => (
         <YearGroup
           key={year}
           year={year}
           shipments={yearShipments}
+          animationIndex={index}
           isExpanded={expandedYears.has(year)}
           onToggle={() => onToggleYear(year)}
           expandedCards={expandedCards}

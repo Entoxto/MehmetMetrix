@@ -57,6 +57,8 @@ Excel / Google Sheet
 - In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.
 - In `Work`, the full first position cell is the click target for opening the product page.
 - The category pill in `ProductDetail` is a real link to the matching catalog category and should read as interactive.
+- Motion should reinforce hierarchy, not decorate for its own sake.
+- Shared motion comes from `MOTION` in `constants/styles.ts`; avoid one-off timing/easing values unless there is a strong reason.
 
 ## Known Project Choices
 
@@ -71,6 +73,9 @@ Excel / Google Sheet
 - `Shell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
 - Entering `/` resets in-app navigation memory, so later back actions start from the main menu again.
 - Product pages use explicit back behavior to preserve `Work` / `Catalog` context, while other screens prefer the in-app history stack first and fallback second.
+- `app/layout.tsx` contains the global keyframes and the `prefers-reduced-motion` safeguard.
+- Screen intros and card grids now use soft staggered entrance motion; new motion should match that quieter rhythm.
+- Telegram's in-app browser may close on vertical swipe for ordinary links; that behavior is outside the control of a regular web page. Official swipe control exists only for Telegram Mini Apps.
 
 ## Safe Refactoring Directions
 
@@ -78,6 +83,7 @@ Excel / Google Sheet
 - Narrow module exports when helpers are only used internally.
 - Prefer updating README / data docs / AGENTS whenever domain or UI terminology changes.
 - If you touch navigation, update both the code contract (`Shell`, `navigationHistory`) and the docs in the same pass.
+- If you touch motion, update both the shared tokens and the documentation of interaction intent in the same pass.
 
 ## Avoid
 
