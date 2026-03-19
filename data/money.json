@@ -1,11 +1,6 @@
 {
   "deposits": [
     {
-      "id": "deposit-hermes",
-      "lines": ["Предоплата hermes mouse ≈ 30 изделий"],
-      "amount": 2000
-    },
-    {
       "id": "deposit-python",
       "lines": [
         "Предоплата на коричневого питона",
