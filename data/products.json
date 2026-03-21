@@ -630,7 +630,9 @@
       "category": "Кожа",
       "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый.jpg",
       "sizes": [
-        "s"
+        "xs",
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральная кожа",
