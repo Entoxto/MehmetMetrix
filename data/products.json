@@ -229,7 +229,7 @@
       "inStock": true,
       "tags": [],
       "price": 550,
-      "cost": 44637
+      "cost": 44636
     },
     {
       "id": "auto-014",
@@ -380,7 +380,7 @@
       "inStock": true,
       "tags": [],
       "price": 480,
-      "cost": 38963
+      "cost": 38962
     },
     {
       "id": "auto-023",
@@ -398,7 +398,7 @@
       "inStock": true,
       "tags": [],
       "price": 550,
-      "cost": 44637
+      "cost": 44636
     },
     {
       "id": "auto-024",
@@ -585,7 +585,7 @@
       "inStock": true,
       "tags": [],
       "price": 320,
-      "cost": 25993
+      "cost": 25992
     },
     {
       "id": "auto-035",
@@ -630,8 +630,7 @@
       "category": "Кожа",
       "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый.jpg",
       "sizes": [
-        "xs",
-        "OneSize"
+        "s"
       ],
       "materials": {
         "outer": "100% Натуральная кожа",
@@ -659,7 +658,7 @@
       "inStock": true,
       "tags": [],
       "price": 320,
-      "cost": 25993
+      "cost": 25992
     },
     {
       "id": "auto-039",
