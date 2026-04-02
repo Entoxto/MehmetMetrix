@@ -14,8 +14,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 28571
+      "price": 260
     },
     {
       "id": "auto-002",
@@ -33,8 +32,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 165,
-      "cost": 16582
+      "price": 165
     },
     {
       "id": "auto-003",
@@ -53,8 +51,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 16866
+      "price": 190
     },
     {
       "id": "auto-004",
@@ -70,8 +67,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 20917
+      "price": 180
     },
     {
       "id": "auto-005",
@@ -85,8 +81,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 400,
-      "cost": 41999
+      "price": 400
     },
     {
       "id": "auto-006",
@@ -102,8 +97,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 29100
+      "price": 260
     },
     {
       "id": "auto-007",
@@ -119,8 +113,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 18900
+      "price": 180
     },
     {
       "id": "auto-008",
@@ -138,8 +131,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 16056
+      "price": 180
     },
     {
       "id": "auto-009",
@@ -153,8 +145,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 315,
-      "cost": 33231
+      "price": 315
     },
     {
       "id": "auto-010",
@@ -172,8 +163,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 16487
+      "price": 180
     },
     {
       "id": "auto-011",
@@ -191,8 +181,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 175,
-      "cost": 18882
+      "price": 175
     },
     {
       "id": "auto-012",
@@ -209,8 +198,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 44705
+      "price": 390
     },
     {
       "id": "auto-013",
@@ -228,8 +216,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 44636
+      "price": 550
     },
     {
       "id": "auto-014",
@@ -243,8 +230,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 43168
+      "price": 390
     },
     {
       "id": "auto-015",
@@ -258,8 +244,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 43168
+      "price": 390
     },
     {
       "id": "auto-016",
@@ -276,8 +261,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 18239
+      "price": 190
     },
     {
       "id": "auto-017",
@@ -291,8 +275,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 41376
+      "price": 390
     },
     {
       "id": "auto-018",
@@ -306,8 +289,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 41376
+      "price": 390
     },
     {
       "id": "auto-019",
@@ -324,8 +306,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 17972
+      "price": 180
     },
     {
       "id": "auto-020",
@@ -343,8 +324,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 46684
+      "price": 550
     },
     {
       "id": "auto-021",
@@ -361,8 +341,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 47113
+      "price": 550
     },
     {
       "id": "auto-022",
@@ -379,8 +358,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 480,
-      "cost": 38962
+      "price": 480
     },
     {
       "id": "auto-023",
@@ -397,8 +375,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 44636
+      "price": 550
     },
     {
       "id": "auto-024",
@@ -415,8 +392,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 300,
-      "cost": 27345
+      "price": 300
     },
     {
       "id": "auto-025",
@@ -430,8 +406,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 310,
-      "cost": 26725
+      "price": 310
     },
     {
       "id": "auto-026",
@@ -445,8 +420,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 330,
-      "cost": 28378
+      "price": 330
     },
     {
       "id": "auto-027",
@@ -460,8 +434,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 195,
-      "cost": 17220
+      "price": 195
     },
     {
       "id": "auto-028",
@@ -475,8 +448,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 400,
-      "cost": 35160
+      "price": 400
     },
     {
       "id": "auto-029",
@@ -493,8 +465,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 270,
-      "cost": 23936
+      "price": 270
     },
     {
       "id": "auto-030",
@@ -512,8 +483,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 215,
-      "cost": 19598
+      "price": 215
     },
     {
       "id": "auto-031",
@@ -531,8 +501,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 22937
+      "price": 260
     },
     {
       "id": "auto-032",
@@ -550,8 +519,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 17314
+      "price": 190
     },
     {
       "id": "auto-033",
@@ -565,8 +533,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 360,
-      "cost": 32312
+      "price": 360
     },
     {
       "id": "auto-034",
@@ -584,8 +551,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 25992
+      "price": 320
     },
     {
       "id": "auto-035",
@@ -603,8 +569,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 27644
+      "price": 320
     },
     {
       "id": "auto-036",
@@ -621,8 +586,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 46684
+      "price": 550
     },
     {
       "id": "auto-037",
@@ -640,8 +604,7 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 310,
-      "cost": 27979
+      "price": 310
     },
     {
       "id": "auto-038",
@@ -659,16 +622,34 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 25992
+      "price": 320
     },
     {
       "id": "auto-039",
+      "name": "Жакет приталенный из кожи питона — белый",
+      "category": "Экзотика",
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
+      "sizes": [
+        "xs",
+        "s"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 550
+    },
+    {
+      "id": "auto-040",
       "name": "Жакет из плетёной замши в стиле 80-х — коричневый",
       "category": "Замша",
       "photo": "/images/products/jpg/Жакет из плетёной замши в стиле 80-х — коричневый.jpg",
       "sizes": [
-        "OneSize"
+        "xs",
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральная кожа",
@@ -676,10 +657,10 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 310
+      "price": 340
     },
     {
-      "id": "auto-040",
+      "id": "auto-041",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
@@ -697,7 +678,7 @@
       "price": 320
     },
     {
-      "id": "auto-041",
+      "id": "auto-042",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",
