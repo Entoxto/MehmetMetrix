@@ -631,7 +631,8 @@
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
       "sizes": [
         "xs",
-        "s"
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Кожа питона",
@@ -639,10 +640,28 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550
+      "price": 325
     },
     {
       "id": "auto-040",
+      "name": "Юбка из кожи питона — белый",
+      "category": "Экзотика",
+      "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 325
+    },
+    {
+      "id": "auto-041",
       "name": "Жакет из плетёной замши в стиле 80-х — коричневый",
       "category": "Замша",
       "photo": "/images/products/jpg/Жакет из плетёной замши в стиле 80-х — коричневый.jpg",
@@ -660,7 +679,7 @@
       "price": 340
     },
     {
-      "id": "auto-041",
+      "id": "auto-042",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
@@ -678,7 +697,7 @@
       "price": 320
     },
     {
-      "id": "auto-042",
+      "id": "auto-043",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",
