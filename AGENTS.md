@@ -30,6 +30,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
 - `data/money.json` is manual and may be edited directly.
+- `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
 
 ## Domain Rules
 

@@ -8,7 +8,8 @@ import { getDataMeta } from "@/lib/meta";
 import { Money } from "@/app/home/Money";
 import { Shell } from "@/components/Shell";
 
-type PendingItem = { id: string; title: string; amount: number };
+type PendingItem = { id: string; title: string; amount: number; href?: string };
+type PendingManualConfig = { id?: string; title?: string; amount?: number };
 type DepositConfig = { id?: string; title?: string; lines?: string[]; amount?: number };
 type DepositItem = { id: string; lines: string[]; amount: number };
 
@@ -33,11 +34,24 @@ export default function MoneyPage() {
   const shipments = useMemo(() => buildShipments(products), [products]);
 
   const pendingItems: PendingItem[] = useMemo(() => {
-    return getPendingShipmentSummaries(shipments).map(({ id, title, amount }) => ({
+    const shipmentPendingItems = getPendingShipmentSummaries(shipments).map(({ id, title, amount }) => ({
       id,
       title,
       amount,
+      href: `/work?batch=${id}`,
     }));
+
+    const pendingManualConfig = Array.isArray((moneyData as { pendingManual?: PendingManualConfig[] }).pendingManual)
+      ? ((moneyData as { pendingManual?: PendingManualConfig[] }).pendingManual as PendingManualConfig[])
+      : [];
+
+    const manualPendingItems = pendingManualConfig.map((item, index) => ({
+      id: item.id ?? `pending-manual-${index}`,
+      title: item.title ?? `Ручная строка ${index + 1}`,
+      amount: typeof item.amount === "number" ? item.amount : Number(item.amount ?? 0),
+    }));
+
+    return [...shipmentPendingItems, ...manualPendingItems];
   }, [shipments]);
 
   const pendingTotal = pendingItems.reduce((sum, item) => sum + item.amount, 0);

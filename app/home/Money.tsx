@@ -16,6 +16,7 @@ interface MoneyStatusItem {
   id: string;
   title: string;
   amount: number;
+  href?: string;
 }
 
 interface MoneyDepositItem {
@@ -339,23 +340,38 @@ export const Money = ({
               getKey: (item) => item.id,
               getAmount: (item) => item.amount,
               renderLabel: (item) => (
-                <Link
-                  href={`/work?batch=${item.id}`}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    ...responsiveTypography.body,
-                    color: COLORS.text.primary,
-                    margin: 0,
-                    overflowWrap: "break-word",
-                    wordBreak: "break-word",
-                    whiteSpace: "normal",
-                    textDecoration: "underline",
-                    textDecorationStyle: "dotted",
-                    textUnderlineOffset: 2,
-                  }}
-                >
-                  {item.title}
-                </Link>
+                item.href ? (
+                  <Link
+                    href={item.href}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      ...responsiveTypography.body,
+                      color: COLORS.text.primary,
+                      margin: 0,
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                      textDecoration: "underline",
+                      textDecorationStyle: "dotted",
+                      textUnderlineOffset: 2,
+                    }}
+                  >
+                    {item.title}
+                  </Link>
+                ) : (
+                  <span
+                    style={{
+                      ...responsiveTypography.body,
+                      color: COLORS.text.primary,
+                      margin: 0,
+                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
+                      whiteSpace: "normal",
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                )
               ),
             },
           })}

@@ -45,11 +45,15 @@ Excel / Google Sheet
 `Excel/update_prices.py` remains as a repair/maintenance script for re-syncing catalog prices from existing shipments.
 
 `data/money.json` is separate manual data.
+It may contain:
+- `deposits` for the right-side deposited/prepaid block
+- `pendingManual` for manual extra rows inside `Всего к оплате`
 
 ## Invariants
 
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
 - Payment visibility depends on `isPayable`.
+- Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
