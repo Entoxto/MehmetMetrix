@@ -43,7 +43,7 @@ npm start
 
 Коротко:
 - `data/shipments.json`, `data/products.json`, `data/meta.json` — генерируются из Excel / Google Sheet
-- `data/money.json` — ручной файл; может содержать и депозиты, и ручные доплаты в `Всего к оплате`
+- `data/money.json` — ручной файл; может содержать депозиты и ручные доплаты в `Всего к оплате`, но всё равно проверяется через `npm run validate:data`
 - статусы хранятся как текст из Excel 1 в 1
 - визуально неинтерактивные элементы не должны выглядеть как кнопки
 - бренд `MM / Mehmet Metrics` в шапке всегда ведёт на главную
@@ -85,10 +85,15 @@ npm start
 │   │   ├── BatchView.tsx   # Таблица поставки с группировкой по статусам
 │   │   └── PositionRow.tsx # Строка позиции в таблице
 │   └── ui/
+│       ├── ClickableCard.tsx # Единая доступная обёртка для кликабельных карточек
 │       ├── OptimizedImage.tsx # Универсальный компонент изображения (WebP → JPG → 📷 fallback)
 │       ├── SizeChips.tsx   # Чипы размеров (XS, S, M...)
 │       ├── SampleTag.tsx   # Метка «образец»
 │       └── StatusBadge.tsx # Бейдж статуса
+│
+├── hooks/                  # Клиентские хуки состояния и адаптивности
+│   ├── useBreakpoint.ts    # Удобные флаги текущего брейкпоинта
+│   └── useWorkNavigationState.ts # Память раскрытия и deep-link прокрутка Work
 │
 ├── data/                   # JSON-данные
 │   ├── products.json       # Каталог изделий (цены обновляются из поставок)
@@ -284,6 +289,7 @@ const sum = price != null && !paidPreviously && !noPayment
 - Поиск подстроки "оплач" безопасен благодаря Data Validation в Excel (статусы выбираются из выпадающего списка)
 - Строки детализации «Надвигающаяся расплата» — кликабельные ссылки на `/work?batch={shipmentId}`; при переходе раскрывается нужная карточка поставки и экран прокручивается к ней (центрирование)
 - Дополнительно в `money.json.pendingManual` можно хранить ручные строки, которые тоже попадают в `Всего к оплате`; они отображаются обычным текстом, без ссылки в `Work`
+- `money.json` валидируется вместе с данными: `amount` в `pendingManual` и `deposits` должен быть положительным числом, иначе `npm run validate:data` остановится
 
 ### Группировка по годам
 
@@ -296,6 +302,7 @@ const sum = price != null && !paidPreviously && !noPayment
 - Внутри года поставки отображаются без отступов, не уменьшая ширину экрана
 - Год и поставка раскрываются по клику на свои шапки; таблица внутри больше не должна случайно сворачивать карточку
 - **Query-параметры** для глубокой ссылки: `batch` — ID поставки (раскрываются год и карточка, прокрутка к карточке по `id="batch-{id}"`); `pos` — ID позиции (прокрутка к `id="pos-{id}"`). Используются при переходе из раздела «Что по бабкам».
+- Сохранение раскрытых годов/поставок, восстановление `workScrollY` и обработка `batch` / `pos` вынесены в `hooks/useWorkNavigationState.ts`, чтобы страница `Work` оставалась тонкой.
 
 ### Навигация и возврат
 
@@ -341,7 +348,7 @@ const sum = price != null && !paidPreviously && !noPayment
 
 **Интерактивность первой колонки:**
 - В `PositionRow.tsx` кликабельна вся левая область позиции, а не только текст названия
-- Переход из `Work` в товар сохраняет `workScrollY` и передаёт `from=work`, `batch`, `pos`
+- Переход из `Work` в товар сохраняет `workScrollY`, передаёт `from=work`, `batch`, `pos` и отключает массовый prefetch карточек из раскрытой таблицы
 - При возврате экран `Work` раскрывает нужный год/поставку и прокручивает к нужной позиции
 
 ### Сортировка в каталоге
@@ -441,7 +448,7 @@ python update_prices.py
 3. Валидирует итоговый `products.json`
 4. Атомарно обновляет поля `price` и `cost` в `data/products.json`
 
-**Smoke-check generated data:**
+**Smoke-check данных:**
 ```bash
 python validate_generated_data.py
 ```
@@ -452,6 +459,7 @@ python validate_generated_data.py
 3. целостность ссылок `productId`
 4. соответствие актуальных `price` / `cost` данным из поставок
 5. корректность `meta.json`
+6. корректность ручного `money.json`
 
 **Проверка ассетов каталога:**
 ```bash
@@ -676,7 +684,7 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | `npm run lint` | Проверка ESLint |
 | `npm run typecheck` | Проверка TypeScript |
 | `npm run typecheck:strict` | Строгая проверка TypeScript с `noUnusedLocals` и `noUnusedParameters` |
-| `npm run validate:data` | Smoke-check generated data (`shipments.json`, `products.json`, `meta.json`) |
+| `npm run validate:data` | Smoke-check generated data (`shipments.json`, `products.json`, `meta.json`) и ручного `money.json` |
 | `npm run validate:images` | Проверка photo-path каталога, JPG/WebP ассетов и лишних файлов |
 | `npm run preflight:fast` | Быстрый ежедневный прогон: generated data + изображения |
 | `npm run preflight` | Полный pre-deploy прогон: lint + typecheck + data + images + build |
@@ -707,7 +715,7 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | `python Excel/fetch_google_sheet.py` | Загрузка таблицы из Google Sheets |
 | `python Excel/parse_excel.py` | Парсинг Excel, актуализация каталога и валидация generated data |
 | `python Excel/update_prices.py` | Повторная синхронизация цен каталога из уже готовых поставок |
-| `python Excel/validate_generated_data.py` | Отдельная проверка `shipments.json` / `products.json` / `meta.json` |
+| `python Excel/validate_generated_data.py` | Отдельная проверка `shipments.json` / `products.json` / `meta.json` / `money.json` |
 
 #### Быстрый запуск с обновлением данных
 

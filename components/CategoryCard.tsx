@@ -7,6 +7,7 @@
  */
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
+import { ClickableCard } from "@/components/ui/ClickableCard";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface CategoryCardProps {
@@ -31,8 +32,8 @@ export const CategoryCard = ({
   );
 
   return (
-    <div
-      onClick={onClick}
+    <ClickableCard
+      onPress={onClick}
       {...hoverHandlers}
       style={{
         ...STYLES.card,
@@ -93,6 +94,6 @@ export const CategoryCard = ({
           Смотреть →
         </span>
       </div>
-    </div>
+    </ClickableCard>
   );
 };

@@ -8,6 +8,7 @@
  */
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
+import { ClickableCard } from "@/components/ui/ClickableCard";
 import { COLORS, MOTION, STYLES } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MENU_STYLES } from "./styles";
@@ -41,9 +42,9 @@ export const Menu = ({ items }: MenuProps) => {
       }}
     >
       {items.map((item, index) => (
-        <div
+        <ClickableCard
           key={index}
-          onClick={item.onClick}
+          onPress={item.onClick}
           {...hoverHandlers}
           style={{
             ...MENU_STYLES.card,
@@ -104,7 +105,7 @@ export const Menu = ({ items }: MenuProps) => {
           <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 8 : 16 }}>
             <p style={{ ...MENU_STYLES.description, fontSize: isMobile ? 13 : MENU_STYLES.description.fontSize }}>{item.description}</p>
           </div>
-        </div>
+        </ClickableCard>
       ))}
     </main>
   );

@@ -126,6 +126,7 @@ export const PositionRow = ({
               <Link
                 id={`pos-${position.id}`}
                 href={`/product/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
+                prefetch={false}
                 onClick={handleLinkClick}
                 style={getPositionLinkAreaStyle(isMobile, cellBaseBackground, cellBaseBorder)}
               >

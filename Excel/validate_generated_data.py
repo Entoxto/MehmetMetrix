@@ -5,6 +5,7 @@ CLI smoke-check для generated data.
 - data/shipments.json
 - data/products.json
 - data/meta.json
+- data/money.json
 """
 
 import sys
@@ -30,11 +31,13 @@ def validate_generated_data() -> bool:
     shipments_file = data_dir / "shipments.json"
     products_file = data_dir / "products.json"
     meta_file = data_dir / "meta.json"
+    money_file = data_dir / "money.json"
 
     try:
         shipments = load_json_file(shipments_file)
         products_data = load_json_file(products_file)
         meta = load_json_file(meta_file)
+        money = load_json_file(money_file)
     except FileNotFoundError as error:
         print(f"❌ Не найден файл для проверки: {error.filename}")
         return False
@@ -42,7 +45,7 @@ def validate_generated_data() -> bool:
         print(f"❌ Не удалось загрузить generated data: {error}")
         return False
 
-    errors = validate_generated_outputs(shipments, products_data, meta)
+    errors = validate_generated_outputs(shipments, products_data, meta, money)
     if errors:
         print("ERROR: Проверка generated data не пройдена:")
         for error in errors:
@@ -53,6 +56,7 @@ def validate_generated_data() -> bool:
     print(f"   Поставок: {len(shipments)}")
     print(f"   Товаров: {len(products_data.get('products', []))}")
     print(f"   Обновлено: {meta.get('updatedAt')}")
+    print("   Ручные финансы: OK")
     return True
 
 

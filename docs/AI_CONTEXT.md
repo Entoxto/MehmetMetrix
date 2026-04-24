@@ -48,19 +48,23 @@ Excel / Google Sheet
 It may contain:
 - `deposits` for the right-side deposited/prepaid block
 - `pendingManual` for manual extra rows inside `Всего к оплате`
+`npm run validate:data` validates this manual file too; manual amounts must stay positive finite numbers.
 
 ## Invariants
 
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
 - Payment visibility depends on `isPayable`.
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
+- Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
 - In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.
 - In `Work`, the full first position cell is the click target for opening the product page.
+- `Work` expansion/scroll restoration lives in `hooks/useWorkNavigationState.ts`; keep page components thin when changing this flow.
 - The category pill in `ProductDetail` is a real link to the matching catalog category and should read as interactive.
+- Repeated clickable-card behavior should go through `components/ui/ClickableCard.tsx` so mouse and keyboard behavior stay aligned.
 - Motion should reinforce hierarchy, not decorate for its own sake.
 - Shared motion comes from `MOTION` in `constants/styles.ts`; avoid one-off timing/easing values unless there is a strong reason.
 
@@ -69,8 +73,8 @@ It may contain:
 - `BreakpointProvider` uses actual viewport width on the client.
 - If desktop suddenly looks mobile, check browser zoom (`Ctrl+0`) before changing breakpoints: zoom changes the real viewport width.
 - A separate strict TypeScript check exists in `tsconfig.strict-check.json`.
-- `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON and image assets without running the full build.
-- `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, generated-data validation, image validation, and production build.
+- `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
+- `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, data validation, image validation, and production build.
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.

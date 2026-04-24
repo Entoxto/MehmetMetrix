@@ -14,12 +14,22 @@ import { getStatusLabel } from '@/lib/format';
  * Преобразует размер из строки в тип Size
  */
 function toSize(size: string): Size {
-  const upper = size === 'OneSize' ? 'OneSize' : size.toUpperCase();
-  
-  if (['XS', 'S', 'M', 'L', 'XL', 'OneSize'].includes(upper)) {
-    return upper as Size;
+  const normalized = size.trim().toLowerCase().replace(/\s+/g, '');
+  const sizeMap: Record<string, Size> = {
+    xs: 'XS',
+    s: 'S',
+    m: 'M',
+    l: 'L',
+    xl: 'XL',
+    onesize: 'OneSize',
+  };
+  const mappedSize = sizeMap[normalized];
+
+  if (!mappedSize) {
+    throw new Error(`Unknown size key in shipment data: ${size}`);
   }
-  return 'S'; // fallback
+
+  return mappedSize;
 }
 
 /**

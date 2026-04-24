@@ -2,6 +2,7 @@
 Валидация сгенерированных JSON-данных пайплайна.
 """
 
+import math
 from datetime import datetime
 from typing import Any, Dict, Iterable, List, Set
 
@@ -9,10 +10,11 @@ from catalog_pricing import collect_latest_product_values
 
 
 ALLOWED_PRODUCT_CATEGORIES: Set[str] = {"Мех", "Замша", "Кожа", "Экзотика"}
+ALLOWED_SIZE_KEYS: Set[str] = {"xs", "s", "m", "l", "xl", "OneSize"}
 
 
 def _is_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
 def _is_non_empty_string(value: Any) -> bool:
@@ -42,6 +44,10 @@ def _validate_raw_item(
             for size_key, count in sizes.items():
                 if not _is_non_empty_string(size_key):
                     errors.append(f"{prefix}: ключ размера должен быть строкой")
+                elif size_key not in ALLOWED_SIZE_KEYS:
+                    errors.append(
+                        f"{prefix}: неизвестный размер {size_key!r}; допустимо {sorted(ALLOWED_SIZE_KEYS)}"
+                    )
                 if not isinstance(count, int) or count < 0:
                     errors.append(f"{prefix}: размер {size_key!r} должен иметь целое количество >= 0")
 
@@ -241,10 +247,75 @@ def validate_meta(meta: Any) -> List[str]:
     return errors
 
 
+def _validate_money_item_common(
+    item: Dict[str, Any],
+    prefix: str,
+    errors: List[str],
+) -> None:
+    item_id = item.get("id")
+    if item_id is not None and not _is_non_empty_string(item_id):
+        errors.append(f"{prefix}: id должен быть непустой строкой")
+
+    amount = item.get("amount")
+    if not _is_number(amount) or float(amount) <= 0:
+        errors.append(f"{prefix}: amount должен быть положительным числом")
+
+
+def validate_money(money: Any) -> List[str]:
+    """Проверяет ручной финансовый файл money.json."""
+    errors: List[str] = []
+
+    if not isinstance(money, dict):
+        return ["money.json должен содержать объект"]
+
+    pending_manual = money.get("pendingManual", [])
+    if not isinstance(pending_manual, list):
+        errors.append("money.json: pendingManual должен быть массивом")
+    else:
+        for index, item in enumerate(pending_manual):
+            prefix = f"money.json → pendingManual[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{prefix} должен быть объектом")
+                continue
+
+            _validate_money_item_common(item, prefix, errors)
+
+            title = item.get("title")
+            if not _is_non_empty_string(title):
+                errors.append(f"{prefix}: title должен быть непустой строкой")
+
+    deposits = money.get("deposits", [])
+    if not isinstance(deposits, list):
+        errors.append("money.json: deposits должен быть массивом")
+    else:
+        for index, item in enumerate(deposits):
+            prefix = f"money.json → deposits[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{prefix} должен быть объектом")
+                continue
+
+            _validate_money_item_common(item, prefix, errors)
+
+            lines = item.get("lines")
+            title = item.get("title")
+            if lines is not None:
+                if not isinstance(lines, list) or not lines:
+                    errors.append(f"{prefix}: lines должен быть непустым массивом строк")
+                else:
+                    for line_index, line in enumerate(lines):
+                        if not _is_non_empty_string(line):
+                            errors.append(f"{prefix}: lines[{line_index}] должен быть непустой строкой")
+            elif not _is_non_empty_string(title):
+                errors.append(f"{prefix}: укажите lines или title")
+
+    return errors
+
+
 def validate_generated_outputs(
     shipments: Any,
     products_data: Any,
     meta: Any | None = None,
+    money: Any | None = None,
 ) -> List[str]:
     """Полная проверка набора сгенерированных данных."""
     errors = []
@@ -256,5 +327,8 @@ def validate_generated_outputs(
 
     if meta is not None:
         errors.extend(validate_meta(meta))
+
+    if money is not None:
+        errors.extend(validate_money(money))
 
     return errors

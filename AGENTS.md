@@ -29,7 +29,7 @@ If you need a production build, stop any active dev server first. A running dev 
 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
-- `data/money.json` is manual and may be edited directly.
+- `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
 
 ## Domain Rules
@@ -40,6 +40,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - `isPayable` controls sums and price-gap logic.
 - Work screen is shipment history by year, not only current work-in-progress.
 - Parser categories must stay within `Мех`, `Замша`, `Кожа`, `Экзотика`; unknown names should fail parsing instead of falling back to `Прочее`.
+- Shipment size keys must stay within `xs`, `s`, `m`, `l`, `xl`, `OneSize`; unknown keys should fail validation instead of falling back to another size.
 
 ## UI Rules
 
@@ -47,6 +48,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - Mobile UI should be calmer and denser, not just a squeezed desktop.
 - Reuse tokens from `constants/styles.ts` before adding local inline styles.
 - If a pattern repeats across screens, extract it.
+- Repeated clickable-card behavior belongs in `components/ui/ClickableCard.tsx`.
 - Brand in `Shell` (`MM` / `Mehmet Metrics`) always routes to `/`.
 - Back navigation is stateful: `Shell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
 - Product pages may use explicit back behavior (`backMode="explicit"`) to preserve origin context from `Work` / `Catalog`.

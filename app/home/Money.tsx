@@ -11,6 +11,7 @@ import { COLORS, SPACING, CARD_HOVER_EFFECTS, TYPOGRAPHY, STYLES, CARD_TEMPLATES
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
+import { ClickableCard } from "@/components/ui/ClickableCard";
 
 interface MoneyStatusItem {
   id: string;
@@ -222,8 +223,8 @@ export const Money = ({
     amountColor,
     details,
   }: MetricCardConfig<TItem>) => (
-    <div
-      onClick={() => onToggleCard(cardId)}
+    <ClickableCard
+      onPress={() => onToggleCard(cardId)}
       style={{
         ...CARD_STYLE,
         padding: isMobile ? SPACING.smPlus : SPACING.xl,
@@ -285,7 +286,7 @@ export const Money = ({
         {summary}
       </p>
       {renderDetailsTable(details)}
-    </div>
+    </ClickableCard>
   );
 
   return (
