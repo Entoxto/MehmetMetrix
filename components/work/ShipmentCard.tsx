@@ -9,6 +9,7 @@ import type { CSSProperties, MouseEvent } from "react";
 import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES, MOTION } from "@/constants/styles";
 import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
+import { getShipmentModelCount, getShipmentUnitCount } from "@/lib/shipmentMetrics";
 import { BatchView } from "@/components/work/BatchView";
 import type { ShipmentWithItems } from "@/types/shipment";
 
@@ -122,8 +123,8 @@ export const ShipmentCard = ({
   const titleWithNonBreakingSpace = shipment.title.replace(/\s+№/, "\u00A0№");
   const highlightStatus = isPaidStatus(shipment.status);
   const statusLabelText = getStatusLabel(shipment.status);
-  const modelsCount = shipment.batch.positions.length;
-  const unitsCount = shipment.batch.positions.reduce((sum, position) => sum + position.qty, 0);
+  const modelsCount = getShipmentModelCount(shipment);
+  const unitsCount = getShipmentUnitCount(shipment);
 
   const cardContainerStyle: CSSProperties = {
     ...cardStyle,

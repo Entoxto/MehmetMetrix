@@ -61,12 +61,15 @@ It may contain:
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
 - In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.
+- Year UI is split by role: `YearGroup` coordinates, `YearHeader` renders the clickable yearly summary, and `YearShipmentsSheet` renders the expanded shipment list.
 - In `Work`, the full first position cell is the click target for opening the product page.
 - `Work` expansion/scroll restoration lives in `hooks/useWorkNavigationState.ts`; keep page components thin when changing this flow.
 - The category pill in `ProductDetail` is a real link to the matching catalog category and should read as interactive.
 - Repeated clickable-card behavior should go through `components/ui/ClickableCard.tsx` so mouse and keyboard behavior stay aligned.
 - Motion should reinforce hierarchy, not decorate for its own sake.
 - Shared motion comes from `MOTION` in `constants/styles.ts`; avoid one-off timing/easing values unless there is a strong reason.
+- Category-specific visual accents come from `CATEGORY_VISUALS` in `constants/styles.ts`; keep them as muted lines/badges, not loud decorative color blocks.
+- If an entire card is clickable, avoid inner fake CTA buttons such as `Смотреть`; use card-level affordance and optional quiet directional hints.
 
 ## Known Project Choices
 

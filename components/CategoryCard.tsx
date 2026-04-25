@@ -5,7 +5,7 @@
  * Показывает название, короткое описание и бейдж с количеством.
  * Используется на главной для выбора категории.
  */
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { ClickableCard } from "@/components/ui/ClickableCard";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -26,6 +26,7 @@ export const CategoryCard = ({
   onClick,
 }: CategoryCardProps) => {
   const { isMobile } = useBreakpoint();
+  const visual = getCategoryVisual(title);
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.category.hover,
     CARD_HOVER_EFFECTS.category.default
@@ -37,23 +38,34 @@ export const CategoryCard = ({
       {...hoverHandlers}
       style={{
         ...STYLES.card,
-        padding: isMobile ? SPACING.md : 24,
+        position: "relative",
+        overflow: "hidden",
+        padding: isMobile ? "14px 16px" : 24,
         cursor: "pointer",
         display: "flex",
         flexDirection: "column",
         justifyContent: isMobile ? "flex-start" : "space-between",
-        gap: isMobile ? SPACING.smPlus : SPACING.lg,
-        minHeight: isMobile ? 0 : 220,
+        gap: isMobile ? SPACING.sm : SPACING.lg,
+        minHeight: isMobile ? 132 : 190,
         borderRadius: isMobile ? 18 : 20,
-        background: isMobile
-          ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
-          : STYLES.card.background,
+        background: visual.surface,
         transition: MOTION.interactiveTransition,
         animation: MOTION.staggerEnter(animationIndex, isMobile ? 70 : 90),
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: SPACING.sm }}>
-        <p style={{ ...STYLES.sectionEyebrow, margin: 0, fontSize: isMobile ? 9 : STYLES.sectionEyebrow.fontSize }}>
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: isMobile ? 16 : SPACING.lg,
+          right: isMobile ? 16 : SPACING.lg,
+          height: 1,
+          background: visual.line,
+        }}
+      />
+      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: SPACING.sm }}>
+        <p style={{ ...STYLES.sectionEyebrow, margin: 0, fontSize: isMobile ? 9 : STYLES.sectionEyebrow.fontSize, color: COLORS.text.tertiary }}>
           Категория
         </p>
         <h3
@@ -71,27 +83,44 @@ export const CategoryCard = ({
         <p
           style={{
             color: COLORS.text.secondary,
-            fontSize: isMobile ? 13 : 14,
+            fontSize: isMobile ? 12 : 14,
             margin: 0,
-            lineHeight: 1.55,
+            lineHeight: isMobile ? 1.45 : 1.55,
           }}
         >
           {description}
         </p>
       </div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: SPACING.md }}>
-        <span style={{ display: "inline-flex", width: "max-content", ...STYLES.categoryBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 10px" : STYLES.categoryBadge.padding }}>
+      <div style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", gap: SPACING.md }}>
+        <span
+          style={{
+            display: "inline-flex",
+            width: "max-content",
+            ...STYLES.categoryBadge,
+            color: visual.accent,
+            background: visual.accentSoft,
+            border: `1px solid ${visual.accentSoft}`,
+            fontSize: isMobile ? 10 : 12,
+            padding: isMobile ? "4px 10px" : STYLES.categoryBadge.padding,
+          }}
+        >
           {badge}
         </span>
         <span
+          aria-hidden="true"
           style={{
-            color: COLORS.primary,
-            fontSize: isMobile ? 13 : 14,
-            fontWeight: 700,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: isMobile ? 20 : 24,
+            height: isMobile ? 20 : 24,
+            color: visual.accent,
+            fontSize: isMobile ? 14 : 16,
+            opacity: 0.72,
             whiteSpace: "nowrap",
           }}
         >
-          Смотреть →
+          →
         </span>
       </div>
     </ClickableCard>

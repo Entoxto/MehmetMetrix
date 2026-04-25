@@ -7,7 +7,7 @@
  */
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION } from "@/constants/styles";
+import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -20,6 +20,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) => {
   const { isMobile } = useBreakpoint();
+  const visual = getCategoryVisual(product.category);
   const hoverHandlers = createCardHoverHandlers(
     CARD_HOVER_EFFECTS.product.hover,
     CARD_HOVER_EFFECTS.product.default
@@ -29,10 +30,9 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
     ...STYLES.card,
     padding: 0,
     overflow: "hidden",
+    position: "relative",
     borderRadius: isMobile ? 20 : 20,
-    background: isMobile
-      ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
-      : STYLES.card.background,
+    background: "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(16,16,19,0.98) 100%)",
     transition: MOTION.interactiveTransition,
     animation: MOTION.staggerEnter(animationIndex, isMobile ? 65 : 85),
   };
@@ -50,6 +50,18 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
       onMouseEnter={hoverHandlers.onMouseEnter}
       onMouseLeave={hoverHandlers.onMouseLeave}
     >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 18,
+          right: 18,
+          height: 1,
+          background: visual.line,
+          zIndex: 2,
+        }}
+      />
       <Link
         href={`/product/${product.id}?from=catalog&category=${encodeURIComponent(product.category)}`}
         prefetch={false}
@@ -64,7 +76,7 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
           style={{
             width: "100%",
             height: isMobile ? 260 : 360,
-            background: COLORS.background.cardExpanded,
+            background: visual.surface,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -72,6 +84,17 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
             position: "relative",
           }}
         >
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(0,0,0,0) 68%, rgba(10,10,12,0.22) 100%)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
           <OptimizedImage
             src={product.photo}
             alt={product.name}
@@ -92,7 +115,16 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: SPACING.sm, flexWrap: "wrap" }}>
-            <span style={{ ...STYLES.categoryBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 10px" : STYLES.categoryBadge.padding }}>
+            <span
+              style={{
+                ...STYLES.categoryBadge,
+                color: visual.accent,
+                background: visual.accentSoft,
+                border: `1px solid ${visual.accentSoft}`,
+                fontSize: isMobile ? 10 : 12,
+                padding: isMobile ? "4px 10px" : STYLES.categoryBadge.padding,
+              }}
+            >
               {product.category}
             </span>
             <span style={{ ...STYLES.sectionEyebrow, color: COLORS.text.tertiary, fontSize: isMobile ? 9 : STYLES.sectionEyebrow.fontSize }}>

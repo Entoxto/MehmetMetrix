@@ -27,12 +27,12 @@ def parse_sizes_from_name(name: str) -> Dict[str, int]:
     if not name:
         return {}
     
-    # Ищем последнюю скобку с размерами
-    match = re.search(r'\(([^)]+)\)', name)
-    if not match:
+    # Размеры живут в последней скобке: в названии могут быть другие скобки раньше.
+    bracket_groups = re.findall(r'\(([^)]+)\)', name)
+    if not bracket_groups:
         return {}
     
-    sizes_str = match.group(1)
+    sizes_str = bracket_groups[-1]
     
     # Проверяем на "образец" - если только "образец" без размеров, возвращаем пустой словарь
     # Но если есть "образец" вместе с размерами (например, "образец XS-2"), парсим размеры

@@ -32,6 +32,44 @@ export const COLORS = {
   },
 } as const;
 
+export const CATEGORY_VISUALS: Record<
+  string,
+  {
+    accent: string;
+    accentSoft: string;
+    surface: string;
+    line: string;
+  }
+> = {
+  Мех: {
+    accent: "#d7a85b",
+    accentSoft: "rgba(215,168,91,0.10)",
+    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    line: "linear-gradient(90deg, rgba(215,168,91,0.52) 0%, rgba(215,168,91,0.12) 70%, rgba(215,168,91,0) 100%)",
+  },
+  Замша: {
+    accent: "#cbb487",
+    accentSoft: "rgba(203,180,135,0.09)",
+    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    line: "linear-gradient(90deg, rgba(203,180,135,0.48) 0%, rgba(203,180,135,0.12) 70%, rgba(203,180,135,0) 100%)",
+  },
+  Кожа: {
+    accent: "#b7794c",
+    accentSoft: "rgba(183,121,76,0.10)",
+    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    line: "linear-gradient(90deg, rgba(183,121,76,0.50) 0%, rgba(183,121,76,0.12) 70%, rgba(183,121,76,0) 100%)",
+  },
+  Экзотика: {
+    accent: "#c7b15a",
+    accentSoft: "rgba(199,177,90,0.10)",
+    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    line: "linear-gradient(90deg, rgba(199,177,90,0.50) 0%, rgba(199,177,90,0.12) 70%, rgba(199,177,90,0) 100%)",
+  },
+};
+
+export const getCategoryVisual = (category: string) =>
+  CATEGORY_VISUALS[category] ?? CATEGORY_VISUALS.Мех;
+
 export const STYLES = {
   // Базовый стиль прямоугольных карточек (товары, категории каталога, меню)
   card: {

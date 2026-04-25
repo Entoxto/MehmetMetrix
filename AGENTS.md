@@ -45,14 +45,17 @@ If you need a production build, stop any active dev server first. A running dev 
 ## UI Rules
 
 - Non-clickable information should not look like buttons.
+- If an entire card is clickable, do not add an inner fake CTA button.
 - Mobile UI should be calmer and denser, not just a squeezed desktop.
 - Reuse tokens from `constants/styles.ts` before adding local inline styles.
+- Category-specific catalog accents should use `CATEGORY_VISUALS` from `constants/styles.ts`.
 - If a pattern repeats across screens, extract it.
 - Repeated clickable-card behavior belongs in `components/ui/ClickableCard.tsx`.
 - Brand in `Shell` (`MM` / `Mehmet Metrics`) always routes to `/`.
 - Back navigation is stateful: `Shell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
 - Product pages may use explicit back behavior (`backMode="explicit"`) to preserve origin context from `Work` / `Catalog`.
 - In `Work`, only year headers and shipment headers toggle expansion.
+- In `Work`, keep `YearGroup` thin: `YearHeader` owns the yearly summary UI and `YearShipmentsSheet` owns the expanded shipment list.
 - In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
 - The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
 - Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
