@@ -678,8 +678,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 325,
-      "cost": 45178
+      "price": 560,
+      "cost": 1200
     },
     {
       "id": "auto-040",
@@ -716,7 +716,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 340
+      "price": 340,
+      "cost": 1200
     },
     {
       "id": "auto-042",

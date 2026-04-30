@@ -7,6 +7,9 @@ pushd "%~dp0" >nul || (
     exit /b 1
 )
 
+if exist "%~dp0.tools\node\npm.cmd" set "PATH=%~dp0.tools\node;%PATH%"
+if exist "%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" set "PATH=%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\python;%PATH%"
+
 echo ========================================
 echo Starting Mehmet Metrics with data update
 echo ========================================

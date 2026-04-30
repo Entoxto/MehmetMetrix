@@ -1,8 +1,8 @@
 [
   {
-    "id": "shipment-2026-10",
-    "number": 10,
-    "title": "Поставка №10",
+    "id": "shipment-2026-12",
+    "number": 12,
+    "title": "Поставка №12",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -67,6 +67,25 @@
           "m": 2
         },
         "status": "Ожидаем материал 🧵"
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-2026-11",
+    "number": 11,
+    "title": "Поставка №11",
+    "status": "В работе 🧵",
+    "rawItems": [
+      {
+        "overrideName": "Жакет приталенный из кожи питона — белый (XS-7, S-4)",
+        "productId": "auto-039",
+        "price": 560,
+        "sizes": {
+          "xs": 7,
+          "s": 4
+        },
+        "status": "В производстве 🛠️"
       },
       {
         "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (XS-10, S-9, M-3)",
@@ -76,25 +95,6 @@
           "xs": 10,
           "s": 9,
           "m": 3
-        },
-        "status": "В производстве 🛠️"
-      }
-    ],
-    "year": 2026
-  },
-  {
-    "id": "shipment-2026-9",
-    "number": 9,
-    "title": "Поставка №9",
-    "status": "В работе 🧵",
-    "rawItems": [
-      {
-        "overrideName": "Жакет приталенный из кожи питона — белый (XS-7, S-4)",
-        "productId": "auto-039",
-        "price": 325,
-        "sizes": {
-          "xs": 7,
-          "s": 4
         },
         "status": "В производстве 🛠️"
       },
@@ -121,6 +121,49 @@
       }
     ],
     "year": 2026
+  },
+  {
+    "id": "shipment-2026-10",
+    "number": 10,
+    "title": "Поставка №10",
+    "status": "В работе 🧵",
+    "rawItems": [
+      {
+        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (образец XS-1)",
+        "productId": "auto-041",
+        "price": 340,
+        "cost": 1200,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true,
+        "quantityOverride": 1
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-2026-9",
+    "number": 9,
+    "title": "Поставка №9",
+    "status": "Получено, не оплачено 📦",
+    "rawItems": [
+      {
+        "overrideName": "Жакет приталенный из кожи питона — белый (образец XS-1)",
+        "productId": "auto-039",
+        "price": 560,
+        "cost": 1200,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
+        "sample": true,
+        "quantityOverride": 1
+      }
+    ],
+    "year": 2026,
+    "receivedDate": "27.04.2026"
   },
   {
     "id": "shipment-2026-8",
