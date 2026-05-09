@@ -36,6 +36,7 @@ class ExcelParser:
     COL_SHIPMENT_STATUS = 5  # F: Статусы поставок
     COL_QUANTITY = 6      # G: Кол-во в заказе
     COL_PRICE_USD = 7     # H: Стоймость 1 ед $ (цена в долларах)
+    COL_EXCHANGE_RATE = 9 # J: Курс списания (0 означает, что себестоимость ещё не известна)
     COL_COST_WITH_CARGO = 13  # N: Себестоимость с учётом карго (в рублях) - используется для cost
     COL_DATE = 15         # P: Дата поступления продукции
     
@@ -298,10 +299,14 @@ class ExcelParser:
         if price_value is not None and price_value > 0:
             item["price"] = int(price_value) if price_value.is_integer() else price_value
         
-        # cost: берём из колонки N (Себестоимость с учётом карго) - в рублях
-        cost_value = self._parse_numeric_field(row, self.COL_COST_WITH_CARGO)
-        if cost_value is not None and cost_value > 0:
-            item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
+        # cost: берём из колонки N только когда курс списания уже известен.
+        # Если курс в колонке J равен 0, формула N может содержать только карго,
+        # а не реальную себестоимость товара.
+        exchange_rate_value = self._parse_numeric_field(row, self.COL_EXCHANGE_RATE)
+        if exchange_rate_value != 0:
+            cost_value = self._parse_numeric_field(row, self.COL_COST_WITH_CARGO)
+            if cost_value is not None and cost_value > 0:
+                item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
         
         # sizes из названия
         sizes = parse_sizes_from_name(name)

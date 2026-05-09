@@ -18,12 +18,28 @@ This repository is an internal control panel for Mehmet Metrics:
 - `npm run lint`
 - `npm run typecheck`
 - `npm run typecheck:strict`
+- `npm run test`
 - `npm run validate:data`
 - `npm run validate:images`
 - `npm run preflight:fast`
 - `npm run preflight`
 
 If you need a production build, stop any active dev server first. A running dev process can lock `.next/trace` on Windows.
+
+## Local Tooling
+
+- The repository may include a local Windows Node runtime in `.tools/node`.
+- If `npm` is not available in the shell, prepend it before running commands:
+  `$env:PATH = "$PWD\.tools\node;$env:PATH"`
+- `scripts/preflight.mjs` prefers `.tools/node/npm.cmd` and the bundled Codex Python runtime when present, so nested checks use local tools consistently.
+- Agent guidance is editor-neutral and lives in `AGENTS.md`, `docs/AI_CONTEXT.md`, and nearby README files.
+
+## Deployment
+
+- The project is deployed on Netlify.
+- `netlify.toml` defines the Netlify build command.
+- A Git push to the deployment branch is the normal way to refresh the Netlify site.
+- Run `npm run preflight` before pushing deployment changes.
 
 ## Source Of Truth
 
@@ -38,6 +54,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - Payment logic is derived from text status plus `paidPreviously` / `noPayment`.
 - Stable position IDs are built from `shipmentId + index`.
 - `isPayable` controls sums and price-gap logic.
+- If Excel column J (`Курс списания`) is `0`, the parser must not emit `cost` from column N; cargo-only formula results are not real себестоимость.
 - Work screen is shipment history by year, not only current work-in-progress.
 - Parser categories must stay within `Мех`, `Замша`, `Кожа`, `Экзотика`; unknown names should fail parsing instead of falling back to `Прочее`.
 - Shipment size keys must stay within `xs`, `s`, `m`, `l`, `xl`, `OneSize`; unknown keys should fail validation instead of falling back to another size.

@@ -17,7 +17,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — Etope (XS-5, S-4, M-1)",
-        "productId": "auto-042",
+        "productId": "auto-044",
         "price": 320,
         "sizes": {
           "xs": 5,
@@ -25,6 +25,17 @@
           "m": 1
         },
         "status": "Ожидаем материал 🧵"
+      },
+      {
+        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (XS-5, S-3, M-2)",
+        "productId": "auto-041",
+        "price": 340,
+        "sizes": {
+          "xs": 5,
+          "s": 3,
+          "m": 2
+        },
+        "status": "В производстве 🛠️"
       },
       {
         "overrideName": "Жакет приталенный из кожи питона — Etope (XS-4, S-3)",
@@ -38,7 +49,7 @@
       },
       {
         "overrideName": "Куртка из кожи питона по новым лекалам — Etope (XS-5, S-3)",
-        "productId": "auto-043",
+        "productId": "auto-045",
         "price": 480,
         "sizes": {
           "xs": 5,
@@ -75,17 +86,42 @@
     "id": "shipment-2026-11",
     "number": 11,
     "title": "Поставка №11",
-    "status": "В работе 🧵",
+    "status": "В пути 🚚",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из кожи питона — белый (XS-7, S-4)",
+        "overrideName": "Плащ из тонкой кожи — бежевый (образец XS-1)",
+        "productId": "auto-042",
+        "price": 320,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В пути 🚚",
+        "inTransit": true,
+        "sample": true,
+        "quantityOverride": 1
+      },
+      {
+        "overrideName": "Жакет из плетёной кожи в стиле 80-х — бежевый (образец XS-1)",
+        "productId": "auto-043",
+        "price": 220,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В пути 🚚",
+        "inTransit": true,
+        "sample": true,
+        "quantityOverride": 1
+      },
+      {
+        "overrideName": "Жакет приталенный из кожи питона — белый (XS-6, S-4)",
         "productId": "auto-039",
         "price": 560,
         "sizes": {
-          "xs": 7,
+          "xs": 6,
           "s": 4
         },
-        "status": "В производстве 🛠️"
+        "status": "В пути 🚚",
+        "inTransit": true
       },
       {
         "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (XS-10, S-9, M-3)",
@@ -96,18 +132,8 @@
           "s": 9,
           "m": 3
         },
-        "status": "В производстве 🛠️"
-      },
-      {
-        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (XS-5, S-3, M-2)",
-        "productId": "auto-041",
-        "price": 340,
-        "sizes": {
-          "xs": 5,
-          "s": 3,
-          "m": 2
-        },
-        "status": "В производстве 🛠️"
+        "status": "В пути 🚚",
+        "inTransit": true
       },
       {
         "overrideName": "Юбка из кожи питона — белый (XS-4, S-3)",
@@ -117,7 +143,8 @@
           "xs": 4,
           "s": 3
         },
-        "status": "В производстве 🛠️"
+        "status": "В пути 🚚",
+        "inTransit": true
       }
     ],
     "year": 2026
@@ -126,22 +153,22 @@
     "id": "shipment-2026-10",
     "number": 10,
     "title": "Поставка №10",
-    "status": "В работе 🧵",
+    "status": "Получено, не оплачено 📦",
     "rawItems": [
       {
         "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (образец XS-1)",
         "productId": "auto-041",
-        "price": 340,
-        "cost": 1200,
+        "price": 350,
         "sizes": {
           "xs": 1
         },
-        "status": "В производстве 🛠️",
+        "status": "Получено, не оплачено 📦",
         "sample": true,
         "quantityOverride": 1
       }
     ],
-    "year": 2026
+    "year": 2026,
+    "receivedDate": "09.05.2026"
   },
   {
     "id": "shipment-2026-9",
@@ -153,7 +180,6 @@
         "overrideName": "Жакет приталенный из кожи питона — белый (образец XS-1)",
         "productId": "auto-039",
         "price": 560,
-        "cost": 1200,
         "sizes": {
           "xs": 1
         },

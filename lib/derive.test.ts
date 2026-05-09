@@ -3,7 +3,7 @@
  * Группировка и сортировка работают по текстовым статусам (statusLabel).
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { toViewRows } from './derive';
 import type { Position, Batch } from '@/types/domain';
 

@@ -3,7 +3,7 @@
  * Проверяет логику определения статуса оплаты по тексту.
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { isPaidStatus } from './statusText';
 
 describe('isPaidStatus', () => {

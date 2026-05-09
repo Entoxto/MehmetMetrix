@@ -6,7 +6,7 @@
  * со старыми кодовыми статусами.
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 import { getStatusIcon, getStatusLabel } from './format';
 
 describe('getStatusIcon', () => {
@@ -59,4 +59,3 @@ describe('getStatusLabel (text-based)', () => {
     expect(getStatusLabel(undefined)).toBe('Неизвестный статус');
   });
 });
-

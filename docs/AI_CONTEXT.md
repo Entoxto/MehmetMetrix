@@ -55,6 +55,7 @@ It may contain:
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
 - Payment visibility depends on `isPayable`.
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
+- Excel column J (`Курс списания`) guards cost import: if it is `0`, ignore column N for `cost` because it may contain cargo-only formula output before the item is paid.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
@@ -76,8 +77,12 @@ It may contain:
 - `BreakpointProvider` uses actual viewport width on the client.
 - If desktop suddenly looks mobile, check browser zoom (`Ctrl+0`) before changing breakpoints: zoom changes the real viewport width.
 - A separate strict TypeScript check exists in `tsconfig.strict-check.json`.
+- Unit tests use Vitest and run through `npm run test`.
 - `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
-- `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, data validation, image validation, and production build.
+- `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
+- The live site is deployed by Netlify. A Git push to the deployment branch normally triggers the Netlify build, using `netlify.toml` for the build command.
+- If plain `npm` is unavailable on Windows, prepend the bundled runtime with `$env:PATH = "$PWD\.tools\node;$env:PATH"`; `scripts/preflight.mjs` also adds the bundled Codex Python runtime for nested validation steps when it exists.
+- Agent rules are kept in editor-neutral docs (`AGENTS.md`, this file, and README files); do not reintroduce stale editor-specific rule files.
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.

@@ -86,7 +86,7 @@ export function getStatusLabel(statusText: string | null | undefined): string {
   const text = (statusText ?? '').trim();
   if (!text) return 'Неизвестный статус';
 
-  const lower = text.toLowerCase().replace(/[\s_]+/g, '');
+  const lower = text.toLowerCase();
 
   // Обратная совместимость: старые кодовые статусы → человекочитаемый вид с эмодзи
   const legacyMap: Record<string, string> = {
@@ -103,6 +103,12 @@ export function getStatusLabel(statusText: string | null | undefined): string {
 
   if (legacyMap[lower]) {
     return legacyMap[lower];
+  }
+
+  const compactLegacyStatus = lower.replace(/[\s_]+/g, '');
+
+  if (legacyMap[compactLegacyStatus]) {
+    return legacyMap[compactLegacyStatus];
   }
 
   // Текст из Excel — возвращаем как есть

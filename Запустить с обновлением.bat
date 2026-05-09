@@ -19,9 +19,11 @@ echo [1/5] Downloading sheet from Google Docs...
 pushd "Excel" >nul
 python fetch_google_sheet.py
 if %ERRORLEVEL% NEQ 0 (
+    popd >nul
     echo.
-    echo WARNING: failed to download sheet from Google Docs
-    echo          using local Excel file instead
+    echo ERROR: failed to download sheet from Google Docs
+    echo        refusing to parse stale local Excel data
+    goto :fail
 )
 popd >nul
 echo.

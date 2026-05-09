@@ -6,12 +6,12 @@
 
 Требования:
 - Таблица должна быть доступна по ссылке (настройка "Все, у кого есть ссылка")
-- pip install requests
 """
 
-import requests
 import sys
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 # ID таблицы из URL: https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit
 SPREADSHEET_ID = "1Z8RE-Gt7itH15PuCb2tW7GffffgwzASPtMolbWSM0O0"
@@ -33,30 +33,42 @@ def fetch_google_sheet():
     print(f"   ID: {SPREADSHEET_ID}")
     
     try:
-        response = requests.get(export_url, timeout=30)
-        response.raise_for_status()
+        request = Request(
+            export_url,
+            headers={
+                "User-Agent": "Mozilla/5.0",
+            },
+        )
+        with urlopen(request, timeout=30) as response:
+            content = response.read()
+            content_type = response.headers.get("content-type", "")
         
         # Проверяем, что получили xlsx, а не HTML-страницу с ошибкой
-        content_type = response.headers.get('content-type', '')
-        if 'spreadsheet' not in content_type and 'octet-stream' not in content_type:
-            if 'text/html' in content_type:
+        is_xlsx = content.startswith(b"PK")
+        if not is_xlsx:
+            if "text/html" in content_type:
                 print(f"❌ Ошибка: таблица недоступна по ссылке.")
                 print(f"   Убедитесь, что в настройках доступа выбрано")
                 print(f"   'Все, у кого есть ссылка' → 'Читатель'")
                 return False
+            print(f"❌ Ошибка: Google вернул не XLSX-файл (content-type: {content_type or 'unknown'})")
+            return False
         
         # Сохраняем файл
-        with open(output_path, 'wb') as f:
-            f.write(response.content)
+        with open(output_path, "wb") as f:
+            f.write(content)
         
-        file_size_kb = len(response.content) / 1024
+        file_size_kb = len(content) / 1024
         print(f"✅ Таблица успешно загружена: {OUTPUT_FILENAME} ({file_size_kb:.1f} KB)")
         return True
         
-    except requests.exceptions.Timeout:
+    except TimeoutError:
         print(f"❌ Ошибка: превышено время ожидания (30 сек)")
         return False
-    except requests.exceptions.RequestException as e:
+    except HTTPError as e:
+        print(f"❌ Ошибка при загрузке: HTTP {e.code} {e.reason}")
+        return False
+    except URLError as e:
         print(f"❌ Ошибка при загрузке: {e}")
         return False
 
@@ -73,4 +85,3 @@ if __name__ == "__main__":
     
     success = fetch_google_sheet()
     sys.exit(0 if success else 1)
-

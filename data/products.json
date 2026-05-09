@@ -679,7 +679,7 @@
       "inStock": true,
       "tags": [],
       "price": 560,
-      "cost": 1200
+      "cost": 45178
     },
     {
       "id": "auto-040",
@@ -711,16 +711,47 @@
         "m"
       ],
       "materials": {
+        "outer": "100% Натуральная замша",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 340
+    },
+    {
+      "id": "auto-042",
+      "name": "Плащ из тонкой кожи — бежевый",
+      "category": "Кожа",
+      "photo": "/images/products/jpg/Плащ из тонкой кожи — бежевый.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
       "inStock": true,
       "tags": [],
-      "price": 340,
-      "cost": 1200
+      "price": 320
     },
     {
-      "id": "auto-042",
+      "id": "auto-043",
+      "name": "Жакет из плетёной кожи в стиле 80-х — бежевый",
+      "category": "Кожа",
+      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — бежевый.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 220
+    },
+    {
+      "id": "auto-044",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
@@ -738,7 +769,7 @@
       "price": 320
     },
     {
-      "id": "auto-043",
+      "id": "auto-045",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",

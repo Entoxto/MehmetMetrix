@@ -30,6 +30,14 @@ npm start
 
 Приложение откроется на `http://localhost:3000`
 
+На Windows проект может использовать локальный Node.js из `.tools/node`. Если shell не видит `npm`, выполните перед командами:
+
+```powershell
+$env:PATH = "$PWD\.tools\node;$env:PATH"
+```
+
+`scripts/preflight.mjs` при запуске сам предпочитает `.tools/node/npm.cmd` и, если доступен, bundled Python из Codex runtime для вложенных проверок данных.
+
 ---
 
 ## 🤖 Контекст для агентов и редакторов
@@ -42,6 +50,7 @@ npm start
 4. `data/README.md` — что можно редактировать вручную, а что перезаписывается парсером
 
 Коротко:
+- правила для агентов хранятся в универсальных документах проекта, без редактор-специфичных `.cursor/rules`
 - `data/shipments.json`, `data/products.json`, `data/meta.json` — генерируются из Excel / Google Sheet
 - `data/money.json` — ручной файл; может содержать депозиты и ручные доплаты в `Всего к оплате`, но всё равно проверяется через `npm run validate:data`
 - статусы хранятся как текст из Excel 1 в 1
@@ -205,7 +214,7 @@ interface Position {
   sizes: Record<Size, number>;  // Количество по размерам
   qty: number;             // Общее количество
   price: number | null;    // Цена за единицу в долларах (из колонки H Excel)
-  cost: number | null;     // Себестоимость в рублях (из колонки N Excel)
+  cost: number | null;     // Себестоимость в рублях (из колонки N Excel, только если курс J != 0)
   sum: number | null;      // Сумма к оплате (price × qty) или null
   isPayable: boolean;     // Учитывается ли позиция в оплате
   sample: boolean;         // Это образец?
@@ -242,7 +251,8 @@ interface Batch {
 **Обновление цен и себестоимости в каталоге:**
 - Цены и себестоимость в `products.json` обновляются автоматически из `shipments.json`
 - Во время `Excel/parse_excel.py` актуализация каталога происходит в памяти, до записи файлов на диск
-- Для каждого товара записывается самая актуальная цена (в долларах) и себестоимость (в рублях) из последней поставки
+- Для каждого товара записывается самая актуальная цена (в долларах) и себестоимость (в рублях) из последней поставки, где себестоимость уже реально известна
+- Если `Курс списания` в колонке J равен `0`, парсер не берёт `cost` из колонки N: формула N может временно содержать только карго до оплаты товара
 - Перед сохранением пайплайн валидирует `shipments.json`, `products.json` и `meta.json`
 - Приложение использует цены и себестоимость напрямую из `products.json` (без дополнительной обработки)
 
@@ -342,7 +352,7 @@ const sum = price != null && !paidPreviously && !noPayment
 | Кол-во | Количество единиц | — | ✅ Видна |
 | Цена | Цена за единицу | $ (доллары) | ✅ Видна |
 | Сумма | Итоговая сумма (цена × количество) | $ (доллары) | ✅ Видна |
-| Себестоимость | Себестоимость с учётом карго за единицу (из колонки N Excel) | ₽ (рубли, округляется до целых) | ❌ Скрыта (прокрутка) |
+| Себестоимость | Себестоимость с учётом карго за единицу (из колонки N Excel, если курс списания в колонке J не равен `0`) | ₽ (рубли, округляется до целых) | ❌ Скрыта (прокрутка) |
 
 **Мобильная адаптация:**
 - На мобильных устройствах (< 768px) колонка "Себестоимость" скрыта для экономии места
@@ -434,7 +444,7 @@ python parse_excel.py
 1. Читает файл `Расчёты с мехметом new.xlsx` (лист "Поставки")
 2. Парсит поставки, позиции, статусы, цены и даты
 3. Извлекает `price` из колонки H ("Стоймость 1 ед $") — цена в долларах
-4. Извлекает `cost` из колонки N ("Себестоимость с учётом карго") — себестоимость в рублях
+4. Извлекает `cost` из колонки N ("Себестоимость с учётом карго") — себестоимость в рублях, но только если `Курс списания` в колонке J не равен `0`
 5. Переносит колонку `Состав` в `products.json` → `materials` (с мягким разбором на `outer`, `lining`, `comments`)
 6. Обновляет `products.json` актуальными `price` / `cost` прямо в памяти
 7. Валидирует `shipments.json`, `products.json` и `meta.json`
@@ -487,9 +497,10 @@ npm run preflight
 1. `npm run lint`
 2. `npm run typecheck`
 3. `npm run typecheck:strict`
-4. `npm run validate:data`
-5. `npm run validate:images`
-6. `npm run build`
+4. `npm run test`
+5. `npm run validate:data`
+6. `npm run validate:images`
+7. `npm run build`
 
 **Быстрый preflight для ежедневного запуска:**
 ```bash
@@ -574,7 +585,7 @@ const isMarkedPaid = isPaidStatus(shipment.status);
 - `price` — цена на момент поставки в долларах (историческая, из колонки H Excel)
 
 **Поля себестоимости:**
-- `cost` — себестоимость в рублях (из колонки N Excel, опционально)
+- `cost` — себестоимость в рублях (из колонки N Excel, опционально; не заполняется при `Курс списания = 0`)
 
 **Опциональные поля:**
 - `overrideName` — название для отображения (если отличается от каталога)
@@ -688,11 +699,12 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 | `npm run lint` | Проверка ESLint |
 | `npm run typecheck` | Проверка TypeScript |
 | `npm run typecheck:strict` | Строгая проверка TypeScript с `noUnusedLocals` и `noUnusedParameters` |
+| `npm run test` | Unit-тесты бизнес-логики через Vitest |
 | `npm run validate:data` | Smoke-check generated data (`shipments.json`, `products.json`, `meta.json`) и ручного `money.json` |
 | `npm run validate:images` | Проверка photo-path каталога, JPG/WebP ассетов и лишних файлов |
 | `npm run preflight:fast` | Быстрый ежедневный прогон: generated data + изображения |
-| `npm run preflight` | Полный pre-deploy прогон: lint + typecheck + data + images + build |
-| `npm run build:full` | Lint + TypeCheck + Build |
+| `npm run preflight` | Полный pre-deploy прогон: lint + typecheck + tests + data + images + build |
+| `npm run build:full` | Lint + TypeCheck + Tests + Build |
 
 ### Python скрипты
 
@@ -728,7 +740,7 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 ```
 
 Этот скрипт выполняет все шаги автоматически:
-1. Загружает таблицу из Google Sheets (если доступна)
+1. Загружает таблицу из Google Sheets; если загрузка не удалась, останавливается, чтобы не парсить старый локальный Excel
 2. Парсит Excel в JSON
 3. Конвертирует изображения в WebP
 4. Прогоняет `npm run preflight:fast`
@@ -739,6 +751,26 @@ Hover-эффекты для карточек определены в `CARD_HOVER
 - `Запустить проект.bat` — быстрый запуск без обновления данных; перед стартом прогоняет `npm run preflight:fast`
 - `Запустить с обновлением.bat` — полный ежедневный сценарий: fetch → parse → webp → `preflight:fast` → `dev`
 - `Собрать проект.bat` — запускает полный `npm run preflight` и оставляет готовую production-сборку в `.next/`
+
+---
+
+## 🚢 Деплой
+
+Проект разворачивается на Netlify. Обычный рабочий путь обновления сайта:
+
+1. Внести изменения и обновить данные при необходимости
+2. Запустить `npm run preflight`
+3. Сделать Git push в deploy-ветку
+4. Netlify подхватит push и выполнит build по `netlify.toml`
+
+`netlify.toml` хранит команду сборки для Netlify:
+
+```toml
+[build]
+  command = "npm run build"
+```
+
+Для агентов это важный контекст: push часто нужен не только для синхронизации Git, но и как способ обновить опубликованный Netlify-сайт.
 
 ---
 
@@ -846,7 +878,9 @@ public/images/products/
 - **pandas** — обработка табличных данных
 - **openpyxl** — чтение Excel файлов
 - **Pillow (PIL)** — конвертация изображений в WebP
-- **requests** — загрузка таблицы из Google Sheets
+
+### Hosting
+- **Netlify** — production deploy; Git push в deploy-ветку обновляет сайт через build из `netlify.toml`
 
 **Установка Python зависимостей:**
 ```bash
