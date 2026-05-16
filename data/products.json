@@ -732,7 +732,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320
+      "price": 320,
+      "cost": 1550
     },
     {
       "id": "auto-043",
@@ -748,10 +749,43 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 220
+      "price": 320,
+      "cost": 2350
     },
     {
       "id": "auto-044",
+      "name": "Штаны из меха астроган — асфальт",
+      "category": "Мех",
+      "photo": "/images/products/jpg/Штаны из меха астроган — асфальт.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 255
+    },
+    {
+      "id": "auto-045",
+      "name": "Дублёнка из меха астроган — асфальт",
+      "category": "Мех",
+      "photo": "/images/products/jpg/Дублёнка из меха астроган — асфальт.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 315
+    },
+    {
+      "id": "auto-046",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
@@ -769,7 +803,7 @@
       "price": 320
     },
     {
-      "id": "auto-045",
+      "id": "auto-047",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",

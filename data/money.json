@@ -1,11 +1,5 @@
 {
-  "pendingManual": [
-    {
-      "id": "pending-deposit-top-up",
-      "title": "Необходимо пополнить депозит",
-      "amount": 3952
-    }
-  ],
+  "pendingManual": [],
   "deposits": [
     {
       "id": "deposit-python",
