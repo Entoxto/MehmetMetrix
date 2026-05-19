@@ -513,7 +513,7 @@
       "inStock": true,
       "tags": [],
       "price": 215,
-      "cost": 19598
+      "cost": 18878
     },
     {
       "id": "auto-031",
@@ -641,7 +641,7 @@
       "inStock": true,
       "tags": [],
       "price": 310,
-      "cost": 25431
+      "cost": 24853
     },
     {
       "id": "auto-038",
@@ -679,7 +679,7 @@
       "inStock": true,
       "tags": [],
       "price": 560,
-      "cost": 45178
+      "cost": 43971
     },
     {
       "id": "auto-040",
@@ -698,7 +698,7 @@
       "inStock": true,
       "tags": [],
       "price": 325,
-      "cost": 26615
+      "cost": 26000
     },
     {
       "id": "auto-041",
@@ -716,7 +716,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 340
+      "price": 340,
+      "cost": 30316
     },
     {
       "id": "auto-042",
@@ -733,7 +734,7 @@
       "inStock": true,
       "tags": [],
       "price": 320,
-      "cost": 1550
+      "cost": 26021
     },
     {
       "id": "auto-043",
@@ -750,7 +751,7 @@
       "inStock": true,
       "tags": [],
       "price": 320,
-      "cost": 2350
+      "cost": 19174
     },
     {
       "id": "auto-044",
@@ -766,7 +767,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 255
+      "price": 255,
+      "cost": 20581
     },
     {
       "id": "auto-045",
@@ -782,7 +784,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 315
+      "price": 315,
+      "cost": 25169
     },
     {
       "id": "auto-046",

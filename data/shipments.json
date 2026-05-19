@@ -124,60 +124,61 @@
     "id": "shipment-2026-14",
     "number": 14,
     "title": "Поставка №14",
-    "status": "В пути 🚚",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из кожи питона — белый (XS-6, S-4)",
         "productId": "auto-039",
         "price": 560,
+        "cost": 43971,
         "sizes": {
           "xs": 6,
           "s": 4
         },
-        "status": "В пути 🚚",
-        "inTransit": true
+        "status": "Получено, оплачено ✅"
       },
       {
         "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (XS-10, S-9, M-3)",
         "productId": "auto-037",
         "price": 310,
+        "cost": 24853,
         "sizes": {
           "xs": 10,
           "s": 9,
           "m": 3
         },
-        "status": "В пути 🚚",
-        "inTransit": true
+        "status": "Получено, оплачено ✅"
       },
       {
         "overrideName": "Юбка из кожи питона — белый (XS-4, S-3)",
         "productId": "auto-040",
         "price": 325,
+        "cost": 26000,
         "sizes": {
           "xs": 4,
           "s": 3
         },
-        "status": "В пути 🚚",
-        "inTransit": true
+        "status": "Получено, оплачено ✅"
       }
     ],
-    "year": 2026
+    "year": 2026,
+    "receivedDate": "19.05.2026"
   },
   {
     "id": "shipment-2026-13",
     "number": 13,
     "title": "Поставка №13",
-    "status": "В пути 🚚",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Штаны из меха астроган — асфальт (образец XS-1)",
         "productId": "auto-044",
         "price": 255,
+        "cost": 20581,
         "sizes": {
           "xs": 1
         },
-        "status": "В пути 🚚",
-        "inTransit": true,
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       },
@@ -185,32 +186,33 @@
         "overrideName": "Дублёнка из меха астроган — асфальт (образец XS-1)",
         "productId": "auto-045",
         "price": 315,
+        "cost": 25169,
         "sizes": {
           "xs": 1
         },
-        "status": "В пути 🚚",
-        "inTransit": true,
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       }
     ],
-    "year": 2026
+    "year": 2026,
+    "receivedDate": "19.05.2026"
   },
   {
     "id": "shipment-2026-12",
     "number": 12,
     "title": "Поставка №12",
-    "status": "Получено, не оплачено 📦",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Жакет из плетёной кожи в стиле 80-х — бежевый (образец XS-1)",
         "productId": "auto-043",
         "price": 220,
-        "cost": 2350,
+        "cost": 19174,
         "sizes": {
           "xs": 1
         },
-        "status": "Получено, не оплачено 📦",
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       }
@@ -222,17 +224,17 @@
     "id": "shipment-2026-11",
     "number": 11,
     "title": "Поставка №11",
-    "status": "Получено, не оплачено 📦",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Плащ из тонкой кожи — бежевый (образец XS-1)",
         "productId": "auto-042",
         "price": 320,
-        "cost": 1550,
+        "cost": 26021,
         "sizes": {
           "xs": 1
         },
-        "status": "Получено, не оплачено 📦",
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       }
@@ -244,16 +246,17 @@
     "id": "shipment-2026-10",
     "number": 10,
     "title": "Поставка №10",
-    "status": "Получено, не оплачено 📦",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (образец XS-1)",
         "productId": "auto-041",
         "price": 350,
+        "cost": 30316,
         "sizes": {
           "xs": 1
         },
-        "status": "Получено, не оплачено 📦",
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       }
@@ -265,16 +268,17 @@
     "id": "shipment-2026-9",
     "number": 9,
     "title": "Поставка №9",
-    "status": "Получено, не оплачено 📦",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Жакет приталенный из кожи питона — белый (образец XS-1)",
         "productId": "auto-039",
         "price": 560,
+        "cost": 45225,
         "sizes": {
           "xs": 1
         },
-        "status": "Получено, не оплачено 📦",
+        "status": "Получено, оплачено ✅",
         "sample": true,
         "quantityOverride": 1
       }
@@ -571,7 +575,7 @@
         "overrideName": "Штаны из меха мериноса — бежевый (M-3)",
         "productId": "auto-030",
         "price": 215,
-        "cost": 19598,
+        "cost": 18878,
         "sizes": {
           "m": 3
         },
