@@ -513,7 +513,7 @@
       "inStock": true,
       "tags": [],
       "price": 215,
-      "cost": 18878
+      "cost": 18569
     },
     {
       "id": "auto-031",
@@ -717,7 +717,7 @@
       "inStock": true,
       "tags": [],
       "price": 340,
-      "cost": 30316
+      "cost": 27967
     },
     {
       "id": "auto-042",
@@ -742,7 +742,9 @@
       "category": "Кожа",
       "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — бежевый.jpg",
       "sizes": [
-        "xs"
+        "xs",
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральная кожа",
@@ -768,7 +770,7 @@
       "inStock": true,
       "tags": [],
       "price": 255,
-      "cost": 20581
+      "cost": 20272
     },
     {
       "id": "auto-045",
@@ -785,10 +787,44 @@
       "inStock": true,
       "tags": [],
       "price": 315,
-      "cost": 25169
+      "cost": 24860
     },
     {
       "id": "auto-046",
+      "name": "Штаны из меха астроган — чёрный",
+      "category": "Мех",
+      "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 230,
+      "cost": 18360
+    },
+    {
+      "id": "auto-047",
+      "name": "Пальто из меха астроган — чёрный",
+      "category": "Мех",
+      "photo": "/images/products/jpg/Пальто из меха астроган — чёрный.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 315,
+      "cost": 24860
+    },
+    {
+      "id": "auto-048",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
@@ -806,7 +842,7 @@
       "price": 320
     },
     {
-      "id": "auto-047",
+      "id": "auto-049",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",

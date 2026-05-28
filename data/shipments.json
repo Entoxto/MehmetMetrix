@@ -1,8 +1,8 @@
 [
   {
-    "id": "shipment-2026-17",
-    "number": 17,
-    "title": "Поставка №17",
+    "id": "shipment-2026-18",
+    "number": 18,
+    "title": "Поставка №18",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -27,7 +27,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — Etope (XS-5, S-4, M-1)",
-        "productId": "auto-046",
+        "productId": "auto-048",
         "price": 320,
         "sizes": {
           "xs": 5,
@@ -38,7 +38,7 @@
       },
       {
         "overrideName": "Куртка из кожи питона по новым лекалам — Etope (XS-5, S-3)",
-        "productId": "auto-047",
+        "productId": "auto-049",
         "price": 480,
         "sizes": {
           "xs": 5,
@@ -72,9 +72,9 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-16",
-    "number": 16,
-    "title": "Поставка №16",
+    "id": "shipment-2026-17",
+    "number": 17,
+    "title": "Поставка №17",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -89,11 +89,13 @@
         "status": "Ожидаем материал 🧵"
       },
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — бежевый (XS-20)",
+        "overrideName": "Жакет из плетёной кожи в стиле 80-х — бежевый (XS-8, S-8, M-4)",
         "productId": "auto-043",
         "price": 320,
         "sizes": {
-          "xs": 20
+          "xs": 8,
+          "s": 8,
+          "m": 4
         },
         "status": "Ожидаем материал 🧵"
       }
@@ -101,24 +103,60 @@
     "year": 2026
   },
   {
+    "id": "shipment-2026-16",
+    "number": 16,
+    "title": "Поставка №16",
+    "status": "Получено, не оплачено 📦",
+    "rawItems": [
+      {
+        "overrideName": "Штаны из меха астроган — чёрный (образец XS-1)",
+        "productId": "auto-046",
+        "price": 230,
+        "cost": 18360,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
+        "sample": true,
+        "quantityOverride": 1
+      },
+      {
+        "overrideName": "Пальто из меха астроган — чёрный (образец XS-1)",
+        "productId": "auto-047",
+        "price": 315,
+        "cost": 24860,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
+        "sample": true,
+        "quantityOverride": 1
+      }
+    ],
+    "year": 2026,
+    "receivedDate": "25.05.2026"
+  },
+  {
     "id": "shipment-2026-15",
     "number": 15,
     "title": "Поставка №15",
-    "status": "Оплачено, в работе 🧵",
+    "status": "Получено, оплачено ✅",
     "rawItems": [
       {
         "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (XS-4, S-3, M-2)",
         "productId": "auto-041",
         "price": 340,
+        "cost": 27967,
         "sizes": {
           "xs": 4,
           "s": 3,
           "m": 2
         },
-        "status": "Оплачено,  в производстве 🛠️"
+        "status": "Получено, оплачено ✅"
       }
     ],
-    "year": 2026
+    "year": 2026,
+    "receivedDate": "28.05.2026"
   },
   {
     "id": "shipment-2026-14",
@@ -174,7 +212,7 @@
         "overrideName": "Штаны из меха астроган — асфальт (образец XS-1)",
         "productId": "auto-044",
         "price": 255,
-        "cost": 20581,
+        "cost": 20272,
         "sizes": {
           "xs": 1
         },
@@ -186,7 +224,7 @@
         "overrideName": "Дублёнка из меха астроган — асфальт (образец XS-1)",
         "productId": "auto-045",
         "price": 315,
-        "cost": 25169,
+        "cost": 24860,
         "sizes": {
           "xs": 1
         },
@@ -575,7 +613,7 @@
         "overrideName": "Штаны из меха мериноса — бежевый (M-3)",
         "productId": "auto-030",
         "price": 215,
-        "cost": 18878,
+        "cost": 18569,
         "sizes": {
           "m": 3
         },
