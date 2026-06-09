@@ -57,6 +57,7 @@ It may contain:
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
 - Excel column J (`Курс списания`) guards cost import: if it is `0`, ignore column N for `cost` because it may contain cargo-only formula output before the item is paid.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
+- `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Product cards and category cards should not imply clickability beyond their real clickable area.

@@ -339,7 +339,7 @@ class ExcelParser:
         # Проверяем наличие слова "образец" в скобках (может быть с размерами или без)
         if re.search(r'\([^)]*образец[^)]*\)', name, re.IGNORECASE):
             item["sample"] = True
-            if "quantityOverride" not in item:
+            if "quantityOverride" not in item and not sizes:
                 item["quantityOverride"] = 1
         
         return item

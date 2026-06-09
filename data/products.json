@@ -334,7 +334,8 @@
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
       "sizes": [
         "xs",
-        "s"
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Кожа питона",
@@ -369,7 +370,8 @@
       "category": "Экзотика",
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
       "sizes": [
-        "xs"
+        "xs",
+        "s"
       ],
       "materials": {
         "outer": "100% Кожа питона",
@@ -590,7 +592,11 @@
       "name": "Юбка из кожи питона — бежевый светлый",
       "category": "Экзотика",
       "photo": "/images/products/jpg/Юбка из кожи питона — бежевый светлый.jpg",
-      "sizes": [],
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
@@ -711,7 +717,7 @@
       "inStock": true,
       "tags": [],
       "price": 340,
-      "cost": 26932
+      "cost": 26886
     },
     {
       "id": "auto-042",
@@ -830,8 +836,59 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 300,
-      "cost": 23873
+      "price": 300
+    },
+    {
+      "id": "auto-049",
+      "name": "Куртка из кожи питона по новым лекалам — белый",
+      "category": "Экзотика",
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — белый.jpg",
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 560,
+      "cost": 885
+    },
+    {
+      "id": "auto-050",
+      "name": "Юбка из кожи питона — Etope",
+      "category": "Экзотика",
+      "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
+      "sizes": [
+        "xs",
+        "s",
+        "m"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 320
+    },
+    {
+      "id": "auto-051",
+      "name": "Куртка из кожи питона по новым лекалам — Etope",
+      "category": "Экзотика",
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",
+      "sizes": [
+        "xs",
+        "s"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 480
     }
   ]
 }
