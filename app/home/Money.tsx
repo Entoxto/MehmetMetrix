@@ -12,19 +12,7 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { formatCurrency } from "@/lib/format";
 import { createCardHoverHandlers } from "@/lib/utils";
 import { ClickableCard } from "@/components/ui/ClickableCard";
-
-interface MoneyStatusItem {
-  id: string;
-  title: string;
-  amount: number;
-  href?: string;
-}
-
-interface MoneyDepositItem {
-  id: string;
-  lines: string[];
-  amount: number;
-}
+import type { MoneyStatusItem, MoneyDepositItem } from "@/lib/money";
 
 interface MoneyProps {
   expandedCards: Set<string>;
@@ -225,6 +213,8 @@ export const Money = ({
   }: MetricCardConfig<TItem>) => (
     <ClickableCard
       onPress={() => onToggleCard(cardId)}
+      aria-expanded={expandedCards.has(cardId)}
+      aria-label={label}
       style={{
         ...CARD_STYLE,
         padding: isMobile ? SPACING.smPlus : SPACING.xl,
@@ -259,11 +249,19 @@ export const Money = ({
           {label}
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-          {expandedCards.has(cardId) ? (
-            <span style={{ fontSize: 14, color: COLORS.text.secondary, transition: "transform 0.3s ease" }}>▼</span>
-          ) : (
-            <span style={{ fontSize: 14, color: COLORS.text.secondary }}>▶</span>
-          )}
+          <span
+            aria-hidden="true"
+            style={{
+              fontSize: 14,
+              color: COLORS.text.secondary,
+              display: "inline-block",
+              transition: "transform 0.3s ease",
+              transform: expandedCards.has(cardId) ? "rotate(90deg)" : "rotate(0deg)",
+              lineHeight: 1,
+            }}
+          >
+            ▶
+          </span>
         </div>
       </div>
       <p

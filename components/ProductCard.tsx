@@ -9,6 +9,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
 import { createCardHoverHandlers } from "@/lib/utils";
+import { formatCurrency } from "@/lib/format";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import type { Product } from "@/types/product";
@@ -163,7 +164,7 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
               </p>
               {product.price ? (
                 <p style={{ color: COLORS.success, fontSize: isMobile ? 20 : 24, fontWeight: 800, margin: 0, lineHeight: isMobile ? "24px" : "28px" }}>
-                  ${product.price.toLocaleString()}
+                  {formatCurrency(product.price)}
                 </p>
               ) : (
                 <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 15 : 18, fontWeight: 700, margin: 0, lineHeight: isMobile ? "20px" : "24px" }}>

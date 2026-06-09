@@ -90,7 +90,7 @@ It may contain:
 - `Shell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
 - Entering `/` resets in-app navigation memory, so later back actions start from the main menu again.
 - Product pages use explicit back behavior to preserve `Work` / `Catalog` context, while other screens prefer the in-app history stack first and fallback second.
-- `app/layout.tsx` contains the global keyframes and the `prefers-reduced-motion` safeguard.
+- `app/layout.tsx` contains the global keyframes, the `prefers-reduced-motion` safeguard, and the global `:focus-visible` ring (keyboard focus is visible, mouse clicks stay clean).
 - Screen intros and card grids now use soft staggered entrance motion; new motion should match that quieter rhythm.
 - Telegram's in-app browser may close on vertical swipe for ordinary links; that behavior is outside the control of a regular web page. Official swipe control exists only for Telegram Mini Apps.
 

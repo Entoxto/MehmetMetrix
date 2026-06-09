@@ -79,11 +79,6 @@ export const STYLES = {
     boxShadow: "0 14px 40px rgba(0, 0, 0, 0.24)",
     transition: "all 0.25s ease",
   },
-  // Расширенная карточка (используется в раскрытом состоянии)
-  cardExpanded: {
-    background: COLORS.background.cardExpanded,
-    border: `1px solid ${COLORS.border.hover}`,
-  },
   // Чип размеров у позиций
   sizeBadge: {
     background: COLORS.background.soft,
@@ -144,39 +139,9 @@ export const STYLES = {
     fontSize: 13,
     lineHeight: 1.5,
   },
-  metaBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    padding: "5px 10px",
-    borderRadius: 999,
-    border: `1px solid ${COLORS.border.default}`,
-    background: COLORS.background.soft,
-    color: COLORS.text.muted,
-    fontSize: 11,
-    lineHeight: 1.4,
-    fontWeight: 600,
-  },
-  divider: {
-    width: "100%",
-    height: 1,
-    background: COLORS.border.default,
-  },
-  focusRing: {
-    outline: `2px solid ${COLORS.primary}`,
-    outlineOffset: "2px",
-  },
 } as const;
 
 export const MOTION = {
-  easing: {
-    smooth: "cubic-bezier(0.22, 1, 0.36, 1)",
-  },
-  duration: {
-    fast: "180ms",
-    base: "260ms",
-    slow: "520ms",
-  },
   interactiveTransition:
     "transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, background 0.24s ease, opacity 0.24s ease",
   staggerEnter: (index = 0, delayStep = 70) =>
@@ -201,7 +166,6 @@ export const TYPOGRAPHY = {
   h2: { fontSize: 32, fontWeight: 900, lineHeight: 1.2 },
   h3: { fontSize: 24, fontWeight: 800, lineHeight: 1.3 },
   body: { fontSize: 14, lineHeight: 1.5 },
-  bodyLg: { fontSize: 16, lineHeight: 1.6 },
   caption: { fontSize: 12, lineHeight: 1.4, letterSpacing: 1.2 },
   amount: { fontSize: 36, fontWeight: 900, lineHeight: 1.1 },
   tableHeader: { fontSize: 12, lineHeight: 1.4, letterSpacing: 1 },
@@ -262,15 +226,6 @@ export const CARD_TEMPLATES = {
     display: "grid",
     gap: isMobile ? SPACING.md : SPACING.lg,
     gridTemplateColumns: isMobile ? "1fr" : `repeat(auto-fit, minmax(${minWidth}px, 1fr))`,
-  }),
-  tableHeader: (isMobile: boolean) => ({
-    padding: isMobile ? "10px 12px" : "14px 18px",
-    background: COLORS.background.soft,
-    textTransform: "uppercase" as const,
-    letterSpacing: 1,
-    color: COLORS.text.muted,
-    borderBottom: `1px solid ${COLORS.border.default}`,
-    margin: 0,
   }),
   tableValue: (isMobile: boolean, align: "left" | "center" = "left") => ({
     padding: isMobile ? "8px 8px" : "12px 12px",
@@ -346,10 +301,6 @@ export const CARD_HOVER_EFFECTS = {
     },
   },
 } as const;
-
-
-
-
 
 
 

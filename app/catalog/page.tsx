@@ -9,7 +9,14 @@ import { formatModelCount } from "@/lib/format";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Catalog } from "@/app/home/Catalog";
 import { Shell } from "@/components/Shell";
-import { COLORS } from "@/constants/styles";
+import { HOME_STYLES } from "@/app/home/styles";
+
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  Мех: "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
+  Замша: "Мягкая, как голос Мехмета, когда он говорит про сроки.",
+  Кожа: "Коровка старалась, не подведи её в каталоге.",
+  Экзотика: "Для тех, кто любит, чтобы шкура шипела дорого.",
+};
 
 function CatalogPageContent() {
   const router = useRouter();
@@ -18,19 +25,9 @@ function CatalogPageContent() {
 
   const selectedCategory = searchParams.get("category");
 
-  // Цены берутся напрямую из products.json (обновляются скриптом update_prices.py)
+  // Цены берутся напрямую из products.json (обновляются шагом актуализации каталога)
   const products: Product[] = useMemo(() => getProducts(), []);
   const dataMeta = useMemo(() => getDataMeta(), []);
-
-  const categoryDescriptions: Record<string, string> = useMemo(
-    () => ({
-      Мех: "Меринос, чернобурка, нутрия — всё, что хочется гладить.",
-      Замша: "Мягкая, как голос Мехмета, когда он говорит про сроки.",
-      Кожа: "Коровка старалась, не подведи её в каталоге.",
-      Экзотика: "Для тех, кто любит, чтобы шкура шипела дорого.",
-    }),
-    []
-  );
 
   const catalogGroups = useMemo(() => {
     const categoryMap = products.reduce((acc, product) => {
@@ -43,10 +40,10 @@ function CatalogPageContent() {
 
     return Object.entries(categoryMap).map(([cat, count]) => ({
       title: cat,
-      desc: categoryDescriptions[cat] || "",
+      desc: CATEGORY_DESCRIPTIONS[cat] || "",
       badge: formatModelCount(count),
     }));
-  }, [categoryDescriptions, products]);
+  }, [products]);
 
   const categoryProducts = useMemo(() => {
     if (!selectedCategory) return [];
@@ -79,22 +76,7 @@ function CatalogPageContent() {
 
 export default function CatalogPage() {
   return (
-    <Suspense
-      fallback={
-        <div
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
-            color: COLORS.text.primary,
-          }}
-        >
-          Загрузка каталога...
-        </div>
-      }
-    >
+    <Suspense fallback={<div style={HOME_STYLES.loaderContainer}>Загрузка каталога...</div>}>
       <CatalogPageContent />
     </Suspense>
   );

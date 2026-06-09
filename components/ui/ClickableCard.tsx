@@ -51,10 +51,7 @@ export const ClickableCard = ({
       tabIndex={tabIndex ?? 0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      style={{
-        outline: "none",
-        ...style,
-      }}
+      style={style}
       {...rest}
     >
       {children}

@@ -3,27 +3,24 @@
 import { useMemo, Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
-import { COLORS } from "@/constants/styles";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { getProducts } from "@/lib/products";
 import { Shell } from "@/components/Shell";
+import { HOME_STYLES } from "@/app/home/styles";
 
 function ProductPageContent() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const { isMobile, isTablet } = useBreakpoint();
-  const isCompact = isMobile || isTablet;
 
   const productId = params.id as string;
 
   const products = useMemo(() => getProducts(), []);
 
-  // Цена берётся напрямую из products.json (обновляется скриптом update_prices.py)
+  // Цена берётся напрямую из products.json (обновляется шагом актуализации каталога)
   const product = useMemo(() => {
     return products.find((p) => p.id === productId);
   }, [products, productId]);
 
-  // Determine back link logic
+  // Возврат сохраняет контекст источника: Work (партия/позиция) или Catalog (категория)
   const backHref = useMemo(() => {
     const from = searchParams.get("from");
     const batch = searchParams.get("batch");
@@ -31,7 +28,6 @@ function ProductPageContent() {
 
     if (from === "work") {
       const params = new URLSearchParams();
-      // We don't need 'view=work' anymore, just path /work
       if (batch) params.set("batch", batch);
       if (pos) params.set("pos", pos);
       const queryString = params.toString();
@@ -44,25 +40,15 @@ function ProductPageContent() {
       }
       return "/catalog";
     }
-    
-    return "/catalog"; // Default fallback
+
+    return "/catalog";
   }, [searchParams]);
 
   if (!product) {
     return (
       <Shell>
-        <div
-          style={{
-            flex: 1,
-            padding: isCompact ? 16 : 32,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 16,
-          }}
-        >
-          <p style={{ color: COLORS.error, fontSize: 16 }}>Товар не найден</p>
+        <div style={HOME_STYLES.errorContainer}>
+          <p style={HOME_STYLES.errorMessage}>Товар не найден</p>
         </div>
       </Shell>
     );
@@ -76,23 +62,8 @@ function ProductPageContent() {
 }
 
 export default function ProductPage() {
-   return (
-    <Suspense
-      fallback={
-        <div
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
-            color: COLORS.text.primary,
-          }}
-        >
-          Загрузка...
-        </div>
-      }
-    >
+  return (
+    <Suspense fallback={<div style={HOME_STYLES.loaderContainer}>Загрузка...</div>}>
       <ProductPageContent />
     </Suspense>
   );

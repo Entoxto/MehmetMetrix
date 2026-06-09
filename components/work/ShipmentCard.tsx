@@ -11,6 +11,7 @@ import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } fro
 import { isPaidStatus } from "@/lib/statusText";
 import { getShipmentModelCount, getShipmentUnitCount } from "@/lib/shipmentMetrics";
 import { BatchView } from "@/components/work/BatchView";
+import { ClickableCard } from "@/components/ui/ClickableCard";
 import type { ShipmentWithItems } from "@/types/shipment";
 
 interface ShipmentCardProps {
@@ -159,16 +160,8 @@ export const ShipmentCard = ({
         }}
       />
 
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={onToggle}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onToggle();
-          }
-        }}
+      <ClickableCard
+        onPress={onToggle}
         aria-expanded={isExpanded}
         aria-label={`${shipment.title}, ${statusLabelText}`}
         style={{
@@ -180,7 +173,6 @@ export const ShipmentCard = ({
           position: "relative",
           zIndex: 1,
           cursor: "pointer",
-          outline: "none",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>
@@ -252,24 +244,13 @@ export const ShipmentCard = ({
           </div>
         </div>
 
-        {isDesktop && (
-          <ShipmentDateInfo
-            shipment={shipment}
-            isDesktop={true}
-            isMobile={isMobile}
-            typography={typography}
-          />
-        )}
-
-        {!isDesktop && (
-          <ShipmentDateInfo
-            shipment={shipment}
-            isDesktop={false}
-            isMobile={isMobile}
-            typography={typography}
-          />
-        )}
-      </div>
+        <ShipmentDateInfo
+          shipment={shipment}
+          isDesktop={isDesktop}
+          isMobile={isMobile}
+          typography={typography}
+        />
+      </ClickableCard>
 
       {isExpanded && (
         <>

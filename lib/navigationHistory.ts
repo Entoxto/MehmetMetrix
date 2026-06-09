@@ -11,7 +11,7 @@ export const getCurrentRoute = () => {
   return `${pathname}${search}${hash}` || "/";
 };
 
-export const readNavigationHistory = () => {
+const readNavigationHistory = () => {
   if (!isBrowser()) return [] as string[];
 
   try {
@@ -25,7 +25,7 @@ export const readNavigationHistory = () => {
   }
 };
 
-export const writeNavigationHistory = (history: string[]) => {
+const writeNavigationHistory = (history: string[]) => {
   if (!isBrowser()) return;
 
   sessionStorage.setItem(APP_NAVIGATION_HISTORY_KEY, JSON.stringify(history));

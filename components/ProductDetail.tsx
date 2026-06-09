@@ -283,7 +283,6 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {/* Цена */}
           <div>
             <p style={SECTION_HEADER_STYLE}>
-              {/* NOTE: All prices are in USD dollars only */}
               Цена
             </p>
             {product.price ? (

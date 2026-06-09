@@ -74,13 +74,14 @@ export default function RootLayout({
             }
           }
 
-          @keyframes shimmerSweep {
-            from {
-              transform: translateX(-140%);
-            }
-            to {
-              transform: translateX(160%);
-            }
+          :focus:not(:focus-visible) {
+            outline: none;
+          }
+
+          :focus-visible {
+            outline: 2px solid #f4c34d;
+            outline-offset: 2px;
+            border-radius: 4px;
           }
 
           @media (prefers-reduced-motion: reduce) {
@@ -103,4 +104,3 @@ export default function RootLayout({
     </html>
   );
 }
-
