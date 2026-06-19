@@ -12,6 +12,7 @@ from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
 from utils import (
     parse_sizes_from_name,
+    has_sizes_unknown_marker,
     find_or_create_product_id,
     parse_product_materials,
     apply_product_materials,
@@ -107,14 +108,14 @@ class ExcelParser:
                 current_shipment_rows = [row]
                 
                 # Первая строка также является позицией
-                item = self._parse_item(row)
+                item = self._parse_item(row, idx + 1)
                 if item:
                     current_shipment['rawItems'].append(item)
             
             # Добавляем позицию к текущей поставке
             elif name and current_shipment:
                 current_shipment_rows.append(row)
-                item = self._parse_item(row)
+                item = self._parse_item(row, idx + 1)
                 if item:
                     current_shipment['rawItems'].append(item)
         
@@ -266,7 +267,7 @@ class ExcelParser:
             return f"shipment-{self.current_year}-{shipment_num}"
         return f"shipment-{shipment_num}"
     
-    def _parse_item(self, row: pd.Series) -> Optional[Dict]:
+    def _parse_item(self, row: pd.Series, excel_row: int) -> Optional[Dict]:
         """
         Парсит позицию поставки из строки.
         
@@ -286,7 +287,11 @@ class ExcelParser:
         }
         
         # productId: найти в каталоге или создать новый товар
-        item["productId"] = find_or_create_product_id(name, self.products)
+        item["productId"] = find_or_create_product_id(
+            name,
+            self.products,
+            excel_row=excel_row,
+        )
 
         # materials: забираем из колонки D ("Состав") и сохраняем в каталог товара
         composition = safe_get_cell(row, self.COL_COMPOSITION)
@@ -309,10 +314,13 @@ class ExcelParser:
                 item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
         
         # sizes из названия
+        sizes_unknown = has_sizes_unknown_marker(name)
         sizes = parse_sizes_from_name(name)
-        if sizes:
+        if sizes_unknown:
+            item["sizesUnknown"] = True
+        elif sizes:
             item["sizes"] = sizes
-        
+
         # quantityOverride
         quantity = safe_get_cell(row, self.COL_QUANTITY)
         if not is_empty_value(quantity):
@@ -324,7 +332,12 @@ class ExcelParser:
                     item["quantityOverride"] = qty
             except (ValueError, TypeError):
                 pass
-        
+        elif sizes_unknown:
+            # Если размеры на уточнении, но количество не задано — это ошибка данных
+            raise ValueError(
+                f"Строка {excel_row}: маркер '(на уточнении)' требует количество в колонке G"
+            )
+
         # status — текст из Excel как есть
         status_raw = safe_get_cell(row, self.COL_POSITION_STATUS, "")
         status = normalize_status_text(status_raw)

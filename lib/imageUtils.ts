@@ -2,6 +2,13 @@
  * Утилиты для работы с изображениями
  */
 
+export const PRODUCT_PHOTO_PLACEHOLDER =
+  "/images/products/jpg/__photo_pending.jpg";
+
+export function getProductImagePath(photoPath?: string): string {
+  return photoPath?.trim() || PRODUCT_PHOTO_PLACEHOLDER;
+}
+
 /**
  * Преобразует путь к JPG изображению в путь к WebP версии.
  * 

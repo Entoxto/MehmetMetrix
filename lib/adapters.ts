@@ -117,6 +117,7 @@ function toPosition(
     sum,
     cost: typeof item.cost === 'number' ? item.cost : null,
     sample: item.sample ?? false,
+    sizesUnknown: item.sizesUnknown ?? false,
     statusLabel,
     isPayable,
     noteEnabled: !!noteEnabled,

@@ -104,6 +104,10 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
               objectFit: "cover",
               objectPosition: "top center",
             }}
+            placeholderStyle={{
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
           />
         </div>
         <div

@@ -36,10 +36,16 @@ def _validate_raw_item(
     if status is not None and not _is_non_empty_string(status):
         errors.append(f"{prefix}: status должен быть непустой строкой")
 
+    sizes_unknown = item.get("sizesUnknown")
+    if sizes_unknown is not None and not isinstance(sizes_unknown, bool):
+        errors.append(f"{prefix}: sizesUnknown должен быть boolean")
+
     sizes = item.get("sizes")
     if sizes is not None:
         if not isinstance(sizes, dict):
             errors.append(f"{prefix}: sizes должен быть объектом")
+        elif sizes_unknown:
+            errors.append(f"{prefix}: sizes и sizesUnknown не могут быть одновременно")
         else:
             for size_key, count in sizes.items():
                 if not _is_non_empty_string(size_key):
@@ -54,6 +60,9 @@ def _validate_raw_item(
     quantity_override = item.get("quantityOverride")
     if quantity_override is not None and (not isinstance(quantity_override, int) or quantity_override < 0):
         errors.append(f"{prefix}: quantityOverride должен быть целым числом >= 0")
+
+    if sizes_unknown and (quantity_override is None or quantity_override <= 0):
+        errors.append(f"{prefix}: sizesUnknown требует положительного quantityOverride")
 
     price = item.get("price")
     if price is not None and (not _is_number(price) or float(price) <= 0):
@@ -153,8 +162,21 @@ def validate_products(products_data: Any) -> List[str]:
             )
 
         photo = product.get("photo")
-        if photo is not None and not isinstance(photo, str):
-            errors.append(f"{product_id}: photo должен быть строкой")
+        if photo is not None and not _is_non_empty_string(photo):
+            errors.append(f"{product_id}: photo должен быть непустой строкой")
+
+        excel_rows = product.get("excelRows")
+        if not isinstance(excel_rows, list) or not excel_rows:
+            errors.append(f"{product_id}: excelRows должен быть непустым массивом строк Excel")
+        elif any(
+            not isinstance(row_number, int)
+            or isinstance(row_number, bool)
+            or row_number <= 0
+            for row_number in excel_rows
+        ):
+            errors.append(f"{product_id}: excelRows должен содержать целые числа > 0")
+        elif len(excel_rows) != len(set(excel_rows)):
+            errors.append(f"{product_id}: excelRows содержит дубликаты")
 
         sizes = product.get("sizes")
         if not isinstance(sizes, list):

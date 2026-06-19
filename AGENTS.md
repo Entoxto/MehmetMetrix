@@ -59,6 +59,8 @@ If you need a production build, stop any active dev server first. A running dev 
 - Parser categories must stay within `Мех`, `Замша`, `Кожа`, `Экзотика`; unknown names should fail parsing instead of falling back to `Прочее`.
 - Shipment size keys must stay within `xs`, `s`, `m`, `l`, `xl`, `OneSize`; unknown keys should fail validation instead of falling back to another size.
 - `sample` is only a marker; it must not force quantity to `1` when sizes or Excel column G already define the quantity.
+- Catalog `photo` is optional. The parser writes it only when the matching JPG/JPEG exists; `excelRows` records every source row for startup diagnostics.
+- Missing catalog photos are valid and use the shared `__photo_pending` placeholder. A present-but-broken `photo` path remains a validation error.
 
 ## UI Rules
 

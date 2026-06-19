@@ -28,6 +28,7 @@ const IMAGE_CONSTRAINTS = {
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const { isMobile, isTablet } = useBreakpoint();
   const isCompact = isMobile || isTablet;
+  const hasProductPhoto = Boolean(product.photo?.trim());
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
   const [isCategoryLinkHovered, setIsCategoryLinkHovered] = useState(false);
   const hasMaterials = Boolean(
@@ -168,7 +169,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
            flexDirection: isCompact ? "column" : undefined,
            gap: isCompact ? SPACING.lg : SPACING.lg, // Уменьшенный gap для десктопа
            alignItems: isCompact ? undefined : "stretch", // Растягиваем на всю высоту
-           width: isCompact ? "100%" : "auto", // На мобильных растягиваем на всю ширину, на десктопе только необходимую
+           width: "100%",
            maxWidth: isCompact ? "100%" : "1400px", // Максимальная ширина контейнера
          }}
        >
@@ -181,7 +182,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               ? undefined
               : containerDimensions.height
             : `${desktopColumnMinHeight}px`,
-          ...(containerDimensions.aspectRatio ? { aspectRatio: containerDimensions.aspectRatio } : {}),
+          ...(containerDimensions.aspectRatio && hasProductPhoto
+            ? { aspectRatio: containerDimensions.aspectRatio }
+            : {}),
           ...PHOTO_STYLE,
           display: "flex",
           alignItems: "center",
@@ -201,11 +204,15 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             objectPosition: "center center",
             transform: isCompact ? undefined : "scale(1.02)",
           }}
+          placeholderStyle={{
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
           priority
           fallbackSize={isCompact ? 48 : 80}
           onLoad={(e) => {
             const img = e.currentTarget as HTMLImageElement;
-            if (img.naturalWidth && img.naturalHeight) {
+            if (hasProductPhoto && img.naturalWidth && img.naturalHeight) {
               setImageAspectRatio(img.naturalWidth / img.naturalHeight);
             }
           }}

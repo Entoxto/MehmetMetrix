@@ -10,7 +10,7 @@ from catalog_pricing import apply_latest_prices
 from data_validator import validate_generated_outputs
 from excel_parser import ExcelParser
 from json_storage import write_json_atomic
-from utils import infer_category, aggregate_product_sizes
+from utils import infer_category, aggregate_product_sizes, assign_product_photos
 
 # Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
 if sys.platform == 'win32':
@@ -67,6 +67,10 @@ def parse_excel() -> bool:
 
     # Собираем размеры каталога из всех позиций поставок (один проход)
     aggregate_product_sizes(shipments, products)
+    assign_product_photos(
+        products,
+        script_dir.parent / "public" / "images" / "products" / "jpg",
+    )
 
     # Обновляем категорию у всех товаров по названию (при каждом парсинге — полное обновление)
     for product in products:

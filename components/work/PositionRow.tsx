@@ -14,6 +14,7 @@ import { getStatusIcon } from "@/lib/format";
 import type { Position } from "@/types/domain";
 import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
+import { SizesPendingTag } from "@/components/ui/SizesPendingTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { MouseEvent } from "react";
 
@@ -141,8 +142,8 @@ export const PositionRow = ({
                   </div>
                 )}
 
-                {/* Строка 2: Бейджи статусов и образца (под размерами) */}
-                {(position.sample || (position.noteEnabled && position.noteText)) && (
+                {/* Строка 2: Бейджи образца, уточнения размеров и статусов (под размерами) */}
+                {(position.sample || position.sizesUnknown || (position.noteEnabled && position.noteText)) && (
                   <div
                     style={{
                       display: "flex",
@@ -152,6 +153,8 @@ export const PositionRow = ({
                     }}
                   >
                     {position.sample && <SampleTag />}
+
+                    {position.sizesUnknown && <SizesPendingTag />}
                     
                     {position.noteEnabled && position.noteText && (
                       <StatusBadge 

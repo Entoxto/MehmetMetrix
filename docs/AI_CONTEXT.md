@@ -57,9 +57,14 @@ It may contain:
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
 - Excel column J (`Курс списания`) guards cost import: if it is `0`, ignore column N for `cost` because it may contain cargo-only formula output before the item is paid.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
+- A position with the marker `(на уточнении)` in the last bracket of the Excel name means sizes are not yet assigned. The parser emits `sizesUnknown: true` and uses `quantityOverride` from column G. These positions still participate in payment totals but do not contribute sizes to the catalog.
 - `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
+- Catalog photos are optional while a model is being developed. The parser writes `photo` only when the exact JPG/JPEG exists and stores all source sheet rows in `excelRows`.
+- `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing is an error.
+- `OptimizedImage` uses the shared `__photo_pending` JPG/WebP when `photo` is absent or a referenced asset fails to load.
+- The shared photo placeholder always uses `object-fit: contain` with stable inner padding across catalog/detail breakpoints; real product photos keep their normal crop rules.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
 - In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.

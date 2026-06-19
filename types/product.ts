@@ -8,7 +8,8 @@ export interface Product {
   id: string;
   name: string;
   category: "Мех" | "Замша" | "Кожа" | "Экзотика";
-  photo: string;
+  photo?: string;
+  excelRows: number[];
   sizes: string[];
   price?: number;
   cost?: number;  // Себестоимость в рублях (обновляется из поставок)
@@ -20,4 +21,3 @@ export interface Product {
 export interface ProductsData {
   products: Product[];
 }
-

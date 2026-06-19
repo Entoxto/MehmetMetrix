@@ -4,7 +4,10 @@
       "id": "auto-001",
       "name": "Плащ из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Плащ из замши — коричневый.jpg",
+      "excelRows": [
+        3,
+        9
+      ],
       "sizes": [
         "OneSize"
       ],
@@ -14,14 +17,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 28571
+      "photo": "/images/products/jpg/Плащ из замши — коричневый.jpg",
+      "price": 260
     },
     {
       "id": "auto-002",
       "name": "Юбка из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Юбка из замши — коричневый.jpg",
+      "excelRows": [
+        4
+      ],
       "sizes": [
         "xs",
         "s",
@@ -33,14 +38,20 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 165,
-      "cost": 16582
+      "photo": "/images/products/jpg/Юбка из замши — коричневый.jpg",
+      "price": 165
     },
     {
       "id": "auto-003",
       "name": "Жакет из замши в стиле 80-х — коричневый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — коричневый.jpg",
+      "excelRows": [
+        5,
+        23,
+        30,
+        51,
+        78
+      ],
       "sizes": [
         "xs",
         "s",
@@ -53,14 +64,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 16866
+      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — коричневый.jpg",
+      "price": 190
     },
     {
       "id": "auto-004",
       "name": "Жакет из кожи Hermes в стиле 80-х — brown",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
+      "excelRows": [
+        6,
+        10,
+        22
+      ],
       "sizes": [
         "OneSize"
       ],
@@ -70,14 +85,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 20917
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
+      "price": 180
     },
     {
       "id": "auto-005",
       "name": "Дублёнка длинная из меха тасканы — коричневый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка длинная из меха тасканы — коричневый.jpg",
+      "excelRows": [
+        7
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -85,14 +102,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 400,
-      "cost": 41999
+      "photo": "/images/products/jpg/Дублёнка длинная из меха тасканы — коричневый.jpg",
+      "price": 400
     },
     {
       "id": "auto-006",
       "name": "Дублёнка короткая из меха кёрли — серый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка короткая из меха кёрли — серый.jpg",
+      "excelRows": [
+        8,
+        13,
+        14
+      ],
       "sizes": [
         "OneSize"
       ],
@@ -102,14 +123,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 29100
+      "photo": "/images/products/jpg/Дублёнка короткая из меха кёрли — серый.jpg",
+      "price": 260
     },
     {
       "id": "auto-007",
       "name": "Жакет из кожи Hermes в стиле 80-х — taupe",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — taupe.jpg",
+      "excelRows": [
+        11
+      ],
       "sizes": [
         "OneSize"
       ],
@@ -119,14 +142,19 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 18900
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — taupe.jpg",
+      "price": 180
     },
     {
       "id": "auto-008",
       "name": "Жакет из кожи Hermes в стиле 80-х — mouse",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
+      "excelRows": [
+        12,
+        50,
+        59,
+        77
+      ],
       "sizes": [
         "xs",
         "s",
@@ -138,14 +166,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 16056
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
+      "price": 180
     },
     {
       "id": "auto-009",
       "name": "Дублёнка длинная из меха кёрли — серый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка длинная из меха кёрли — серый.jpg",
+      "excelRows": [
+        15
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -153,14 +183,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 315,
-      "cost": 33231
+      "photo": "/images/products/jpg/Дублёнка длинная из меха кёрли — серый.jpg",
+      "price": 315
     },
     {
       "id": "auto-010",
       "name": "Брюки из замши — коричневый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Брюки из замши — коричневый.jpg",
+      "excelRows": [
+        16,
+        52
+      ],
       "sizes": [
         "xs",
         "s",
@@ -172,14 +205,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 16487
+      "photo": "/images/products/jpg/Брюки из замши — коричневый.jpg",
+      "price": 180
     },
     {
       "id": "auto-011",
       "name": "Брюки из замши — чёрный",
       "category": "Замша",
-      "photo": "/images/products/jpg/Брюки из замши — чёрный.jpg",
+      "excelRows": [
+        17
+      ],
       "sizes": [
         "xs",
         "s",
@@ -191,14 +226,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 175,
-      "cost": 18882
+      "photo": "/images/products/jpg/Брюки из замши — чёрный.jpg",
+      "price": 175
     },
     {
       "id": "auto-012",
       "name": "Дублёнка двусторонняя из меха тасканы — etoupe",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка двусторонняя из меха тасканы — etoupe.jpg",
+      "excelRows": [
+        18
+      ],
       "sizes": [
         "s",
         "m"
@@ -209,14 +246,21 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 44705
+      "photo": "/images/products/jpg/Дублёнка двусторонняя из меха тасканы — etoupe.jpg",
+      "price": 390
     },
     {
       "id": "auto-013",
       "name": "Жакет приталенный из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
+      "excelRows": [
+        19,
+        26,
+        32,
+        41,
+        64,
+        85
+      ],
       "sizes": [
         "xs",
         "s",
@@ -228,14 +272,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 44388
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
+      "price": 550
     },
     {
       "id": "auto-014",
       "name": "Дублёнка мехом внутрь из тасканы с замшей — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
+      "excelRows": [
+        21
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -243,14 +289,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 43168
+      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
+      "price": 390
     },
     {
       "id": "auto-015",
       "name": "Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
+      "excelRows": [
+        24
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -258,14 +306,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 43168
+      "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
+      "price": 390
     },
     {
       "id": "auto-016",
       "name": "Жакет из замши в стиле 80-х — бежевый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — бежевый.jpg",
+      "excelRows": [
+        25,
+        53,
+        61
+      ],
       "sizes": [
         "xs",
         "s"
@@ -276,14 +328,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 18239
+      "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — бежевый.jpg",
+      "price": 190
     },
     {
       "id": "auto-017",
       "name": "Дублёнка с мехом наружу из волка — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка с мехом наружу из волка — бежевый.jpg",
+      "excelRows": [
+        27
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Мех волка",
@@ -291,14 +345,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 41376
+      "photo": "/images/products/jpg/Дублёнка с мехом наружу из волка — бежевый.jpg",
+      "price": 390
     },
     {
       "id": "auto-018",
       "name": "Дублёнка двусторонняя из тасканы silk с мехом montana — camel",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
+      "excelRows": [
+        28
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -306,14 +362,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 390,
-      "cost": 41376
+      "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
+      "price": 390
     },
     {
       "id": "auto-019",
       "name": "Жакет из кожи Hermes в стиле 80-х — чёрный",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
+      "excelRows": [
+        29,
+        49
+      ],
       "sizes": [
         "xs",
         "s"
@@ -324,14 +383,19 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 180,
-      "cost": 17972
+      "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
+      "price": 180
     },
     {
       "id": "auto-020",
       "name": "Жакет приталенный из кожи питона — бежевый светлый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
+      "excelRows": [
+        31,
+        68,
+        89,
+        110
+      ],
       "sizes": [
         "xs",
         "s",
@@ -343,14 +407,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 44388
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
+      "price": 550
     },
     {
       "id": "auto-021",
       "name": "Жакет приталенный из кожи питона — чёрный матовый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный матовый.jpg",
+      "excelRows": [
+        33,
+        42,
+        55
+      ],
       "sizes": [
         "xs",
         "s"
@@ -361,14 +429,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 47113
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный матовый.jpg",
+      "price": 550
     },
     {
       "id": "auto-022",
       "name": "Куртка из кожи питона по новым лекалам — коричневый матовый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
+      "excelRows": [
+        34,
+        79,
+        112
+      ],
       "sizes": [
         "xs",
         "s"
@@ -379,14 +451,20 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 480,
-      "cost": 40210
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
+      "price": 465
     },
     {
       "id": "auto-023",
       "name": "Жакет приталенный из кожи питона — коричневый глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
+      "excelRows": [
+        35,
+        40,
+        56,
+        65,
+        87
+      ],
       "sizes": [
         "xs",
         "s"
@@ -397,14 +475,20 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 44388
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
+      "price": 550
     },
     {
       "id": "auto-024",
       "name": "Жакет приталенный из меха пони в стиле 80-х — чёрный",
       "category": "Мех",
-      "photo": "/images/products/jpg/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
+      "excelRows": [
+        36,
+        43,
+        48,
+        57,
+        60
+      ],
       "sizes": [
         "xs",
         "s"
@@ -415,14 +499,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 300,
-      "cost": 27345
+      "photo": "/images/products/jpg/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
+      "price": 300
     },
     {
       "id": "auto-025",
       "name": "Жакет из меха пони по новым лекалам — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Жакет из меха пони по новым лекалам — бежевый.jpg",
+      "excelRows": [
+        37
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
@@ -430,14 +516,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 310,
-      "cost": 26725
+      "photo": "/images/products/jpg/Жакет из меха пони по новым лекалам — бежевый.jpg",
+      "price": 310
     },
     {
       "id": "auto-026",
       "name": "Жакет из меха пони в стиле 80-х — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Жакет из меха пони в стиле 80-х — бежевый.jpg",
+      "excelRows": [
+        38
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
@@ -445,14 +533,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 330,
-      "cost": 28378
+      "photo": "/images/products/jpg/Жакет из меха пони в стиле 80-х — бежевый.jpg",
+      "price": 330
     },
     {
       "id": "auto-027",
       "name": "Парка из кожи Hermes — mouse",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Парка из кожи Hermes — mouse.jpg",
+      "excelRows": [
+        39
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная кожа",
@@ -460,14 +550,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 195,
-      "cost": 17220
+      "photo": "/images/products/jpg/Парка из кожи Hermes — mouse.jpg",
+      "price": 195
     },
     {
       "id": "auto-028",
       "name": "Парка из кожи коровы — леопард",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
+      "excelRows": [
+        44
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Кожа коровы с мехом",
@@ -475,14 +567,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 400,
-      "cost": 35160
+      "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
+      "price": 400
     },
     {
       "id": "auto-029",
       "name": "Штаны из меха пони — чёрный",
       "category": "Мех",
-      "photo": "/images/products/jpg/Штаны из меха пони — чёрный.jpg",
+      "excelRows": [
+        45,
+        58
+      ],
       "sizes": [
         "xs",
         "s"
@@ -493,14 +588,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 270,
-      "cost": 23936
+      "photo": "/images/products/jpg/Штаны из меха пони — чёрный.jpg",
+      "price": 270
     },
     {
       "id": "auto-030",
       "name": "Штаны из меха мериноса — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Штаны из меха мериноса — бежевый.jpg",
+      "excelRows": [
+        46,
+        62,
+        72
+      ],
       "sizes": [
         "xs",
         "s",
@@ -512,14 +611,19 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 215,
-      "cost": 18569
+      "photo": "/images/products/jpg/Штаны из меха мериноса — бежевый.jpg",
+      "price": 215
     },
     {
       "id": "auto-031",
       "name": "Дублёнка из меха мериноса — бежевый",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка из меха мериноса — бежевый.jpg",
+      "excelRows": [
+        47,
+        63,
+        74,
+        75
+      ],
       "sizes": [
         "xs",
         "s",
@@ -531,14 +635,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 260,
-      "cost": 22937
+      "photo": "/images/products/jpg/Дублёнка из меха мериноса — бежевый.jpg",
+      "price": 260
     },
     {
       "id": "auto-032",
       "name": "Брюки из замши — бежевый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Брюки из замши — бежевый.jpg",
+      "excelRows": [
+        54
+      ],
       "sizes": [
         "xs",
         "s",
@@ -550,14 +656,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 190,
-      "cost": 17314
+      "photo": "/images/products/jpg/Брюки из замши — бежевый.jpg",
+      "price": 190
     },
     {
       "id": "auto-033",
       "name": "Дублёнка из меха тасканы — волк",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка из меха тасканы — волк.jpg",
+      "excelRows": [
+        66
+      ],
       "sizes": [],
       "materials": {
         "outer": "100% Натуральная овчина",
@@ -565,14 +673,19 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 360,
-      "cost": 32312
+      "photo": "/images/products/jpg/Дублёнка из меха тасканы — волк.jpg",
+      "price": 360
     },
     {
       "id": "auto-034",
       "name": "Юбка из кожи питона — чёрный глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Юбка из кожи питона — чёрный глянцевый.jpg",
+      "excelRows": [
+        67,
+        71,
+        80,
+        86
+      ],
       "sizes": [
         "xs",
         "s",
@@ -584,14 +697,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 26220
+      "photo": "/images/products/jpg/Юбка из кожи питона — чёрный глянцевый.jpg",
+      "price": 320
     },
     {
       "id": "auto-035",
       "name": "Юбка из кожи питона — бежевый светлый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Юбка из кожи питона — бежевый светлый.jpg",
+      "excelRows": [
+        69,
+        115
+      ],
       "sizes": [
         "xs",
         "s",
@@ -603,14 +719,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 27644
+      "photo": "/images/products/jpg/Юбка из кожи питона — бежевый светлый.jpg",
+      "price": 320
     },
     {
       "id": "auto-036",
       "name": "Жакет приталенный из кожи питона — Etope",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — Etope.jpg",
+      "excelRows": [
+        70,
+        108
+      ],
       "sizes": [
         "xs",
         "s"
@@ -621,14 +740,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 550,
-      "cost": 46684
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — Etope.jpg",
+      "price": 550
     },
     {
       "id": "auto-037",
       "name": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый.jpg",
+      "excelRows": [
+        76,
+        90,
+        98
+      ],
       "sizes": [
         "xs",
         "s",
@@ -640,14 +763,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 310,
-      "cost": 24853
+      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый.jpg",
+      "price": 310
     },
     {
       "id": "auto-038",
       "name": "Юбка из кожи питона — коричневый глянцевый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Юбка из кожи питона — коричневый глянцевый.jpg",
+      "excelRows": [
+        81,
+        88
+      ],
       "sizes": [
         "xs",
         "s",
@@ -659,14 +785,20 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 26220
+      "photo": "/images/products/jpg/Юбка из кожи питона — коричневый глянцевый.jpg",
+      "price": 320
     },
     {
       "id": "auto-039",
       "name": "Жакет приталенный из кожи питона — белый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
+      "excelRows": [
+        82,
+        83,
+        91,
+        97,
+        109
+      ],
       "sizes": [
         "xs",
         "s",
@@ -678,14 +810,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 560,
-      "cost": 43971
+      "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
+      "price": 560
     },
     {
       "id": "auto-040",
       "name": "Юбка из кожи питона — белый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
+      "excelRows": [
+        84,
+        99,
+        117
+      ],
       "sizes": [
         "xs",
         "s",
@@ -697,14 +833,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 325,
-      "cost": 26000
+      "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
+      "price": 325
     },
     {
       "id": "auto-041",
       "name": "Жакет из плетёной замши в стиле 80-х — коричневый",
       "category": "Замша",
-      "photo": "/images/products/jpg/Жакет из плетёной замши в стиле 80-х — коричневый.jpg",
+      "excelRows": [
+        92,
+        100,
+        103
+      ],
       "sizes": [
         "xs",
         "s",
@@ -716,14 +856,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 340,
-      "cost": 26886
+      "photo": "/images/products/jpg/Жакет из плетёной замши в стиле 80-х — коричневый.jpg",
+      "price": 340
     },
     {
       "id": "auto-042",
       "name": "Плащ из тонкой кожи — бежевый",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Плащ из тонкой кожи — бежевый.jpg",
+      "excelRows": [
+        93
+      ],
       "sizes": [
         "xs"
       ],
@@ -733,14 +875,17 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 26021
+      "photo": "/images/products/jpg/Плащ из тонкой кожи — бежевый.jpg",
+      "price": 320
     },
     {
       "id": "auto-043",
       "name": "Жакет из плетёной кожи в стиле 80-х — бежевый",
       "category": "Кожа",
-      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — бежевый.jpg",
+      "excelRows": [
+        94,
+        111
+      ],
       "sizes": [
         "xs",
         "s",
@@ -752,14 +897,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 320,
-      "cost": 19174
+      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — бежевый.jpg",
+      "price": 320
     },
     {
       "id": "auto-044",
       "name": "Штаны из меха астроган — асфальт",
       "category": "Мех",
-      "photo": "/images/products/jpg/Штаны из меха астроган — асфальт.jpg",
+      "excelRows": [
+        95
+      ],
       "sizes": [
         "xs"
       ],
@@ -769,14 +916,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 255,
-      "cost": 20272
+      "photo": "/images/products/jpg/Штаны из меха астроган — асфальт.jpg",
+      "price": 255
     },
     {
       "id": "auto-045",
       "name": "Дублёнка из меха астроган — асфальт",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка из меха астроган — асфальт.jpg",
+      "excelRows": [
+        96
+      ],
       "sizes": [
         "xs"
       ],
@@ -786,14 +935,16 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 315,
-      "cost": 24860
+      "photo": "/images/products/jpg/Дублёнка из меха астроган — асфальт.jpg",
+      "price": 315
     },
     {
       "id": "auto-046",
       "name": "Штаны из меха астроган — чёрный",
       "category": "Мех",
-      "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
+      "excelRows": [
+        101
+      ],
       "sizes": [
         "xs"
       ],
@@ -803,13 +954,16 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
       "price": 230
     },
     {
       "id": "auto-047",
       "name": "Пальто из меха астроган — чёрный",
       "category": "Мех",
-      "photo": "/images/products/jpg/Пальто из меха астроган — чёрный.jpg",
+      "excelRows": [
+        102
+      ],
       "sizes": [
         "xs"
       ],
@@ -819,16 +973,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 315,
-      "cost": 771
+      "photo": "/images/products/jpg/Пальто из меха астроган — чёрный.jpg",
+      "price": 315
     },
     {
       "id": "auto-048",
       "name": "Дублёнка из меха астроган в стиле 80-х — чёрный",
       "category": "Мех",
-      "photo": "/images/products/jpg/Дублёнка из меха астроган в стиле 80-х — чёрный.jpg",
+      "excelRows": [
+        104
+      ],
       "sizes": [
-        "xs"
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральный мех мериноса",
@@ -836,13 +992,17 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Дублёнка из меха астроган в стиле 80-х — чёрный.jpg",
       "price": 300
     },
     {
       "id": "auto-049",
       "name": "Куртка из кожи питона по новым лекалам — белый",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — белый.jpg",
+      "excelRows": [
+        105,
+        118
+      ],
       "sizes": [
         "xs"
       ],
@@ -852,19 +1012,94 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 560,
-      "cost": 885
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — белый.jpg",
+      "price": 480
     },
     {
       "id": "auto-050",
+      "name": "Штаны из молочной кожи",
+      "category": "Кожа",
+      "excelRows": [
+        106
+      ],
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 155
+    },
+    {
+      "id": "auto-051",
+      "name": "Жакет из плетёной кожи в стиле 80-х — коричневый",
+      "category": "Кожа",
+      "excelRows": [
+        107
+      ],
+      "sizes": [
+        "xs"
+      ],
+      "materials": {
+        "outer": "100% Натуральная кожа",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "price": 290
+    },
+    {
+      "id": "auto-052",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
-      "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
+      "excelRows": [
+        113
+      ],
       "sizes": [
         "xs",
         "s",
         "m"
       ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
+      "price": 320
+    },
+    {
+      "id": "auto-053",
+      "name": "Куртка из кожи питона по новым лекалам — Etope",
+      "category": "Экзотика",
+      "excelRows": [
+        114
+      ],
+      "sizes": [
+        "xs",
+        "s"
+      ],
+      "materials": {
+        "outer": "100% Кожа питона",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",
+      "price": 465
+    },
+    {
+      "id": "auto-054",
+      "name": "Юбка из кожи питона — коричневый матовый",
+      "category": "Экзотика",
+      "excelRows": [
+        116
+      ],
+      "sizes": [],
       "materials": {
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
@@ -872,23 +1107,6 @@
       "inStock": true,
       "tags": [],
       "price": 320
-    },
-    {
-      "id": "auto-051",
-      "name": "Куртка из кожи питона по новым лекалам — Etope",
-      "category": "Экзотика",
-      "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — Etope.jpg",
-      "sizes": [
-        "xs",
-        "s"
-      ],
-      "materials": {
-        "outer": "100% Кожа питона",
-        "lining": "%70 Acetate %30 Polyester"
-      },
-      "inStock": true,
-      "tags": [],
-      "price": 480
     }
   ]
 }

@@ -6,23 +6,51 @@
 import re
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Optional, Dict, List
 import pandas as pd
 
 # Порядок размеров для каталога (product.sizes)
 SIZE_ORDER = ["xs", "s", "m", "l", "xl", "onesize"]
 
+# Маркеры в последней скобке названия, означающие, что размеры пока не разбиты,
+# но позиция уже существует и участвует в заказе (количество берётся из колонки G).
+SIZES_UNKNOWN_MARKERS = ["на уточнении"]
+
+
+def has_sizes_unknown_marker(name: str) -> bool:
+    """
+    Проверяет, содержит ли последняя скобка названия маркер "размеры не заданы".
+
+    Args:
+        name: Полное название товара
+
+    Returns:
+        True, если в последней скобке найден маркер из SIZES_UNKNOWN_MARKERS
+    """
+    if not name:
+        return False
+
+    bracket_groups = re.findall(r'\(([^)]+)\)', name)
+    if not bracket_groups:
+        return False
+
+    last_bracket = bracket_groups[-1].strip().lower()
+    return any(marker.lower() in last_bracket for marker in SIZES_UNKNOWN_MARKERS)
+
 
 def parse_sizes_from_name(name: str) -> Dict[str, int]:
     """
-    Парсит размеры из названия: "(XS-5, S-7, M-5)" или "(one size-5)" или "(образец XS-2)"
+    Парсит размеры из названия: "(XS-5, S-7, M-5)", "(one size-5)" или "(образец XS-2)".
+    Если в последней скобке маркер "на уточнении", размеры не парсятся — позиция
+    будет отображаться как ожидающая размерной сетки.
     
     Args:
         name: Полное название товара с размерами в скобках
         
     Returns:
         Словарь размеров: {"xs": 5, "s": 7, "m": 5} или {"OneSize": 5}
-        Пустой словарь, если размеров нет
+        Пустой словарь, если размеров нет или размеры на уточнении
     """
     if not name:
         return {}
@@ -128,7 +156,11 @@ def get_next_auto_id(products: List[Dict]) -> str:
     return f"auto-{next_num:03d}"
 
 
-def find_or_create_product_id(name: str, products: List[Dict]) -> str:
+def find_or_create_product_id(
+    name: str,
+    products: List[Dict],
+    excel_row: Optional[int] = None,
+) -> str:
     """
     Находит productId в каталоге по названию или создаёт новый товар и возвращает его id.
     Каталог (products) мутируется при создании нового товара.
@@ -144,15 +176,18 @@ def find_or_create_product_id(name: str, products: List[Dict]) -> str:
     for product in products:
         product_name = product.get('name', '')
         if ' '.join(product_name.split()) == normalized_clean:
+            if excel_row is not None:
+                rows = product.setdefault("excelRows", [])
+                if excel_row not in rows:
+                    rows.append(excel_row)
             return product.get('id', '')
 
     new_id = get_next_auto_id(products)
-    photo_path = f"/images/products/jpg/{clean_name}.jpg"
     new_product = {
         "id": new_id,
         "name": clean_name,
         "category": infer_category(clean_name),
-        "photo": photo_path,
+        "excelRows": [excel_row] if excel_row is not None else [],
         "sizes": [],
         "materials": {},
         "inStock": True,
@@ -161,6 +196,35 @@ def find_or_create_product_id(name: str, products: List[Dict]) -> str:
     products.append(new_product)
     print(f"  + Добавлен в каталог: {clean_name}")
     return new_id
+
+
+def assign_product_photos(products: List[Dict], jpg_dir: Path) -> None:
+    """
+    Записывает photo только для товаров, у которых реально есть JPG/JPEG.
+    Точное имя файла берётся с диска, чтобы регистр расширения был корректным
+    и на case-sensitive окружениях Netlify.
+    """
+    if not jpg_dir.exists():
+        raise FileNotFoundError(f"Папка каталожных JPG не найдена: {jpg_dir}")
+
+    supported_extensions = {".jpg", ".jpeg"}
+    files_by_name = {
+        path.name.casefold(): path.name
+        for path in jpg_dir.iterdir()
+        if path.is_file() and path.suffix.casefold() in supported_extensions
+    }
+
+    for product in products:
+        name = str(product.get("name", "")).strip()
+        product.pop("photo", None)
+        if not name:
+            continue
+
+        for extension in (".jpg", ".jpeg"):
+            actual_name = files_by_name.get(f"{name}{extension}".casefold())
+            if actual_name:
+                product["photo"] = f"/images/products/jpg/{actual_name}"
+                break
 
 
 def parse_product_materials(raw_value: Any) -> Dict[str, str]:
@@ -248,6 +312,7 @@ def aggregate_product_sizes(shipments: List[Dict], products: List[Dict]) -> None
     """
     Заполняет product["sizes"] для каждого товара: объединение всех размеров,
     встречающихся у этого товара в позициях поставок (rawItems).
+    Позиции с sizesUnknown игнорируются, чтобы не добавлять фиктивный размер в каталог.
     Один проход по поставкам, без повторного парсинга Excel.
     """
     by_id = defaultdict(set)
@@ -255,6 +320,8 @@ def aggregate_product_sizes(shipments: List[Dict], products: List[Dict]) -> None
         for item in shipment.get("rawItems", []):
             pid = item.get("productId")
             if not pid:
+                continue
+            if item.get("sizesUnknown"):
                 continue
             for size_key in item.get("sizes", {}).keys():
                 by_id[pid].add(size_key)

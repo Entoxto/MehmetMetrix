@@ -82,6 +82,7 @@ function collectSourceImageReferences() {
 const products = readProducts();
 const errors = [];
 const warnings = [];
+const productsWithoutPhoto = [];
 
 const referencedJpg = new Set();
 const referencedWebp = new Set();
@@ -92,7 +93,13 @@ for (const product of products) {
   const label = `${id} (${name})`;
 
   if (typeof photo !== "string" || photo.trim().length === 0) {
-    errors.push(`${label}: photo отсутствует`);
+    const excelRows = Array.isArray(product.excelRows)
+      ? product.excelRows.filter((row) => Number.isInteger(row) && row > 0)
+      : [];
+    productsWithoutPhoto.push({
+      label,
+      excelRows,
+    });
     continue;
   }
 
@@ -183,7 +190,19 @@ if (errors.length > 0) {
 }
 
 console.log("OK: Каталожные изображения валидны");
-console.log(`  Товаров с фото: ${products.length}`);
+console.log(`  Всего моделей в каталоге: ${products.length}`);
+console.log(`  Моделей с фото: ${products.length - productsWithoutPhoto.length}`);
+console.log(`  Моделей без фото: ${productsWithoutPhoto.length}`);
+if (productsWithoutPhoto.length > 0) {
+  console.log("  Список моделей без фото:");
+  for (const product of productsWithoutPhoto) {
+    const rows =
+      product.excelRows.length > 0
+        ? product.excelRows.join(", ")
+        : "не сохранены";
+    console.log(`    - ${product.label}; строки Excel: ${rows}`);
+  }
+}
 console.log(`  Доп. ссылок на изображения в коде: ${sourceImageReferences.size}`);
 console.log(`  JPG-файлов в каталоге: ${jpgFiles.length}`);
 console.log(`  WebP-файлов в каталоге: ${webpFiles.length}`);
