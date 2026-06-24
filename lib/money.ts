@@ -15,7 +15,18 @@ export interface MoneyDepositItem {
   amount: number;
 }
 
-type MoneyConfig = {
+export interface MoneyOverview {
+  pending: {
+    total: number;
+    items: MoneyStatusItem[];
+  };
+  deposits: {
+    total: number;
+    items: MoneyDepositItem[];
+  };
+}
+
+export type MoneyConfig = {
   pendingManual?: unknown;
   deposits?: unknown;
 };
@@ -82,8 +93,10 @@ function readDepositItems(config: MoneyConfig): MoneyDepositItem[] {
   });
 }
 
-export function getMoneyOverview(shipments: readonly ShipmentWithItems[]) {
-  const config = moneyData as MoneyConfig;
+export function buildMoneyOverview(
+  shipments: readonly ShipmentWithItems[],
+  config: MoneyConfig
+): MoneyOverview {
   const shipmentPendingItems: MoneyStatusItem[] = getPendingShipmentSummaries(shipments).map(
     ({ id, title, amount }) => ({
       id,
@@ -106,4 +119,8 @@ export function getMoneyOverview(shipments: readonly ShipmentWithItems[]) {
       items: depositItems,
     },
   };
+}
+
+export function getMoneyOverview(shipments: readonly ShipmentWithItems[]): MoneyOverview {
+  return buildMoneyOverview(shipments, moneyData as MoneyConfig);
 }

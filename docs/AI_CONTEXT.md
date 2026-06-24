@@ -72,6 +72,8 @@ It may contain:
 - In `Work`, the full first position cell is the click target for opening the product page.
 - `Work` expansion/scroll restoration lives in `hooks/useWorkNavigationState.ts`; keep page components thin when changing this flow.
 - The category pill in `ProductDetail` is a real link to the matching catalog category and should read as interactive.
+- `ProductDetail` is intentionally a thin layout wrapper; keep photo behavior in `components/product/ProductPhoto.tsx`, product facts in `ProductInfo.tsx`, and material rendering in `ProductMaterials.tsx`.
+- `Money` is intentionally a screen-level layout; reusable financial cards/tables live in `components/money/MoneyMetricCard.tsx` and `MoneyDetailsTable.tsx`.
 - Repeated clickable-card behavior should go through `components/ui/ClickableCard.tsx` so mouse and keyboard behavior stay aligned.
 - Motion should reinforce hierarchy, not decorate for its own sake.
 - Shared motion comes from `MOTION` in `constants/styles.ts`; avoid one-off timing/easing values unless there is a strong reason.
@@ -91,6 +93,7 @@ It may contain:
 - Agent rules are kept in editor-neutral docs (`AGENTS.md`, this file, and README files); do not reintroduce stale editor-specific rule files.
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
+- `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; `getMoneyOverview()` is the app wrapper that injects `data/money.json`.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
 - `Shell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
 - Entering `/` resets in-app navigation memory, so later back actions start from the main menu again.

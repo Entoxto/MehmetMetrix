@@ -60,6 +60,67 @@ function cleanProductName(name: string): string {
   return cleaned.split(/\s+/).join(' ');
 }
 
+function createEmptySizes(): Record<Size, number> {
+  return {
+    XS: 0,
+    S: 0,
+    M: 0,
+    L: 0,
+    XL: 0,
+    OneSize: 0,
+  };
+}
+
+function mapPositionSizes(item: ShipmentRawItem): Record<Size, number> {
+  const sizes = createEmptySizes();
+
+  if (!item.sizes) {
+    return sizes;
+  }
+
+  for (const [size, count] of Object.entries(item.sizes)) {
+    sizes[toSize(size)] = count;
+  }
+
+  return sizes;
+}
+
+function getPositionQuantity(item: ShipmentRawItem): number {
+  const sizeEntries = item.sizes ? Object.entries(item.sizes) : [];
+  const computedQuantity = sizeEntries.reduce((acc, [, count]) => acc + count, 0);
+
+  return item.quantityOverride ?? (computedQuantity || (item.sample ? 1 : 0));
+}
+
+function getNullableNumber(value: unknown): number | null {
+  return typeof value === 'number' ? value : null;
+}
+
+function getPositionSum(price: number | null, qty: number, isPayable: boolean): number | null {
+  return price != null && isPayable ? price * qty : null;
+}
+
+function getPositionNote(item: ShipmentRawItem): {
+  noteEnabled: boolean;
+  noteText: string | null;
+} {
+  const hasNoteText = item.note && item.note.toLowerCase() !== 'образец';
+  const noteEnabled = item.showStatusTag || hasNoteText;
+
+  return {
+    noteEnabled: !!noteEnabled,
+    noteText: item.note || null,
+  };
+}
+
+function getPositionTitle(item: ShipmentRawItem, product?: Product): string {
+  const cleanOverrideName = item.overrideName
+    ? cleanProductName(item.overrideName)
+    : null;
+
+  return cleanOverrideName || product?.name || 'Неизвестное изделие';
+}
+
 /**
  * Преобразует сырой элемент в Position
  */
@@ -69,58 +130,30 @@ function toPosition(
   options?: { shipmentId?: string; index?: number }
 ): Position {
   const product = products.find((p) => p.id === item.productId);
-  const price = typeof item.price === 'number' ? item.price : null;
   const index = options?.index ?? 0;
-
-  // Преобразуем размеры
-  const sizes: Record<Size, number> = {
-    XS: 0, S: 0, M: 0, L: 0, XL: 0, OneSize: 0,
-  };
-
-  if (item.sizes) {
-    for (const [size, count] of Object.entries(item.sizes)) {
-      sizes[toSize(size)] = count;
-    }
-  }
-
-  // Вычисляем количество
-  const sizeEntries = item.sizes ? Object.entries(item.sizes) : [];
-  const computedQuantity = sizeEntries.reduce((acc, [, count]) => acc + count, 0);
-  const qty = item.quantityOverride ?? (computedQuantity || (item.sample ? 1 : 0));
-
-  // Текстовый статус — 1 в 1 из Excel
+  const price = getNullableNumber(item.price);
+  const cost = getNullableNumber(item.cost);
+  const sizes = mapPositionSizes(item);
+  const qty = getPositionQuantity(item);
   const statusLabel = getStatusLabel(item.status);
-
   const isPayable = !item.paidPreviously && !item.noPayment;
-
-  // Сумма — отображается у всех позиций, кроме paidPreviously и noPayment
-  const sum = price != null && qty != null && isPayable
-    ? price * qty
-    : null;
-
-  // Примечание
-  const hasNoteText = item.note && item.note.toLowerCase() !== 'образец';
-  const noteEnabled = item.showStatusTag || hasNoteText;
-  const noteText = item.note || null;
-
-  const cleanOverrideName = item.overrideName 
-    ? cleanProductName(item.overrideName)
-    : null;
+  const sum = getPositionSum(price, qty, isPayable);
+  const { noteEnabled, noteText } = getPositionNote(item);
 
   return {
     id: buildPositionId(options?.shipmentId, item.productId, index),
     productId: item.productId,
-    title: cleanOverrideName || product?.name || 'Неизвестное изделие',
+    title: getPositionTitle(item, product),
     sizes,
     qty,
     price,
     sum,
-    cost: typeof item.cost === 'number' ? item.cost : null,
+    cost,
     sample: item.sample ?? false,
     sizesUnknown: item.sizesUnknown ?? false,
     statusLabel,
     isPayable,
-    noteEnabled: !!noteEnabled,
+    noteEnabled,
     noteText,
   };
 }

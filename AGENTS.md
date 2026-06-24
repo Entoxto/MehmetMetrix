@@ -78,6 +78,8 @@ If you need a production build, stop any active dev server first. A running dev 
 - In `Work`, keep `YearGroup` thin: `YearHeader` owns the yearly summary UI and `YearShipmentsSheet` owns the expanded shipment list.
 - In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
 - The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
+- Keep `ProductDetail` thin: photo behavior belongs in `components/product/ProductPhoto.tsx`, product facts in `ProductInfo.tsx`, and materials in `ProductMaterials.tsx`.
+- Keep `Money` screen-level: reusable financial card/table UI belongs in `components/money/`.
 - Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
 - New animations must stay subtle and respect `prefers-reduced-motion`.
 - Staggered entrance is acceptable for lists and page sections, but avoid decorative motion that competes with data.
