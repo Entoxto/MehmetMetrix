@@ -121,13 +121,18 @@ function getPositionTitle(item: ShipmentRawItem, product?: Product): string {
   return cleanOverrideName || product?.name || 'Неизвестное изделие';
 }
 
+function getPositionStatus(itemStatus: string | undefined, shipmentStatus: string | undefined): string {
+  const effectiveStatus = itemStatus?.trim() ? itemStatus : shipmentStatus;
+  return getStatusLabel(effectiveStatus);
+}
+
 /**
  * Преобразует сырой элемент в Position
  */
 function toPosition(
   item: ShipmentRawItem,
   products: Product[],
-  options?: { shipmentId?: string; index?: number }
+  options?: { shipmentId?: string; index?: number; fallbackStatus?: string }
 ): Position {
   const product = products.find((p) => p.id === item.productId);
   const index = options?.index ?? 0;
@@ -135,7 +140,9 @@ function toPosition(
   const cost = getNullableNumber(item.cost);
   const sizes = mapPositionSizes(item);
   const qty = getPositionQuantity(item);
-  const statusLabel = getStatusLabel(item.status);
+  // Позиция наследует статус поставки, только если её собственный статус пуст.
+  // Так пустая ячейка не превращает оплаченную позицию в «Неизвестный статус».
+  const statusLabel = getPositionStatus(item.status, options?.fallbackStatus);
   const isPayable = !item.paidPreviously && !item.noPayment;
   const sum = getPositionSum(price, qty, isPayable);
   const { noteEnabled, noteText } = getPositionNote(item);
@@ -163,7 +170,11 @@ function toPosition(
  */
 export function toBatch(config: ShipmentConfig, products: Product[]): Batch {
   const positions: Position[] = config.rawItems.map((item, index) =>
-    toPosition(item, products, { shipmentId: config.id, index })
+    toPosition(item, products, {
+      shipmentId: config.id,
+      index,
+      fallbackStatus: config.status,
+    })
   );
 
   return {

@@ -58,7 +58,7 @@ describe("buildShipments", () => {
 });
 
 describe("getPendingShipmentSummaries", () => {
-  it("возвращает суммы только по неоплаченным поставкам и позициям", () => {
+  it("считает неоплаченные позиции, даже если статус поставки ошибочно отмечен как оплаченный", () => {
     const shipments = buildShipments(products, [
       createShipment({
         id: "shipment-2025-1",
@@ -101,7 +101,30 @@ describe("getPendingShipmentSummaries", () => {
         amount: 200,
         unpaidUnits: 2,
       },
+      {
+        id: "shipment-2025-2",
+        title: "Оплата за поставку №2",
+        amount: 300,
+        unpaidUnits: 3,
+      },
     ]);
+  });
+
+  it("не создаёт долг, когда позиция без статуса наследует оплаченный статус поставки", () => {
+    const shipments = buildShipments(products, [
+      createShipment({
+        status: "Получено, оплачено ✅",
+        rawItems: [
+          {
+            productId: "product-1",
+            quantityOverride: 1,
+            price: 100,
+          },
+        ],
+      }),
+    ]);
+
+    expect(getPendingShipmentSummaries(shipments)).toEqual([]);
   });
 });
 

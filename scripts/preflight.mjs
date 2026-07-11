@@ -43,6 +43,7 @@ const tasks = isFastMode
       ["run", "typecheck"],
       ["run", "typecheck:strict"],
       ["run", "test"],
+      ["run", "test:excel"],
       ["run", "validate:data"],
       ["run", "validate:images"],
       ["run", "build"],

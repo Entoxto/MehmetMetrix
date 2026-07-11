@@ -10,11 +10,12 @@
     "typecheck": "tsc --noEmit",
     "typecheck:strict": "tsc -p tsconfig.strict-check.json",
     "test": "vitest run",
+    "test:excel": "python Excel/test_parser_logic.py",
     "validate:data": "python Excel/validate_generated_data.py",
     "validate:images": "node scripts/validate_catalog_images.mjs",
     "preflight:fast": "node scripts/preflight.mjs --fast",
     "preflight": "node scripts/preflight.mjs",
-    "build:full": "npm run lint && npm run typecheck && npm run test && npm run build"
+    "build:full": "npm run preflight"
   },
   "dependencies": {
     "next": "14.2.35",

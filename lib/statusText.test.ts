@@ -45,6 +45,12 @@ describe('isPaidStatus', () => {
       expect(isPaidStatus('НЕ ОПЛАЧЕНО')).toBe(false);
     });
 
+    it('распознаёт «не оплачено» без пробела или с дефисом', () => {
+      expect(isPaidStatus('Неоплачено')).toBe(false);
+      expect(isPaidStatus('Не-оплачено')).toBe(false);
+      expect(isPaidStatus('Не\tоплачено')).toBe(false);
+    });
+
     it('частичная оплата (есть "оплач" и "част") → не оплачено', () => {
       expect(isPaidStatus('Оплачен частично')).toBe(false);
       expect(isPaidStatus('Оплачено частично 🌓')).toBe(false);

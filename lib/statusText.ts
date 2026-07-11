@@ -33,19 +33,22 @@ export function isPaidStatus(raw: string | null | undefined): boolean {
   if (!text) return false;
 
   const lower = text.toLowerCase();
+  // Excel обычно отдаёт «не оплачено», но ручная правка может убрать пробел
+  // или заменить его дефисом. Для финансовой логики это всё тот же статус.
+  const compact = lower.replace(/[\s-]+/g, "");
 
   // Явно не оплачено
-  if (lower.includes("не оплачен")) return false;
+  if (compact.includes("неоплачен")) return false;
   
   // Частичная оплата (есть и "оплач" и "част" в любом порядке) → не оплачено
-  if (lower.includes("оплач") && lower.includes("част")) return false;
+  if (compact.includes("оплач") && compact.includes("част")) return false;
 
   // Любое другое упоминание "оплачен" → считаем оплаченным
-  if (lower.includes("оплачен")) return true;
+  if (compact.includes("оплачен")) return true;
 
   // Обратная совместимость: старые кодовые статусы из JSON/парсера
   // Нормализуем: убираем подчёркивания и пробелы.
-  const code = lower.replace(/[\s_]+/g, "");
+  const code = lower.replace(/[\s_-]+/g, "");
 
   // Позиции / партии, полученные и оплаченные
   if (code === "receivedpaid") return true;
@@ -60,4 +63,3 @@ export function isPaidStatus(raw: string | null | undefined): boolean {
   // По умолчанию считаем, что статус не даёт нам сигнала "оплачен" → не оплачен.
   return false;
 }
-

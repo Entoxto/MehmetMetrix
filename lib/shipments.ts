@@ -47,12 +47,9 @@ export function getPendingShipmentSummaries(
 ): PendingShipmentSummary[] {
   return shipments
     .map((shipment) => {
-      if (isPaidStatus(shipment.status)) {
-        return null;
-      }
-
       const unpaidPositions = shipment.batch.positions.filter(
-        (position) => position.sum !== null && !isPaidStatus(position.statusLabel)
+        (position) =>
+          position.isPayable && position.sum !== null && !isPaidStatus(position.statusLabel)
       );
 
       const amount = unpaidPositions.reduce((sum, position) => sum + (position.sum ?? 0), 0);

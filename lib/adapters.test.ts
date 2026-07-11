@@ -121,6 +121,47 @@ describe("toBatch", () => {
     expect(batch.positions.map((position) => position.sum)).toEqual([null, null]);
   });
 
+  it.each([undefined, "", "   "])(
+    "наследует статус поставки, если статус позиции пуст: %j",
+    (status) => {
+      const batch = toBatch(
+        {
+          ...createShipmentConfig([
+            {
+              productId: "product-1",
+              quantityOverride: 1,
+              price: 100,
+              status,
+            },
+          ]),
+          status: "Получено, оплачено ✅",
+        },
+        products
+      );
+
+      expect(batch.positions[0].statusLabel).toBe("Получено, оплачено ✅");
+    }
+  );
+
+  it("сохраняет непустой статус позиции вместо статуса поставки", () => {
+    const batch = toBatch(
+      {
+        ...createShipmentConfig([
+          {
+            productId: "product-1",
+            quantityOverride: 1,
+            price: 100,
+            status: "В производстве 🛠️",
+          },
+        ]),
+        status: "Получено, оплачено ✅",
+      },
+      products
+    );
+
+    expect(batch.positions[0].statusLabel).toBe("В производстве 🛠️");
+  });
+
   it("падает на неизвестном ключе размера", () => {
     expect(() =>
       toBatch(

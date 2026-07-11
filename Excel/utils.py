@@ -39,7 +39,7 @@ def has_sizes_unknown_marker(name: str) -> bool:
     return any(marker.lower() in last_bracket for marker in SIZES_UNKNOWN_MARKERS)
 
 
-def parse_sizes_from_name(name: str) -> Dict[str, int]:
+def parse_sizes_from_name(name: str, excel_row: Optional[int] = None) -> Dict[str, int]:
     """
     Парсит размеры из названия: "(XS-5, S-7, M-5)", "(one size-5)" или "(образец XS-2)".
     Если в последней скобке маркер "на уточнении", размеры не парсятся — позиция
@@ -47,10 +47,14 @@ def parse_sizes_from_name(name: str) -> Dict[str, int]:
     
     Args:
         name: Полное название товара с размерами в скобках
+        excel_row: Номер строки Excel для диагностического сообщения
         
     Returns:
-        Словарь размеров: {"xs": 5, "s": 7, "m": 5} или {"OneSize": 5}
-        Пустой словарь, если размеров нет или размеры на уточнении
+        Словарь размеров: {"xs": 5, "s": 7, "m": 5} или {"OneSize": 5}.
+        Пустой словарь, если размеров нет или размеры на уточнении.
+
+    Raises:
+        ValueError: Если один размер указан в последней скобке больше одного раза.
     """
     if not name:
         return {}
@@ -73,18 +77,24 @@ def parse_sizes_from_name(name: str) -> Dict[str, int]:
         # Иначе продолжаем парсить размеры из очищенной строки
         sizes_str = sizes_str_cleaned
     
-    # Проверяем на "one size"
-    one_size_match = re.search(r'one\s+size[-\s]*(\d+)', sizes_str, re.IGNORECASE)
-    if one_size_match:
-        count = int(one_size_match.group(1))
-        return {"OneSize": count}
-    
-    # Парсим обычные размеры: XS-5, S-7, M-5
+    # Парсим обычные размеры и OneSize единым проходом, чтобы дубликаты
+    # проверялись одинаково для всех допустимых вариантов записи.
     sizes = {}
-    size_pattern = r'([A-Z]+)\s*-\s*(\d+)'
+    size_pattern = r'(one\s*size|[A-Z]+)\s*-\s*(\d+)'
     for match in re.finditer(size_pattern, sizes_str, re.IGNORECASE):
-        size = match.group(1).lower()
+        raw_size = match.group(1)
+        normalized_size = re.sub(r'\s+', '', raw_size).lower()
+        size = "OneSize" if normalized_size == "onesize" else normalized_size
         count = int(match.group(2))
+
+        if size in sizes:
+            row_prefix = f"Строка {excel_row}: " if excel_row is not None else ""
+            display_size = "ONE SIZE" if size == "OneSize" else raw_size.upper()
+            raise ValueError(
+                f"{row_prefix}обнаружено дублирование размера {display_size} "
+                "в наименовании товара"
+            )
+
         sizes[size] = count
     
     return sizes

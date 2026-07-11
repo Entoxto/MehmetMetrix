@@ -53,9 +53,9 @@ It may contain:
 ## Invariants
 
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
-- Payment visibility depends on `isPayable`.
+- Payment visibility depends on `isPayable` and the position status. A position without its own status inherits the shipment status; an explicit position status always decides its payment visibility.
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
-- Excel column J (`Курс списания`) guards cost import: if it is `0`, ignore column N for `cost` because it may contain cargo-only formula output before the item is paid.
+- Excel column J (`Курс списания`) guards cost import: import column N as `cost` only when J is positive. A blank, zero, or negative J can leave N with cargo-only formula output before the item is paid.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
 - A position with the marker `(на уточнении)` in the last bracket of the Excel name means sizes are not yet assigned. The parser emits `sizesUnknown: true` and uses `quantityOverride` from column G. These positions still participate in payment totals but do not contribute sizes to the catalog.
 - `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.

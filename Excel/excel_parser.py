@@ -304,18 +304,18 @@ class ExcelParser:
         if price_value is not None and price_value > 0:
             item["price"] = int(price_value) if price_value.is_integer() else price_value
         
-        # cost: берём из колонки N только когда курс списания уже известен.
-        # Если курс в колонке J равен 0, формула N может содержать только карго,
+        # cost: берём из колонки N только когда курс списания уже известен и положителен.
+        # При пустом или нулевом J формула N может содержать только карго,
         # а не реальную себестоимость товара.
         exchange_rate_value = self._parse_numeric_field(row, self.COL_EXCHANGE_RATE)
-        if exchange_rate_value != 0:
+        if exchange_rate_value is not None and exchange_rate_value > 0:
             cost_value = self._parse_numeric_field(row, self.COL_COST_WITH_CARGO)
             if cost_value is not None and cost_value > 0:
                 item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
         
         # sizes из названия
         sizes_unknown = has_sizes_unknown_marker(name)
-        sizes = parse_sizes_from_name(name)
+        sizes = parse_sizes_from_name(name, excel_row=excel_row)
         if sizes_unknown:
             item["sizesUnknown"] = True
         elif sizes:
