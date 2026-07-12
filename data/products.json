@@ -18,7 +18,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Плащ из замши — коричневый.jpg",
-      "price": 260
+      "price": 260,
+      "cost": 27413
     },
     {
       "id": "auto-002",
@@ -65,7 +66,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — коричневый.jpg",
-      "price": 190
+      "price": 190,
+      "cost": 16487
     },
     {
       "id": "auto-004",
@@ -86,7 +88,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — brown.jpg",
-      "price": 180
+      "price": 180,
+      "cost": 18900
     },
     {
       "id": "auto-005",
@@ -103,7 +106,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Дублёнка длинная из меха тасканы — коричневый.jpg",
-      "price": 400
+      "price": 400,
+      "cost": 41999
     },
     {
       "id": "auto-006",
@@ -167,7 +171,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — mouse.jpg",
-      "price": 180
+      "price": 180,
+      "cost": 16056
     },
     {
       "id": "auto-009",
@@ -206,7 +211,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Брюки из замши — коричневый.jpg",
-      "price": 180
+      "price": 180,
+      "cost": 18882
     },
     {
       "id": "auto-011",
@@ -247,7 +253,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Дублёнка двусторонняя из меха тасканы — etoupe.jpg",
-      "price": 390
+      "price": 390,
+      "cost": 44705
     },
     {
       "id": "auto-013",
@@ -290,7 +297,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
-      "price": 390
+      "price": 390,
+      "cost": 43168
     },
     {
       "id": "auto-015",
@@ -329,7 +337,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из замши в стиле 80-х — бежевый.jpg",
-      "price": 190
+      "price": 190,
+      "cost": 20767
     },
     {
       "id": "auto-017",
@@ -384,7 +393,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из кожи Hermes в стиле 80-х — чёрный.jpg",
-      "price": 180
+      "price": 180,
+      "cost": 17751
     },
     {
       "id": "auto-020",
@@ -409,7 +419,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
-      "price": 550
+      "price": 550,
+      "cost": 46684
     },
     {
       "id": "auto-021",
@@ -453,7 +464,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — коричневый матовый.jpg",
-      "price": 465
+      "price": 465,
+      "cost": 40210
     },
     {
       "id": "auto-023",
@@ -477,7 +489,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
-      "price": 550
+      "price": 550,
+      "cost": 46340
     },
     {
       "id": "auto-024",
@@ -501,7 +514,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из меха пони в стиле 80-х — чёрный.jpg",
-      "price": 300
+      "price": 300,
+      "cost": 27345
     },
     {
       "id": "auto-025",
@@ -569,7 +583,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
-      "price": 400
+      "price": 400,
+      "cost": 35160
     },
     {
       "id": "auto-029",
@@ -613,7 +628,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Штаны из меха мериноса — бежевый.jpg",
-      "price": 215
+      "price": 215,
+      "cost": 18569
     },
     {
       "id": "auto-031",
@@ -637,7 +653,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Дублёнка из меха мериноса — бежевый.jpg",
-      "price": 260
+      "price": 260,
+      "cost": 22937
     },
     {
       "id": "auto-032",
@@ -699,7 +716,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — чёрный глянцевый.jpg",
-      "price": 320
+      "price": 320,
+      "cost": 26518
     },
     {
       "id": "auto-035",
@@ -765,7 +783,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый.jpg",
-      "price": 310
+      "price": 310,
+      "cost": 27979
     },
     {
       "id": "auto-038",
@@ -787,7 +806,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — коричневый глянцевый.jpg",
-      "price": 320
+      "price": 320,
+      "cost": 28576
     },
     {
       "id": "auto-039",
@@ -812,7 +832,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
-      "price": 560
+      "price": 560,
+      "cost": 43971
     },
     {
       "id": "auto-040",
@@ -859,7 +880,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Жакет из плетёной замши в стиле 80-х — коричневый.jpg",
-      "price": 340
+      "price": 340,
+      "cost": 26984
     },
     {
       "id": "auto-042",
@@ -878,7 +900,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Плащ из тонкой кожи — бежевый.jpg",
-      "price": 320
+      "price": 320,
+      "cost": 26021
     },
     {
       "id": "auto-043",
@@ -896,7 +919,8 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 220
+      "price": 220,
+      "cost": 19174
     },
     {
       "id": "auto-044",
@@ -915,7 +939,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Штаны из меха астроган — асфальт.jpg",
-      "price": 255
+      "price": 255,
+      "cost": 20272
     },
     {
       "id": "auto-045",
@@ -953,7 +978,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
-      "price": 230
+      "price": 230,
+      "cost": 18575
     },
     {
       "id": "auto-047",
@@ -991,7 +1017,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Дублёнка из меха астроган в стиле 80-х — чёрный.jpg",
-      "price": 300
+      "price": 300,
+      "cost": 26022
     },
     {
       "id": "auto-049",
@@ -1011,7 +1038,8 @@
       "inStock": true,
       "tags": [],
       "photo": "/images/products/jpg/Куртка из кожи питона по новым лекалам — белый.jpg",
-      "price": 480
+      "price": 480,
+      "cost": 38721
     },
     {
       "id": "auto-050",
