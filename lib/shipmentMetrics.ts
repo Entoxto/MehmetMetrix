@@ -1,4 +1,4 @@
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 export interface YearShipmentMetrics {
   shipmentsCount: number;
@@ -7,16 +7,16 @@ export interface YearShipmentMetrics {
   totalAmount: number;
 }
 
-export function getShipmentModelCount(shipment: ShipmentWithItems): number {
-  return shipment.batch.positions.length;
+export function getShipmentModelCount(shipment: Shipment): number {
+  return shipment.positions.length;
 }
 
-export function getShipmentUnitCount(shipment: ShipmentWithItems): number {
-  return shipment.batch.positions.reduce((sum, position) => sum + position.qty, 0);
+export function getShipmentUnitCount(shipment: Shipment): number {
+  return shipment.positions.reduce((sum, position) => sum + position.qty, 0);
 }
 
 export function getYearShipmentMetrics(
-  shipments: readonly ShipmentWithItems[]
+  shipments: readonly Shipment[]
 ): YearShipmentMetrics {
   return shipments.reduce(
     (metrics, shipment) => ({

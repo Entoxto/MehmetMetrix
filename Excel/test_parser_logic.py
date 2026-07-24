@@ -10,7 +10,7 @@ import pandas as pd
 from openpyxl import Workbook
 
 from excel_parser import ExcelParser
-from utils import parse_sizes_from_name
+from parser_utils import parse_sizes_from_name
 
 
 class ParserLogicTests(unittest.TestCase):

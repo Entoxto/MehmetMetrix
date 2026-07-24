@@ -1,6 +1,6 @@
 import moneyData from "@/data/money.json";
 import { getPendingShipmentSummaries } from "@/lib/shipments";
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 export interface MoneyStatusItem {
   id: string;
@@ -94,7 +94,7 @@ function readDepositItems(config: MoneyConfig): MoneyDepositItem[] {
 }
 
 export function buildMoneyOverview(
-  shipments: readonly ShipmentWithItems[],
+  shipments: readonly Shipment[],
   config: MoneyConfig
 ): MoneyOverview {
   const shipmentPendingItems: MoneyStatusItem[] = getPendingShipmentSummaries(shipments).map(
@@ -121,6 +121,6 @@ export function buildMoneyOverview(
   };
 }
 
-export function getMoneyOverview(shipments: readonly ShipmentWithItems[]): MoneyOverview {
+export function getMoneyOverview(shipments: readonly Shipment[]): MoneyOverview {
   return buildMoneyOverview(shipments, moneyData as MoneyConfig);
 }

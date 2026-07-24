@@ -11,7 +11,9 @@ This repository is an internal control panel for Mehmet Metrics:
 
 1. `README.md` — project overview, commands, architecture.
 2. `docs/AI_CONTEXT.md` — domain invariants and editing rules for agents.
-3. `data/README.md` — source-of-truth rules for generated/manual JSON files.
+3. `docs/ARCHITECTURE.md` — module boundaries, ownership, dependency direction.
+4. `data/README.md` — source-of-truth rules for generated/manual JSON files.
+5. `docs/EXCEL_PIPELINE.md` — parser contract when changing data import.
 
 ## Fast Commands
 
@@ -19,6 +21,7 @@ This repository is an internal control panel for Mehmet Metrics:
 - `npm run typecheck`
 - `npm run typecheck:strict`
 - `npm run test`
+- `npm run test:images`
 - `npm run validate:data`
 - `npm run validate:images`
 - `npm run preflight:fast`
@@ -61,25 +64,28 @@ If you need a production build, stop any active dev server first. A running dev 
 - `sample` is only a marker; it must not force quantity to `1` when sizes or Excel column G already define the quantity.
 - Catalog `photo` is optional. The parser writes it only when the matching JPG/JPEG exists; `excelRows` records every source row for startup diagnostics.
 - Missing catalog photos are valid and use the shared `__photo_pending` placeholder. A present-but-broken `photo` path remains a validation error.
+- Product grids and the home menu use `webp/card`; product detail uses full `webp`. Keep the fallback chain card WebP → full WebP → exact source JPG/JPEG → shared placeholder.
+- `public/images/products/jpg/` is the only manually maintained image source. Full/card WebP files are generated; `scripts/convert_to_webp.py` safely prunes derived `.webp` files whose JPG/JPEG source was removed.
 
 ## UI Rules
 
 - Non-clickable information should not look like buttons.
 - If an entire card is clickable, do not add an inner fake CTA button.
 - Mobile UI should be calmer and denser, not just a squeezed desktop.
+- Keep root layout request-independent: breakpoint correction happens on the client, and `headers()` / `cookies()` in `app/layout.tsx` would make every route dynamic.
 - Reuse tokens from `constants/styles.ts` before adding local inline styles.
 - Category-specific catalog accents should use `CATEGORY_VISUALS` from `constants/styles.ts`.
 - If a pattern repeats across screens, extract it.
 - Repeated clickable-card behavior belongs in `components/ui/ClickableCard.tsx`.
-- Brand in `Shell` (`MM` / `Mehmet Metrics`) always routes to `/`.
-- Back navigation is stateful: `Shell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
+- Brand in `AppShell` (`MM` / `Mehmet Metrics`) always routes to `/`.
+- Back navigation is stateful: `AppShell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
 - Product pages may use explicit back behavior (`backMode="explicit"`) to preserve origin context from `Work` / `Catalog`.
 - In `Work`, only year headers and shipment headers toggle expansion.
 - In `Work`, keep `YearGroup` thin: `YearHeader` owns the yearly summary UI and `YearShipmentsSheet` owns the expanded shipment list.
 - In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
 - The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
 - Keep `ProductDetail` thin: photo behavior belongs in `components/product/ProductPhoto.tsx`, product facts in `ProductInfo.tsx`, and materials in `ProductMaterials.tsx`.
-- Keep `Money` screen-level: reusable financial card/table UI belongs in `components/money/`.
+- Keep `MoneyScreen` screen-level: reusable financial card/table UI belongs in `components/money/`.
 - Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
 - New animations must stay subtle and respect `prefers-reduced-motion`.
 - Staggered entrance is acceptable for lists and page sections, but avoid decorative motion that competes with data.
@@ -87,6 +93,7 @@ If you need a production build, stop any active dev server first. A running dev 
 ## Editing Rules
 
 - Keep business logic in `lib/`, not inside page components.
+- Keep generated JSON imports on the server side; files marked `"use client"` receive prepared props and must not import the data loaders.
 - Keep generated-data assumptions documented when behavior changes.
 - If you change visible terminology, update docs and nearby UI consistently.
 - Prefer smaller public APIs: do not export helpers unless another module really needs them.

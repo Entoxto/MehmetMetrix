@@ -15,8 +15,6 @@ export const viewport = {
 };
 
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
-import { detectBreakpointFromUserAgent } from "@/lib/breakpoints";
 import { BreakpointProvider } from "@/components/providers/BreakpointProvider";
 
 export default function RootLayout({
@@ -24,9 +22,6 @@ export default function RootLayout({
 }: {
   children: ReactNode;
 }) {
-  const userAgent = headers().get("user-agent");
-  const initialBreakpoint = detectBreakpointFromUserAgent(userAgent);
-
   return (
     <html lang="ru">
       <head>
@@ -97,7 +92,7 @@ export default function RootLayout({
         `}</style>
       </head>
       <body>
-        <BreakpointProvider initialBreakpoint={initialBreakpoint}>
+        <BreakpointProvider initialBreakpoint="desktop">
           {children}
         </BreakpointProvider>
       </body>

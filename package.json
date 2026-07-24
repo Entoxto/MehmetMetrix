@@ -11,6 +11,7 @@
     "typecheck:strict": "tsc -p tsconfig.strict-check.json",
     "test": "vitest run",
     "test:excel": "python Excel/test_parser_logic.py",
+    "test:images": "python scripts/test_convert_to_webp.py",
     "validate:data": "python Excel/validate_generated_data.py",
     "validate:images": "node scripts/validate_catalog_images.mjs",
     "preflight:fast": "node scripts/preflight.mjs --fast",

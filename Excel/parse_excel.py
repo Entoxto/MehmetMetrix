@@ -10,7 +10,7 @@ from catalog_pricing import apply_latest_prices
 from data_validator import validate_generated_outputs
 from excel_parser import ExcelParser
 from json_storage import write_json_atomic
-from utils import infer_category, aggregate_product_sizes, assign_product_photos
+from parser_utils import infer_category, aggregate_product_sizes, assign_product_photos
 
 # Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
 if sys.platform == 'win32':

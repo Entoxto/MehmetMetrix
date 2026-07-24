@@ -1,5 +1,5 @@
 /**
- * Доменные типы для проекта MehmetMetrix.
+ * Доменные типы для проекта Mehmet Metrics.
  *
  * Статусы позиций — произвольные строки из Excel (1 в 1).
  * Логика «оплачен / не оплачен» определяется через isPaidStatus().
@@ -25,10 +25,4 @@ export interface Position {
   statusLabel: string;
   noteEnabled: boolean;
   noteText: string | null;
-}
-
-export interface Batch {
-  id: string;
-  receivedAt?: string;
-  positions: Position[];
 }

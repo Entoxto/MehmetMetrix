@@ -3,10 +3,10 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { COLORS, SPACING } from "@/constants/styles";
 import { ShipmentCard } from "@/components/work/ShipmentCard";
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 interface YearShipmentsSheetProps {
-  shipments: ShipmentWithItems[];
+  shipments: Shipment[];
   expandedCards: Set<string>;
   onToggleCard: (cardId: string) => void;
   isMobile: boolean;

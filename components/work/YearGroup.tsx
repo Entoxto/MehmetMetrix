@@ -9,15 +9,15 @@
 import { useMemo } from "react";
 import type { MouseEvent } from "react";
 import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY, MOTION } from "@/constants/styles";
-import { createCardHoverHandlers } from "@/lib/utils";
+import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
 import { getYearShipmentMetrics } from "@/lib/shipmentMetrics";
 import { YearHeader } from "@/components/work/YearHeader";
 import { YearShipmentsSheet } from "@/components/work/YearShipmentsSheet";
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 interface YearGroupProps {
   year: number;
-  shipments: ShipmentWithItems[];
+  shipments: Shipment[];
   animationIndex?: number;
   isExpanded: boolean;
   onToggle: () => void;

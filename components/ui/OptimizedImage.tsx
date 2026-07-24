@@ -2,7 +2,8 @@
 
 /**
  * Универсальный компонент изображения с оптимизацией.
- * Цепочка fallback: WebP → JPG → общая заглушка → эмодзи 📷
+ * Цепочка fallback для карточек:
+ * облегчённый WebP → полноразмерный WebP → JPG → общая заглушка → эмодзи 📷.
  * Используй этот компонент вместо повторения логики fallback вручную.
  */
 
@@ -14,14 +15,16 @@ import {
   PRODUCT_PHOTO_PLACEHOLDER,
   getProductImagePath,
   getOptimizedImagePath,
-  getJpgFallbackPath,
   getBlurPlaceholder,
 } from "@/lib/imageUtils";
+import type { ProductImageVariant } from "@/lib/imageUtils";
 
 interface OptimizedImageProps {
   /** Путь к оригинальному JPG изображению; без пути используется общая заглушка */
   src?: string;
   alt: string;
+  /** Полноразмерная версия или облегчённая версия для карточек */
+  variant?: ProductImageVariant;
   /** fill mode (по умолчанию true) */
   fill?: boolean;
   sizes?: string;
@@ -41,6 +44,7 @@ interface OptimizedImageProps {
 export const OptimizedImage = ({
   src,
   alt,
+  variant = "full",
   fill = true,
   sizes = "(max-width: 768px) 100vw, 50vw",
   style,
@@ -51,14 +55,16 @@ export const OptimizedImage = ({
   onLoad,
 }: OptimizedImageProps) => {
   const resolvedSrc = getProductImagePath(src);
-  const [imageSrc, setImageSrc] = useState<string>(() => getOptimizedImagePath(resolvedSrc));
+  const [imageSrc, setImageSrc] = useState<string>(() =>
+    getOptimizedImagePath(resolvedSrc, variant)
+  );
   const [imageError, setImageError] = useState(false);
   const isPlaceholder = imageSrc.includes("__photo_pending.");
 
   useEffect(() => {
-    setImageSrc(getOptimizedImagePath(resolvedSrc));
+    setImageSrc(getOptimizedImagePath(resolvedSrc, variant));
     setImageError(false);
-  }, [resolvedSrc]);
+  }, [resolvedSrc, variant]);
 
   if (imageError) {
     return <span style={{ color: COLORS.text.muted, fontSize: fallbackSize }}>📷</span>;
@@ -78,10 +84,12 @@ export const OptimizedImage = ({
       unoptimized={true}
       onLoad={onLoad}
       onError={() => {
-        if (imageSrc.includes("/webp/")) {
-          setImageSrc(getJpgFallbackPath(imageSrc));
+        if (imageSrc.includes("/webp/card/")) {
+          setImageSrc(getOptimizedImagePath(resolvedSrc, "full"));
+        } else if (imageSrc.includes("/webp/")) {
+          setImageSrc(resolvedSrc);
         } else if (imageSrc !== PRODUCT_PHOTO_PLACEHOLDER) {
-          setImageSrc(getOptimizedImagePath(PRODUCT_PHOTO_PLACEHOLDER));
+          setImageSrc(getOptimizedImagePath(PRODUCT_PHOTO_PLACEHOLDER, variant));
         } else {
           setImageError(true);
         }

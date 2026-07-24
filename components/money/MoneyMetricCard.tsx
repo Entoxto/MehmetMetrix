@@ -12,7 +12,7 @@ import {
 import { ClickableCard } from "@/components/ui/ClickableCard";
 import { MoneyDetailsTable } from "@/components/money/MoneyDetailsTable";
 import { formatCurrency } from "@/lib/format";
-import { createCardHoverHandlers } from "@/lib/utils";
+import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
 
 interface MoneyDetailsConfig<TItem> {
   items: TItem[];
