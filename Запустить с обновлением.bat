@@ -40,12 +40,12 @@ if %ERRORLEVEL% NEQ 0 (
 popd >nul
 echo.
 
-echo [3/5] Converting images to WebP...
+echo [3/5] Synchronizing JPG sources and WebP variants...
 pushd "scripts" >nul
 python convert_to_webp.py --auto
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo WARNING: image conversion to WebP failed
+    echo WARNING: image synchronization failed
     echo          continuing to start the project...
 )
 popd >nul

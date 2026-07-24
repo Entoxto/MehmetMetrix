@@ -23,22 +23,3 @@ export const resolveBreakpoint = (width: number): BreakpointKey => {
   return "desktop";
 };
 
-export const detectBreakpointFromUserAgent = (userAgent?: string | null): BreakpointKey => {
-  if (!userAgent) {
-    return "desktop";
-  }
-
-  const ua = userAgent.toLowerCase();
-
-  if (/\b(ipad|tablet)\b/.test(ua)) {
-    return "tablet";
-  }
-
-  if (/\b(mobile|iphone|ipod|android)\b/.test(ua)) {
-    return "mobile";
-  }
-
-  return "desktop";
-};
-
-

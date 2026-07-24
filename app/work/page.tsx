@@ -1,35 +1,21 @@
-"use client";
-
-import { useMemo } from "react";
+import { Suspense } from "react";
 import { getProducts } from "@/lib/products";
 import { buildShipments } from "@/lib/shipments";
 import { getDataMeta } from "@/lib/meta";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
-import { useWorkNavigationState } from "@/hooks/useWorkNavigationState";
-import { Work } from "@/app/home/Work";
-import { Shell } from "@/components/Shell";
+import { WorkScreen } from "@/components/work/WorkScreen";
+import { AppShell } from "@/components/layout/AppShell";
+import { APP_SHELL_STYLES } from "@/components/layout/appShellStyles";
 
 export default function WorkPage() {
-  const { isMobile, isWide: isDesktop } = useBreakpoint();
-
-  const products = useMemo(() => getProducts(), []);
-  const dataMeta = useMemo(() => getDataMeta(), []);
-
-  const shipments = useMemo(() => buildShipments(products), [products]);
-  const { expandedCards, expandedYears, toggleCard, toggleYear } =
-    useWorkNavigationState(shipments);
+  const products = getProducts();
+  const dataMeta = getDataMeta();
+  const shipments = buildShipments(products);
 
   return (
-    <Shell updatedAt={dataMeta.updatedAt}>
-      <Work
-        isMobile={isMobile}
-        isDesktop={isDesktop}
-        shipments={shipments}
-        expandedCards={expandedCards}
-        onToggleCard={toggleCard}
-        expandedYears={expandedYears}
-        onToggleYear={toggleYear}
-      />
-    </Shell>
+    <AppShell updatedAt={dataMeta.updatedAt}>
+      <Suspense fallback={<div style={APP_SHELL_STYLES.errorContainer}>Загрузка истории...</div>}>
+        <WorkScreen shipments={shipments} />
+      </Suspense>
+    </AppShell>
   );
 }

@@ -29,7 +29,7 @@ interface PositionRowColumn {
 
 export interface PositionRowProps {
   position: Position;
-  batchId?: string;
+  shipmentId?: string;
   onRowHover?: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
   cellBaseBackground: string;
   cellBaseBorder: string;
@@ -93,7 +93,7 @@ const getPositionLinkAreaStyle = (
 
 export const PositionRow = ({
   position,
-  batchId,
+  shipmentId,
   onRowHover,
   cellBaseBackground,
   cellBaseBorder,
@@ -126,7 +126,7 @@ export const PositionRow = ({
             >
               <Link
                 id={`pos-${position.id}`}
-                href={`/product/${position.productId}${batchId ? `?from=work&batch=${batchId}&pos=${position.id}` : "?from=work"}`}
+                href={`/product/${position.productId}${shipmentId ? `?from=work&batch=${shipmentId}&pos=${position.id}` : "?from=work"}`}
                 prefetch={false}
                 onClick={handleLinkClick}
                 style={getPositionLinkAreaStyle(isMobile, cellBaseBackground, cellBaseBorder)}
@@ -176,7 +176,7 @@ export const PositionRow = ({
           <Fragment key={column.id}>
             {column.renderCell(position, isMobile, {
               position,
-              batchId,
+              shipmentId,
               onRowHover,
               cellBaseBackground,
               cellBaseBorder,

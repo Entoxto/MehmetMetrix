@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getShipmentYear, groupShipmentsByYear } from "@/lib/shipments";
-import type { ShipmentWithItems } from "@/types/shipment";
+import { getShipmentYear, groupShipmentsByYear } from "@/lib/shipmentGrouping";
+import type { Shipment } from "@/types/shipment";
 
 function readStringSet(key: string): Set<string> {
   if (typeof window === "undefined") return new Set();
@@ -48,7 +48,7 @@ function toggleSetValue<T>(current: Set<T>, value: T): Set<T> {
   return next;
 }
 
-export function useWorkNavigationState(shipments: readonly ShipmentWithItems[]) {
+export function useWorkNavigationState(shipments: readonly Shipment[]) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const processedParamsRef = useRef("");
@@ -75,23 +75,24 @@ export function useWorkNavigationState(shipments: readonly ShipmentWithItems[]) 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const batch = searchParams.get("batch");
+    // `batch` остаётся именем query-параметра для совместимости старых ссылок.
+    const shipmentId = searchParams.get("batch");
     const pos = searchParams.get("pos");
-    const paramsKey = `${batch || ""}-${pos || ""}`;
+    const paramsKey = `${shipmentId || ""}-${pos || ""}`;
 
-    if (!batch && !pos) {
+    if (!shipmentId && !pos) {
       processedParamsRef.current = "";
       return;
     }
 
     if (processedParamsRef.current === paramsKey) return;
 
-    if (batch) {
-      const shipment = shipments.find((item) => item.id === batch);
+    if (shipmentId) {
+      const shipment = shipments.find((item) => item.id === shipmentId);
       if (shipment) {
         setExpandedYears((current) => addToSet(current, getShipmentYear(shipment)));
       }
-      setExpandedCards((current) => addToSet(current, batch));
+      setExpandedCards((current) => addToSet(current, shipmentId));
     }
 
     const timeoutIds: number[] = [];
@@ -106,7 +107,7 @@ export function useWorkNavigationState(shipments: readonly ShipmentWithItems[]) 
       );
     }
 
-    const scrollTarget = pos ? `pos-${pos}` : batch ? `batch-${batch}` : null;
+    const scrollTarget = pos ? `pos-${pos}` : shipmentId ? `batch-${shipmentId}` : null;
     if (scrollTarget) {
       timeoutIds.push(
         window.setTimeout(() => {

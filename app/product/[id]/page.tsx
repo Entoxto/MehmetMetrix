@@ -1,70 +1,34 @@
-"use client";
-
-import { useMemo, Suspense } from "react";
-import { useParams, useSearchParams } from "next/navigation";
-import { ProductDetail } from "@/components/ProductDetail";
+import { Suspense } from "react";
 import { getProducts } from "@/lib/products";
-import { Shell } from "@/components/Shell";
-import { HOME_STYLES } from "@/app/home/styles";
+import { ProductPageClient } from "@/components/product/ProductPageClient";
+import { APP_SHELL_STYLES } from "@/components/layout/appShellStyles";
 
-function ProductPageContent() {
-  const params = useParams();
-  const searchParams = useSearchParams();
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
 
-  const productId = params.id as string;
+export const dynamicParams = false;
 
-  const products = useMemo(() => getProducts(), []);
+export function generateStaticParams() {
+  return getProducts().map((product) => ({ id: product.id }));
+}
 
-  // Цена берётся напрямую из products.json (обновляется шагом актуализации каталога)
-  const product = useMemo(() => {
-    return products.find((p) => p.id === productId);
-  }, [products, productId]);
-
-  // Возврат сохраняет контекст источника: Work (партия/позиция) или Catalog (категория)
-  const backHref = useMemo(() => {
-    const from = searchParams.get("from");
-    const batch = searchParams.get("batch");
-    const pos = searchParams.get("pos");
-
-    if (from === "work") {
-      const params = new URLSearchParams();
-      if (batch) params.set("batch", batch);
-      if (pos) params.set("pos", pos);
-      const queryString = params.toString();
-      const hash = pos ? `#pos-${pos}` : "";
-      return `/work?${queryString}${hash}`;
-    } else if (from === "catalog") {
-      const category = searchParams.get("category");
-      if (category) {
-         return `/catalog?category=${encodeURIComponent(category)}`;
-      }
-      return "/catalog";
-    }
-
-    return "/catalog";
-  }, [searchParams]);
+export default function ProductPage({ params }: ProductPageProps) {
+  const product = getProducts().find((item) => item.id === params.id);
 
   if (!product) {
     return (
-      <Shell>
-        <div style={HOME_STYLES.errorContainer}>
-          <p style={HOME_STYLES.errorMessage}>Товар не найден</p>
-        </div>
-      </Shell>
+      <div style={APP_SHELL_STYLES.errorContainer}>
+        <p style={APP_SHELL_STYLES.errorMessage}>Товар не найден</p>
+      </div>
     );
   }
 
   return (
-    <Shell backHref={backHref} backMode="explicit">
-      <ProductDetail product={product} />
-    </Shell>
-  );
-}
-
-export default function ProductPage() {
-  return (
-    <Suspense fallback={<div style={HOME_STYLES.loaderContainer}>Загрузка...</div>}>
-      <ProductPageContent />
+    <Suspense fallback={<div style={APP_SHELL_STYLES.loaderContainer}>Загрузка...</div>}>
+      <ProductPageClient product={product} />
     </Suspense>
   );
 }

@@ -10,12 +10,12 @@ import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES, MOTION } from "@/constants/
 import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
 import { getShipmentModelCount, getShipmentUnitCount } from "@/lib/shipmentMetrics";
-import { BatchView } from "@/components/work/BatchView";
+import { ShipmentPositionsTable } from "@/components/work/ShipmentPositionsTable";
 import { ClickableCard } from "@/components/ui/ClickableCard";
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 interface ShipmentCardProps {
-  shipment: ShipmentWithItems;
+  shipment: Shipment;
   animationIndex?: number;
   isExpanded: boolean;
   onToggle: () => void;
@@ -45,7 +45,7 @@ const ShipmentDateInfo = ({
   isMobile,
   typography,
 }: {
-  shipment: ShipmentWithItems;
+  shipment: Shipment;
   isDesktop: boolean;
   isMobile: boolean;
   typography: { caption: CSSProperties };
@@ -265,8 +265,9 @@ export const ShipmentCard = ({
             }}
             aria-hidden="true"
           />
-          <BatchView
-            batch={shipment.batch}
+          <ShipmentPositionsTable
+            shipmentId={shipment.id}
+            positions={shipment.positions}
             onRowHover={onRowHover}
             cellBaseBackground={cellBaseBackground}
             cellBaseBorder={cellBaseBorder}
@@ -348,5 +349,3 @@ export const ShipmentCard = ({
     </div>
   );
 };
-
-

@@ -19,10 +19,8 @@ The app has three user-facing areas:
 ## Important Terminology
 
 - `shipment` / `поставка`
-  The business object shown in Work. In code it wraps a `batch`.
-
-- `batch`
-  Internal domain object containing `positions`.
+  The business object shown in Work. Computed positions live directly in
+  `shipment.positions`.
 
 - `position`
   Internal row inside a shipment.
@@ -62,8 +60,9 @@ It may contain:
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Catalog photos are optional while a model is being developed. The parser writes `photo` only when the exact JPG/JPEG exists and stores all source sheet rows in `excelRows`.
-- `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing is an error.
-- `OptimizedImage` uses the shared `__photo_pending` JPG/WebP when `photo` is absent or a referenced asset fails to load.
+- `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing or whose card WebP was not generated is an error.
+- `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> emoji.
+- `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.
 - The shared photo placeholder always uses `object-fit: contain` with stable inner padding across catalog/detail breakpoints; real product photos keep their normal crop rules.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
@@ -82,10 +81,11 @@ It may contain:
 
 ## Known Project Choices
 
-- `BreakpointProvider` uses actual viewport width on the client.
+- `app/layout.tsx` deliberately starts `BreakpointProvider` at `desktop`; the provider corrects it from the actual viewport in `useLayoutEffect`. Do not read User-Agent through `headers()`/`cookies()` in root layout: that makes every route dynamic.
 - If desktop suddenly looks mobile, check browser zoom (`Ctrl+0`) before changing breakpoints: zoom changes the real viewport width.
 - A separate strict TypeScript check exists in `tsconfig.strict-check.json`.
 - Unit tests use Vitest and run through `npm run test`.
+- WebP source-sync regressions run through `npm run test:images`.
 - `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
 - `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
 - The live site is deployed by Netlify. A Git push to the deployment branch normally triggers the Netlify build, using `netlify.toml` for the build command.
@@ -95,7 +95,13 @@ It may contain:
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; `getMoneyOverview()` is the app wrapper that injects `data/money.json`.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
-- `Shell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
+- Routes live in `app/`; screen components are grouped by owner in
+  `components/home`, `catalog`, `money`, `product`, and `work`.
+- Route files are server components and generated JSON must not be imported from `"use client"` modules. Current production output is Static for `/`, `/catalog`, `/money`, `/work` and SSG for every `/product/[id]`.
+- Catalog and product query-state lives in narrow client boundaries under `Suspense`; keep the server route responsible for data loading.
+- `AppShell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
+- The legacy `batch` query parameter carries a shipment id in deep links; keep
+  it compatible, but use `shipmentId` for TypeScript variables.
 - Entering `/` resets in-app navigation memory, so later back actions start from the main menu again.
 - Product pages use explicit back behavior to preserve `Work` / `Catalog` context, while other screens prefer the in-app history stack first and fallback second.
 - `app/layout.tsx` contains the global keyframes, the `prefers-reduced-motion` safeguard, and the global `:focus-visible` ring (keyboard focus is visible, mouse clicks stay clean).
@@ -106,8 +112,8 @@ It may contain:
 
 - Collapse duplicated UI patterns into local helpers or shared style tokens.
 - Narrow module exports when helpers are only used internally.
-- Prefer updating README / data docs / AGENTS whenever domain or UI terminology changes.
-- If you touch navigation, update both the code contract (`Shell`, `navigationHistory`) and the docs in the same pass.
+- Prefer updating README / architecture / data docs / AGENTS whenever domain or UI terminology changes.
+- If you touch navigation, update both the code contract (`AppShell`, `navigationHistory`) and the docs in the same pass.
 - If you touch motion, update both the shared tokens and the documentation of interaction intent in the same pass.
 
 ## Avoid

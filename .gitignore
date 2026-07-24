@@ -29,6 +29,9 @@ __pycache__/
 *.exe
 public/images/products/*.exe
 
+# Machine-local Windows shortcuts
+/*.lnk
+
 # Debug
 npm-debug.log*
 yarn-debug.log*

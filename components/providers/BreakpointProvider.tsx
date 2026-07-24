@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useLayoutEffect, type ReactNode } from "react";
-import { BreakpointContext } from "@/contexts/BreakpointContext";
+import { BreakpointContext } from "@/components/providers/BreakpointContext";
 import { resolveBreakpoint, type BreakpointKey } from "@/lib/breakpoints";
 
 interface BreakpointProviderProps {

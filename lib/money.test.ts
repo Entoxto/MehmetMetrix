@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildMoneyOverview } from "./money";
 import type { Position } from "@/types/domain";
-import type { ShipmentWithItems } from "@/types/shipment";
+import type { Shipment } from "@/types/shipment";
 
 function createPosition(overrides: Partial<Position>): Position {
   return {
@@ -31,19 +31,16 @@ function createShipment({
   title?: string;
   status?: string;
   positions?: Position[];
-}): ShipmentWithItems {
+}): Shipment {
   return {
     id,
     title,
     status,
     rawItems: [],
+    positions,
     totalAmount: positions.reduce((sum, position) => sum + (position.sum ?? 0), 0),
     hasPriceGaps: false,
-    batch: {
-      id,
-      positions,
-    },
-  } as ShipmentWithItems;
+  } as Shipment;
 }
 
 describe("buildMoneyOverview", () => {

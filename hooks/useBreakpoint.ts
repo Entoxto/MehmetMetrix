@@ -6,7 +6,7 @@
  */
 
 import { useContext } from "react";
-import { BreakpointContext } from "@/contexts/BreakpointContext";
+import { BreakpointContext } from "@/components/providers/BreakpointContext";
 
 export const useBreakpoint = () => {
   const breakpoint = useContext(BreakpointContext);
@@ -21,7 +21,6 @@ export const useBreakpoint = () => {
     isWide: breakpoint === "laptop" || breakpoint === "desktop",
   } as const;
 };
-
 
 
 

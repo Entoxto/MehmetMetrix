@@ -1,6 +1,6 @@
 /**
- * Типы для работы с партиями (shipments)
- * Общие интерфейсы для adapters.ts и shipments.ts
+ * Сырые и вычисленные типы поставок.
+ * Общие интерфейсы для shipmentAdapter.ts и shipments.ts.
  *
  * Статусы партий и позиций — это произвольные строки из Excel.
  * Логика «оплачен / не оплачен» определяется через lib/statusText.ts (isPaidStatus).
@@ -42,9 +42,9 @@ export interface ShipmentConfig {
 /**
  * Расширенный интерфейс поставки с вычисленными данными
  */
-export interface ShipmentWithItems extends ShipmentConfig {
+export interface Shipment extends ShipmentConfig {
+  positions: import("@/types/domain").Position[];
   totalAmount: number;
   hasPriceGaps: boolean;
-  batch: import('@/types/domain').Batch;
 }
 

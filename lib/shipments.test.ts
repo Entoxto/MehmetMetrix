@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildShipments,
   getPendingShipmentSummaries,
-  getShipmentYear,
-  groupShipmentsByYear,
 } from "./shipments";
+import { getShipmentYear, groupShipmentsByYear } from "./shipmentGrouping";
 import type { Product } from "@/types/product";
 import type { ShipmentConfig } from "@/types/shipment";
 

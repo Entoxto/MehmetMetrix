@@ -5,6 +5,8 @@
 export const PRODUCT_PHOTO_PLACEHOLDER =
   "/images/products/jpg/__photo_pending.jpg";
 
+export type ProductImageVariant = "full" | "card";
+
 export function getProductImagePath(photoPath?: string): string {
   return photoPath?.trim() || PRODUCT_PHOTO_PLACEHOLDER;
 }
@@ -13,21 +15,18 @@ export function getProductImagePath(photoPath?: string): string {
  * Преобразует путь к JPG изображению в путь к WebP версии.
  * 
  * @param jpgPath - Путь к JPG изображению (например: "/images/products/jpg/фото.jpg")
+ * @param variant - Полноразмерная версия или облегчённая версия для карточек
  * @returns Путь к WebP (например: "/images/products/webp/фото.webp")
  */
-export function getOptimizedImagePath(jpgPath: string): string {
-  return jpgPath.replace('/jpg/', '/webp/').replace(/\.(jpg|jpeg)$/i, '.webp');
-}
+export function getOptimizedImagePath(
+  jpgPath: string,
+  variant: ProductImageVariant = "full"
+): string {
+  const targetDirectory = variant === "card" ? "/webp/card/" : "/webp/";
 
-/**
- * Преобразует путь к WebP обратно в путь к JPG (fallback).
- * Используется при ошибке загрузки WebP для автоматического переключения на JPG.
- * 
- * @param webpPath - Путь к WebP изображению (например: "/images/products/webp/фото.webp")
- * @returns Путь к JPG (например: "/images/products/jpg/фото.jpg")
- */
-export function getJpgFallbackPath(webpPath: string): string {
-  return webpPath.replace('/webp/', '/jpg/').replace(/\.webp$/i, '.jpg');
+  return jpgPath
+    .replace("/jpg/", targetDirectory)
+    .replace(/\.(jpg|jpeg)$/i, ".webp");
 }
 
 /**

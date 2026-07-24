@@ -1,6 +1,6 @@
 """
 Основной парсер Excel файла для преобразования в JSON формат поставок.
-Реализует логику согласно документу "логика парсинга.txt"
+Реализует контракт из docs/EXCEL_PIPELINE.md.
 
 Статусы партий и позиций прокидываются как текст из Excel (без маппинга в коды).
 Логика «оплачен / не оплачен» определяется на стороне TypeScript (isPaidStatus).
@@ -11,7 +11,7 @@ import re
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
 from openpyxl import load_workbook
-from utils import (
+from parser_utils import (
     parse_sizes_from_name,
     has_sizes_unknown_marker,
     find_or_create_product_id,

@@ -5,6 +5,7 @@ const rootDir = process.cwd();
 const productsPath = path.join(rootDir, "data", "products.json");
 const jpgDir = path.join(rootDir, "public", "images", "products", "jpg");
 const webpDir = path.join(rootDir, "public", "images", "products", "webp");
+const cardWebpDir = path.join(webpDir, "card");
 const sourceDirs = ["app", "components", "lib"];
 const sourceImagePattern =
   /\/images\/products\/(?:jpg|webp)\/[^"'`\r\n]+?\.(?:jpg|jpeg|webp)/gi;
@@ -24,6 +25,24 @@ function listFiles(dirPath) {
     .map((entry) => entry.name);
 }
 
+function listRelativeFilesRecursive(dirPath, baseDir = dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    return [];
+  }
+
+  const files = [];
+  for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...listRelativeFilesRecursive(fullPath, baseDir));
+    } else if (entry.isFile()) {
+      files.push(toPosix(path.relative(baseDir, fullPath)));
+    }
+  }
+
+  return files;
+}
+
 function readProducts() {
   const raw = fs.readFileSync(productsPath, "utf8");
   const parsed = JSON.parse(raw);
@@ -36,6 +55,12 @@ function buildPublicPath(photoPath) {
 
 function getWebpPhotoPath(photoPath) {
   return photoPath.replace("/jpg/", "/webp/").replace(/\.(jpg|jpeg)$/i, ".webp");
+}
+
+function getCardWebpPhotoPath(photoPath) {
+  return photoPath
+    .replace("/jpg/", "/webp/card/")
+    .replace(/\.(jpg|jpeg)$/i, ".webp");
 }
 
 function walkFiles(dirPath) {
@@ -86,6 +111,7 @@ const productsWithoutPhoto = [];
 
 const referencedJpg = new Set();
 const referencedWebp = new Set();
+const referencedCardWebp = new Set();
 const sourceImageReferences = collectSourceImageReferences();
 
 for (const product of products) {
@@ -128,6 +154,14 @@ for (const product of products) {
   if (!fs.existsSync(webpAbsolutePath)) {
     warnings.push(`${label}: отсутствует WebP-версия ${webpPhoto}`);
   }
+
+  const cardWebpPhoto = getCardWebpPhotoPath(photo);
+  const cardWebpAbsolutePath = buildPublicPath(cardWebpPhoto);
+  referencedCardWebp.add(path.basename(cardWebpAbsolutePath));
+
+  if (!fs.existsSync(cardWebpAbsolutePath)) {
+    errors.push(`${label}: отсутствует карточная WebP-версия ${cardWebpPhoto}`);
+  }
 }
 
 for (const imagePath of sourceImageReferences) {
@@ -148,6 +182,18 @@ for (const imagePath of sourceImageReferences) {
     if (!fs.existsSync(webpAbsolutePath)) {
       warnings.push(`Для изображения из кода отсутствует WebP-версия ${webpImagePath}`);
     }
+
+    const cardWebpImagePath = getCardWebpPhotoPath(imagePath);
+    const cardWebpAbsolutePath = buildPublicPath(cardWebpImagePath);
+    referencedCardWebp.add(path.basename(cardWebpAbsolutePath));
+
+    if (!fs.existsSync(cardWebpAbsolutePath)) {
+      errors.push(
+        `Для изображения из кода отсутствует карточная WebP-версия ${cardWebpImagePath}`
+      );
+    }
+  } else if (imagePath.includes("/webp/card/")) {
+    referencedCardWebp.add(fileName);
   } else if (imagePath.includes("/webp/")) {
     referencedWebp.add(fileName);
   }
@@ -155,9 +201,42 @@ for (const imagePath of sourceImageReferences) {
 
 const jpgFiles = listFiles(jpgDir);
 const webpFiles = listFiles(webpDir);
+const cardWebpFiles = listFiles(cardWebpDir);
+const sourceStems = new Set(
+  jpgFiles
+    .filter((fileName) => /\.(jpg|jpeg)$/i.test(fileName))
+    .map((fileName) => path.parse(fileName).name)
+);
+const allDerivedWebpFiles = listRelativeFilesRecursive(webpDir).filter(
+  (fileName) => /\.webp$/i.test(fileName)
+);
+
+for (const relativePath of allDerivedWebpFiles) {
+  const pathParts = relativePath.split("/");
+  const hasSupportedLayout =
+    pathParts.length === 1 ||
+    (pathParts.length === 2 && pathParts[0] === "card");
+
+  if (!hasSupportedLayout) {
+    errors.push(
+      `Неожиданный производный WebP ${relativePath}; запустите python scripts/convert_to_webp.py --auto`
+    );
+    continue;
+  }
+
+  const sourceStem = path.parse(pathParts.at(-1)).name;
+  if (!sourceStems.has(sourceStem)) {
+    errors.push(
+      `У производного WebP ${relativePath} нет исходного JPG/JPEG; запустите python scripts/convert_to_webp.py --auto`
+    );
+  }
+}
 
 const orphanJpg = jpgFiles.filter((fileName) => !referencedJpg.has(fileName));
 const orphanWebp = webpFiles.filter((fileName) => !referencedWebp.has(fileName));
+const orphanCardWebp = cardWebpFiles.filter(
+  (fileName) => !referencedCardWebp.has(fileName)
+);
 
 if (orphanJpg.length > 0) {
   warnings.push(
@@ -172,6 +251,14 @@ if (orphanWebp.length > 0) {
     `Есть неиспользуемые WebP-файлы (${orphanWebp.length}): ${orphanWebp
       .slice(0, 8)
       .join(", ")}${orphanWebp.length > 8 ? ", ..." : ""}`
+  );
+}
+
+if (orphanCardWebp.length > 0) {
+  warnings.push(
+    `Есть неиспользуемые карточные WebP-файлы (${orphanCardWebp.length}): ${orphanCardWebp
+      .slice(0, 8)
+      .join(", ")}${orphanCardWebp.length > 8 ? ", ..." : ""}`
   );
 }
 
@@ -206,6 +293,7 @@ if (productsWithoutPhoto.length > 0) {
 console.log(`  Доп. ссылок на изображения в коде: ${sourceImageReferences.size}`);
 console.log(`  JPG-файлов в каталоге: ${jpgFiles.length}`);
 console.log(`  WebP-файлов в каталоге: ${webpFiles.length}`);
+console.log(`  Карточных WebP-файлов в каталоге: ${cardWebpFiles.length}`);
 
 if (warnings.length > 0) {
   console.log("WARN:");
