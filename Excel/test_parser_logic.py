@@ -3,8 +3,11 @@
 import unittest
 from contextlib import redirect_stdout
 from io import StringIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pandas as pd
+from openpyxl import Workbook
 
 from excel_parser import ExcelParser
 from utils import parse_sizes_from_name
@@ -55,6 +58,49 @@ class ParserLogicTests(unittest.TestCase):
         item = self.parse_item(self.create_row(exchange_rate=95.5))
 
         self.assertEqual(item["cost"], 42000)
+
+    def test_merged_exchange_rate_imports_cost_for_every_position(self):
+        with TemporaryDirectory() as temp_dir:
+            excel_path = Path(temp_dir) / "shipments.xlsx"
+            workbook = Workbook()
+            worksheet = workbook.active
+            worksheet.title = "Поставки"
+
+            for column in range(1, 15):
+                worksheet.cell(row=1, column=column, value=f"column-{column}")
+
+            worksheet.cell(row=2, column=1, value=1)
+            worksheet.cell(
+                row=2,
+                column=3,
+                value="Жакет из кожи — первый (XS-1)",
+            )
+            worksheet.cell(row=2, column=7, value=1)
+            worksheet.cell(row=2, column=8, value=100)
+            worksheet.cell(row=2, column=10, value=95.5)
+            worksheet.cell(row=2, column=14, value=42000)
+
+            worksheet.cell(
+                row=3,
+                column=3,
+                value="Жакет из кожи — второй (XS-1)",
+            )
+            worksheet.cell(row=3, column=7, value=1)
+            worksheet.cell(row=3, column=8, value=100)
+            worksheet.cell(row=3, column=14, value=43000)
+            worksheet.merge_cells("J2:J3")
+
+            workbook.save(excel_path)
+            workbook.close()
+
+            with redirect_stdout(StringIO()):
+                shipments = ExcelParser(str(excel_path), []).parse()
+
+        costs = [
+            item.get("cost")
+            for item in shipments[0]["rawItems"]
+        ]
+        self.assertEqual(costs, [42000, 43000])
 
 
 if __name__ == "__main__":

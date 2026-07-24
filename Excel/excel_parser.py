@@ -10,6 +10,7 @@ import pandas as pd
 import re
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
+from openpyxl import load_workbook
 from utils import (
     parse_sizes_from_name,
     has_sizes_unknown_marker,
@@ -29,6 +30,8 @@ from utils import (
 class ExcelParser:
     """Парсер Excel файла для преобразования поставок в JSON"""
     
+    SHEET_NAME = "Поставки"
+
     # Индексы колонок
     COL_SHIPMENT_NUM = 0  # A: № Поставки
     COL_NAME = 2          # C: Наименование
@@ -61,7 +64,7 @@ class ExcelParser:
             Список поставок в формате JSON
         """
         # Читаем Excel лист "Поставки"
-        df = pd.read_excel(self.excel_file, sheet_name='Поставки', header=None)
+        df = self._read_shipments_sheet()
         
         # Проверяем структуру файла
         self._validate_excel_structure(df)
@@ -127,6 +130,54 @@ class ExcelParser:
         shipments.sort(key=self._get_shipment_sort_key)
         
         return shipments
+
+    def _read_shipments_sheet(self) -> pd.DataFrame:
+        """
+        Читает лист поставок и разворачивает объединённые ячейки курса списания.
+
+        Pandas оставляет значение объединённой ячейки только в первой строке.
+        В таблице курс J часто объединён на несколько позиций одной поставки,
+        поэтому значение нужно явно перенести на все строки этого диапазона.
+        """
+        df = pd.read_excel(
+            self.excel_file,
+            sheet_name=self.SHEET_NAME,
+            header=None,
+        )
+
+        if df.shape[1] <= self.COL_EXCHANGE_RATE:
+            return df
+
+        workbook = load_workbook(self.excel_file, data_only=True, read_only=False)
+        try:
+            worksheet = workbook[self.SHEET_NAME]
+            exchange_rate_column = self.COL_EXCHANGE_RATE + 1
+
+            for merged_range in worksheet.merged_cells.ranges:
+                if (
+                    merged_range.min_col != exchange_rate_column
+                    or merged_range.max_col != exchange_rate_column
+                ):
+                    continue
+
+                exchange_rate = worksheet.cell(
+                    row=merged_range.min_row,
+                    column=exchange_rate_column,
+                ).value
+                if is_empty_value(exchange_rate):
+                    continue
+
+                start_index = max(merged_range.min_row - 1, 0)
+                stop_index = min(merged_range.max_row, len(df))
+                if start_index < stop_index:
+                    df.iloc[
+                        start_index:stop_index,
+                        self.COL_EXCHANGE_RATE,
+                    ] = exchange_rate
+        finally:
+            workbook.close()
+
+        return df
     
     def _finish_shipment(
         self,
