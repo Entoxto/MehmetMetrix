@@ -49,7 +49,9 @@ export const ShipmentContentsList = ({
           {items.map((item, index) => (
             <li
               key={item.id}
-              aria-label={`${item.sourceTitle}, ${formatUnitCount(item.quantity)}`}
+              aria-label={`${item.sourceTitle}, ${formatUnitCount(item.quantity)}${
+                item.isSample ? ", образец" : ""
+              }`}
               style={{
                 display: "grid",
                 gridTemplateColumns: isMobile
@@ -70,7 +72,9 @@ export const ShipmentContentsList = ({
                 style={{
                   display: "block",
                   minWidth: 0,
-                  color: COLORS.text.secondary,
+                  color: item.isSample
+                    ? SHIPMENT_TYPE_VISUALS.sample.accent
+                    : COLORS.text.secondary,
                   fontSize: isMobile ? 11 : 13,
                   lineHeight: isMobile ? 1.32 : 1.35,
                   overflowWrap: "break-word",

@@ -99,6 +99,7 @@ describe("shipment contents", () => {
         model: "Куртка",
         color: "коричневый матовый",
         quantity: 2,
+        isSample: false,
         sourceTitle: "Куртка — коричневый матовый",
       },
       {
@@ -106,6 +107,7 @@ describe("shipment contents", () => {
         model: "Модель two",
         color: null,
         quantity: 1,
+        isSample: true,
         sourceTitle: "Модель two",
       },
       {
@@ -113,6 +115,7 @@ describe("shipment contents", () => {
         model: "Модель three",
         color: null,
         quantity: 4,
+        isSample: false,
         sourceTitle: "Модель three",
       },
     ]);

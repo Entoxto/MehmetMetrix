@@ -18,6 +18,7 @@ export interface ShipmentContentItem {
   model: string;
   color: string | null;
   quantity: number;
+  isSample: boolean;
   sourceTitle: string;
 }
 
@@ -56,6 +57,7 @@ export function getShipmentContentsItems(
       model,
       color,
       quantity: position.qty,
+      isSample: position.sample,
       sourceTitle: position.title,
     };
   });

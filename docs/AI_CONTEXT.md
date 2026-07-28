@@ -67,6 +67,9 @@ It may contain:
   unchanged. Desktop uses model/color/quantity columns, while mobile places
   color and quantity on a second row below the wrapping model name. The two
   shipment-type badges stay together as one wrapping pair.
+- Sample position model names use the same muted violet accent as the
+  `Образец` badge. Product color stays bronze and quantity stays neutral so the
+  sample signal does not flatten the row hierarchy.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Catalog photos are optional while a model is being developed. The parser writes `photo` only when the exact JPG/JPEG exists and stores all source sheet rows in `excelRows`.
