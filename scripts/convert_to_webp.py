@@ -3,10 +3,13 @@
 import io
 import sys
 from pathlib import Path
+from statistics import median
 
 FULL_QUALITY = 85
 CARD_QUALITY = 80
-CARD_MAX_SIZE = (960, 1200)
+CARD_MAX_SIZE = (960, 960)
+CARD_VARIANT_VERSION = "square-contain-v1"
+CARD_VARIANT_VERSION_FILE = ".variant-version"
 
 
 def configure_windows_console() -> None:
@@ -35,11 +38,57 @@ def needs_refresh(source_path: Path, target_path: Path) -> bool:
     return target_path.stat().st_mtime_ns < source_changed_at
 
 
+def estimate_background_color(image) -> tuple[int, int, int]:
+    """Подбирает нейтральные поля по четырём углам исходного изображения."""
+    from PIL import ImageStat
+
+    rgb_image = image.convert("RGB")
+    width, height = rgb_image.size
+    sample_size = max(1, min(width, height) // 20)
+    boxes = (
+        (0, 0, sample_size, sample_size),
+        (width - sample_size, 0, width, sample_size),
+        (0, height - sample_size, sample_size, height),
+        (width - sample_size, height - sample_size, width, height),
+    )
+    corner_colors = [
+        tuple(int(value) for value in ImageStat.Stat(rgb_image.crop(box)).median[:3])
+        for box in boxes
+    ]
+
+    return tuple(
+        int(median(color[channel] for color in corner_colors))
+        for channel in range(3)
+    )
+
+
+def pad_to_square(image):
+    """Вписывает изображение целиком в квадрат без кропа."""
+    from PIL import Image
+
+    width, height = image.size
+    square_size = max(width, height)
+    if width == height:
+        return image
+
+    background = estimate_background_color(image)
+    canvas = Image.new("RGB", (square_size, square_size), background)
+    offset = ((square_size - width) // 2, (square_size - height) // 2)
+
+    if image.mode == "RGBA":
+        canvas.paste(image, offset, image)
+    else:
+        canvas.paste(image.convert("RGB"), offset)
+
+    return canvas
+
+
 def convert_to_webp(
     input_path: Path,
     output_path: Path,
     quality: int,
     max_size: tuple[int, int] | None = None,
+    square_canvas: bool = False,
 ) -> tuple[int, int]:
     """Конвертирует JPG в WebP и возвращает размеры исходника и результата."""
     from PIL import Image
@@ -57,6 +106,9 @@ def convert_to_webp(
         if max_size is not None:
             image.thumbnail(max_size, Image.Resampling.LANCZOS)
 
+        if square_canvas:
+            image = pad_to_square(image)
+
         image.save(output_path, "WebP", quality=quality, method=6)
 
     return input_path.stat().st_size, output_path.stat().st_size
@@ -68,9 +120,11 @@ def ensure_variant(
     *,
     quality: int,
     max_size: tuple[int, int] | None = None,
+    square_canvas: bool = False,
+    force_refresh: bool = False,
 ) -> tuple[bool, int]:
     """Обновляет вариант при необходимости; возвращает факт конвертации и размер."""
-    if not needs_refresh(source_path, target_path):
+    if not force_refresh and not needs_refresh(source_path, target_path):
         return False, target_path.stat().st_size
 
     _, target_size = convert_to_webp(
@@ -78,6 +132,7 @@ def ensure_variant(
         target_path,
         quality=quality,
         max_size=max_size,
+        square_canvas=square_canvas,
     )
     return True, target_size
 
@@ -163,6 +218,7 @@ def main() -> int:
     jpg_dir = project_root / "public" / "images" / "products" / "jpg"
     webp_dir = project_root / "public" / "images" / "products" / "webp"
     card_webp_dir = webp_dir / "card"
+    card_variant_version_path = card_webp_dir / CARD_VARIANT_VERSION_FILE
 
     if not jpg_dir.exists():
         print(f"❌ Папка не найдена: {jpg_dir}")
@@ -189,6 +245,11 @@ def main() -> int:
 
     webp_dir.mkdir(parents=True, exist_ok=True)
     card_webp_dir.mkdir(parents=True, exist_ok=True)
+    card_variant_needs_refresh = (
+        not card_variant_version_path.exists()
+        or card_variant_version_path.read_text(encoding="utf-8").strip()
+        != CARD_VARIANT_VERSION
+    )
 
     project_root_resolved = project_root.resolve()
     for generated_dir in (webp_dir, card_webp_dir):
@@ -240,6 +301,8 @@ def main() -> int:
                 card_path,
                 quality=CARD_QUALITY,
                 max_size=CARD_MAX_SIZE,
+                square_canvas=True,
+                force_refresh=card_variant_needs_refresh,
             )
         except Exception as error:
             errors += 1
@@ -260,6 +323,12 @@ def main() -> int:
         print(
             f"{'🔄' if statuses else '✓'} {image_path.name}: {status}; "
             f"{full_size / 1024:.1f} KB / {card_size / 1024:.1f} KB"
+        )
+
+    if errors == 0:
+        card_variant_version_path.write_text(
+            f"{CARD_VARIANT_VERSION}\n",
+            encoding="utf-8",
         )
 
     print(f"\n{'=' * 60}")

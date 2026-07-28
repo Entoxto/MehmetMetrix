@@ -59,8 +59,8 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
         <div
           style={{
             width: "100%",
-            height: isMobile ? 260 : 360,
-            background: visual.surface,
+            aspectRatio: "1 / 1",
+            background: COLORS.background.photo,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -85,8 +85,9 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
             variant="card"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             style={{
-              objectFit: "cover",
-              objectPosition: "top center",
+              objectFit: "contain",
+              objectPosition: "center center",
+              background: COLORS.background.photo,
             }}
             placeholderStyle={{
               objectFit: "cover",

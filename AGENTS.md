@@ -64,7 +64,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - `sample` is only a marker; it must not force quantity to `1` when sizes or Excel column G already define the quantity.
 - Catalog `photo` is optional. The parser writes it only when the matching JPG/JPEG exists; `excelRows` records every source row for startup diagnostics.
 - Missing catalog photos are valid and use the shared `__photo_pending` placeholder. A present-but-broken `photo` path remains a validation error.
-- Product grids and the home menu use `webp/card`; product detail uses full `webp`. Keep the fallback chain card WebP → full WebP → exact source JPG/JPEG → shared placeholder.
+- Product grids and the home menu use square contain `webp/card` variants; product detail uses full `webp`. Keep the fallback chain card WebP → full WebP → exact source JPG/JPEG → shared placeholder.
 - `public/images/products/jpg/` is the only manually maintained image source. Full/card WebP files are generated; `scripts/convert_to_webp.py` safely prunes derived `.webp` files whose JPG/JPEG source was removed.
 
 ## UI Rules

@@ -22,6 +22,7 @@ export const COLORS = {
     footer: "rgba(8,8,9,0.88)",
     soft: "rgba(255,255,255,0.03)",
     accent: "rgba(244,195,77,0.08)",
+    photo: "#c3c2bb",
   },
   border: {
     default: "rgba(255,255,255,0.10)",

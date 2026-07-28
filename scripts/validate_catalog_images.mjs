@@ -200,8 +200,10 @@ for (const imagePath of sourceImageReferences) {
 }
 
 const jpgFiles = listFiles(jpgDir);
-const webpFiles = listFiles(webpDir);
-const cardWebpFiles = listFiles(cardWebpDir);
+const webpFiles = listFiles(webpDir).filter((fileName) => /\.webp$/i.test(fileName));
+const cardWebpFiles = listFiles(cardWebpDir).filter((fileName) =>
+  /\.webp$/i.test(fileName)
+);
 const sourceStems = new Set(
   jpgFiles
     .filter((fileName) => /\.(jpg|jpeg)$/i.test(fileName))

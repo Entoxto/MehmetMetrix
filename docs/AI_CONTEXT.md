@@ -76,7 +76,8 @@ It may contain:
 - `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing or whose card WebP was not generated is an error.
 - `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> system image icon.
 - `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.
-- The shared photo placeholder always uses `object-fit: contain` with stable inner padding across catalog/detail breakpoints; real product photos keep their normal crop rules.
+- Generated card WebPs are square contain canvases. The converter samples the four source corners for a neutral background, so portrait and near-square product photos keep the full subject without hand-added margins.
+- Catalog cards use a square media region with `object-fit: contain` at every breakpoint. The shared placeholder keeps its dedicated cover treatment.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
 - In `Work`, a year expands from its header. A shipment expands from the whole

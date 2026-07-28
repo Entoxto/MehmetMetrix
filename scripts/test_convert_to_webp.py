@@ -7,10 +7,39 @@ from tempfile import TemporaryDirectory
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from convert_to_webp import prune_stale_variants
+from convert_to_webp import convert_to_webp, prune_stale_variants
 
 
 class WebpSyncTests(unittest.TestCase):
+    def test_card_variant_preserves_full_portrait_inside_square(self) -> None:
+        try:
+            from PIL import Image, ImageDraw
+        except ModuleNotFoundError:
+            self.skipTest("Pillow недоступен в текущем Python runtime")
+
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source_path = root / "portrait.jpg"
+            target_path = root / "card.webp"
+            source = Image.new("RGB", (100, 200), (240, 237, 232))
+            draw = ImageDraw.Draw(source)
+            draw.rectangle((30, 20, 70, 190), fill=(12, 12, 12))
+            source.save(source_path, "JPEG", quality=100)
+
+            convert_to_webp(
+                source_path,
+                target_path,
+                quality=100,
+                max_size=(960, 960),
+                square_canvas=True,
+            )
+
+            with Image.open(target_path) as card:
+                card = card.convert("RGB")
+                self.assertEqual(card.size, (200, 200))
+                self.assertLess(sum(card.getpixel((100, 185))) / 3, 80)
+                self.assertGreater(sum(card.getpixel((10, 100))) / 3, 200)
+
     def test_prunes_only_webp_without_source(self) -> None:
         with TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
