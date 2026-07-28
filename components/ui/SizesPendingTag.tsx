@@ -2,26 +2,14 @@
 
 /**
  * Метка «Размеры на уточнении» для позиций, у которых размеры пока не разбиты.
- * Выполнена в том же ключе, что и SampleTag, но фиолетовым цветом.
  */
 
-import { useState, useEffect } from "react";
+import { Ruler } from "@phosphor-icons/react";
+import { COLORS, FONT_FAMILIES, SPACING } from "@/constants/styles";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 export const SizesPendingTag = () => {
-  const [isNarrowMobile, setIsNarrowMobile] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const checkNarrow = () => {
-      setIsNarrowMobile(window.innerWidth <= 430);
-    };
-
-    checkNarrow();
-    window.addEventListener("resize", checkNarrow);
-
-    return () => window.removeEventListener("resize", checkNarrow);
-  }, []);
+  const { isMobile } = useBreakpoint();
 
   return (
     <span
@@ -29,21 +17,20 @@ export const SizesPendingTag = () => {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: isNarrowMobile ? "3px 10px" : "4px 12px",
-        borderRadius: isNarrowMobile ? 11 : 13,
-        fontSize: isNarrowMobile
-          ? "clamp(11px, 2.2vw, 12px)"
-          : "clamp(12px, 1vw, 13px)",
-        fontWeight: 600,
-        letterSpacing: 0.5,
+        gap: isMobile ? SPACING.xs : SPACING.xsPlus,
+        padding: isMobile ? "3px 9px" : "4px 11px",
+        borderRadius: isMobile ? 8 : 9,
+        fontSize: isMobile ? 10 : 11,
+        fontWeight: 700,
+        fontFamily: FONT_FAMILIES.ui,
+        letterSpacing: 0.55,
         lineHeight: 1,
-        background: "rgba(139,92,246,0.12)",
-        color: "#A78BFA",
-        border: "1px solid rgba(139,92,246,0.35)",
-        boxShadow: "0 0 8px rgba(139,92,246,0.22), 0 0 16px rgba(139,92,246,0.10)",
-        transition: "all 0.2s ease",
+        background: COLORS.background.accent,
+        color: COLORS.primary,
+        border: `1px solid ${COLORS.border.primary}`,
       }}
     >
+      <Ruler size={isMobile ? 12 : 14} weight="regular" aria-hidden="true" />
       Размеры на уточнении
     </span>
   );

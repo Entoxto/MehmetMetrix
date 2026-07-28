@@ -3,10 +3,11 @@
 /**
  * Универсальный компонент изображения с оптимизацией.
  * Цепочка fallback для карточек:
- * облегчённый WebP → полноразмерный WebP → JPG → общая заглушка → эмодзи 📷.
+ * облегчённый WebP → полноразмерный WebP → JPG → общая заглушка → системная иконка.
  * Используй этот компонент вместо повторения логики fallback вручную.
  */
 
+import { ImageSquare } from "@phosphor-icons/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
@@ -35,7 +36,7 @@ interface OptimizedImageProps {
   loading?: "eager" | "lazy";
   /** Отметить как priority (для LCP) */
   priority?: boolean;
-  /** Размер эмодзи-заглушки при ошибке (по умолчанию 48) */
+  /** Размер системной иконки при полной ошибке fallback-цепочки */
   fallbackSize?: number;
   /** Колбэк при загрузке изображения */
   onLoad?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
@@ -67,7 +68,14 @@ export const OptimizedImage = ({
   }, [resolvedSrc, variant]);
 
   if (imageError) {
-    return <span style={{ color: COLORS.text.muted, fontSize: fallbackSize }}>📷</span>;
+    return (
+      <ImageSquare
+        size={fallbackSize}
+        weight="duotone"
+        color={COLORS.text.muted}
+        aria-label="Изображение недоступно"
+      />
+    );
   }
 
   return (

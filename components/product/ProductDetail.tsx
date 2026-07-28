@@ -8,6 +8,7 @@ import { SPACING } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { ProductPhoto } from "@/components/product/ProductPhoto";
+import { PageFrame } from "@/components/ui/PageFrame";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {
@@ -21,15 +22,10 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   const isCompact = isMobile || isTablet;
 
   return (
-    <div
+    <PageFrame
       style={{
-        flex: 1,
-        paddingLeft: isCompact ? SPACING.md : SPACING.lg,
-        paddingRight: isCompact ? SPACING.md : SPACING.lg,
         paddingTop: SPACING.md,
         paddingBottom: isCompact ? SPACING.xl * 2 : SPACING.lg,
-        display: "flex",
-        justifyContent: "center",
         alignItems: "flex-start",
       }}
     >
@@ -56,6 +52,6 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           desktopMinHeight={DESKTOP_COLUMN_MIN_HEIGHT}
         />
       </div>
-    </div>
+    </PageFrame>
   );
 };

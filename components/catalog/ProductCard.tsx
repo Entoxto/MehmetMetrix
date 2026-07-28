@@ -7,8 +7,7 @@
  */
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
-import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
+import { STYLES, COLORS, FONT_FAMILIES, SPACING, MOTION, SURFACES, getCategoryVisual } from "@/constants/styles";
 import { formatCurrency } from "@/lib/format";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
@@ -22,34 +21,28 @@ interface ProductCardProps {
 export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) => {
   const { isMobile } = useBreakpoint();
   const visual = getCategoryVisual(product.category);
-  const hoverHandlers = createCardHoverHandlers(
-    CARD_HOVER_EFFECTS.product.hover,
-    CARD_HOVER_EFFECTS.product.default
-  );
 
   const cardStyle: CSSProperties = {
     ...STYLES.card,
     padding: 0,
     overflow: "hidden",
     position: "relative",
-    borderRadius: isMobile ? 20 : 20,
-    background: "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(16,16,19,0.98) 100%)",
+    borderRadius: isMobile ? 18 : 20,
+    background: SURFACES.card,
     transition: MOTION.interactiveTransition,
     animation: MOTION.staggerEnter(animationIndex, isMobile ? 65 : 85),
+    cursor: "pointer",
+    textDecoration: "none",
+    display: "block",
   };
 
-  if (CARD_HOVER_EFFECTS.product.default.boxShadow !== undefined) {
-    cardStyle.boxShadow = CARD_HOVER_EFFECTS.product.default.boxShadow;
-  }
-  if (CARD_HOVER_EFFECTS.product.default.transform !== undefined) {
-    cardStyle.transform = CARD_HOVER_EFFECTS.product.default.transform;
-  }
-
   return (
-    <div
+    <Link
+      href={`/product/${product.id}?from=catalog&category=${encodeURIComponent(product.category)}`}
+      prefetch={false}
+      className="mm-interactive-surface"
+      data-hover="lift"
       style={cardStyle}
-      onMouseEnter={hoverHandlers.onMouseEnter}
-      onMouseLeave={hoverHandlers.onMouseLeave}
     >
       <div
         aria-hidden="true"
@@ -63,16 +56,6 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
           zIndex: 2,
         }}
       />
-      <Link
-        href={`/product/${product.id}?from=catalog&category=${encodeURIComponent(product.category)}`}
-        prefetch={false}
-        style={{
-          cursor: "pointer",
-          transition: "all 0.3s ease",
-          textDecoration: "none",
-          display: "block",
-        }}
-      >
         <div
           style={{
             width: "100%",
@@ -140,7 +123,7 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
           <h3
             style={{
               fontSize: isMobile ? 17 : 22,
-              fontWeight: 800,
+              fontWeight: 700,
               margin: 0,
               color: isMobile ? COLORS.text.softTitle : COLORS.text.primary,
               minHeight: isMobile ? "auto" : 58,
@@ -168,11 +151,11 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
                 Цена
               </p>
               {product.price ? (
-                <p style={{ color: COLORS.success, fontSize: isMobile ? 20 : 24, fontWeight: 800, margin: 0, lineHeight: isMobile ? "24px" : "28px" }}>
+                <p style={{ color: COLORS.success, fontSize: isMobile ? 20 : 24, fontWeight: 700, margin: 0, lineHeight: isMobile ? "24px" : "28px", fontFamily: FONT_FAMILIES.ui, fontVariantNumeric: "tabular-nums" }}>
                   {formatCurrency(product.price)}
                 </p>
               ) : (
-                <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 15 : 18, fontWeight: 700, margin: 0, lineHeight: isMobile ? "20px" : "24px" }}>
+                <p style={{ color: COLORS.text.secondary, fontSize: isMobile ? 15 : 18, fontWeight: 700, margin: 0, lineHeight: isMobile ? "20px" : "24px", fontFamily: FONT_FAMILIES.ui }}>
                   уточняется
                 </p>
               )}
@@ -205,7 +188,6 @@ export const ProductCard = ({ product, animationIndex = 0 }: ProductCardProps) =
             </div>
           </div>
         </div>
-      </Link>
-    </div>
+    </Link>
   );
 };

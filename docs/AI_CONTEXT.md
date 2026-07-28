@@ -57,16 +57,28 @@ It may contain:
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
 - A position with the marker `(на уточнении)` in the last bracket of the Excel name means sizes are not yet assigned. The parser emits `sizesUnknown: true` and uses `quantityOverride` from column G. These positions still participate in payment totals but do not contribute sizes to the catalog.
 - `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.
+- In the collapsed Work card, shipment type is composed from the actual
+  positions: regular positions add the bronze `Партия` badge, sample positions
+  add the violet `Образец` badge, and a mixed shipment shows both independent
+  badges. Do not reintroduce a synthetic `С образцом` badge.
+- A collapsed Work shipment shows every position plus compact
+  position/unit/amount metrics. Its presentation layer splits only the last
+  whitespace-surrounded dash into model and color; source Excel/JSON text stays
+  unchanged. Desktop uses model/color/quantity columns, while mobile places
+  color and quantity on a second row below the wrapping model name. The two
+  shipment-type badges stay together as one wrapping pair.
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Catalog photos are optional while a model is being developed. The parser writes `photo` only when the exact JPG/JPEG exists and stores all source sheet rows in `excelRows`.
 - `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing or whose card WebP was not generated is an error.
-- `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> emoji.
+- `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> system image icon.
 - `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.
 - The shared photo placeholder always uses `object-fit: contain` with stable inner padding across catalog/detail breakpoints; real product photos keep their normal crop rules.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
-- In `Work`, expansion belongs to year headers and shipment headers; table content should not accidentally toggle cards.
+- In `Work`, a year expands from its header. A shipment expands from the whole
+  card surface except nested product links and other interactive controls; the
+  shipment header remains its keyboard-accessible control.
 - Year UI is split by role: `YearGroup` coordinates, `YearHeader` renders the clickable yearly summary, and `YearShipmentsSheet` renders the expanded shipment list.
 - In `Work`, the full first position cell is the click target for opening the product page.
 - `Work` expansion/scroll restoration lives in `hooks/useWorkNavigationState.ts`; keep page components thin when changing this flow.
@@ -74,6 +86,15 @@ It may contain:
 - `ProductDetail` is intentionally a thin layout wrapper; keep photo behavior in `components/product/ProductPhoto.tsx`, product facts in `ProductInfo.tsx`, and material rendering in `ProductMaterials.tsx`.
 - `Money` is intentionally a screen-level layout; reusable financial cards/tables live in `components/money/MoneyMetricCard.tsx` and `MoneyDetailsTable.tsx`.
 - Repeated clickable-card behavior should go through `components/ui/ClickableCard.tsx` so mouse and keyboard behavior stay aligned.
+- Shared page width/padding belongs in `components/ui/PageFrame.tsx`; repeated
+  page intro hierarchy belongs in `PageIntro.tsx`.
+- Shared typography is role-based in `FONT_FAMILIES`: `display` (`Lora`) owns
+  headings and reading text, while `ui` (`Manrope`) owns amounts, metrics,
+  tables, badges, and compact controls. Numeric values use tabular numerals; do
+  not introduce local font stacks that bypass these tokens.
+- Global hover, active, focus, and reduced-motion rules live in
+  `app/globals.css`; component-specific DOM style mutation is not a shared
+  interaction mechanism.
 - Motion should reinforce hierarchy, not decorate for its own sake.
 - Shared motion comes from `MOTION` in `constants/styles.ts`; avoid one-off timing/easing values unless there is a strong reason.
 - Category-specific visual accents come from `CATEGORY_VISUALS` in `constants/styles.ts`; keep them as muted lines/badges, not loud decorative color blocks.
@@ -82,6 +103,9 @@ It may contain:
 ## Known Project Choices
 
 - `app/layout.tsx` deliberately starts `BreakpointProvider` at `desktop`; the provider corrects it from the actual viewport in `useLayoutEffect`. Do not read User-Agent through `headers()`/`cookies()` in root layout: that makes every route dynamic.
+- Work expansion state also starts deterministically empty on the server and
+  client, then restores `sessionStorage` after mount. Do not read stored state
+  in a `useState` initializer because that creates hydration mismatches.
 - If desktop suddenly looks mobile, check browser zoom (`Ctrl+0`) before changing breakpoints: zoom changes the real viewport width.
 - A separate strict TypeScript check exists in `tsconfig.strict-check.json`.
 - Unit tests use Vitest and run through `npm run test`.

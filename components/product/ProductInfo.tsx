@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { ArrowRight } from "@phosphor-icons/react";
 import Link from "next/link";
-import { CARD_TEMPLATES, COLORS, MOTION, SPACING, STYLES, TYPOGRAPHY } from "@/constants/styles";
+import { CARD_TEMPLATES, COLORS, FONT_FAMILIES, MOTION, SPACING, STYLES, TYPOGRAPHY, getCategoryVisual } from "@/constants/styles";
 import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { ProductMaterials } from "@/components/product/ProductMaterials";
 import type { Product } from "@/types/product";
@@ -18,17 +18,25 @@ export const ProductInfo = ({
   isCompact,
   desktopMinHeight,
 }: ProductInfoProps) => {
-  const [isCategoryLinkHovered, setIsCategoryLinkHovered] = useState(false);
   const hasMaterials = Boolean(
     product.materials?.outer || product.materials?.lining || product.materials?.comments
   );
+  const categoryVisual = getCategoryVisual(product.category);
 
   const responsiveTypography = {
     h1: { ...TYPOGRAPHY.h1, fontSize: isCompact ? 24 : 32 },
     h2: { ...TYPOGRAPHY.h2, fontSize: isCompact ? 14 : 16 },
     body: { ...TYPOGRAPHY.body, fontSize: isCompact ? 14 : 16 },
     caption: { ...TYPOGRAPHY.caption, fontSize: isCompact ? 11 : 12 },
-    price: { fontSize: isCompact ? 32 : 40, fontWeight: 700, lineHeight: 1.2 },
+    price: {
+      fontSize: isCompact ? 32 : 40,
+      fontWeight: 700,
+      lineHeight: 1.15,
+      fontFamily: FONT_FAMILIES.ui,
+      fontVariantNumeric: "tabular-nums" as const,
+      fontFeatureSettings: '"tnum"',
+      letterSpacing: -0.35,
+    },
   };
 
   const sizeChipStyle = {
@@ -55,19 +63,17 @@ export const ProductInfo = ({
     width: "max-content",
     textDecoration: "none",
     cursor: "pointer",
-    background: isCategoryLinkHovered ? "rgba(244,195,77,0.14)" : COLORS.background.accent,
-    color: COLORS.primary,
+    background: categoryVisual.accentSoft,
+    color: categoryVisual.accent,
     padding: isCompact ? "8px 16px" : "9px 18px",
     borderRadius: 999,
-    border: `1px solid ${isCategoryLinkHovered ? COLORS.border.primaryHover : COLORS.border.primary}`,
+    border: `1px solid ${COLORS.border.primary}`,
     fontSize: isCompact ? 12 : 13,
     fontWeight: 700,
+    fontFamily: FONT_FAMILIES.ui,
     lineHeight: 1,
-    boxShadow: isCategoryLinkHovered
-      ? "0 10px 24px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.05)"
-      : "inset 0 1px 0 rgba(255,255,255,0.04)",
-    transform: isCategoryLinkHovered ? "translateY(-1px)" : "translateY(0)",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+    transition: MOTION.interactiveTransition,
   } as const;
 
   return (
@@ -87,23 +93,19 @@ export const ProductInfo = ({
             <Link
               href={categoryHref}
               style={categoryLinkStyle}
+              className="mm-interactive-surface"
+              data-hover="soft"
               aria-label={`Открыть категорию ${product.category} в каталоге`}
-              onMouseEnter={() => setIsCategoryLinkHovered(true)}
-              onMouseLeave={() => setIsCategoryLinkHovered(false)}
-              onTouchStart={() => setIsCategoryLinkHovered(true)}
-              onTouchEnd={() => setIsCategoryLinkHovered(false)}
             >
               {product.category}
-              <span
+              <ArrowRight
                 aria-hidden="true"
+                size={isCompact ? 12 : 13}
+                weight="bold"
                 style={{
-                  fontSize: isCompact ? 12 : 13,
-                  transform: isCategoryLinkHovered ? "translateX(1px)" : "translateX(0)",
-                  transition: "transform 0.2s ease",
+                  flexShrink: 0,
                 }}
-              >
-                →
-              </span>
+              />
             </Link>
           </div>
           <h1
@@ -167,7 +169,15 @@ export const ProductInfo = ({
         <p style={{ ...sectionHeaderStyle, color: COLORS.primary }}>
           Последняя себестоимость
         </p>
-        <p style={{ ...responsiveTypography.body, color: COLORS.text.primary, margin: 0 }}>
+        <p
+          style={{
+            ...responsiveTypography.body,
+            color: COLORS.text.primary,
+            margin: 0,
+            fontFamily: FONT_FAMILIES.ui,
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
           {product.cost != null ? formatCurrencyRUB(product.cost) : "—"}
         </p>
       </div>

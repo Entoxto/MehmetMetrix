@@ -414,7 +414,7 @@
         68,
         89,
         110,
-        114
+        115
       ],
       "sizes": [
         "xs",
@@ -429,7 +429,7 @@
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
       "price": 550,
-      "cost": 44388
+      "cost": 45158
     },
     {
       "id": "auto-021",
@@ -461,7 +461,7 @@
       "excelRows": [
         34,
         79,
-        115
+        128
       ],
       "sizes": [
         "xs",
@@ -741,7 +741,7 @@
       "category": "Экзотика",
       "excelRows": [
         69,
-        118
+        117
       ],
       "sizes": [
         "xs",
@@ -778,7 +778,7 @@
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — Etope.jpg",
       "price": 550,
-      "cost": 46684
+      "cost": 44814
     },
     {
       "id": "auto-037",
@@ -851,7 +851,7 @@
       "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
       "price": 560,
-      "cost": 43971
+      "cost": 45593
     },
     {
       "id": "auto-040",
@@ -862,7 +862,8 @@
         99,
         109,
         113,
-        120
+        114,
+        131
       ],
       "sizes": [
         "xs",
@@ -877,7 +878,7 @@
       "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
       "price": 325,
-      "cost": 26000
+      "cost": 28742
     },
     {
       "id": "auto-041",
@@ -925,13 +926,16 @@
     },
     {
       "id": "auto-043",
-      "name": "Жакет из плетёной кожи в стиле 80-х — бежевый",
+      "name": "Жакет из плетёной кожи в стиле 80-х — молочный",
       "category": "Кожа",
       "excelRows": [
-        94
+        94,
+        111
       ],
       "sizes": [
-        "xs"
+        "xs",
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральная кожа",
@@ -939,15 +943,18 @@
       },
       "inStock": true,
       "tags": [],
-      "price": 220,
-      "cost": 19174
+      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — молочный.jpg",
+      "price": 320,
+      "cost": 26526
     },
     {
       "id": "auto-044",
-      "name": "Штаны из меха астроган — асфальт",
+      "name": "Штаны из меха астроган — антрацит",
       "category": "Мех",
       "excelRows": [
-        95
+        95,
+        124,
+        127
       ],
       "sizes": [
         "xs"
@@ -958,16 +965,17 @@
       },
       "inStock": true,
       "tags": [],
-      "photo": "/images/products/jpg/Штаны из меха астроган — асфальт.jpg",
+      "photo": "/images/products/jpg/Штаны из меха астроган — антрацит.jpg",
       "price": 255,
       "cost": 20272
     },
     {
       "id": "auto-045",
-      "name": "Дублёнка из меха астроган — асфальт",
+      "name": "Дублёнка из меха астроган Аляска — антрацит",
       "category": "Мех",
       "excelRows": [
-        96
+        96,
+        123
       ],
       "sizes": [
         "xs"
@@ -978,8 +986,8 @@
       },
       "inStock": true,
       "tags": [],
-      "photo": "/images/products/jpg/Дублёнка из меха астроган — асфальт.jpg",
-      "price": 315,
+      "photo": "/images/products/jpg/Дублёнка из меха астроган Аляска — антрацит.jpg",
+      "price": 320,
       "cost": 24860
     },
     {
@@ -987,10 +995,13 @@
       "name": "Штаны из меха астроган — чёрный",
       "category": "Мех",
       "excelRows": [
-        101
+        101,
+        122
       ],
       "sizes": [
-        "xs"
+        "xs",
+        "s",
+        "m"
       ],
       "materials": {
         "outer": "100% Натуральный мех мериноса",
@@ -1027,9 +1038,12 @@
       "name": "Дублёнка из меха астроган в стиле 80-х — чёрный",
       "category": "Мех",
       "excelRows": [
-        104
+        104,
+        121
       ],
       "sizes": [
+        "xs",
+        "s",
         "m"
       ],
       "materials": {
@@ -1048,7 +1062,7 @@
       "category": "Экзотика",
       "excelRows": [
         105,
-        121
+        132
       ],
       "sizes": [
         "xs"
@@ -1105,27 +1119,6 @@
     },
     {
       "id": "auto-052",
-      "name": "Жакет из плетёной кожи в стиле 80-х — молочный",
-      "category": "Кожа",
-      "excelRows": [
-        111
-      ],
-      "sizes": [
-        "xs",
-        "s",
-        "m"
-      ],
-      "materials": {
-        "outer": "100% Натуральная кожа",
-        "lining": "%70 Acetate %30 Polyester"
-      },
-      "inStock": true,
-      "tags": [],
-      "photo": "/images/products/jpg/Жакет из плетёной кожи в стиле 80-х — молочный.jpg",
-      "price": 320
-    },
-    {
-      "id": "auto-053",
       "name": "Юбка из кожи питона — Etope",
       "category": "Экзотика",
       "excelRows": [
@@ -1146,11 +1139,76 @@
       "price": 320
     },
     {
+      "id": "auto-053",
+      "name": "Жакет приталенный из меха страуса в стиле 80-х удлинённый — синий",
+      "category": "Мех",
+      "excelRows": [
+        118
+      ],
+      "sizes": [],
+      "materials": {
+        "outer": "100% Кожа барана",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": []
+    },
+    {
       "id": "auto-054",
+      "name": "Дублёнка из меха астроган Аляска — молочный",
+      "category": "Мех",
+      "excelRows": [
+        119,
+        126
+      ],
+      "sizes": [],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "photo": "/images/products/jpg/Дублёнка из меха астроган Аляска — молочный.jpg",
+      "price": 320
+    },
+    {
+      "id": "auto-055",
+      "name": "Дублёнка из пушистого меха астроган Агнес — молочный",
+      "category": "Мех",
+      "excelRows": [
+        120
+      ],
+      "sizes": [],
+      "materials": {
+        "outer": "100% Натуральный мех",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": []
+    },
+    {
+      "id": "auto-056",
+      "name": "Дублёнка из меха астроган в стиле 80-х — молочный",
+      "category": "Мех",
+      "excelRows": [
+        125
+      ],
+      "sizes": [],
+      "materials": {
+        "outer": "100% Натуральный мех мериноса",
+        "lining": "%70 Acetate %30 Polyester"
+      },
+      "inStock": true,
+      "tags": [],
+      "photo": "/images/products/jpg/Дублёнка из меха астроган в стиле 80-х — молочный.jpg",
+      "price": 300
+    },
+    {
+      "id": "auto-057",
       "name": "Куртка из кожи питона по новым лекалам — Etope",
       "category": "Экзотика",
       "excelRows": [
-        117
+        129
       ],
       "sizes": [
         "xs",
@@ -1166,11 +1224,11 @@
       "price": 465
     },
     {
-      "id": "auto-055",
+      "id": "auto-058",
       "name": "Юбка из кожи питона — коричневый матовый",
       "category": "Экзотика",
       "excelRows": [
-        119
+        130
       ],
       "sizes": [],
       "materials": {

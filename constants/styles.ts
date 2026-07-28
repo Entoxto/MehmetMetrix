@@ -15,11 +15,11 @@ export const COLORS = {
     tertiary: "#686868",
   },
   background: {
-    dark: "#09090b",
-    darker: "#111113",
-    card: "rgba(24,24,27,0.78)",
-    cardExpanded: "rgba(30,30,34,0.94)",
-    footer: "rgba(9,9,11,0.64)",
+    dark: "#080809",
+    darker: "#0c0c0e",
+    card: "rgba(14,14,16,0.98)",
+    cardExpanded: "rgba(10,10,12,0.99)",
+    footer: "rgba(8,8,9,0.88)",
     soft: "rgba(255,255,255,0.03)",
     accent: "rgba(244,195,77,0.08)",
   },
@@ -31,6 +31,29 @@ export const COLORS = {
     primaryHover: "rgba(244,195,77,0.42)",
   },
 } as const;
+
+export const SURFACES = {
+  card: "linear-gradient(180deg, rgba(15,15,17,0.99) 0%, rgba(9,9,11,0.995) 100%)",
+  cardRaised:
+    "linear-gradient(180deg, rgba(18,18,20,0.99) 0%, rgba(10,10,12,0.995) 100%)",
+  cardExpanded:
+    "linear-gradient(180deg, rgba(244,195,77,0.07) 0%, rgba(13,13,15,0.99) 16%, rgba(8,8,10,0.995) 100%)",
+  intro:
+    "linear-gradient(135deg, rgba(244,195,77,0.055) 0%, rgba(15,15,17,0.99) 20%, rgba(9,9,11,0.995) 100%)",
+  inset: "rgba(10,10,12,0.94)",
+  sheet:
+    "linear-gradient(180deg, rgba(244,195,77,0.035) 0%, rgba(11,11,13,0.995) 16%, rgba(8,8,10,0.995) 100%)",
+} as const;
+
+export const PAGE_MAX_WIDTH = 1440;
+
+export const FONT_FAMILIES = {
+  display: "var(--font-display), 'Palatino Linotype', Georgia, serif",
+  ui: "var(--font-ui), 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+} as const;
+
+const INTERACTIVE_TRANSITION =
+  "transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, background 0.24s ease, opacity 0.24s ease";
 
 export const CATEGORY_VISUALS: Record<
   string,
@@ -44,25 +67,25 @@ export const CATEGORY_VISUALS: Record<
   Мех: {
     accent: "#d7a85b",
     accentSoft: "rgba(215,168,91,0.10)",
-    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    surface: SURFACES.card,
     line: "linear-gradient(90deg, rgba(215,168,91,0.52) 0%, rgba(215,168,91,0.12) 70%, rgba(215,168,91,0) 100%)",
   },
   Замша: {
     accent: "#cbb487",
     accentSoft: "rgba(203,180,135,0.09)",
-    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    surface: SURFACES.card,
     line: "linear-gradient(90deg, rgba(203,180,135,0.48) 0%, rgba(203,180,135,0.12) 70%, rgba(203,180,135,0) 100%)",
   },
   Кожа: {
     accent: "#b7794c",
     accentSoft: "rgba(183,121,76,0.10)",
-    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    surface: SURFACES.card,
     line: "linear-gradient(90deg, rgba(183,121,76,0.50) 0%, rgba(183,121,76,0.12) 70%, rgba(183,121,76,0) 100%)",
   },
   Экзотика: {
     accent: "#c7b15a",
     accentSoft: "rgba(199,177,90,0.10)",
-    surface: "linear-gradient(180deg, rgba(24,24,27,0.97) 0%, rgba(17,17,20,0.99) 100%)",
+    surface: SURFACES.card,
     line: "linear-gradient(90deg, rgba(199,177,90,0.50) 0%, rgba(199,177,90,0.12) 70%, rgba(199,177,90,0) 100%)",
   },
 };
@@ -70,14 +93,27 @@ export const CATEGORY_VISUALS: Record<
 export const getCategoryVisual = (category: string) =>
   CATEGORY_VISUALS[category] ?? CATEGORY_VISUALS.Мех;
 
+export const SHIPMENT_TYPE_VISUALS = {
+  batch: {
+    accent: "#d09a58",
+    surface: "rgba(112, 67, 27, 0.14)",
+    border: "rgba(208, 154, 88, 0.48)",
+  },
+  sample: {
+    accent: "#a78bfa",
+    surface: "rgba(99, 75, 166, 0.14)",
+    border: "rgba(167, 139, 250, 0.48)",
+  },
+} as const;
+
 export const STYLES = {
   // Базовый стиль прямоугольных карточек (товары, категории каталога, меню)
   card: {
-    background: COLORS.background.card,
+    background: SURFACES.card,
     border: `1px solid ${COLORS.border.default}`,
-    borderRadius: 20,
-    boxShadow: "0 14px 40px rgba(0, 0, 0, 0.24)",
-    transition: "all 0.25s ease",
+    borderRadius: 18,
+    boxShadow: "0 12px 30px rgba(0, 0, 0, 0.22)",
+    transition: INTERACTIVE_TRANSITION,
   },
   // Чип размеров у позиций
   sizeBadge: {
@@ -87,6 +123,8 @@ export const STYLES = {
     borderRadius: 999,
     fontSize: 12,
     fontWeight: 600,
+    fontFamily: FONT_FAMILIES.ui,
+    fontVariantNumeric: "tabular-nums" as const,
     border: `1px solid ${COLORS.border.default}`,
   },
   // Бейдж категории в меню или каталоге
@@ -98,6 +136,7 @@ export const STYLES = {
     borderRadius: 999,
     border: `1px solid ${COLORS.border.primary}`,
     fontWeight: 600,
+    fontFamily: FONT_FAMILIES.ui,
   },
   sectionEyebrow: {
     color: COLORS.text.muted,
@@ -106,23 +145,28 @@ export const STYLES = {
     letterSpacing: 1.4,
     textTransform: "uppercase" as const,
     fontWeight: 700,
+    fontFamily: FONT_FAMILIES.ui,
   },
   sectionTitle: {
     color: COLORS.text.primary,
     fontSize: 30,
-    fontWeight: 800,
+    fontWeight: 600,
     lineHeight: 1.15,
-    letterSpacing: -0.8,
+    letterSpacing: -0.3,
+    fontFamily: FONT_FAMILIES.display,
+    fontVariantNumeric: "lining-nums proportional-nums" as const,
   },
   sectionDescription: {
     color: COLORS.text.secondary,
     fontSize: 14,
     lineHeight: 1.6,
+    fontFamily: FONT_FAMILIES.display,
   },
   pageIntroCopy: (isMobile: boolean) => ({
     color: isMobile ? COLORS.text.muted : COLORS.text.secondary,
     fontSize: isMobile ? 11 : 13,
     lineHeight: isMobile ? 1.45 : 1.5,
+    fontFamily: FONT_FAMILIES.display,
     maxWidth: isMobile ? 520 : 620,
     margin: 0,
   }),
@@ -133,17 +177,19 @@ export const STYLES = {
     letterSpacing: 1.4,
     textTransform: "uppercase" as const,
     fontWeight: 700,
+    fontFamily: FONT_FAMILIES.ui,
+    fontVariantNumeric: "tabular-nums" as const,
   },
   metricHint: {
     color: COLORS.text.muted,
     fontSize: 13,
     lineHeight: 1.5,
+    fontFamily: FONT_FAMILIES.ui,
   },
 } as const;
 
 export const MOTION = {
-  interactiveTransition:
-    "transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, background 0.24s ease, opacity 0.24s ease",
+  interactiveTransition: INTERACTIVE_TRANSITION,
   staggerEnter: (index = 0, delayStep = 70) =>
     `fadeUp 520ms cubic-bezier(0.22, 1, 0.36, 1) both ${Math.max(index, 0) * delayStep}ms`,
   softEnter: "fadeUp 420ms cubic-bezier(0.22, 1, 0.36, 1) both",
@@ -162,14 +208,58 @@ export const SPACING = {
 } as const;
 
 export const TYPOGRAPHY = {
-  h1: { fontSize: 44, fontWeight: 900, lineHeight: 1.1 },
-  h2: { fontSize: 32, fontWeight: 900, lineHeight: 1.2 },
-  h3: { fontSize: 24, fontWeight: 800, lineHeight: 1.3 },
-  body: { fontSize: 14, lineHeight: 1.5 },
-  caption: { fontSize: 12, lineHeight: 1.4, letterSpacing: 1.2 },
-  amount: { fontSize: 36, fontWeight: 900, lineHeight: 1.1 },
-  tableHeader: { fontSize: 12, lineHeight: 1.4, letterSpacing: 1 },
-  tableCell: { fontSize: 12, lineHeight: 1.5 },
+  h1: {
+    fontSize: 44,
+    fontWeight: 600,
+    lineHeight: 1.1,
+    fontFamily: FONT_FAMILIES.display,
+    fontVariantNumeric: "lining-nums proportional-nums" as const,
+  },
+  h2: {
+    fontSize: 32,
+    fontWeight: 600,
+    lineHeight: 1.2,
+    fontFamily: FONT_FAMILIES.display,
+    fontVariantNumeric: "lining-nums proportional-nums" as const,
+  },
+  h3: {
+    fontSize: 24,
+    fontWeight: 600,
+    lineHeight: 1.3,
+    fontFamily: FONT_FAMILIES.display,
+    fontVariantNumeric: "lining-nums proportional-nums" as const,
+  },
+  body: {
+    fontSize: 14,
+    lineHeight: 1.5,
+    fontFamily: FONT_FAMILIES.display,
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 1.4,
+    letterSpacing: 1.2,
+    fontFamily: FONT_FAMILIES.ui,
+  },
+  amount: {
+    fontSize: 36,
+    fontWeight: 600,
+    lineHeight: 1.1,
+    fontFamily: FONT_FAMILIES.ui,
+    fontVariantNumeric: "tabular-nums" as const,
+    fontFeatureSettings: '"tnum"',
+  },
+  tableHeader: {
+    fontSize: 12,
+    lineHeight: 1.4,
+    letterSpacing: 1,
+    fontFamily: FONT_FAMILIES.ui,
+  },
+  tableCell: {
+    fontSize: 12,
+    lineHeight: 1.5,
+    fontFamily: FONT_FAMILIES.ui,
+    fontVariantNumeric: "tabular-nums" as const,
+  },
 } as const;
 
 export const STATUS_CHIP_STYLE = (highlight: boolean, isCompact: boolean) => ({
@@ -180,6 +270,7 @@ export const STATUS_CHIP_STYLE = (highlight: boolean, isCompact: boolean) => ({
   borderRadius: 999,
   fontSize: isCompact ? "clamp(11px, 2vw, 12px)" : "clamp(12px, 0.9vw, 13px)",
   fontWeight: 600,
+  fontFamily: FONT_FAMILIES.ui,
   lineHeight: 1,
   border: "1px solid",
   background: highlight ? "rgba(52,211,153,0.15)" : "rgba(251,191,36,0.15)",
@@ -189,13 +280,12 @@ export const STATUS_CHIP_STYLE = (highlight: boolean, isCompact: boolean) => ({
 
 export const CARD_TEMPLATES = {
   container: (isMobile: boolean) => ({
-    background: COLORS.background.card,
+    background: SURFACES.card,
     border: `1px solid ${COLORS.border.default}`,
-    borderRadius: isMobile ? 18 : 22,
+    borderRadius: isMobile ? 16 : 20,
     padding: isMobile ? SPACING.md : SPACING.lg,
-    boxShadow: "0 14px 32px rgba(0, 0, 0, 0.18)",
-    transition: "all 0.25s ease",
-    backdropFilter: isMobile ? "none" : "blur(10px)",
+    boxShadow: "0 12px 28px rgba(0, 0, 0, 0.2)",
+    transition: INTERACTIVE_TRANSITION,
   }),
   introCard: (isMobile: boolean) => ({
     ...STYLES.card,
@@ -212,7 +302,7 @@ export const CARD_TEMPLATES = {
     flexDirection: "column" as const,
     gap: isMobile ? SPACING.xsPlus : SPACING.sm,
     boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
-    background: "linear-gradient(180deg, rgba(24,24,27,0.82) 0%, rgba(21,21,24,0.94) 100%)",
+    background: SURFACES.intro,
   }),
   metricCard: (isMobile: boolean) => ({
     ...STYLES.card,
@@ -244,63 +334,3 @@ export const CARD_TEMPLATES = {
     margin: 0,
   }),
 } as const;
-
-// Готовые эффекты наведения для карточек разных типов
-export const CARD_HOVER_EFFECTS = {
-  // Плитка категории в меню каталога
-  category: {
-    hover: {
-      transform: "translateY(-3px)",
-      boxShadow: "0 18px 36px rgba(0, 0, 0, 0.26)",
-      border: `1px solid ${COLORS.border.primaryHover}`,
-    },
-    default: {
-      transform: "translateY(0) scale(1)",
-      boxShadow: STYLES.card.boxShadow,
-      border: `1px solid ${COLORS.border.default}`,
-    },
-  },
-  // Карточка товара
-  product: {
-    hover: {
-      transform: "translateY(-4px)",
-      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.28)",
-      border: `1px solid ${COLORS.border.primaryHover}`,
-    },
-    default: {
-      transform: "translateY(0)",
-      boxShadow: STYLES.card.boxShadow,
-      border: `1px solid ${COLORS.border.default}`,
-    },
-  },
-  // Карточка в разделе «Что по бабкам»
-  money: {
-    hover: {
-      boxShadow: "0 22px 44px rgba(0, 0, 0, 0.28)",
-      transform: "translateY(-2px)",
-      border: `1px solid ${COLORS.border.primaryHover}`,
-    },
-    default: {
-      boxShadow: STYLES.card.boxShadow,
-      transform: "translateY(0)",
-      border: `1px solid ${COLORS.border.default}`,
-    },
-  },
-  work: {
-    hover: {
-      boxShadow: "0 18px 36px rgba(0, 0, 0, 0.24)",
-      transform: "translateY(-2px)",
-      background: COLORS.background.cardExpanded,
-      border: `1px solid ${COLORS.border.primaryHover}`,
-    },
-    default: {
-      boxShadow: "0 14px 32px rgba(0, 0, 0, 0.18)",
-      transform: "translateY(0)",
-      background: COLORS.background.card,
-      border: `1px solid ${COLORS.border.default}`,
-    },
-  },
-} as const;
-
-
-

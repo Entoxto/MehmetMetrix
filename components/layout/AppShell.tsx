@@ -1,6 +1,8 @@
 "use client";
 
 import { ReactNode, useCallback, useEffect, useRef } from "react";
+import { ArrowLeft } from "@phosphor-icons/react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
@@ -71,9 +73,12 @@ export const AppShell = ({
       style={APP_SHELL_STYLES.headerBackButton(isMobile)}
       onClick={handleBackClick}
     >
-      <span aria-hidden="true" style={APP_SHELL_STYLES.headerBackIcon(isMobile)}>
-        ←
-      </span>
+      <ArrowLeft
+        aria-hidden="true"
+        size={isMobile ? 14 : 18}
+        weight="bold"
+        style={APP_SHELL_STYLES.headerBackIcon(isMobile)}
+      />
       Назад
     </button>
   ) : null;
@@ -85,11 +90,16 @@ export const AppShell = ({
           <div style={APP_SHELL_STYLES.headerTopRow(isMobile)}>
             <Link href="/" aria-label="Перейти на главную" style={APP_SHELL_STYLES.headerBrandLink}>
               <div style={APP_SHELL_STYLES.headerLogoGroup(isMobile)}>
-                <div aria-hidden="true" style={APP_SHELL_STYLES.brandMark(isMobile)}>
-                  <div style={APP_SHELL_STYLES.brandMarkInset(isMobile)}>
-                    <span style={APP_SHELL_STYLES.brandMarkText(isMobile)}>MM</span>
-                  </div>
-                </div>
+                <span aria-hidden="true" style={APP_SHELL_STYLES.brandMark(isMobile)}>
+                  <Image
+                    src="/images/brand/mehmet-metrics.png"
+                    alt=""
+                    width={isMobile ? 34 : 54}
+                    height={isMobile ? 34 : 54}
+                    priority
+                    style={APP_SHELL_STYLES.brandImage}
+                  />
+                </span>
                 <div style={APP_SHELL_STYLES.headerTitleGroup}>
                   <h1 style={APP_SHELL_STYLES.headerTitle(isMobile)}>Mehmet Metrics</h1>
                 </div>

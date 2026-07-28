@@ -1,3 +1,20 @@
+import type { ReactNode } from "react";
+import { Lora, Manrope } from "next/font/google";
+import { BreakpointProvider } from "@/components/providers/BreakpointProvider";
+import "./globals.css";
+
+const displayFont = Lora({
+  subsets: ["cyrillic", "latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const uiFont = Manrope({
+  subsets: ["cyrillic", "latin"],
+  variable: "--font-ui",
+  display: "swap",
+});
+
 /**
  * RootLayout — общий каркас Next.js приложения.
  * Задаёт метаданные, глобальный CSS и оборачивает все страницы в <html>/<body>.
@@ -14,82 +31,15 @@ export const viewport = {
   userScalable: true,
 };
 
-import type { ReactNode } from "react";
-import { BreakpointProvider } from "@/components/providers/BreakpointProvider";
-
 export default function RootLayout({
   children,
 }: {
   children: ReactNode;
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={`${displayFont.variable} ${uiFont.variable}`}>
       <head>
         <meta name="robots" content="noindex,nofollow" />
-        <style>{`
-          * {
-            box-sizing: border-box;
-          }
-          
-          html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-            -moz-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            text-size-adjust: 100%;
-          }
-          
-          body {
-            position: relative;
-          }
-          
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          @keyframes fadeUp {
-            from {
-              opacity: 0;
-              transform: translateY(18px) scale(0.985);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0) scale(1);
-            }
-          }
-
-          :focus:not(:focus-visible) {
-            outline: none;
-          }
-
-          :focus-visible {
-            outline: 2px solid #f4c34d;
-            outline-offset: 2px;
-            border-radius: 4px;
-          }
-
-          @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-              animation-duration: 0.01ms !important;
-              animation-iteration-count: 1 !important;
-              transition-duration: 0.01ms !important;
-              scroll-behavior: auto !important;
-            }
-          }
-        `}</style>
       </head>
       <body>
         <BreakpointProvider initialBreakpoint="desktop">

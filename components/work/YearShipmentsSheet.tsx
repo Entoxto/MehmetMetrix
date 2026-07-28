@@ -1,7 +1,7 @@
 "use client";
 
-import type { CSSProperties, MouseEvent } from "react";
-import { COLORS, SPACING } from "@/constants/styles";
+import type { CSSProperties } from "react";
+import { COLORS, SPACING, SURFACES } from "@/constants/styles";
 import { ShipmentCard } from "@/components/work/ShipmentCard";
 import type { Shipment } from "@/types/shipment";
 
@@ -12,11 +12,6 @@ interface YearShipmentsSheetProps {
   isMobile: boolean;
   isDesktop: boolean;
   shipmentCardStyle: CSSProperties;
-  hoverHandlers: {
-    onMouseEnter: (e: MouseEvent<HTMLElement>) => void;
-    onMouseLeave: (e: MouseEvent<HTMLElement>) => void;
-  };
-  onRowHover: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
   cellBaseBackground: string;
   cellBaseBorder: string;
   typography: {
@@ -39,8 +34,7 @@ const getSheetStyle = (isMobile: boolean): CSSProperties => ({
   border: `1px solid ${COLORS.border.primary}`,
   borderTop: "none",
   borderRadius: isMobile ? "0 0 18px 18px" : "0 0 28px 28px",
-  background:
-    "linear-gradient(180deg, rgba(244,195,77,0.08) 0%, rgba(33,33,38,0.96) 16%, rgba(16,16,19,0.94) 100%)",
+  background: SURFACES.sheet,
   boxShadow: isMobile ? "0 18px 38px rgba(0, 0, 0, 0.28)" : "0 28px 60px rgba(0, 0, 0, 0.34)",
   overflow: "hidden",
   animation: "fadeIn 260ms ease-out",
@@ -53,8 +47,6 @@ export const YearShipmentsSheet = ({
   isMobile,
   isDesktop,
   shipmentCardStyle,
-  hoverHandlers,
-  onRowHover,
   cellBaseBackground,
   cellBaseBorder,
   typography,
@@ -91,8 +83,6 @@ export const YearShipmentsSheet = ({
             isMobile={isMobile}
             isDesktop={isDesktop}
             cardStyle={shipmentCardStyle}
-            hoverHandlers={hoverHandlers}
-            onRowHover={onRowHover}
             cellBaseBackground={cellBaseBackground}
             cellBaseBorder={cellBaseBorder}
             typography={typography}

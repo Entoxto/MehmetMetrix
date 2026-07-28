@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { COLORS, MOTION } from "@/constants/styles";
+import { COLORS, MOTION, SURFACES } from "@/constants/styles";
 import { OptimizedImage } from "@/components/ui/OptimizedImage";
 
 const IMAGE_CONSTRAINTS = {
@@ -75,7 +75,8 @@ export const ProductPhoto = ({
         borderRadius: isCompact ? 16 : 20,
         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)",
         overflow: "hidden",
-        background: COLORS.background.cardExpanded,
+        background: SURFACES.inset,
+        border: `1px solid ${COLORS.border.default}`,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

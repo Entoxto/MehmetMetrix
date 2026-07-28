@@ -14,13 +14,11 @@ import { formatCurrency, formatCurrencyRUB } from "@/lib/format";
 import { buildShipmentStatusRows } from "@/lib/shipmentStatusRows";
 import { PositionRow } from "./PositionRow";
 import type { Position } from "@/types/domain";
-import type { MouseEvent } from "react";
 import type { PositionRowProps } from "./PositionRow";
 
 interface ShipmentPositionsTableProps {
   shipmentId: string;
   positions: readonly Position[];
-  onRowHover?: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
   cellBaseBackground: string;
   cellBaseBorder: string;
   typography: {
@@ -214,7 +212,6 @@ const COLUMNS_CONFIG: ColumnConfig[] = [
 export const ShipmentPositionsTable = ({
   shipmentId,
   positions,
-  onRowHover,
   cellBaseBackground,
   cellBaseBorder,
   typography,
@@ -285,7 +282,6 @@ export const ShipmentPositionsTable = ({
               key={position.id}
               position={position}
               shipmentId={shipmentId}
-              onRowHover={onRowHover}
               cellBaseBackground={cellBaseBackground}
               cellBaseBorder={cellBaseBorder}
               typography={typography}

@@ -1,7 +1,8 @@
 "use client";
 
-import type { CSSProperties, MouseEvent } from "react";
-import { COLORS, SPACING, STYLES } from "@/constants/styles";
+import { CaretRight } from "@phosphor-icons/react";
+import type { CSSProperties } from "react";
+import { COLORS, FONT_FAMILIES, SPACING, STYLES, SURFACES } from "@/constants/styles";
 import { formatCurrency, formatModelCount, formatUnitCount } from "@/lib/format";
 import type { YearShipmentMetrics } from "@/lib/shipmentMetrics";
 import { ClickableCard } from "@/components/ui/ClickableCard";
@@ -14,10 +15,6 @@ interface YearHeaderProps {
   isDesktop: boolean;
   onToggle: () => void;
   cardStyle: CSSProperties;
-  hoverHandlers: {
-    onMouseEnter: (e: MouseEvent<HTMLElement>) => void;
-    onMouseLeave: (e: MouseEvent<HTMLElement>) => void;
-  };
   typography: {
     h2: CSSProperties;
     amount: CSSProperties;
@@ -41,6 +38,8 @@ const mobileMetaRowStyle: CSSProperties = {
   fontSize: 10,
   lineHeight: 1.2,
   color: COLORS.text.secondary,
+  fontFamily: FONT_FAMILIES.ui,
+  fontVariantNumeric: "tabular-nums",
   minWidth: 0,
 };
 
@@ -63,6 +62,8 @@ const desktopMetaRowStyle: CSSProperties = {
   fontSize: 12,
   lineHeight: 1.3,
   fontWeight: 650,
+  fontFamily: FONT_FAMILIES.ui,
+  fontVariantNumeric: "tabular-nums",
 };
 
 const desktopMetaSeparatorStyle: CSSProperties = {
@@ -93,27 +94,23 @@ const getYearHeaderStyle = ({
     : cardStyle.borderRadius,
   border: isExpanded ? `1px solid ${COLORS.border.primary}` : cardStyle.border,
   background: isExpanded
-    ? `linear-gradient(135deg, rgba(244,195,77,0.16) 0%, rgba(32,32,37,0.98) 24%, ${COLORS.background.cardExpanded} 100%)`
-    : isMobile
-    ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
-    : cardStyle.background,
+    ? SURFACES.intro
+    : SURFACES.card,
   boxShadow: isExpanded ? "0 22px 44px rgba(0, 0, 0, 0.3)" : cardStyle.boxShadow,
 });
 
 const Chevron = ({ isExpanded, isMobile }: { isExpanded: boolean; isMobile: boolean }) => (
-  <span
+  <CaretRight
+    size={isMobile ? 16 : 20}
+    weight="fill"
     style={{
-      fontSize: isMobile ? 15 : 20,
       color: COLORS.primary,
       transition: "transform 0.3s ease",
       transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
       flexShrink: 0,
-      lineHeight: 1,
     }}
     aria-hidden="true"
-  >
-    ▶
-  </span>
+  />
 );
 
 export const YearHeader = ({
@@ -124,19 +121,17 @@ export const YearHeader = ({
   isDesktop,
   onToggle,
   cardStyle,
-  hoverHandlers,
   typography,
 }: YearHeaderProps) => {
   const headerStyle = getYearHeaderStyle({ cardStyle, isExpanded, isMobile });
-  const hoverProps = isMobile || isExpanded ? {} : hoverHandlers;
 
   return (
     <ClickableCard
       onPress={onToggle}
+      hoverVariant="soft"
       style={headerStyle}
       aria-expanded={isExpanded}
       aria-label={`Год ${year}, поставок: ${metrics.shipmentsCount}`}
-      {...hoverProps}
     >
       {isExpanded && (
         <div

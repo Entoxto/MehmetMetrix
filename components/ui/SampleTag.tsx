@@ -2,26 +2,15 @@
 
 /**
  * Небольшая метка «образец» для позиций.
- * Меняет размер под очень узкие мобильные экраны.
  */
 
-import { useState, useEffect } from "react";
+import { Tag } from "@phosphor-icons/react";
+import { FONT_FAMILIES, SHIPMENT_TYPE_VISUALS, SPACING } from "@/constants/styles";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 export const SampleTag = () => {
-  const [isNarrowMobile, setIsNarrowMobile] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    
-    const checkNarrow = () => {
-      setIsNarrowMobile(window.innerWidth <= 430);
-    };
-    
-    checkNarrow();
-    window.addEventListener("resize", checkNarrow);
-    
-    return () => window.removeEventListener("resize", checkNarrow);
-  }, []);
+  const { isMobile } = useBreakpoint();
+  const visual = SHIPMENT_TYPE_VISUALS.sample;
 
   return (
     <span
@@ -29,22 +18,22 @@ export const SampleTag = () => {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: isNarrowMobile ? "3px 10px" : "4px 12px",
-        borderRadius: isNarrowMobile ? 11 : 13,
-        fontSize: isNarrowMobile
-          ? "clamp(11px, 2.2vw, 12px)"
-          : "clamp(12px, 1vw, 13px)",
-        fontWeight: 600,
-        letterSpacing: 0.5,
+        gap: isMobile ? SPACING.xs : SPACING.xsPlus,
+        padding: isMobile ? "3px 9px" : "4px 11px",
+        borderRadius: isMobile ? 8 : 9,
+        fontSize: isMobile ? 10 : 11,
+        fontWeight: 700,
+        fontFamily: FONT_FAMILIES.ui,
+        letterSpacing: 0.65,
         lineHeight: 1,
-        background: "rgba(59,130,246,0.1)",
-        color: "#3B82F6",
-        border: "1px solid rgba(59,130,246,0.3)",
-        boxShadow: "0 0 8px rgba(59,130,246,0.3), 0 0 16px rgba(59,130,246,0.15)",
-        transition: "all 0.2s ease",
+        textTransform: "uppercase",
+        background: visual.surface,
+        color: visual.accent,
+        border: `1px solid ${visual.border}`,
       }}
     >
-      образец
+      <Tag size={isMobile ? 12 : 14} weight="regular" aria-hidden="true" />
+      Образец
     </span>
   );
 };

@@ -7,9 +7,7 @@
  */
 
 import { useMemo } from "react";
-import type { MouseEvent } from "react";
-import { COLORS, SPACING, CARD_TEMPLATES, CARD_HOVER_EFFECTS, TYPOGRAPHY, MOTION } from "@/constants/styles";
-import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
+import { COLORS, SPACING, CARD_TEMPLATES, TYPOGRAPHY, MOTION, SURFACES } from "@/constants/styles";
 import { getYearShipmentMetrics } from "@/lib/shipmentMetrics";
 import { YearHeader } from "@/components/work/YearHeader";
 import { YearShipmentsSheet } from "@/components/work/YearShipmentsSheet";
@@ -60,36 +58,18 @@ export const YearGroup = ({
   const metrics = useMemo(() => getYearShipmentMetrics(shipments), [shipments]);
 
   const shipmentCellBaseBackground = isMobile ? "rgba(13,13,16,0.98)" : "rgba(18,18,22,0.78)";
-  const shipmentCellHoverBackground = "rgba(34,34,39,0.96)";
   const shipmentCellBaseBorder = COLORS.border.default;
-  const shipmentCellHoverBorder = COLORS.border.primaryHover;
-
-  const handleShipmentRowHover = (event: MouseEvent<HTMLDivElement>, isHover: boolean) => {
-    const row = event.currentTarget;
-    const cells = Array.from(row.children) as HTMLElement[];
-    cells.forEach((cell) => {
-      cell.style.background = isHover ? shipmentCellHoverBackground : shipmentCellBaseBackground;
-      cell.style.borderBottom = `1px solid ${
-        isHover ? shipmentCellHoverBorder : shipmentCellBaseBorder
-      }`;
-    });
-  };
 
   const cardStyle = useMemo(() => CARD_TEMPLATES.container(isMobile), [isMobile]);
   const shipmentCardStyle = useMemo(
     () => ({
       ...cardStyle,
-      background:
-        "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(20,20,24,0.9) 100%)",
+      background: SURFACES.card,
       border: `1px solid ${COLORS.border.hover}`,
       borderRadius: isMobile ? 16 : 20,
       boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
     }),
     [cardStyle, isMobile]
-  );
-  const hoverHandlers = useMemo(
-    () => createCardHoverHandlers(CARD_HOVER_EFFECTS.work.hover, CARD_HOVER_EFFECTS.work.default),
-    []
   );
 
   return (
@@ -109,7 +89,6 @@ export const YearGroup = ({
         isDesktop={isDesktop}
         onToggle={onToggle}
         cardStyle={cardStyle}
-        hoverHandlers={hoverHandlers}
         typography={responsiveTypography}
       />
 
@@ -121,8 +100,6 @@ export const YearGroup = ({
           isMobile={isMobile}
           isDesktop={isDesktop}
           shipmentCardStyle={shipmentCardStyle}
-          hoverHandlers={hoverHandlers}
-          onRowHover={handleShipmentRowHover}
           cellBaseBackground={shipmentCellBaseBackground}
           cellBaseBorder={shipmentCellBaseBorder}
           typography={responsiveTypography}

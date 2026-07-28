@@ -16,7 +16,6 @@ import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
 import { SizesPendingTag } from "@/components/ui/SizesPendingTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import type { MouseEvent } from "react";
 
 interface PositionRowColumn {
   id: string;
@@ -30,7 +29,6 @@ interface PositionRowColumn {
 export interface PositionRowProps {
   position: Position;
   shipmentId?: string;
-  onRowHover?: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
   cellBaseBackground: string;
   cellBaseBorder: string;
   typography: {
@@ -94,7 +92,6 @@ const getPositionLinkAreaStyle = (
 export const PositionRow = ({
   position,
   shipmentId,
-  onRowHover,
   cellBaseBackground,
   cellBaseBorder,
   typography,
@@ -121,8 +118,6 @@ export const PositionRow = ({
             <div
               key={column.id}
               style={{ display: "contents" }}
-              onMouseEnter={onRowHover ? (event) => onRowHover(event, true) : undefined}
-              onMouseLeave={onRowHover ? (event) => onRowHover(event, false) : undefined}
             >
               <Link
                 id={`pos-${position.id}`}
@@ -177,7 +172,6 @@ export const PositionRow = ({
             {column.renderCell(position, isMobile, {
               position,
               shipmentId,
-              onRowHover,
               cellBaseBackground,
               cellBaseBorder,
               typography,

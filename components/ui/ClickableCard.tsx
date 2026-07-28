@@ -5,9 +5,10 @@ import type { KeyboardEvent, MouseEvent, HTMLAttributes, ReactNode } from "react
 interface ClickableCardProps extends Omit<HTMLAttributes<HTMLDivElement>, "onClick"> {
   children: ReactNode;
   onPress: () => void;
+  hoverVariant?: "soft" | "lift";
 }
 
-function isNestedInteractiveTarget(
+export function isNestedInteractiveTarget(
   target: EventTarget | null,
   currentTarget: HTMLElement
 ): boolean {
@@ -27,6 +28,8 @@ export const ClickableCard = ({
   style,
   role,
   tabIndex,
+  className,
+  hoverVariant = "soft",
   ...rest
 }: ClickableCardProps) => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -51,6 +54,8 @@ export const ClickableCard = ({
       tabIndex={tabIndex ?? 0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      className={["mm-interactive-surface", className].filter(Boolean).join(" ")}
+      data-hover={hoverVariant}
       style={style}
       {...rest}
     >

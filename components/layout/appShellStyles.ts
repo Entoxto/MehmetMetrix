@@ -1,10 +1,10 @@
-import { COLORS, SPACING } from "@/constants/styles";
+import { COLORS, FONT_FAMILIES, SPACING } from "@/constants/styles";
 import type { CSSProperties } from "react";
 
 export const APP_SHELL_STYLES = {
   container: {
     minHeight: "100vh",
-    background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
+    background: COLORS.background.dark,
     color: COLORS.text.primary,
     display: "flex",
     flexDirection: "column",
@@ -56,41 +56,20 @@ export const APP_SHELL_STYLES = {
   }),
 
   brandMark: (isMobile: boolean): CSSProperties => ({
-    position: "relative",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: "inline-flex",
     width: isMobile ? 34 : 54,
     height: isMobile ? 34 : 54,
     borderRadius: isMobile ? 11 : 18,
-    padding: isMobile ? 2 : 4,
-    background:
-      "linear-gradient(145deg, rgba(244,195,77,0.28) 0%, rgba(244,195,77,0.08) 38%, rgba(255,255,255,0.04) 100%)",
-    border: `1px solid ${COLORS.border.primary}`,
-    boxShadow: "0 14px 30px rgba(0, 0, 0, 0.24)",
+    overflow: "hidden",
+    boxShadow: "0 12px 28px rgba(0, 0, 0, 0.28)",
+    flexShrink: 0,
   }),
 
-  brandMarkInset: (isMobile: boolean): CSSProperties => ({
+  brandImage: {
     width: "100%",
     height: "100%",
-    borderRadius: isMobile ? 8 : 14,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background:
-      "radial-gradient(circle at top, rgba(255,255,255,0.14) 0%, rgba(37,37,41,0.98) 58%, rgba(19,19,22,0.98) 100%)",
-    border: `1px solid ${COLORS.border.strong}`,
-    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
-  }),
-
-  brandMarkText: (isMobile: boolean): CSSProperties => ({
-    fontSize: isMobile ? 11 : 18,
-    lineHeight: 1,
-    fontWeight: 800,
-    letterSpacing: isMobile ? -0.5 : -1,
-    color: COLORS.primary,
-    textShadow: "0 0 18px rgba(244,195,77,0.18)",
-  }),
+    display: "block",
+  } as CSSProperties,
 
   headerTitleGroup: {
     display: "flex",
@@ -100,10 +79,10 @@ export const APP_SHELL_STYLES = {
   } as CSSProperties,
 
   headerTitle: (isMobile: boolean): CSSProperties => ({
-    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontFamily: FONT_FAMILIES.display,
     fontSize: isMobile ? 20 : 34,
-    fontWeight: 900,
-    letterSpacing: isMobile ? -0.5 : -0.9,
+    fontWeight: 600,
+    letterSpacing: isMobile ? -0.2 : -0.4,
     lineHeight: 1.02,
     background: "linear-gradient(180deg, #f7de97 0%, #f4c34d 55%, #cc9225 100%)",
     WebkitBackgroundClip: "text",
@@ -128,21 +107,12 @@ export const APP_SHELL_STYLES = {
     boxShadow: "0 10px 24px rgba(0, 0, 0, 0.18)",
     whiteSpace: "nowrap",
     cursor: "pointer",
-    fontFamily: "inherit",
+    fontFamily: FONT_FAMILIES.ui,
     appearance: "none",
   }),
 
-  headerBackIcon: (isMobile: boolean): CSSProperties => ({
-    width: isMobile ? 16 : 24,
-    height: isMobile ? 16 : 24,
-    borderRadius: 999,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: COLORS.background.accent,
-    border: `1px solid ${COLORS.border.primary}`,
+  headerBackIcon: (_isMobile: boolean): CSSProperties => ({
     color: COLORS.primary,
-    fontSize: isMobile ? 9 : 12,
     flexShrink: 0,
   }),
 
@@ -164,7 +134,7 @@ export const APP_SHELL_STYLES = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: `linear-gradient(135deg, ${COLORS.background.dark} 0%, ${COLORS.background.darker} 100%)`,
+    background: COLORS.background.dark,
     color: COLORS.text.primary,
   } as CSSProperties,
 
@@ -174,7 +144,7 @@ export const APP_SHELL_STYLES = {
     padding: "0",
     borderBottom: `1px solid ${COLORS.border.default}`,
     background:
-      "linear-gradient(180deg, rgba(18,18,21,0.96) 0%, rgba(13,13,16,0.88) 100%)",
+      "linear-gradient(180deg, rgba(12,12,14,0.99) 0%, rgba(8,8,10,0.97) 100%)",
     backdropFilter: "blur(14px)",
     boxShadow: "0 14px 32px rgba(0, 0, 0, 0.2)",
     width: "100%",

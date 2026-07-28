@@ -5,13 +5,20 @@
  * Показывает заголовок, статус, дату/ETA и раскрывающуюся таблицу позиций.
  */
 
+import { CaretRight } from "@phosphor-icons/react";
 import type { CSSProperties, MouseEvent } from "react";
-import { COLORS, SPACING, STATUS_CHIP_STYLE, STYLES, MOTION } from "@/constants/styles";
-import { formatCurrency, formatModelCount, formatUnitCount, getStatusLabel } from "@/lib/format";
+import { COLORS, SPACING, STATUS_CHIP_STYLE, MOTION, SURFACES } from "@/constants/styles";
+import { formatCurrency, getStatusLabel } from "@/lib/format";
 import { isPaidStatus } from "@/lib/statusText";
 import { getShipmentModelCount, getShipmentUnitCount } from "@/lib/shipmentMetrics";
+import {
+  ShipmentDateInfo,
+  ShipmentMetricsSummary,
+} from "@/components/work/ShipmentCardSummary";
+import { ShipmentContentsList } from "@/components/work/ShipmentContentsList";
 import { ShipmentPositionsTable } from "@/components/work/ShipmentPositionsTable";
-import { ClickableCard } from "@/components/ui/ClickableCard";
+import { ShipmentTypeBadges } from "@/components/work/ShipmentTypeBadges";
+import { ClickableCard, isNestedInteractiveTarget } from "@/components/ui/ClickableCard";
 import type { Shipment } from "@/types/shipment";
 
 interface ShipmentCardProps {
@@ -22,11 +29,6 @@ interface ShipmentCardProps {
   isMobile: boolean;
   isDesktop: boolean;
   cardStyle: CSSProperties;
-  hoverHandlers: {
-    onMouseEnter: (e: MouseEvent<HTMLElement>) => void;
-    onMouseLeave: (e: MouseEvent<HTMLElement>) => void;
-  };
-  onRowHover: (event: MouseEvent<HTMLDivElement>, isHover: boolean) => void;
   cellBaseBackground: string;
   cellBaseBorder: string;
   typography: {
@@ -39,74 +41,6 @@ interface ShipmentCardProps {
   };
 }
 
-const ShipmentDateInfo = ({
-  shipment,
-  isDesktop,
-  isMobile,
-  typography,
-}: {
-  shipment: Shipment;
-  isDesktop: boolean;
-  isMobile: boolean;
-  typography: { caption: CSSProperties };
-}) => {
-  const label = shipment.receivedDate ? "Дата получения" : "План доставки";
-  const value = shipment.receivedDate || shipment.eta;
-  const detailValueFontSize = isMobile ? 14 : 15;
-  const labelColor = isDesktop ? "rgba(212, 212, 212, 0.6)" : COLORS.text.muted;
-
-  if (!value) return null;
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        ...(isDesktop
-          ? {
-              alignItems: "flex-end",
-              justifyContent: "center",
-              gap: 4,
-              minHeight: 60,
-              paddingRight: SPACING.md,
-            }
-          : {
-              gap: SPACING.xs,
-              marginTop: SPACING.xs,
-              paddingTop: SPACING.sm,
-              borderTop: `1px solid ${COLORS.border.default}`,
-            }),
-      }}
-    >
-      <p
-        style={{
-          ...typography.caption,
-          color: labelColor,
-          textTransform: "uppercase",
-          margin: 0,
-          lineHeight: 1.4,
-          ...(isDesktop ? { textAlign: "right" } : {}),
-        }}
-      >
-        {label}
-      </p>
-      <p
-        style={{
-          fontSize: detailValueFontSize,
-          lineHeight: 1.4,
-          color: COLORS.text.primary,
-          fontWeight: 600,
-          margin: 0,
-          ...(isDesktop ? { textAlign: "right" } : {}),
-        }}
-        aria-label={`${label}: ${value}`}
-      >
-        {value}
-      </p>
-    </div>
-  );
-};
-
 export const ShipmentCard = ({
   shipment,
   animationIndex = 0,
@@ -115,8 +49,6 @@ export const ShipmentCard = ({
   isMobile,
   isDesktop,
   cardStyle,
-  hoverHandlers,
-  onRowHover,
   cellBaseBackground,
   cellBaseBorder,
   typography,
@@ -126,25 +58,30 @@ export const ShipmentCard = ({
   const statusLabelText = getStatusLabel(shipment.status);
   const modelsCount = getShipmentModelCount(shipment);
   const unitsCount = getShipmentUnitCount(shipment);
+  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (isNestedInteractiveTarget(event.target, event.currentTarget)) return;
+    onToggle();
+  };
 
   const cardContainerStyle: CSSProperties = {
     ...cardStyle,
     padding: isMobile ? SPACING.smPlus : cardStyle.padding,
     position: "relative",
     overflow: "hidden",
-    background: isExpanded
-      ? "linear-gradient(180deg, rgba(244,195,77,0.12) 0%, rgba(29,29,33,0.96) 16%, rgba(20,20,24,0.96) 100%)"
-      : cardStyle.background,
+    background: isExpanded ? SURFACES.cardExpanded : SURFACES.card,
     border: isExpanded ? `1px solid ${COLORS.border.primary}` : cardStyle.border,
     boxShadow: isExpanded ? "0 18px 36px rgba(0, 0, 0, 0.26)" : cardStyle.boxShadow,
     animation: isExpanded ? "fadeIn 220ms ease-out" : MOTION.staggerEnter(animationIndex, isMobile ? 40 : 55),
+    cursor: "pointer",
   };
 
   return (
     <div
       id={`batch-${shipment.id}`}
+      className="mm-interactive-surface"
+      data-hover="soft"
+      onClick={handleCardClick}
       style={cardContainerStyle}
-      {...(isMobile || isExpanded ? {} : hoverHandlers)}
     >
       <div
         aria-hidden="true"
@@ -162,95 +99,141 @@ export const ShipmentCard = ({
 
       <ClickableCard
         onPress={onToggle}
+        hoverVariant="soft"
         aria-expanded={isExpanded}
         aria-label={`${shipment.title}, ${statusLabelText}`}
         style={{
           display: "grid",
           gridTemplateColumns: isDesktop ? "1fr auto" : "1fr",
-          gap: isDesktop ? SPACING.lg : SPACING.smPlus,
-          alignItems: "center",
-          minHeight: isDesktop ? 60 : "auto",
+          gap: isDesktop ? SPACING.lg : SPACING.sm,
+          alignItems: isDesktop ? "center" : "start",
+          minHeight: isDesktop ? 42 : "auto",
           position: "relative",
           zIndex: 1,
           cursor: "pointer",
+          borderRadius: isMobile ? 10 : 12,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: isMobile ? SPACING.sm : SPACING.md }}>
-            <span
-              style={{
-                fontSize: isMobile ? 14 : 18,
-                color: COLORS.primary,
-                transition: "transform 0.3s ease",
-                transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-                flexShrink: 0,
-                lineHeight: 1,
-              }}
-              aria-hidden="true"
-            >
-              ▶
-            </span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: isMobile ? SPACING.sm : SPACING.md,
+            minWidth: 0,
+          }}
+        >
+          <CaretRight
+            size={isMobile ? 16 : 20}
+            weight="fill"
+            style={{
+              color: COLORS.primary,
+              transition: MOTION.interactiveTransition,
+              transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+              flexShrink: 0,
+              marginTop: isMobile ? 2 : 4,
+            }}
+            aria-hidden="true"
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              columnGap: isMobile ? SPACING.sm : SPACING.md,
+              rowGap: isMobile ? SPACING.xsPlus : SPACING.sm,
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
             <h3
               style={{
                 ...typography.h3,
                 color: COLORS.text.primary,
                 margin: 0,
+                minWidth: 0,
+                maxWidth: "100%",
                 ...(isMobile
                   ? {
                       fontSize: 17,
                       lineHeight: 1.2,
-                      whiteSpace: "normal",
-                      overflow: "hidden",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
                     }
                   : {
+                      fontSize: 24,
+                      lineHeight: 1.2,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                     }),
-                flex: 1,
               }}
             >
               {titleWithNonBreakingSpace}
             </h3>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-            <div
-              style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
-              role="status"
-              aria-label={`Статус: ${statusLabelText}`}
-            >
-              <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
-            </div>
-          </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: isMobile ? SPACING.xsPlus : SPACING.sm }}>
-            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
-              {formatModelCount(modelsCount)}
-            </span>
-            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
-              {formatUnitCount(unitsCount)}
-            </span>
-            <span style={{ ...STYLES.sizeBadge, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
-              {formatCurrency(shipment.totalAmount)}
-            </span>
-            {shipment.hasPriceGaps && (
-              <span style={{ ...STYLES.sizeBadge, color: COLORS.text.muted, fontSize: isMobile ? 10 : 12, padding: isMobile ? "4px 8px" : STYLES.sizeBadge.padding }}>
-                есть уточнения
-              </span>
-            )}
+            <ShipmentTypeBadges shipment={shipment} isMobile={isMobile} />
           </div>
         </div>
 
+        {isDesktop && (
+          <ShipmentDateInfo
+            shipment={shipment}
+            isDesktop={isDesktop}
+            isMobile={isMobile}
+            typography={typography}
+          />
+        )}
+      </ClickableCard>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: SPACING.xs,
+          marginTop: isMobile ? SPACING.sm : SPACING.smPlus,
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={STATUS_CHIP_STYLE(highlightStatus, isMobile)}
+          role="status"
+          aria-label={`Статус: ${statusLabelText}`}
+        >
+          <span style={{ textTransform: "uppercase" }}>{statusLabelText}</span>
+        </div>
+      </div>
+
+      {!isExpanded && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isDesktop
+              ? "minmax(0, 1fr) minmax(300px, 0.72fr)"
+              : "1fr",
+            gap: isDesktop ? SPACING.xl : SPACING.smPlus,
+            alignItems: "end",
+            marginTop: isMobile ? SPACING.smPlus : SPACING.md,
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <ShipmentContentsList shipment={shipment} isMobile={isMobile} />
+          <ShipmentMetricsSummary
+            modelsCount={modelsCount}
+            unitsCount={unitsCount}
+            totalAmount={shipment.totalAmount}
+            isMobile={isMobile}
+            typography={typography}
+          />
+        </div>
+      )}
+
+      {!isDesktop && (
         <ShipmentDateInfo
           shipment={shipment}
           isDesktop={isDesktop}
           isMobile={isMobile}
           typography={typography}
         />
-      </ClickableCard>
+      )}
 
       {isExpanded && (
         <>
@@ -268,7 +251,6 @@ export const ShipmentCard = ({
           <ShipmentPositionsTable
             shipmentId={shipment.id}
             positions={shipment.positions}
-            onRowHover={onRowHover}
             cellBaseBackground={cellBaseBackground}
             cellBaseBorder={cellBaseBorder}
             typography={typography}

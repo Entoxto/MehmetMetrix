@@ -53,27 +53,42 @@ export function useWorkNavigationState(shipments: readonly Shipment[]) {
   const router = useRouter();
   const processedParamsRef = useRef("");
 
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(() =>
-    readStringSet("workExpandedCards")
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(() => new Set());
+  const [expandedYears, setExpandedYears] = useState<Set<number>>(() => new Set());
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  const yearsOrdered = useMemo(
+    () => Array.from(groupShipmentsByYear([...shipments]).keys()),
+    [shipments]
   );
-  const [expandedYears, setExpandedYears] = useState<Set<number>>(() =>
-    readNumberSet("workExpandedYears")
-  );
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("workExpandedCards", JSON.stringify(Array.from(expandedCards)));
+    const storedCards = readStringSet("workExpandedCards");
+    const storedYears = readNumberSet("workExpandedYears");
+    const wasInitialized = sessionStorage.getItem("workExpandedYearsInitialized") === "true";
+
+    setExpandedCards(storedCards);
+    if (wasInitialized) {
+      setExpandedYears(storedYears);
+    } else {
+      setExpandedYears(yearsOrdered.length > 0 ? new Set([yearsOrdered[0]]) : new Set());
+      sessionStorage.setItem("workExpandedYearsInitialized", "true");
     }
-  }, [expandedCards]);
+    setHasHydrated(true);
+  }, [yearsOrdered]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("workExpandedYears", JSON.stringify(Array.from(expandedYears)));
-    }
-  }, [expandedYears]);
+    if (!hasHydrated) return;
+    sessionStorage.setItem("workExpandedCards", JSON.stringify(Array.from(expandedCards)));
+  }, [expandedCards, hasHydrated]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!hasHydrated) return;
+    sessionStorage.setItem("workExpandedYears", JSON.stringify(Array.from(expandedYears)));
+  }, [expandedYears, hasHydrated]);
+
+  useEffect(() => {
+    if (!hasHydrated) return;
 
     // `batch` остаётся именем query-параметра для совместимости старых ссылок.
     const shipmentId = searchParams.get("batch");
@@ -127,27 +142,7 @@ export function useWorkNavigationState(shipments: readonly Shipment[]) {
     return () => {
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
-  }, [router, searchParams, shipments]);
-
-  const yearsOrdered = useMemo(
-    () => Array.from(groupShipmentsByYear([...shipments]).keys()),
-    [shipments]
-  );
-
-  useEffect(() => {
-    if (yearsOrdered.length === 0) return;
-    if (typeof window === "undefined") return;
-
-    if (sessionStorage.getItem("workExpandedYearsInitialized")) return;
-
-    if (expandedYears.size > 0) {
-      sessionStorage.setItem("workExpandedYearsInitialized", "true");
-      return;
-    }
-
-    sessionStorage.setItem("workExpandedYearsInitialized", "true");
-    setExpandedYears(new Set([yearsOrdered[0]]));
-  }, [yearsOrdered, expandedYears.size]);
+  }, [hasHydrated, router, searchParams, shipments]);
 
   const toggleCard = useCallback((cardId: string) => {
     setExpandedCards((current) => toggleSetValue(current, cardId));

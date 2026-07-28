@@ -5,8 +5,8 @@
  * Показывает название, короткое описание и бейдж с количеством.
  * Используется в каталоге для выбора категории.
  */
-import { STYLES, COLORS, CARD_HOVER_EFFECTS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
-import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
+import { ArrowRight } from "@phosphor-icons/react";
+import { STYLES, COLORS, SPACING, MOTION, getCategoryVisual } from "@/constants/styles";
 import { ClickableCard } from "@/components/ui/ClickableCard";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
@@ -27,15 +27,11 @@ export const CategoryCard = ({
 }: CategoryCardProps) => {
   const { isMobile } = useBreakpoint();
   const visual = getCategoryVisual(title);
-  const hoverHandlers = createCardHoverHandlers(
-    CARD_HOVER_EFFECTS.category.hover,
-    CARD_HOVER_EFFECTS.category.default
-  );
 
   return (
     <ClickableCard
       onPress={onClick}
-      {...hoverHandlers}
+      hoverVariant="lift"
       style={{
         ...STYLES.card,
         position: "relative",
@@ -71,7 +67,7 @@ export const CategoryCard = ({
         <h3
           style={{
             fontSize: isMobile ? 18 : 24,
-            fontWeight: 800,
+            fontWeight: 700,
             lineHeight: isMobile ? 1.15 : 1.2,
             letterSpacing: isMobile ? -0.25 : -0.4,
             margin: 0,
@@ -106,22 +102,16 @@ export const CategoryCard = ({
         >
           {badge}
         </span>
-        <span
+        <ArrowRight
           aria-hidden="true"
+          size={isMobile ? 16 : 18}
+          weight="bold"
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: isMobile ? 20 : 24,
-            height: isMobile ? 20 : 24,
             color: visual.accent,
-            fontSize: isMobile ? 14 : 16,
             opacity: 0.72,
-            whiteSpace: "nowrap",
+            flexShrink: 0,
           }}
-        >
-          →
-        </span>
+        />
       </div>
     </ClickableCard>
   );

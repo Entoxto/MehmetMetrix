@@ -1,4 +1,4 @@
-import { COLORS, SPACING, STYLES } from "@/constants/styles";
+import { COLORS, FONT_FAMILIES, SPACING, STYLES, SURFACES } from "@/constants/styles";
 import type { CSSProperties } from "react";
 
 export const HOME_MENU_STYLES = {
@@ -23,7 +23,9 @@ export const HOME_MENU_STYLES = {
     justifyContent: "space-between",
     cursor: "pointer",
     minHeight: 520,
-    transition: "all 0.25s ease",
+    position: "relative",
+    overflow: "hidden",
+    background: SURFACES.card,
   } as CSSProperties,
 
   cardHeader: {
@@ -33,17 +35,17 @@ export const HOME_MENU_STYLES = {
   } as CSSProperties,
 
   icon: {
-    fontSize: 18,
-    lineHeight: 1,
     color: COLORS.primary,
     marginTop: 2,
+    flexShrink: 0,
   } as CSSProperties,
 
   title: {
     fontSize: 22,
-    fontWeight: 800,
+    fontWeight: 600,
     lineHeight: 1.2,
-    letterSpacing: -0.4,
+    letterSpacing: -0.2,
+    fontFamily: FONT_FAMILIES.display,
     color: COLORS.text.primary,
     margin: 0,
   } as CSSProperties,
@@ -53,7 +55,7 @@ export const HOME_MENU_STYLES = {
     aspectRatio: "5 / 6",
     borderRadius: 16,
     overflow: "hidden",
-    background: COLORS.background.cardExpanded,
+    background: SURFACES.inset,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -73,15 +75,4 @@ export const HOME_MENU_STYLES = {
     margin: 0,
   } as CSSProperties,
 
-  cardHover: {
-    transform: "translateY(-3px)",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.28)",
-    border: `1px solid ${COLORS.border.primaryHover}`,
-  } as CSSProperties,
-
-  cardDefault: {
-    transform: "translateY(0)",
-    boxShadow: STYLES.card.boxShadow,
-    border: `1px solid ${COLORS.border.default}`,
-  } as CSSProperties,
 };

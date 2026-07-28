@@ -6,9 +6,11 @@
  */
 import { Fragment, useState } from "react";
 import Link from "next/link";
-import { COLORS, SPACING, TYPOGRAPHY, STYLES, CARD_TEMPLATES, MOTION } from "@/constants/styles";
+import { COLORS, SPACING, TYPOGRAPHY } from "@/constants/styles";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { MoneyMetricCard } from "@/components/money/MoneyMetricCard";
+import { PageFrame } from "@/components/ui/PageFrame";
+import { PageIntro } from "@/components/ui/PageIntro";
 import type { MoneyStatusItem, MoneyDepositItem } from "@/lib/money";
 
 interface MoneyScreenProps {
@@ -42,40 +44,15 @@ export const MoneyScreen = ({
   const introDescription = isMobile
     ? "Сколько ещё нужно оплатить и сколько уже внесено депозитами и предоплатами."
     : "Слева то, что ещё нужно оплатить, справа уже внесённые депозиты и предоплаты.";
-  const introCopyStyle = STYLES.pageIntroCopy(isMobile);
 
   const responsiveTypography = {
-    h2: { ...TYPOGRAPHY.h2, fontSize: isMobile ? 20 : 28 },
     body: { ...TYPOGRAPHY.body, fontSize: isMobile ? 12 : 14 },
     amount: { ...TYPOGRAPHY.amount, fontSize: isMobile ? 30 : 36 },
   } as const;
 
   return (
-    <div
-      style={{
-        flex: 1,
-        padding: isMobile ? SPACING.smPlus : SPACING.xl,
-        paddingTop: isMobile ? SPACING.smPlus : SPACING.lg,
-        paddingBottom: isMobile ? SPACING.smPlus : SPACING.lg,
-        display: "flex",
-        flexDirection: "column",
-        gap: isMobile ? SPACING.smPlus : SPACING.xl * 2,
-      }}
-    >
-      <div style={{ ...CARD_TEMPLATES.pageIntro(isMobile), animation: MOTION.softEnter }}>
-        <h2
-          style={{
-            ...responsiveTypography.h2,
-            color: COLORS.text.primary,
-            margin: 0,
-          }}
-        >
-          Надвигающаяся расплата
-        </h2>
-        <p style={introCopyStyle}>
-          {introDescription}
-        </p>
-      </div>
+    <PageFrame>
+      <PageIntro title="Надвигающаяся расплата" description={introDescription} />
 
       <div
         style={{
@@ -219,6 +196,6 @@ export const MoneyScreen = ({
           />
         </div>
       </div>
-    </div>
+    </PageFrame>
   );
 };

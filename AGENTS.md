@@ -80,13 +80,18 @@ If you need a production build, stop any active dev server first. A running dev 
 - Brand in `AppShell` (`MM` / `Mehmet Metrics`) always routes to `/`.
 - Back navigation is stateful: `AppShell` first uses in-app history from `lib/navigationHistory.ts`; reaching `/` resets that history.
 - Product pages may use explicit back behavior (`backMode="explicit"`) to preserve origin context from `Work` / `Catalog`.
-- In `Work`, only year headers and shipment headers toggle expansion.
+- In `Work`, year headers toggle their year. A shipment toggles from its whole
+  card surface except nested product links or other interactive controls; its
+  header remains the keyboard-accessible control with `aria-expanded`.
 - In `Work`, keep `YearGroup` thin: `YearHeader` owns the yearly summary UI and `YearShipmentsSheet` owns the expanded shipment list.
 - In `Work`, the whole first position cell is the navigation target to the product page; numeric cells are not navigation controls.
 - The category pill on `ProductDetail` is a real navigation control to `/catalog?category=...` and should look clickable.
 - Keep `ProductDetail` thin: photo behavior belongs in `components/product/ProductPhoto.tsx`, product facts in `ProductInfo.tsx`, and materials in `ProductMaterials.tsx`.
 - Keep `MoneyScreen` screen-level: reusable financial card/table UI belongs in `components/money/`.
 - Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
+- Shared page layout belongs in `components/ui/PageFrame.tsx` and repeated intro UI in `PageIntro.tsx`.
+- App typography uses the shared system sans-serif from `FONT_FAMILIES`; do not reintroduce Georgia or another decorative display serif.
+- Shared hover/focus behavior lives in `app/globals.css`; do not recreate per-card DOM mutation helpers.
 - New animations must stay subtle and respect `prefers-reduced-motion`.
 - Staggered entrance is acceptable for lists and page sections, but avoid decorative motion that competes with data.
 

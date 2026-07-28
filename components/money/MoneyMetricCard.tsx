@@ -1,18 +1,18 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import { CaretRight } from "@phosphor-icons/react";
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import {
-  CARD_HOVER_EFFECTS,
   CARD_TEMPLATES,
   COLORS,
   MOTION,
   SPACING,
   STYLES,
+  SURFACES,
 } from "@/constants/styles";
-import { ClickableCard } from "@/components/ui/ClickableCard";
+import { ClickableCard, isNestedInteractiveTarget } from "@/components/ui/ClickableCard";
 import { MoneyDetailsTable } from "@/components/money/MoneyDetailsTable";
 import { formatCurrency } from "@/lib/format";
-import { createCardHoverHandlers } from "@/lib/cardHoverHandlers";
 
 interface MoneyDetailsConfig<TItem> {
   items: TItem[];
@@ -57,18 +57,21 @@ export const MoneyMetricCard = <TItem,>({
     ...templateStyle,
     border: `1px solid ${COLORS.border.default}`,
     borderRadius: 20,
-    background: isMobile
-      ? "linear-gradient(180deg, rgba(24,24,27,0.96) 0%, rgba(18,18,21,0.98) 100%)"
-      : templateStyle.background,
+    borderLeft: `2px solid ${amountColor}`,
+    background: SURFACES.card,
     boxShadow: isMobile ? "0 14px 30px rgba(0, 0, 0, 0.22)" : templateStyle.boxShadow,
-    transition: "all 0.25s ease",
+    transition: MOTION.interactiveTransition,
   } as const;
+  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (isNestedInteractiveTarget(event.target, event.currentTarget)) return;
+    onToggle();
+  };
 
   return (
-    <ClickableCard
-      onPress={onToggle}
-      aria-expanded={isExpanded}
-      aria-label={label}
+    <div
+      className="mm-interactive-surface"
+      data-hover="soft"
+      onClick={handleCardClick}
       style={{
         ...cardStyle,
         padding: isMobile ? SPACING.smPlus : SPACING.xl,
@@ -78,14 +81,12 @@ export const MoneyMetricCard = <TItem,>({
         gap: isMobile ? SPACING.xsPlus : SPACING.md,
         animation: MOTION.staggerEnter(animationIndex, isMobile ? 90 : 120),
       }}
-      {...(isMobile
-        ? {}
-        : createCardHoverHandlers(CARD_HOVER_EFFECTS.money.hover, {
-            boxShadow: cardStyle.boxShadow,
-            transform: "translateY(0)",
-          }))}
     >
-      <div
+      <ClickableCard
+        onPress={onToggle}
+        hoverVariant="soft"
+        aria-expanded={isExpanded}
+        aria-label={label}
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -103,26 +104,24 @@ export const MoneyMetricCard = <TItem,>({
           {label}
         </p>
         <div style={{ display: "flex", alignItems: "center", gap: SPACING.xs }}>
-          <span
+          <CaretRight
             aria-hidden="true"
+            size={isMobile ? 15 : 18}
+            weight="fill"
             style={{
-              fontSize: 14,
               color: COLORS.text.secondary,
-              display: "inline-block",
               transition: "transform 0.3s ease",
               transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
-              lineHeight: 1,
+              flexShrink: 0,
             }}
-          >
-            ▶
-          </span>
+          />
         </div>
-      </div>
+      </ClickableCard>
       <p
         style={{
           ...amountTypography,
           color: amountColor,
-          letterSpacing: -1,
+          letterSpacing: -0.35,
           margin: 0,
         }}
       >
@@ -149,6 +148,6 @@ export const MoneyMetricCard = <TItem,>({
         isDesktop={isDesktop}
         bodyTypography={bodyTypography}
       />
-    </ClickableCard>
+    </div>
   );
 };

@@ -27,9 +27,9 @@ export const StatusBadge = ({ children, kind = "default", icon }: StatusBadgePro
       border: "rgba(251,191,36,0.3)",
     },
     info: {
-      background: "rgba(59,130,246,0.15)",
-      text: "#3B82F6",
-      border: "rgba(59,130,246,0.3)",
+      background: "rgba(99,75,166,0.14)",
+      text: "#A78BFA",
+      border: "rgba(167,139,250,0.34)",
     },
     success: {
       background: "rgba(52,211,153,0.15)",
