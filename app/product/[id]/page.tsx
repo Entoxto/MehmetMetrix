@@ -4,14 +4,15 @@ import { ProductPageClient } from "@/components/product/ProductPageClient";
 import { APP_SHELL_STYLES } from "@/components/layout/appShellStyles";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params;
   const data = await getDataBundle();
-  const product = data.products.products.find((item) => item.id === params.id);
+  const product = data.products.products.find((item) => item.id === id);
 
   if (!product) {
     return (

@@ -163,7 +163,7 @@ of duplicating them in this domain overview.
 
 ## Known Project Choices
 
-- `app/layout.tsx` deliberately starts `BreakpointProvider` at `desktop`; the provider corrects it from the actual viewport in `useLayoutEffect`. Do not read User-Agent through `headers()`/`cookies()` in root layout: that makes every route dynamic.
+- `app/layout.tsx` deliberately starts `BreakpointProvider` at `desktop`; the provider reads the actual viewport through `useSyncExternalStore` while keeping that deterministic server snapshot for hydration. Do not read User-Agent through `headers()`/`cookies()` in root layout: that makes every route dynamic.
 - Work expansion state also starts deterministically empty on the server and
   client, then restores `sessionStorage` after mount. Do not read stored state
   in a `useState` initializer because that creates hydration mismatches.
@@ -173,6 +173,7 @@ of duplicating them in this domain overview.
 - WebP source-sync regressions run through `npm run test:images`.
 - `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
 - `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
+- Netlify uses `npm run preflight` as its build command, so a deploy cannot pass by running only `next build`; run the same command locally first for faster feedback.
 - The live site is deployed by Netlify. Git push updates code, rules, and static photos; `npm run publish:data` updates the table/finance bundle without rebuilding.
 - If plain `npm` is unavailable on Windows, prepend the bundled runtime with `$env:PATH = "$PWD\.tools\node;$env:PATH"`; `scripts/preflight.mjs` also adds the bundled Codex Python runtime for nested validation steps when it exists.
 - Agent rules are kept in editor-neutral docs (`AGENTS.md`, this file, and README files); do not reintroduce stale editor-specific rule files.

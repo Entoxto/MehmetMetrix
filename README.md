@@ -11,6 +11,9 @@
 
 ## Быстрый запуск
 
+Проект закреплён на Node.js 24 через `.nvmrc` (минимум для текущего Next.js —
+Node.js 20.9).
+
 ```bash
 npm install
 npm run dev
@@ -303,7 +306,9 @@ npm run preflight
 
 Проект развёрнут на Netlify. Код, правила и фотографии обновляются push в
 deployment branch; обычные табличные данные и `money.json` — отдельной командой
-`npm run publish:data` без сборки. Команда сборки задана в `netlify.toml`.
+`npm run publish:data` без сборки. Netlify запускает `npm run preflight` из
+`netlify.toml`, поэтому deploy не продолжается при ошибке lint, типов, тестов,
+валидации данных/изображений или production build.
 
 ## Документация для разработки
 

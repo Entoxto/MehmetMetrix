@@ -50,10 +50,10 @@ If you need a production build, stop any active dev server first. A running dev 
 ## Deployment
 
 - The project is deployed on Netlify.
-- `netlify.toml` defines the Netlify build command.
+- `netlify.toml` runs `npm run preflight`, so every Netlify deploy must pass lint, type checks, tests, data/image validation, and the production build.
 - A Git push to the deployment branch refreshes code, agent rules, and static photos.
 - Normal table and `money.json` changes are published explicitly with `npm run publish:data`; they must not require a Git push or rebuild.
-- Run `npm run preflight` before pushing deployment changes.
+- Run `npm run preflight` locally before pushing deployment changes to catch failures before Netlify repeats the same gate.
 
 ## Source Of Truth
 
@@ -128,7 +128,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - Keep `MoneyScreen` screen-level: reusable financial card/table UI belongs in `components/money/`.
 - Motion is centralized in `constants/styles.ts` via `MOTION`; prefer shared timing/easing over ad-hoc inline values.
 - Shared page layout belongs in `components/ui/PageFrame.tsx` and repeated intro UI in `PageIntro.tsx`.
-- App typography uses the shared system sans-serif from `FONT_FAMILIES`; do not reintroduce Georgia or another decorative display serif.
+- App typography is role-based through `FONT_FAMILIES`: `display` (`Lora`) owns headings and reading text, while `ui` (`Manrope`) owns amounts, metrics, tables, badges, and compact controls. Do not introduce local font stacks outside these shared tokens.
 - Shared hover/focus behavior lives in `app/globals.css`; do not recreate per-card DOM mutation helpers.
 - New animations must stay subtle and respect `prefers-reduced-motion`.
 - Staggered entrance is acceptable for lists and page sections, but avoid decorative motion that competes with data.
