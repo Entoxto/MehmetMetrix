@@ -14,11 +14,14 @@
     "test:images": "python scripts/test_convert_to_webp.py",
     "validate:data": "python Excel/validate_generated_data.py",
     "validate:images": "node scripts/validate_catalog_images.mjs",
+    "publish:data": "node scripts/publish_data.mjs",
+    "publish:data:dry-run": "node scripts/publish_data.mjs --dry-run",
     "preflight:fast": "node scripts/preflight.mjs --fast",
     "preflight": "node scripts/preflight.mjs",
     "build:full": "npm run preflight"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.7.13",
     "@phosphor-icons/react": "^2.1.10",
     "next": "14.2.35",
     "react": "18.2.0",

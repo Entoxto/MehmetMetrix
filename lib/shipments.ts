@@ -1,15 +1,11 @@
-import shipmentsData from "@/data/shipments.json";
 import type { Product } from "@/types/product";
 import { toShipmentPositions } from "./shipmentAdapter";
 import type { ShipmentConfig, Shipment } from "@/types/shipment";
 import { isPaidStatus } from "./statusText";
 
-const SHIPMENTS_CONFIG: readonly ShipmentConfig[] =
-  shipmentsData as readonly ShipmentConfig[];
-
 export const buildShipments = (
   products: readonly Product[],
-  configs: readonly ShipmentConfig[] = SHIPMENTS_CONFIG
+  configs: readonly ShipmentConfig[]
 ): Shipment[] =>
   configs.map((config) => {
     const positions = toShipmentPositions(config, products as Product[]);

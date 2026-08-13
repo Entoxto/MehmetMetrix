@@ -9,6 +9,7 @@
 | Границы модулей приложения | `../../../docs/ARCHITECTURE.md` |
 | Импорт Google Sheets / Excel | `../../../docs/EXCEL_PIPELINE.md` |
 | Generated и ручные данные | `../../../data/README.md` |
+| Явная публикация runtime-данных | `../../../docs/DATA_PUBLISHING.md` |
 | Команды, запуск и деплой | `../../../README.md` |
 
 Не переносить правила из этих файлов сюда. Обновлять первичный источник, если
@@ -30,6 +31,14 @@
 `../../../docs/EXCEL_PIPELINE.md`. В C хранить `(N шт.)`, когда общее количество
 известно без размеров; G сохранять вычисляемой и не заменять ручным числом.
 
+## Netlify
+
+- Проект: `eloquent-buttercream-3d732d`.
+- Production URL: `https://eloquent-buttercream-3d732d.netlify.app`.
+- Project ID: `facb4a96-e9fc-4a07-951c-a49330c2e339`.
+- GitHub: `Entoxto/MehmetMetrix`.
+- Ветка production deploy: `main`.
+
 ## Маршрутизация задач
 
 | Задача | Что прочитать |
@@ -42,11 +51,12 @@
 | Формулы, границы, списки и примечания | Актуальные ячейки Google Sheets и соседний корректный образец |
 | Связь колонки с приложением | `EXCEL_PIPELINE.md`, затем парсер и загрузчики в `Excel/` и `lib/` |
 | Generated JSON | `data/README.md`; менять источник, а не generated-файл |
-| Публикация приложения | `AGENTS.md`, `README.md`, `netlify.toml` |
+| Публикация данных приложения | `workflows.md`, `DATA_PUBLISHING.md`, затем `npm run publish:data` |
+| Публикация кода и фотографий | `AGENTS.md`, `README.md`, `netlify.toml` |
 
 ## Проверка результата
 
 Выбирать минимальный набор проверок из корневого `AGENTS.md`. После операций с
 Google Sheets повторно читать изменённый диапазон. После синхронизации данных
-как минимум проверять generated-данные и изображения; перед публикацией
-выполнять полный preflight.
+как минимум проверять generated-данные и изображения; канонический data-publish
+выполняет fast preflight сам, а перед Git-deploy нужен полный preflight.

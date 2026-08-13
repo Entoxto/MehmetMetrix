@@ -39,6 +39,8 @@ Excel / Google Sheet
 -> in-memory validation
 -> `data/shipments.json` + `data/products.json`
 -> `data/meta.json`
+-> explicit `npm run publish:data`
+-> versioned Netlify Blobs bundle + atomic `current`
 
 `Excel/update_prices.py` remains as a repair/maintenance script for re-syncing catalog prices from existing shipments.
 
@@ -47,6 +49,9 @@ It may contain:
 - `deposits` for the right-side deposited/prepaid block
 - `pendingManual` for manual extra rows inside `Всего к оплате`
 `npm run validate:data` validates this manual file too; manual amounts must stay positive finite numbers.
+The same manual file is published inside the atomic runtime bundle. The Google
+Sheets `Оплаты` tab is not part of this flow and must not be edited by the
+publisher.
 
 Administrative text and voice commands are routed through
 `admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the
@@ -168,16 +173,17 @@ of duplicating them in this domain overview.
 - WebP source-sync regressions run through `npm run test:images`.
 - `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
 - `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
-- The live site is deployed by Netlify. A Git push to the deployment branch normally triggers the Netlify build, using `netlify.toml` for the build command.
+- The live site is deployed by Netlify. Git push updates code, rules, and static photos; `npm run publish:data` updates the table/finance bundle without rebuilding.
 - If plain `npm` is unavailable on Windows, prepend the bundled runtime with `$env:PATH = "$PWD\.tools\node;$env:PATH"`; `scripts/preflight.mjs` also adds the bundled Codex Python runtime for nested validation steps when it exists.
 - Agent rules are kept in editor-neutral docs (`AGENTS.md`, this file, and README files); do not reintroduce stale editor-specific rule files.
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
-- `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; `getMoneyOverview()` is the app wrapper that injects `data/money.json`.
+- `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; the server route supplies config from the same published bundle as shipments.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
+- `lib/dataSource.ts` is the only runtime entrypoint for the four-file bundle. On Netlify it strongly reads Blob key `current` on every data-backed request and falls back to the build snapshot if Blob data is missing or invalid.
 - Routes live in `app/`; screen components are grouped by owner in
   `components/home`, `catalog`, `money`, `product`, and `work`.
-- Route files are server components and generated JSON must not be imported from `"use client"` modules. Current production output is Static for `/`, `/catalog`, `/money`, `/work` and SSG for every `/product/[id]`.
+- Route files are server components and generated JSON or the Blob loader must not be imported from `"use client"` modules. `/` stays Static; `/catalog`, `/money`, `/work`, and `/product/[id]` are request-rendered so a published bundle is visible without a deploy.
 - Catalog and product query-state lives in narrow client boundaries under `Suspense`; keep the server route responsible for data loading.
 - `AppShell` owns top-level navigation behavior: brand click returns to `/`, and back navigation is resolved through `lib/navigationHistory.ts`.
 - The legacy `batch` query parameter carries a shipment id in deep links; keep

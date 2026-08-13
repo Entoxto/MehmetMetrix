@@ -1,18 +1,16 @@
-import { getProducts } from "@/lib/products";
+import { getDataBundle } from "@/lib/dataSource";
 import { buildShipments } from "@/lib/shipments";
-import { getDataMeta } from "@/lib/meta";
-import { getMoneyOverview } from "@/lib/money";
+import { buildMoneyOverview } from "@/lib/money";
 import { MoneyScreen } from "@/components/money/MoneyScreen";
 import { AppShell } from "@/components/layout/AppShell";
 
-export default function MoneyPage() {
-  const products = getProducts();
-  const dataMeta = getDataMeta();
-  const shipments = buildShipments(products);
-  const moneyOverview = getMoneyOverview(shipments);
+export default async function MoneyPage() {
+  const data = await getDataBundle();
+  const shipments = buildShipments(data.products.products, data.shipments);
+  const moneyOverview = buildMoneyOverview(shipments, data.money);
 
   return (
-    <AppShell updatedAt={dataMeta.updatedAt}>
+    <AppShell updatedAt={data.meta.updatedAt}>
       <MoneyScreen
         pending={moneyOverview.pending}
         deposits={moneyOverview.deposits}

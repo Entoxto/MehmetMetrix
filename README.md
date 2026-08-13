@@ -29,6 +29,8 @@ $env:PATH = "$PWD\.tools\node;$env:PATH"
 - `Запустить проект.bat` — fast preflight и dev server без обновления данных;
 - `Запустить с обновлением.bat` — Google Sheet → Excel → JSON → WebP → проверки
   → dev server;
+- `Опубликовать данные.bat` — после подтверждения скачать свежую таблицу,
+  проверить её и обновить данные работающего приложения без пересборки;
 - `Собрать проект.bat` — полный preflight и production build.
 
 Оба сценария запуска проверяют `http://localhost:3000` перед открытием браузера.
@@ -52,6 +54,8 @@ $env:PATH = "$PWD\.tools\node;$env:PATH"
 | `npm run test:images` | Регрессии синхронизации JPG → WebP |
 | `npm run validate:data` | Проверка generated JSON и ручных финансов |
 | `npm run validate:images` | Проверка фото, полноразмерных и карточных WebP |
+| `npm run publish:data:dry-run` | Проверка локального пакета без внешней записи |
+| `npm run publish:data` | Явная публикация свежей таблицы и `money.json` без rebuild |
 | `npm run preflight:fast` | Быстрая проверка данных и изображений |
 | `npm run preflight` | Полная проверка перед деплоем |
 
@@ -98,7 +102,9 @@ Python parser + validation
         ↓
 data/*.json
         ↓
-lib/* + types/*
+explicit publish → Netlify Blobs (`current` + version history)
+        ↓
+lib/dataSource.ts + lib/* + types/*
         ↓
 app/*/page.tsx
         ↓
@@ -132,18 +138,23 @@ Excel / Google Sheet — источник правды для:
 - исторических и актуальных цен.
 
 Файлы `data/shipments.json`, `data/products.json`, `data/meta.json` генерируются
-и будут перезаписаны следующим импортом.
+и будут перезаписаны следующим импортом. Они являются входом публикации и
+резервным снимком последнего deploy, но production-приложение обычно читает
+последнюю явно опубликованную версию из Netlify Blobs.
 
 `data/money.json` редактируется вручную:
 
 - `deposits` — депозиты и предоплаты;
 - `pendingManual` — дополнительные ручные строки к оплате.
 
+Все четыре JSON входят в один атомарный публикуемый пакет. Лист Google Sheets
+«Оплаты» в этот процесс не вовлечён.
+
 Подробные правила: [`data/README.md`](data/README.md).
 
 ## Обновление данных
 
-Ручной сценарий:
+Локальная подготовка без изменения работающего приложения:
 
 ```bash
 python Excel/fetch_google_sheet.py
@@ -151,6 +162,18 @@ python Excel/parse_excel.py --auto
 python scripts/convert_to_webp.py --auto
 npm run preflight:fast
 ```
+
+Публикация по отдельному подтверждению:
+
+```bash
+npm run publish:data
+```
+
+Команда сама повторно скачивает полную таблицу, парсит и проверяет её, добавляет
+ручной `money.json`, после чего атомарно переключает `current` в Netlify Blobs.
+Если проверка или загрузка не удалась, предыдущая версия остаётся активной.
+Настройка секрета, диагностика и контракт отката описаны в
+[`docs/DATA_PUBLISHING.md`](docs/DATA_PUBLISHING.md).
 
 Полный контракт парсера, используемые колонки и инварианты:
 [`docs/EXCEL_PIPELINE.md`](docs/EXCEL_PIPELINE.md).
@@ -219,11 +242,15 @@ npm run validate:images
 `python Excel/parse_excel.py --auto`: старый `photo` в generated
 `data/products.json` должен также исчезнуть.
 
+Фотографии остаются статическими файлами и требуют Git push/deploy. Сервер
+отклоняет пакет данных, если он ссылается на фото, которого ещё нет в текущем
+deploy; сначала разворачиваются изображения, затем публикуются данные.
+
 ## Производительность
 
-- все маршруты предварительно рендерятся при production build: обычные страницы
-  как Static, товары — как SSG;
-- route-компоненты читают JSON на сервере, а клиент получает только необходимые
+- корневое меню остаётся Static, а Work, Catalog, Money и карточки товаров
+  рендерятся на сервере из последней опубликованной версии;
+- route-компоненты читают пакет только на сервере, а клиент получает необходимые
   экрану props;
 - `app/layout.tsx` не использует request-bound `headers()`/`cookies()`, чтобы не
   переводить весь проект в dynamic rendering;
@@ -274,8 +301,9 @@ npm run preflight
 Команда запускает lint, обе TypeScript-проверки, TypeScript и Python-тесты,
 валидацию данных/изображений и production build.
 
-Проект развёрнут на Netlify. Обычный способ обновить сайт — push в deployment
-branch; команда сборки задана в `netlify.toml`.
+Проект развёрнут на Netlify. Код, правила и фотографии обновляются push в
+deployment branch; обычные табличные данные и `money.json` — отдельной командой
+`npm run publish:data` без сборки. Команда сборки задана в `netlify.toml`.
 
 ## Документация для разработки
 
@@ -287,3 +315,4 @@ branch; команда сборки задана в `netlify.toml`.
 4. `docs/PERFORMANCE.md` — performance-контракты и контрольные метрики;
 5. `data/README.md` — правила generated/manual data;
 6. `docs/EXCEL_PIPELINE.md` — подробности импорта.
+7. `docs/DATA_PUBLISHING.md` — явная публикация данных без rebuild.

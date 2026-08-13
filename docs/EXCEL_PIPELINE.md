@@ -12,6 +12,9 @@ Excel / Google Sheet, лист «Поставки».
 - `data/meta.json`.
 
 `data/money.json` не генерируется и валидируется отдельно как ручной источник.
+После отдельного подтверждения все четыре JSON объединяются в runtime-пакет по
+контракту `docs/DATA_PUBLISHING.md`. Лист Google Sheets «Оплаты» публикация не
+читает и не меняет.
 
 ## Точки входа
 
@@ -22,6 +25,8 @@ Excel / Google Sheet, лист «Поставки».
 | `python Excel/update_prices.py` | Повторно синхронизировать price/cost каталога из существующих поставок |
 | `python Excel/validate_generated_data.py` | Проверить generated JSON и `money.json` |
 | `python Excel/test_parser_logic.py` | Запустить регрессионные тесты парсера |
+| `npm run publish:data:dry-run` | Проверить существующий пакет без внешней записи |
+| `npm run publish:data` | Снова скачать таблицу, проверить и явно опубликовать полный пакет |
 
 Windows-сценарий `Запустить с обновлением.bat` выполняет fetch → parse → WebP →
 fast preflight → dev server.

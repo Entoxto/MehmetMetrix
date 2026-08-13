@@ -1,5 +1,5 @@
-import moneyData from "@/data/money.json";
 import { getPendingShipmentSummaries } from "@/lib/shipments";
+import type { MoneyConfig } from "@/types/dataBundle";
 import type { Shipment } from "@/types/shipment";
 
 export interface MoneyStatusItem {
@@ -25,11 +25,6 @@ export interface MoneyOverview {
     items: MoneyDepositItem[];
   };
 }
-
-export type MoneyConfig = {
-  pendingManual?: unknown;
-  deposits?: unknown;
-};
 
 type ManualPendingConfig = {
   id?: unknown;
@@ -119,8 +114,4 @@ export function buildMoneyOverview(
       items: depositItems,
     },
   };
-}
-
-export function getMoneyOverview(shipments: readonly Shipment[]): MoneyOverview {
-  return buildMoneyOverview(shipments, moneyData as MoneyConfig);
 }

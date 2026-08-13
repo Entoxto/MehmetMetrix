@@ -14,6 +14,7 @@ This repository is an internal control panel for Mehmet Metrics:
 3. `docs/ARCHITECTURE.md` — module boundaries, ownership, dependency direction.
 4. `data/README.md` — source-of-truth rules for generated/manual JSON files.
 5. `docs/EXCEL_PIPELINE.md` — parser contract when changing data import.
+6. `docs/DATA_PUBLISHING.md` — explicit runtime publication and rollback contract.
 
 ## Project Operator
 
@@ -31,6 +32,7 @@ truth for domain rules.
 - `npm run test:images`
 - `npm run validate:data`
 - `npm run validate:images`
+- `npm run publish:data:dry-run`
 - `npm run preflight:fast`
 - `npm run preflight`
 
@@ -48,7 +50,8 @@ If you need a production build, stop any active dev server first. A running dev 
 
 - The project is deployed on Netlify.
 - `netlify.toml` defines the Netlify build command.
-- A Git push to the deployment branch is the normal way to refresh the Netlify site.
+- A Git push to the deployment branch refreshes code, agent rules, and static photos.
+- Normal table and `money.json` changes are published explicitly with `npm run publish:data`; they must not require a Git push or rebuild.
 - Run `npm run preflight` before pushing deployment changes.
 
 ## Source Of Truth
@@ -57,6 +60,16 @@ If you need a production build, stop any active dev server first. A running dev 
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
+- The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files; repository JSON remains the publish input and build fallback.
+- Do not read or mutate the Google Sheets `Оплаты` tab as part of data publishing.
+
+## Data Publication
+
+- Treat Google Sheets changes as a draft until the user separately confirms publication.
+- Use the canonical `npm run publish:data` workflow; it refreshes the whole sheet, validates the full snapshot, and atomically replaces the current Blob bundle.
+- `npm run publish:data:dry-run` must not fetch the sheet or write external state.
+- Never publish a data bundle that references a photo absent from the current deployment. Photo changes still deploy through Git first.
+- See `docs/DATA_PUBLISHING.md` and the confirmation protocol in `admin/mehmet-operator/references/workflows.md`.
 
 ## Domain Rules
 
