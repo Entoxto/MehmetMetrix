@@ -13,6 +13,7 @@ from typing import List, Dict, Optional, Tuple, Any
 from openpyxl import load_workbook
 from parser_utils import (
     parse_sizes_from_name,
+    parse_quantity_only_from_name,
     has_sizes_unknown_marker,
     find_or_create_product_id,
     parse_product_materials,
@@ -38,8 +39,8 @@ class ExcelParser:
     COL_COMPOSITION = 3   # D: Состав
     COL_POSITION_STATUS = 4  # E: Статусы позиций
     COL_SHIPMENT_STATUS = 5  # F: Статусы поставок
-    COL_QUANTITY = 6      # G: Кол-во в заказе
-    COL_PRICE_USD = 7     # H: Стоймость 1 ед $ (цена в долларах)
+    COL_QUANTITY = 6      # G: Количество в заказе
+    COL_PRICE_USD = 7     # H: Цена за единицу, $ (цена в долларах)
     COL_EXCHANGE_RATE = 9 # J: Курс списания (0 означает, что себестоимость ещё не известна)
     COL_COST_WITH_CARGO = 13  # N: Себестоимость с учётом карго (в рублях) - используется для cost
     COL_DATE = 15         # P: Дата поступления продукции
@@ -350,7 +351,7 @@ class ExcelParser:
         if materials:
             apply_product_materials(item["productId"], materials, self.products)
         
-        # price: берём из колонки H (Стоймость 1 ед $) - цена в долларах
+        # price: берём из колонки H (Цена за единицу, $) - цена в долларах
         price_value = self._parse_numeric_field(row, self.COL_PRICE_USD)
         if price_value is not None and price_value > 0:
             item["price"] = int(price_value) if price_value.is_integer() else price_value
@@ -364,7 +365,9 @@ class ExcelParser:
             if cost_value is not None and cost_value > 0:
                 item["cost"] = int(cost_value) if cost_value.is_integer() else cost_value
         
-        # sizes из названия
+        # Размерная сетка и каноническое общее количество из названия.
+        # Запись "(10 шт.)" означает: количество известно, размеры на уточнении.
+        quantity_from_name = parse_quantity_only_from_name(name, excel_row=excel_row)
         sizes_unknown = has_sizes_unknown_marker(name)
         sizes = parse_sizes_from_name(name, excel_row=excel_row)
         if sizes_unknown:
@@ -372,21 +375,38 @@ class ExcelParser:
         elif sizes:
             item["sizes"] = sizes
 
-        # quantityOverride
+        # Колонка G вычисляется формулой из C. Для нового формата C остаётся
+        # источником правды, а G обязана подтверждать то же количество.
         quantity = safe_get_cell(row, self.COL_QUANTITY)
         if not is_empty_value(quantity):
-            try:
-                qty = int(float(quantity))
-                # Проверяем соответствие с размерами
-                sizes_sum = sum(sizes.values()) if sizes else 0
-                if sizes_sum == 0 or sizes_sum != qty:
-                    item["quantityOverride"] = qty
-            except (ValueError, TypeError):
-                pass
+            parsed_quantity = parse_numeric_value(quantity)
+            if (
+                parsed_quantity is None
+                or not parsed_quantity.is_integer()
+                or parsed_quantity <= 0
+            ):
+                raise ValueError(
+                    f"Строка {excel_row}: колонка G должна содержать целое "
+                    "количество больше нуля"
+                )
+
+            qty = int(parsed_quantity)
+            if quantity_from_name is not None and qty != quantity_from_name:
+                raise ValueError(
+                    f"Строка {excel_row}: количество в наименовании "
+                    f"({quantity_from_name}) не совпадает с колонкой G ({qty})"
+                )
+
+            sizes_sum = sum(sizes.values()) if sizes else 0
+            if quantity_from_name is not None or sizes_sum == 0 or sizes_sum != qty:
+                item["quantityOverride"] = (
+                    quantity_from_name if quantity_from_name is not None else qty
+                )
         elif sizes_unknown:
-            # Если размеры на уточнении, но количество не задано — это ошибка данных
+            # Legacy-маркер пока поддерживается, но всё ещё требует G.
+            marker = "'(N шт.)'" if quantity_from_name is not None else "'(на уточнении)'"
             raise ValueError(
-                f"Строка {excel_row}: маркер '(на уточнении)' требует количество в колонке G"
+                f"Строка {excel_row}: маркер {marker} требует количество в колонке G"
             )
 
         # status — текст из Excel как есть
@@ -455,7 +475,7 @@ class ExcelParser:
         
         if found_prices == 0:
             print(f"⚠️  ВНИМАНИЕ: В первых {sample_rows} строках данных колонка H (индекс {self.COL_PRICE_USD}) пустая")
-            print(f"   Проверьте, что в Excel файле колонка 'Стоймость 1 ед $' заполнена")
+            print(f"   Проверьте, что в Excel файле колонка 'Цена за единицу, $' заполнена")
         
         if found_costs == 0:
             print(f"⚠️  ВНИМАНИЕ: В первых {sample_rows} строках данных колонка N (индекс {self.COL_COST_WITH_CARGO}) пустая")

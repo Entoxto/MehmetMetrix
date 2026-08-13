@@ -16,7 +16,9 @@ Excel/*.py
         ↓
 data/*.json
         ↓
-lib/* + types/*
+explicit publish API → Netlify Blobs
+        ↓
+lib/dataSource.ts + lib/* + types/*
         ↓
 app/*/page.tsx
         ↓
@@ -28,7 +30,7 @@ components/<area>/*
 ```text
 app → components → hooks/lib/types/constants
 hooks → lib/types/components/providers
-lib → data/types
+lib → data/types/Netlify Blobs
 ```
 
 `lib/` не импортирует UI-компоненты. Компоненты не читают Excel и не знают о
@@ -48,10 +50,13 @@ lib → data/types
 - `/catalog` → `components/catalog/CatalogPageClient.tsx` → `CatalogScreen.tsx`
 - `/product/[id]` → `components/product/ProductPageClient.tsx` →
   `ProductDetail.tsx`
+- `/api/publish-data` → защищённая проверка и атомарная запись пакета в Blobs
+- `/api/data-version` → операционная проверка активной версии
 
 Маршрут не должен содержать крупную разметку или бизнес-правила. Все обычные
-маршруты остаются Static, а страницы товаров генерируются через
-`generateStaticParams`; request-bound API в корневом layout запрещены.
+маршруты данных (`work`, `money`, `catalog`, `product`) рендерятся на сервере по
+запросу, чтобы видеть новую явно опубликованную версию без deploy. Корневое
+меню остаётся Static; request-bound API в корневом layout запрещены.
 
 ### `components/`
 
@@ -83,9 +88,11 @@ lib → data/types
 - `productLabel.ts` — презентационное разделение исходного Excel-наименования
   на модель и цвет без изменения generated-данных;
 - `money.ts` — финансовая сводка;
+- `dataBundle.ts` — минимальная runtime-проверка схемы опубликованного пакета;
+- `dataSource.ts` — серверное чтение `current` из Netlify Blobs со строгой
+  согласованностью и fallback на JSON текущей сборки;
 - `statusText.ts` — текстовая логика оплаты;
 - `navigationHistory.ts` — внутренняя история переходов;
-- `products.ts`, `meta.ts` — точки чтения JSON;
 - `format.ts`, `imageUtils.ts`, `breakpoints.ts` — общие специализированные
   функции.
 
@@ -98,6 +105,8 @@ lib → data/types
 - `shipment.ts` — сырой `ShipmentConfig`, `ShipmentRawItem` и вычисленный
   `Shipment`;
 - `product.ts` — каталог и материалы товара.
+- `dataBundle.ts` — схема единого пакета поставок, каталога, метаданных и
+  ручных финансов.
 
 ### `data/`
 
@@ -113,8 +122,10 @@ Next.js.
 
 ### `scripts/`
 
-Независимые операционные скрипты: preflight, изображения и Windows-helper для
-запуска dev-сервера. `scripts/windows/start_dev_server.ps1` отвечает за
+Независимые операционные скрипты: preflight, изображения, явная публикация и
+Windows-helper для запуска dev-сервера. `scripts/publish_data.mjs` владеет
+каноническим fetch → parse → validate → publish-сценарием.
+`scripts/windows/start_dev_server.ps1` отвечает за
 готовность локального URL: переиспользует работающий сервер, распознаёт и
 перезапускает зависший Next-процесс именно этого проекта, ждёт успешный HTTP
 ответ и только затем открывает браузер. Batch-файл остаётся тонкой точкой входа.
@@ -149,10 +160,15 @@ Query-параметр `batch` сохранён как legacy-контракт �
 4. Актуальные price/cost вычисляются из поставок.
 5. Generated data валидируются до записи.
 6. JSON сохраняются атомарно.
-7. `lib/products.ts`, `lib/shipments.ts` и `lib/meta.ts` предоставляют данные
-   приложению.
+7. После отдельного подтверждения `scripts/publish_data.mjs` объединяет JSON с
+   ручным `money.json`, хеширует и отправляет пакет в защищённый API.
+8. API сохраняет неизменяемую версию и атомарно переключает `current` в
+   Netlify Blobs.
+9. `lib/dataSource.ts` читает `current`, а `lib/shipments.ts` и `lib/money.ts`
+   строят вычисленные модели.
 
-Подробный контракт описан в `docs/EXCEL_PIPELINE.md`.
+Контракт импорта описан в `docs/EXCEL_PIPELINE.md`, публикации — в
+`docs/DATA_PUBLISHING.md`.
 
 ## Финансовая логика
 

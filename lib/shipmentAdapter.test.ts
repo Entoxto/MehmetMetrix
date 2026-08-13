@@ -98,6 +98,21 @@ describe("toShipmentPositions", () => {
     expect(positions[0].sum).toBe(450);
   });
 
+  it("считает позицию без размеров и явного количества как одну вещь", () => {
+    const positions = toShipmentPositions(
+      createShipmentConfig([
+        {
+          productId: "product-1",
+          price: 90,
+        },
+      ]),
+      products
+    );
+
+    expect(positions[0].qty).toBe(1);
+    expect(positions[0].sum).toBe(90);
+  });
+
   it("не включает paidPreviously/noPayment позиции в сумму", () => {
     const positions = toShipmentPositions(
       createShipmentConfig([

@@ -6,7 +6,7 @@
     "status": "В работе 🧵",
     "rawItems": [
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (XS-7, S-4)",
+        "overrideName": "Куртка по новым лекалам из кожи питона — коричневый матовый (XS-7, S-4)",
         "productId": "auto-022",
         "price": 465,
         "sizes": {
@@ -16,8 +16,8 @@
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — Etope (XS-5, S-3)",
-        "productId": "auto-057",
+        "overrideName": "Куртка по новым лекалам из кожи питона — Etope (XS-5, S-3)",
+        "productId": "auto-059",
         "price": 465,
         "sizes": {
           "xs": 5,
@@ -26,15 +26,15 @@
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Юбка из кожи питона — коричневый матовый (на уточнении)",
-        "productId": "auto-058",
+        "overrideName": "Юбка из кожи питона — коричневый матовый (10 шт.)",
+        "productId": "auto-060",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 10,
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Юбка из кожи питона — белый  (на уточнении)",
+        "overrideName": "Юбка из кожи питона — белый (10 шт.)",
         "productId": "auto-040",
         "price": 325,
         "sizesUnknown": true,
@@ -42,7 +42,7 @@
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — белый (на уточнении)",
+        "overrideName": "Куртка по новым лекалам из кожи питона — белый (10 шт.)",
         "productId": "auto-049",
         "price": 480,
         "sizesUnknown": true,
@@ -59,23 +59,23 @@
     "status": "В работе 🧵",
     "rawItems": [
       {
-        "overrideName": "Дублёнка из меха астроган в стиле 80-х — молочный  (на уточнении)",
-        "productId": "auto-056",
+        "overrideName": "Дублёнка в стиле 80-х из меха астроган — молочный (23 шт.)",
+        "productId": "auto-057",
         "price": 300,
         "sizesUnknown": true,
         "quantityOverride": 23,
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Дублёнка из меха астроган Аляска — молочный  (на уточнении)",
-        "productId": "auto-054",
+        "overrideName": "Дублёнка Аляска из меха астроган — молочный (20 шт.)",
+        "productId": "auto-058",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 20,
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Штаны из меха астроган — антрацит (на уточнении)",
+        "overrideName": "Штаны из меха астроган — антрацит (20 шт.)",
         "productId": "auto-044",
         "price": 255,
         "sizesUnknown": true,
@@ -92,7 +92,7 @@
     "status": "В работе 🧵",
     "rawItems": [
       {
-        "overrideName": "Дублёнка из меха астроган Аляска — антрацит (на уточнении)",
+        "overrideName": "Дублёнка Аляска из меха астроган — антрацит (23 шт.)",
         "productId": "auto-045",
         "price": 320,
         "sizesUnknown": true,
@@ -100,7 +100,7 @@
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Штаны из меха астроган — антрацит (на уточнении)",
+        "overrideName": "Штаны из меха астроган — антрацит (20 шт.)",
         "productId": "auto-044",
         "price": 255,
         "sizesUnknown": true,
@@ -117,68 +117,6 @@
     "status": "В работе 🧵",
     "rawItems": [
       {
-        "overrideName": "Дублёнка из меха астроган в стиле 80-х — чёрный (XS-10, S-11, M-6)",
-        "productId": "auto-048",
-        "price": 300,
-        "sizes": {
-          "xs": 10,
-          "s": 11,
-          "m": 6
-        },
-        "status": "В производстве 🛠️"
-      },
-      {
-        "overrideName": "Штаны из меха астроган — чёрный (XS-8, S-8, M-4)",
-        "productId": "auto-046",
-        "price": 230,
-        "sizes": {
-          "xs": 8,
-          "s": 8,
-          "m": 4
-        },
-        "status": "В производстве 🛠️"
-      }
-    ],
-    "year": 2026
-  },
-  {
-    "id": "shipment-2026-27",
-    "number": 27,
-    "title": "Поставка №27",
-    "status": "В работе 🧵",
-    "rawItems": [
-      {
-        "overrideName": "Жакет приталенный из меха страуса в стиле 80-х удлинённый — синий (образец)",
-        "productId": "auto-053",
-        "quantityOverride": 1,
-        "status": "В производстве 🛠️",
-        "sample": true
-      },
-      {
-        "overrideName": "Дублёнка из меха астроган Аляска — молочный  (образец)",
-        "productId": "auto-054",
-        "price": 320,
-        "quantityOverride": 1,
-        "status": "В производстве 🛠️",
-        "sample": true
-      },
-      {
-        "overrideName": "Дублёнка из пушистого меха астроган Агнес — молочный  (образец)",
-        "productId": "auto-055",
-        "quantityOverride": 1,
-        "status": "В производстве 🛠️",
-        "sample": true
-      }
-    ],
-    "year": 2026
-  },
-  {
-    "id": "shipment-2026-26",
-    "number": 26,
-    "title": "Поставка №26",
-    "status": "В работе 🧵",
-    "rawItems": [
-      {
         "overrideName": "Жакет приталенный из кожи питона — бежевый светлый (XS-5, S-4, M-1)",
         "productId": "auto-020",
         "price": 550,
@@ -191,7 +129,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — Etope (XS-5, S-4, M-1)",
-        "productId": "auto-052",
+        "productId": "auto-056",
         "price": 320,
         "sizes": {
           "xs": 5,
@@ -215,20 +153,118 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-25",
-    "number": 25,
-    "title": "Поставка №25",
+    "id": "shipment-2026-27",
+    "number": 27,
+    "title": "Поставка №27",
+    "status": "В работе 🧵",
+    "rawItems": [
+      {
+        "overrideName": "Дублёнка Аляска из меха астроган — антрацит (образец XS-1)",
+        "productId": "auto-045",
+        "price": 320,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true
+      },
+      {
+        "overrideName": "Юбка из меха астраган — молочный (образец XS-1)",
+        "productId": "auto-053",
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true
+      },
+      {
+        "overrideName": "Дублёнка Агнес из меха астроган — молочный (образец XS-1)",
+        "productId": "auto-054",
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true
+      },
+      {
+        "overrideName": "Дублёнка Агнес из пушистого меха — чёрный (образец XS-1)",
+        "productId": "auto-055",
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В производстве 🛠️",
+        "sample": true
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-2026-26",
+    "number": 26,
+    "title": "Поставка №26",
     "status": "В пути 🚚",
     "rawItems": [
       {
-        "overrideName": "Юбка из кожи питона — белый   (образец XS-1)",
-        "productId": "auto-040",
-        "price": 325,
+        "overrideName": "Жакет приталенный удлинённый в стиле 80-х из кожи страуса — синий (образец XS-1)",
+        "productId": "auto-052",
         "sizes": {
           "xs": 1
         },
         "status": "В пути 🚚",
         "inTransit": true,
+        "sample": true
+      },
+      {
+        "overrideName": "Дублёнка в стиле 80-х из меха астроган — чёрный (XS-10, S-11, M-6)",
+        "productId": "auto-048",
+        "price": 300,
+        "sizes": {
+          "xs": 10,
+          "s": 11,
+          "m": 6
+        },
+        "status": "В пути 🚚",
+        "inTransit": true
+      },
+      {
+        "overrideName": "Штаны из меха астроган — чёрный (XS-8, S-8, M-4)",
+        "productId": "auto-046",
+        "price": 230,
+        "sizes": {
+          "xs": 8,
+          "s": 8,
+          "m": 4
+        },
+        "status": "В пути 🚚",
+        "inTransit": true
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-2026-25",
+    "number": 25,
+    "title": "Поставка №25",
+    "status": "Получено, не оплачено 📦",
+    "rawItems": [
+      {
+        "overrideName": "Юбка из кожи питона — белый (образец XS-1)",
+        "productId": "auto-040",
+        "price": 325,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
+        "sample": true
+      },
+      {
+        "overrideName": "Дублёнка Аляска из меха астроган — антрацит (образец XS-1)",
+        "productId": "auto-045",
+        "price": 320,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "Получено, не оплачено 📦",
         "sample": true
       }
     ],
@@ -241,7 +277,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Юбка из кожи питона — белый   (образец XS-1)",
+        "overrideName": "Юбка из кожи питона — белый (образец XS-1)",
         "productId": "auto-040",
         "price": 325,
         "cost": 28742,
@@ -262,7 +298,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — молочный (XS-8, S-8, M-4)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — молочный (XS-8, S-8, M-4)",
         "productId": "auto-043",
         "price": 320,
         "cost": 26526,
@@ -298,7 +334,7 @@
         "overrideName": "Жакет приталенный из кожи питона — бежевый светлый (образец XS-1)",
         "productId": "auto-020",
         "price": 550,
-        "cost": 45158,
+        "cost": 46583,
         "sizes": {
           "xs": 1
         },
@@ -327,7 +363,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Юбка из кожи питона — белый   (образец XS-1)",
+        "overrideName": "Юбка из кожи питона — белый (образец XS-1)",
         "productId": "auto-040",
         "price": 325,
         "cost": 26908,
@@ -348,7 +384,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — белый (образец XS-1)",
+        "overrideName": "Куртка по новым лекалам из кожи питона — белый (образец XS-1)",
         "productId": "auto-049",
         "price": 480,
         "cost": 38721,
@@ -370,7 +406,7 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — коричневый (образец XS-1)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — коричневый (образец XS-1)",
         "productId": "auto-051",
         "price": 290,
         "cost": 24014,
@@ -391,7 +427,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Дублёнка из меха астроган в стиле 80-х — чёрный (образец M-1)",
+        "overrideName": "Дублёнка в стиле 80-х из меха астроган — чёрный (образец M-1)",
         "productId": "auto-048",
         "price": 300,
         "cost": 26022,
@@ -412,10 +448,10 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (XS-4, S-3, M-2)",
+        "overrideName": "Жакет в стиле 80-х из плетёной замши — коричневый (XS-4, S-3, M-2)",
         "productId": "auto-041",
         "price": 340,
-        "cost": 26984,
+        "cost": 27967,
         "sizes": {
           "xs": 4,
           "s": 3,
@@ -437,7 +473,7 @@
         "overrideName": "Штаны из меха астроган — чёрный (образец XS-1)",
         "productId": "auto-046",
         "price": 230,
-        "cost": 18575,
+        "cost": 20503,
         "sizes": {
           "xs": 1
         },
@@ -448,7 +484,7 @@
         "overrideName": "Пальто из меха астроган — чёрный (образец XS-1)",
         "productId": "auto-047",
         "price": 315,
-        "cost": 25154,
+        "cost": 27083,
         "sizes": {
           "xs": 1
         },
@@ -466,10 +502,10 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (XS-4, S-3, M-2)",
+        "overrideName": "Жакет в стиле 80-х из плетёной замши — коричневый (XS-4, S-3, M-2)",
         "productId": "auto-041",
         "price": 340,
-        "cost": 26984,
+        "cost": 27967,
         "sizes": {
           "xs": 4,
           "s": 3,
@@ -499,7 +535,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (XS-10, S-9, M-3)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — чёрный глянцевый (XS-10, S-9, M-3)",
         "productId": "auto-037",
         "price": 310,
         "cost": 24853,
@@ -535,7 +571,7 @@
         "overrideName": "Штаны из меха астроган — антрацит (образец XS-1)",
         "productId": "auto-044",
         "price": 255,
-        "cost": 20272,
+        "cost": 22201,
         "sizes": {
           "xs": 1
         },
@@ -543,10 +579,10 @@
         "sample": true
       },
       {
-        "overrideName": "Дублёнка из меха астроган Аляска — антрацит (образец XS-1)",
+        "overrideName": "Дублёнка Аляска из меха астроган — антрацит (образец XS-1)",
         "productId": "auto-045",
         "price": 315,
-        "cost": 24860,
+        "cost": 26789,
         "sizes": {
           "xs": 1
         },
@@ -564,7 +600,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — молочный (образец XS-1)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — молочный (образец XS-1)",
         "productId": "auto-043",
         "price": 220,
         "cost": 19174,
@@ -606,7 +642,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной замши в стиле 80-х — коричневый (образец XS-1)",
+        "overrideName": "Жакет в стиле 80-х из плетёной замши — коричневый (образец XS-1)",
         "productId": "auto-041",
         "price": 350,
         "cost": 30316,
@@ -729,7 +765,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (XS-6, S-6, M-3)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — чёрный глянцевый (XS-6, S-6, M-3)",
         "productId": "auto-037",
         "price": 310,
         "cost": 25431,
@@ -793,7 +829,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (образец XS-1)",
+        "overrideName": "Куртка по новым лекалам из кожи питона — коричневый матовый (образец XS-1)",
         "productId": "auto-022",
         "price": 480,
         "cost": 40210,
@@ -825,7 +861,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (XS-8, S-8, M-4)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — mouse (XS-8, S-8, M-4)",
         "productId": "auto-008",
         "price": 180,
         "cost": 16056,
@@ -837,7 +873,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-10, S-10, M-5)",
+        "overrideName": "Жакет в стиле 80-х из замши — коричневый (XS-10, S-10, M-5)",
         "productId": "auto-003",
         "price": 190,
         "cost": 16866,
@@ -859,10 +895,10 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из плетёной кожи в стиле 80-х — чёрный глянцевый (образец S-1)",
+        "overrideName": "Жакет в стиле 80-х из плетёной кожи — чёрный глянцевый (образец S-1)",
         "productId": "auto-037",
         "price": 310,
-        "cost": 26554,
+        "cost": 27979,
         "sizes": {
           "s": 1
         },
@@ -925,7 +961,7 @@
         "overrideName": "Штаны из меха мериноса — бежевый (M-3)",
         "productId": "auto-030",
         "price": 215,
-        "cost": 18569,
+        "cost": 19598,
         "sizes": {
           "m": 3
         },
@@ -994,7 +1030,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-1, S-3)",
+        "overrideName": "Жакет приталенный в стиле 80-х из меха пони — чёрный (XS-1, S-3)",
         "productId": "auto-024",
         "price": 300,
         "cost": 27345,
@@ -1005,7 +1041,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из замши в стиле 80-х — бежевый (S-1)",
+        "overrideName": "Жакет в стиле 80-х из замши — бежевый (S-1)",
         "productId": "auto-016",
         "price": 190,
         "cost": 18239,
@@ -1088,7 +1124,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-5, S-5)",
+        "overrideName": "Жакет в стиле 80-х из замши — коричневый (XS-5, S-5)",
         "productId": "auto-003",
         "price": 180,
         "cost": 16487,
@@ -1111,7 +1147,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из замши в стиле 80-х — бежевый (XS-3, S-3)",
+        "overrideName": "Жакет в стиле 80-х из замши — бежевый (XS-3, S-3)",
         "productId": "auto-016",
         "price": 190,
         "cost": 17314,
@@ -1156,7 +1192,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-5, S-2)",
+        "overrideName": "Жакет приталенный в стиле 80-х из меха пони — чёрный (XS-5, S-2)",
         "productId": "auto-024",
         "price": 300,
         "cost": 26420,
@@ -1178,7 +1214,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (XS-3, S-1)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — mouse (XS-3, S-1)",
         "productId": "auto-008",
         "price": 180,
         "cost": 16487,
@@ -1199,7 +1235,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-1, S-1)",
+        "overrideName": "Жакет приталенный в стиле 80-х из меха пони — чёрный (XS-1, S-1)",
         "productId": "auto-024",
         "price": 300,
         "cost": 27905,
@@ -1210,7 +1246,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — чёрный (XS-10, S-10)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — чёрный (XS-10, S-10)",
         "productId": "auto-019",
         "price": 180,
         "cost": 17972,
@@ -1221,7 +1257,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (S-2)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — mouse (S-2)",
         "productId": "auto-008",
         "price": 180,
         "cost": 17972,
@@ -1287,7 +1323,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (XS-3, S-4)",
+        "overrideName": "Жакет приталенный в стиле 80-х из меха пони — чёрный (XS-3, S-4)",
         "productId": "auto-024",
         "price": 300,
         "cost": 25948,
@@ -1384,7 +1420,7 @@
         "sample": true
       },
       {
-        "overrideName": "Куртка из кожи питона по новым лекалам — коричневый матовый (образец XS-1)",
+        "overrideName": "Куртка по новым лекалам из кожи питона — коричневый матовый (образец XS-1)",
         "productId": "auto-022",
         "price": 480,
         "cost": 40776,
@@ -1406,7 +1442,7 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет приталенный из меха пони в стиле 80-х — чёрный (образец)",
+        "overrideName": "Жакет приталенный в стиле 80-х из меха пони — чёрный (образец)",
         "productId": "auto-024",
         "price": 300,
         "cost": 25899,
@@ -1415,7 +1451,7 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет из меха пони по новым лекалам — бежевый (образец)",
+        "overrideName": "Жакет по новым лекалам из меха пони — бежевый (образец)",
         "productId": "auto-025",
         "price": 310,
         "cost": 26725,
@@ -1424,7 +1460,7 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет из меха пони в стиле 80-х — бежевый (образец)",
+        "overrideName": "Жакет в стиле 80-х из меха пони — бежевый (образец)",
         "productId": "auto-026",
         "price": 330,
         "cost": 28378,
@@ -1452,7 +1488,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из замши в стиле 80-х — коричневый (XS-17, S-8)",
+        "overrideName": "Жакет в стиле 80-х из замши — коричневый (XS-17, S-8)",
         "productId": "auto-003",
         "price": 180,
         "cost": 16806,
@@ -1473,7 +1509,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — чёрный (XS-10, S-20)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — чёрный (XS-10, S-20)",
         "productId": "auto-019",
         "price": 180,
         "cost": 17751,
@@ -1494,7 +1530,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из замши в стиле 80-х — бежевый (XS-23, S-10)",
+        "overrideName": "Жакет в стиле 80-х из замши — бежевый (XS-23, S-10)",
         "productId": "auto-016",
         "price": 190,
         "cost": 20767,
@@ -1553,7 +1589,7 @@
         "sample": true
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-28)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — brown (one size-28)",
         "productId": "auto-004",
         "price": 180,
         "cost": 20917,
@@ -1563,7 +1599,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из замши в стиле 80-х — коричневый (one size-17)",
+        "overrideName": "Жакет в стиле 80-х из замши — коричневый (one size-17)",
         "productId": "auto-003",
         "price": 180,
         "cost": 20917,
@@ -1603,7 +1639,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый  (образец)",
+        "overrideName": "Жакет приталенный из кожи питона — чёрный глянцевый (образец)",
         "productId": "auto-013",
         "price": 550,
         "cost": 61814,
@@ -1656,7 +1692,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — mouse (образец)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — mouse (образец)",
         "productId": "auto-008",
         "price": 180,
         "cost": 20723,
@@ -1665,7 +1701,7 @@
         "sample": true
       },
       {
-        "overrideName": "Дублёнка короткая из меха  кёрли — серый (образец)",
+        "overrideName": "Дублёнка короткая из меха кёрли — серый (образец)",
         "productId": "auto-006",
         "price": 260,
         "cost": 29100,
@@ -1674,7 +1710,7 @@
         "sample": true
       },
       {
-        "overrideName": "Дублёнка короткая из меха  кёрли — серый (one size-20)",
+        "overrideName": "Дублёнка короткая из меха кёрли — серый (one size-20)",
         "productId": "auto-006",
         "price": 260,
         "cost": 27816,
@@ -1703,7 +1739,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-10)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — brown (one size-10)",
         "productId": "auto-004",
         "price": 180,
         "cost": 18900,
@@ -1713,7 +1749,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — taupe (one size-14)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — taupe (one size-14)",
         "productId": "auto-007",
         "price": 180,
         "cost": 18900,
@@ -1770,7 +1806,7 @@
     "status": "Получено, оплачено ✅",
     "rawItems": [
       {
-        "overrideName": "Плащ из замши — коричневый  (one size-5)",
+        "overrideName": "Плащ из замши — коричневый (one size-5)",
         "productId": "auto-001",
         "price": 280,
         "cost": 27413,
@@ -1792,7 +1828,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из замши в стиле 80-х — коричневый (one size-20)",
+        "overrideName": "Жакет в стиле 80-х из замши — коричневый (one size-20)",
         "productId": "auto-003",
         "price": 180,
         "cost": 17995,
@@ -1802,7 +1838,7 @@
         "status": "Получено, оплачено ✅"
       },
       {
-        "overrideName": "Жакет из кожи Hermes в стиле 80-х — brown (one size-6)",
+        "overrideName": "Жакет в стиле 80-х из кожи Hermes — brown (one size-6)",
         "productId": "auto-004",
         "price": 180,
         "cost": 17995,

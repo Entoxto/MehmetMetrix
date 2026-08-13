@@ -14,6 +14,14 @@ This repository is an internal control panel for Mehmet Metrics:
 3. `docs/ARCHITECTURE.md` — module boundaries, ownership, dependency direction.
 4. `data/README.md` — source-of-truth rules for generated/manual JSON files.
 5. `docs/EXCEL_PIPELINE.md` — parser contract when changing data import.
+6. `docs/DATA_PUBLISHING.md` — explicit runtime publication and rollback contract.
+
+## Project Operator
+
+For Google Sheets administration, source-data operations, or voice-style
+commands, read `admin/mehmet-operator/SKILL.md` before acting. This directory is
+the navigation layer; the existing project documents remain the sources of
+truth for domain rules.
 
 ## Fast Commands
 
@@ -24,6 +32,7 @@ This repository is an internal control panel for Mehmet Metrics:
 - `npm run test:images`
 - `npm run validate:data`
 - `npm run validate:images`
+- `npm run publish:data:dry-run`
 - `npm run preflight:fast`
 - `npm run preflight`
 
@@ -41,7 +50,8 @@ If you need a production build, stop any active dev server first. A running dev 
 
 - The project is deployed on Netlify.
 - `netlify.toml` defines the Netlify build command.
-- A Git push to the deployment branch is the normal way to refresh the Netlify site.
+- A Git push to the deployment branch refreshes code, agent rules, and static photos.
+- Normal table and `money.json` changes are published explicitly with `npm run publish:data`; they must not require a Git push or rebuild.
 - Run `npm run preflight` before pushing deployment changes.
 
 ## Source Of Truth
@@ -50,6 +60,16 @@ If you need a production build, stop any active dev server first. A running dev 
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
+- The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files; repository JSON remains the publish input and build fallback.
+- Do not read or mutate the Google Sheets `Оплаты` tab as part of data publishing.
+
+## Data Publication
+
+- Treat Google Sheets changes as a draft until the user separately confirms publication.
+- Use the canonical `npm run publish:data` workflow; it refreshes the whole sheet, validates the full snapshot, and atomically replaces the current Blob bundle.
+- `npm run publish:data:dry-run` must not fetch the sheet or write external state.
+- Never publish a data bundle that references a photo absent from the current deployment. Photo changes still deploy through Git first.
+- See `docs/DATA_PUBLISHING.md` and the confirmation protocol in `admin/mehmet-operator/references/workflows.md`.
 
 ## Domain Rules
 
@@ -57,11 +77,28 @@ If you need a production build, stop any active dev server first. A running dev 
 - Payment logic is derived from text status plus `paidPreviously` / `noPayment`.
 - Stable position IDs are built from `shipmentId + index`.
 - `isPayable` controls sums and price-gap logic.
-- If Excel column J (`Курс списания`) is `0`, the parser must not emit `cost` from column N; cargo-only formula results are not real себестоимость.
+- The parser emits `cost` from Excel column N only when column J (`Курс списания`) is positive; a blank, zero, or negative J means cost is still unknown.
+- Columns N and O are formula-driven on every position row. N distributes the latest explicit positive cargo marker from M only inside the current shipment and its current M block; equal cargo amounts in different blocks stay independent. Missing cargo leaves N and O blank, so zero sentinels in M are not used.
+- Excel column P accepts either an actual receipt date or free-form ETA text. When a shipment contains only dates, the parser uses the latest date; any text value is treated as ETA and takes priority.
+- Column Q is formula-only at each shipment start. It finds the next shipment boundary from A, sums numeric O values for the current shipment, and stays blank while O has no calculated values. Do not author manual `SUM(Ox:Oy)` ranges.
 - Work screen is shipment history by year, not only current work-in-progress.
 - Parser categories must stay within `Мех`, `Замша`, `Кожа`, `Экзотика`; unknown names should fail parsing instead of falling back to `Прочее`.
 - Shipment size keys must stay within `xs`, `s`, `m`, `l`, `xl`, `OneSize`; unknown keys should fail validation instead of falling back to another size.
 - `sample` is only a marker; it must not force quantity to `1` when sizes or Excel column G already define the quantity.
+- Excel column G is computed and must not be replaced with manual quantities. When the total is known but sizes are not, encode it in the final column C suffix as `(10 шт.)`; the parser emits `sizesUnknown` and the same positive `quantityOverride`.
+- Every source position represents at least one item; without sizes or an explicit `(N шт.)` suffix, quantity falls back to `1`.
+- When adding a repeated position without an explicitly stated price, copy H
+  from the nearest previous row whose column C has the same cleaned product
+  name (the final size/quantity bracket is ignored). An explicit new price
+  overrides this default; never rewrite older shipment prices.
+- Excel column I is formula-only: `G × H`, but blank when H is empty or `0`.
+  Keep the formula present in both cases.
+- Excel columns K and L are formula-only. K calculates unit cost without cargo
+  from H and the latest explicit J marker inside the current shipment only;
+  the shipment starts at the latest non-empty A on a position row. A J formula
+  counts as a marker even while it returns blank. Missing, zero, or negative
+  rates leave K blank. L is `K × G` and stays blank with K. Never use a zero in
+  J merely to stop a previous shipment's rate from leaking downward.
 - Catalog `photo` is optional. The parser writes it only when the matching JPG/JPEG exists; `excelRows` records every source row for startup diagnostics.
 - Missing catalog photos are valid and use the shared `__photo_pending` placeholder. A present-but-broken `photo` path remains a validation error.
 - Product grids and the home menu use square contain `webp/card` variants; product detail uses full `webp`. Keep the fallback chain card WebP → full WebP → exact source JPG/JPEG → shared placeholder.
