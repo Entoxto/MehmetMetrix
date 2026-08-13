@@ -78,6 +78,7 @@ It may contain:
 - `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.
 - Generated card WebPs are square contain canvases. The converter samples the four source corners for a neutral background, so portrait and near-square product photos keep the full subject without hand-added margins.
 - Catalog cards use a square media region with `object-fit: contain` at every breakpoint. The shared placeholder keeps its dedicated cover treatment.
+- Product detail uses the full WebP with `object-fit: contain` at every breakpoint. On wide screens the photo frame follows the loaded image ratio instead of stretching a fixed-height column and cropping it.
 - Product cards and category cards should not imply clickability beyond their real clickable area.
 - Intro copy at the top of pages should be quiet and compact.
 - In `Work`, a year expands from its header. A shipment expands from the whole

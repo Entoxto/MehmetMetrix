@@ -6,7 +6,6 @@ import { OptimizedImage } from "@/components/ui/OptimizedImage";
 
 const IMAGE_CONSTRAINTS = {
   maxWidth: 650,
-  maxHeight: 450,
   minWidth: 300,
   minHeight: 300,
 };
@@ -30,8 +29,10 @@ export const ProductPhoto = ({
   const containerDimensions = useMemo(() => {
     if (!imageAspectRatio) {
       return {
-        width: isCompact ? "100%" : `${IMAGE_CONSTRAINTS.minWidth}px`,
-        height: `${IMAGE_CONSTRAINTS.minHeight}px`,
+        width: "100%",
+        height: isCompact
+          ? `${IMAGE_CONSTRAINTS.minHeight}px`
+          : `${desktopMinHeight}px`,
       };
     }
 
@@ -43,32 +44,27 @@ export const ProductPhoto = ({
       };
     }
 
-    let width = IMAGE_CONSTRAINTS.maxWidth;
-    let height = width / imageAspectRatio;
-
-    if (height > IMAGE_CONSTRAINTS.maxHeight) {
-      height = IMAGE_CONSTRAINTS.maxHeight;
-      width = height * imageAspectRatio;
-    }
-
-    width = Math.max(width, IMAGE_CONSTRAINTS.minWidth);
-    height = Math.max(height, IMAGE_CONSTRAINTS.minHeight);
+    const naturalWidth = desktopMinHeight * imageAspectRatio;
+    const width = Math.min(
+      IMAGE_CONSTRAINTS.maxWidth,
+      Math.max(naturalWidth, IMAGE_CONSTRAINTS.minWidth)
+    );
 
     return {
-      width: `${width}px`,
-      height: `${height}px`,
+      width: `min(100%, ${width}px)`,
+      height: "auto",
+      aspectRatio: imageAspectRatio.toString(),
     };
-  }, [isCompact, imageAspectRatio]);
+  }, [desktopMinHeight, isCompact, imageAspectRatio]);
 
   return (
     <div
       style={{
-        width: isCompact ? containerDimensions.width : "100%",
-        height: isCompact
-          ? containerDimensions.height === "auto"
+        width: containerDimensions.width,
+        height:
+          containerDimensions.height === "auto"
             ? undefined
-            : containerDimensions.height
-          : `${desktopMinHeight}px`,
+            : containerDimensions.height,
         ...(containerDimensions.aspectRatio && hasProductPhoto
           ? { aspectRatio: containerDimensions.aspectRatio }
           : {}),
@@ -82,7 +78,9 @@ export const ProductPhoto = ({
         justifyContent: "center",
         position: "relative",
         justifySelf: isCompact ? undefined : "center",
-        minHeight: isCompact ? undefined : `${desktopMinHeight}px`,
+        alignSelf: isCompact ? undefined : "start",
+        minHeight:
+          !isCompact && !imageAspectRatio ? `${desktopMinHeight}px` : undefined,
         animation: MOTION.staggerEnter(0, 0),
       }}
     >
@@ -91,9 +89,8 @@ export const ProductPhoto = ({
         alt={productName}
         sizes="(max-width: 768px) 100vw, 50vw"
         style={{
-          objectFit: isCompact ? "contain" : "cover",
+          objectFit: "contain",
           objectPosition: "center center",
-          transform: isCompact ? undefined : "scale(1.02)",
         }}
         placeholderStyle={{
           objectFit: "cover",
