@@ -10,7 +10,7 @@ import pandas as pd
 from openpyxl import Workbook
 
 from excel_parser import ExcelParser
-from parser_utils import parse_sizes_from_name
+from parser_utils import parse_quantity_only_from_name, parse_sizes_from_name
 
 
 class ParserLogicTests(unittest.TestCase):
@@ -42,6 +42,81 @@ class ParserLogicTests(unittest.TestCase):
                 "Жакет из кожи (one size-2, OneSize-3)",
                 excel_row=58,
             )
+
+    def test_quantity_only_suffix_parses_supported_wording(self):
+        for suffix in ("10 шт.", "10 шт", "10 штук", "10 штуки", "10 штука"):
+            with self.subTest(suffix=suffix):
+                self.assertEqual(
+                    parse_quantity_only_from_name(
+                        f"Жакет из кожи — тестовый ({suffix})",
+                        excel_row=60,
+                    ),
+                    10,
+                )
+
+    def test_quantity_only_suffix_rejects_zero(self):
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Строка 61: общее количество.*больше нуля",
+        ):
+            parse_quantity_only_from_name(
+                "Жакет из кожи — тестовый (0 шт.)",
+                excel_row=61,
+            )
+
+    def test_quantity_only_suffix_cannot_be_mixed_with_sizes(self):
+        for suffix in ("XS-2, 10 шт.", "XS-2, 10шт"):
+            with self.subTest(suffix=suffix):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    r"Строка 62: неверный формат общего количества.*не смешивайте",
+                ):
+                    parse_sizes_from_name(
+                        f"Жакет из кожи — тестовый ({suffix})",
+                        excel_row=62,
+                    )
+
+    def test_quantity_only_suffix_sets_unknown_sizes_and_quantity(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"
+        row.iloc[6] = 10
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["sizesUnknown"])
+        self.assertEqual(item["quantityOverride"], 10)
+        self.assertNotIn("sizes", item)
+
+    def test_quantity_only_suffix_must_match_formula_in_g(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"
+        row.iloc[6] = 9
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Строка 2: количество в наименовании \(10\).*G \(9\)",
+        ):
+            self.parse_item(row)
+
+    def test_non_positive_quantity_in_g_is_rejected(self):
+        row = self.create_row()
+        row.iloc[6] = 0
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Строка 2: колонка G.*больше нуля",
+        ):
+            self.parse_item(row)
+
+    def test_legacy_unknown_sizes_marker_remains_supported(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (на уточнении)"
+        row.iloc[6] = 7
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["sizesUnknown"])
+        self.assertEqual(item["quantityOverride"], 7)
 
     def test_blank_exchange_rate_does_not_import_cost(self):
         item = self.parse_item(self.create_row())

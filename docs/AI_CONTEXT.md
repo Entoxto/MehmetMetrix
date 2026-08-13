@@ -48,14 +48,54 @@ It may contain:
 - `pendingManual` for manual extra rows inside `Всего к оплате`
 `npm run validate:data` validates this manual file too; manual amounts must stay positive finite numbers.
 
+Administrative text and voice commands are routed through
+`admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the
+confirmed operator defaults for adding or moving positions, changing sizes,
+and resolving relative ETA dates; keep detailed workflow rules there instead
+of duplicating them in this domain overview.
+
 ## Invariants
 
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
 - Payment visibility depends on `isPayable` and the position status. A position without its own status inherits the shipment status; an explicit position status always decides its payment visibility.
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
-- Excel column J (`Курс списания`) guards cost import: import column N as `cost` only when J is positive. A vertically merged J cell applies its top-left value to every covered item row. A blank, zero, or negative J can leave N with cargo-only formula output before the item is paid.
+- Excel column J (`Курс списания`) guards cost import: import column N as `cost`
+  only when J is positive. A vertically merged J cell applies its top-left
+  value to every covered item row. Blank, zero, or negative J means the final
+  cost is still unknown and must not update catalog cost.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
-- A position with the marker `(на уточнении)` in the last bracket of the Excel name means sizes are not yet assigned. The parser emits `sizesUnknown: true` and uses `quantityOverride` from column G. These positions still participate in payment totals but do not contribute sizes to the catalog.
+- A quantity-only suffix such as `(10 шт.)` in the last bracket of column C means the total is known but sizes are not assigned. The parser emits `sizesUnknown: true` and `quantityOverride: 10`; formula G must calculate the same value and must not be replaced with a manual number. The legacy `(на уточнении)` + G form remains read-compatible only.
+- Every source position represents at least one physical item. With no sizes and no explicit quantity, the TypeScript adapter and the G formula use `1`.
+- When an operator adds a repeated position and the user does not state a
+  price, column H inherits the nearest previous price for the exact cleaned
+  product name from C (ignore only the final size/quantity bracket). An
+  explicitly stated price overrides this default. Price changes are valid and
+  historical rows must not be rewritten. If no prior match exists, do not
+  invent a price; leave H blank and ask.
+- Column I is fully formula-driven: `G × H`, but blank when H is blank or `0`.
+  Every position row keeps the formula, including rows without a known price.
+- Columns K and L are fully formula-driven on every position row. K calculates
+  unit cost without cargo from H and the latest explicit J marker inside the
+  current shipment only. Shipment scope begins at the latest non-empty A on a
+  row with C; a formula in J remains a marker even while its result is blank.
+  Blank, zero, or negative rates leave K blank. L is `K × G` and stays blank
+  whenever K is unavailable. Do not add zero sentinels to J to stop inheritance
+  from a previous shipment.
+- Columns N and O are fully formula-driven on every position row. An explicit M
+  value starts a cargo block that ends at the next explicit M marker or at the
+  shipment boundary. N is `ROUND(K + cargo / sum(G in the block), 0)`; O is
+  `N × G`. Cargo never crosses a shipment boundary, and repeated equal M values
+  in different blocks are calculated independently. Blank, zero, or negative M
+  leaves N and O blank; do not add zero sentinels to M.
+- Column P has two intentional input types. A real date means the product was
+  received; free-form text such as an expected dispatch or arrival window is
+  ETA copy shown in the app. With dates only, the parser uses the latest date
+  in the shipment. If any text is present, the first cleaned text value becomes
+  ETA and takes priority over dates.
+- Column Q is a formula-only shipment control total. The formula exists in the
+  first row of every shipment, discovers the next non-empty A on a position
+  row, and sums O up to that boundary. It stays blank when O has no numeric
+  values. Never replace it with a manually maintained `SUM(Ox:Oy)` range.
 - `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.
 - In the collapsed Work card, shipment type is composed from the actual
   positions: regular positions add the bronze `Партия` badge, sample positions
@@ -73,6 +113,17 @@ It may contain:
 - `hasPriceGaps` should consider only payable positions with quantity but without price.
 - Product category must resolve to one of four real buckets: `Мех`, `Замша`, `Кожа`, `Экзотика`. If the parser cannot infer a category, it should fail instead of inventing `Прочее`.
 - Catalog photos are optional while a model is being developed. The parser writes `photo` only when the exact JPG/JPEG exists and stores all source sheet rows in `excelRows`.
+- Product names use the order `garment + model/fit/style + material + color`:
+  in Russian source text, named models and descriptors such as `Аляска`,
+  `Агнес`, `в стиле 80-х`, and `по новым лекалам` belong before the
+  `из материала` phrase. JPG/JPEG stems must match the resulting product name
+  exactly.
+- In semantic checks between Excel columns C and D, treat C as the commercial
+  name/appearance and D as the actual composition. The confirmed combination
+  `из кожи страуса` + `100% Кожа барана` is valid because it means ram leather
+  finished to look like ostrich, not natural ostrich leather. Do not flag or
+  auto-correct it; send other unconfirmed species mismatches for review. See
+  `docs/EXCEL_PIPELINE.md`, section `Состав и смысловая проверка C ↔ D`.
 - `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing or whose card WebP was not generated is an error.
 - `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> system image icon.
 - `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.

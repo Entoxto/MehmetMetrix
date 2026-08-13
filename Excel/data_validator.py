@@ -58,8 +58,8 @@ def _validate_raw_item(
                     errors.append(f"{prefix}: размер {size_key!r} должен иметь целое количество >= 0")
 
     quantity_override = item.get("quantityOverride")
-    if quantity_override is not None and (not isinstance(quantity_override, int) or quantity_override < 0):
-        errors.append(f"{prefix}: quantityOverride должен быть целым числом >= 0")
+    if quantity_override is not None and (not isinstance(quantity_override, int) or quantity_override <= 0):
+        errors.append(f"{prefix}: quantityOverride должен быть целым числом > 0")
 
     if sizes_unknown and (quantity_override is None or quantity_override <= 0):
         errors.append(f"{prefix}: sizesUnknown требует положительного quantityOverride")

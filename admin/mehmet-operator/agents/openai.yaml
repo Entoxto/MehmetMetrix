@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mehmet Operator"
+  short_description: "Навигация по данным и операциям Mehmet"
+  default_prompt: "Используй $mehmet-operator, чтобы безопасно выполнить команду над данными Mehmet Metrics."

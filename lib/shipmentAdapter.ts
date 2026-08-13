@@ -89,7 +89,8 @@ function getPositionQuantity(item: ShipmentRawItem): number {
   const sizeEntries = item.sizes ? Object.entries(item.sizes) : [];
   const computedQuantity = sizeEntries.reduce((acc, [, count]) => acc + count, 0);
 
-  return item.quantityOverride ?? (computedQuantity || (item.sample ? 1 : 0));
+  // Существующая позиция всегда означает как минимум одну физическую вещь.
+  return item.quantityOverride ?? (computedQuantity || 1);
 }
 
 function getNullableNumber(value: unknown): number | null {

@@ -10,9 +10,62 @@ import pandas as pd
 # Порядок размеров для каталога (product.sizes)
 SIZE_ORDER = ["xs", "s", "m", "l", "xl", "onesize"]
 
-# Маркеры в последней скобке названия, означающие, что размеры пока не разбиты,
-# но позиция уже существует и участвует в заказе (количество берётся из колонки G).
+# Маркеры в последней скобке названия, означающие, что размеры пока не разбиты.
+# Текстовый маркер сохранён для обратной совместимости; новый канонический
+# формат хранит общее количество прямо в названии: "(10 шт.)".
 SIZES_UNKNOWN_MARKERS = ["на уточнении"]
+QUANTITY_ONLY_PATTERN = re.compile(
+    r'^\s*(\d+)\s*(?:шт\.?|штук(?:а|и)?)\s*$',
+    re.IGNORECASE,
+)
+QUANTITY_TOKEN_PATTERN = re.compile(
+    r'(?<![A-ZА-ЯЁa-zа-яё])(?:шт\.?|штук(?:а|и)?)(?![A-ZА-ЯЁa-zа-яё])',
+    re.IGNORECASE,
+)
+
+
+def _get_last_bracket(name: str) -> Optional[str]:
+    """Возвращает содержимое последней пары скобок или None."""
+    if not name:
+        return None
+
+    bracket_groups = re.findall(r'\(([^)]+)\)', name)
+    return bracket_groups[-1].strip() if bracket_groups else None
+
+
+def parse_quantity_only_from_name(
+    name: str,
+    excel_row: Optional[int] = None,
+) -> Optional[int]:
+    """Парсит каноническое общее количество без размерной сетки: ``(10 шт.)``.
+
+    Любое упоминание ``шт`` в другой форме считается ошибкой: общее количество
+    нельзя смешивать с размерами, делать нулевым, отрицательным или дробным.
+    """
+    last_bracket = _get_last_bracket(name)
+    if last_bracket is None:
+        return None
+
+    match = QUANTITY_ONLY_PATTERN.fullmatch(last_bracket)
+    if match:
+        quantity = int(match.group(1))
+        if quantity > 0:
+            return quantity
+
+        row_prefix = f"Строка {excel_row}: " if excel_row is not None else ""
+        raise ValueError(
+            f"{row_prefix}общее количество в наименовании должно быть больше нуля"
+        )
+
+    if QUANTITY_TOKEN_PATTERN.search(last_bracket):
+        row_prefix = f"Строка {excel_row}: " if excel_row is not None else ""
+        raise ValueError(
+            f"{row_prefix}неверный формат общего количества {last_bracket!r}; "
+            "используйте отдельную последнюю скобку вида '(10 шт.)' и не "
+            "смешивайте количество с размерами"
+        )
+
+    return None
 
 
 def has_sizes_unknown_marker(name: str) -> bool:
@@ -28,19 +81,22 @@ def has_sizes_unknown_marker(name: str) -> bool:
     if not name:
         return False
 
-    bracket_groups = re.findall(r'\(([^)]+)\)', name)
-    if not bracket_groups:
+    last_bracket = _get_last_bracket(name)
+    if last_bracket is None:
         return False
 
-    last_bracket = bracket_groups[-1].strip().lower()
-    return any(marker.lower() in last_bracket for marker in SIZES_UNKNOWN_MARKERS)
+    normalized = last_bracket.lower()
+    return (
+        QUANTITY_ONLY_PATTERN.fullmatch(last_bracket) is not None
+        or any(marker.lower() in normalized for marker in SIZES_UNKNOWN_MARKERS)
+    )
 
 
 def parse_sizes_from_name(name: str, excel_row: Optional[int] = None) -> Dict[str, int]:
     """
     Парсит размеры из названия: "(XS-5, S-7, M-5)", "(one size-5)" или "(образец XS-2)".
-    Если в последней скобке маркер "на уточнении", размеры не парсятся — позиция
-    будет отображаться как ожидающая размерной сетки.
+    Если в последней скобке маркер "на уточнении" либо общее количество вида
+    "(10 шт.)", размеры не парсятся — позиция ожидает размерную сетку.
     
     Args:
         name: Полное название товара с размерами в скобках
@@ -51,17 +107,19 @@ def parse_sizes_from_name(name: str, excel_row: Optional[int] = None) -> Dict[st
         Пустой словарь, если размеров нет или размеры на уточнении.
 
     Raises:
-        ValueError: Если один размер указан в последней скобке больше одного раза.
+        ValueError: Если формат количества неоднозначен или размер продублирован.
     """
     if not name:
         return {}
     
     # Размеры живут в последней скобке: в названии могут быть другие скобки раньше.
-    bracket_groups = re.findall(r'\(([^)]+)\)', name)
-    if not bracket_groups:
+    sizes_str = _get_last_bracket(name)
+    if sizes_str is None:
         return {}
-    
-    sizes_str = bracket_groups[-1]
+
+    quantity_only = parse_quantity_only_from_name(name, excel_row=excel_row)
+    if quantity_only is not None:
+        return {}
     
     # Проверяем на "образец" - если только "образец" без размеров, возвращаем пустой словарь
     # Но если есть "образец" вместе с размерами (например, "образец XS-2"), парсим размеры
