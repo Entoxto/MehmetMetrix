@@ -3,6 +3,9 @@
 
 [build.environment]
   NEXT_TELEMETRY_DISABLED = "1"
+  # Turbopack serializes the build environment into its private compiler cache.
+  # Keep secret scanning enabled everywhere except this generated, unpublished cache.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**"
 
 [build.cache]
   paths = [
