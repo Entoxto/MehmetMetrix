@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect -- This hook synchronizes state with sessionStorage and URL navigation after hydration. */
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getShipmentYear, groupShipmentsByYear } from "@/lib/shipmentGrouping";

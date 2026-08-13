@@ -9,7 +9,7 @@
 
 import { ImageSquare } from "@phosphor-icons/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CSSProperties } from "react";
 import { COLORS } from "@/constants/styles";
 import {
@@ -42,30 +42,29 @@ interface OptimizedImageProps {
   onLoad?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
-export const OptimizedImage = ({
-  src,
+interface ResolvedOptimizedImageProps extends Omit<OptimizedImageProps, "src" | "variant"> {
+  resolvedSrc: string;
+  variant: ProductImageVariant;
+}
+
+const ResolvedOptimizedImage = ({
+  resolvedSrc,
   alt,
-  variant = "full",
-  fill = true,
-  sizes = "(max-width: 768px) 100vw, 50vw",
+  variant,
+  fill,
+  sizes,
   style,
   placeholderStyle,
-  loading = "lazy",
-  priority = false,
-  fallbackSize = 48,
+  loading,
+  priority,
+  fallbackSize,
   onLoad,
-}: OptimizedImageProps) => {
-  const resolvedSrc = getProductImagePath(src);
+}: ResolvedOptimizedImageProps) => {
   const [imageSrc, setImageSrc] = useState<string>(() =>
     getOptimizedImagePath(resolvedSrc, variant)
   );
   const [imageError, setImageError] = useState(false);
   const isPlaceholder = imageSrc.includes("__photo_pending.");
-
-  useEffect(() => {
-    setImageSrc(getOptimizedImagePath(resolvedSrc, variant));
-    setImageError(false);
-  }, [resolvedSrc, variant]);
 
   if (imageError) {
     return (
@@ -102,6 +101,39 @@ export const OptimizedImage = ({
           setImageError(true);
         }
       }}
+    />
+  );
+};
+
+export const OptimizedImage = ({
+  src,
+  alt,
+  variant = "full",
+  fill = true,
+  sizes = "(max-width: 768px) 100vw, 50vw",
+  style,
+  placeholderStyle,
+  loading = "lazy",
+  priority = false,
+  fallbackSize = 48,
+  onLoad,
+}: OptimizedImageProps) => {
+  const resolvedSrc = getProductImagePath(src);
+
+  return (
+    <ResolvedOptimizedImage
+      key={`${resolvedSrc}:${variant}`}
+      resolvedSrc={resolvedSrc}
+      alt={alt}
+      variant={variant}
+      fill={fill}
+      sizes={sizes}
+      style={style}
+      placeholderStyle={placeholderStyle}
+      loading={loading}
+      priority={priority}
+      fallbackSize={fallbackSize}
+      onLoad={onLoad}
     />
   );
 };

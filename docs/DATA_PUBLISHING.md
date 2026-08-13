@@ -54,6 +54,11 @@ MEHMET_SITE_URL=https://eloquent-buttercream-3d732d.netlify.app
 MEHMET_PUBLISH_TOKEN=<та же строка>
 ```
 
+На Netlify secret scanning остаётся включённым для репозитория и публикуемых
+артефактов. В `netlify.toml` исключён только generated Turbopack cache
+`.netlify/.next/cache/**`: компилятор сериализует туда build-окружение, хотя этот
+cache не публикуется как часть приложения.
+
 Production-сайт: `eloquent-buttercream-3d732d`, ветка deploy — `main`.
 Netlify Project ID: `facb4a96-e9fc-4a07-951c-a49330c2e339`.
 

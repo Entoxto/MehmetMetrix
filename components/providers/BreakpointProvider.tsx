@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import { BreakpointContext } from "@/components/providers/BreakpointContext";
 import { resolveBreakpoint, type BreakpointKey } from "@/lib/breakpoints";
 
@@ -12,71 +12,65 @@ interface BreakpointProviderProps {
 /**
  * Throttle функция - ограничивает частоту вызовов
  */
-function throttle<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  let lastCall = 0;
-  let timeoutId: NodeJS.Timeout | null = null;
+type ThrottledCallback = (() => void) & { cancel: () => void };
 
-  return (...args: Parameters<T>) => {
+function throttle(
+  func: () => void,
+  delay: number
+): ThrottledCallback {
+  let lastCall = 0;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const throttled: ThrottledCallback = () => {
     const now = Date.now();
     const timeSinceLastCall = now - lastCall;
 
     if (timeSinceLastCall >= delay) {
       lastCall = now;
-      func(...args);
+      func();
     } else {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(() => {
         lastCall = Date.now();
-        func(...args);
+        timeoutId = null;
+        func();
       }, delay - timeSinceLastCall);
     }
+  };
+
+  throttled.cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return throttled;
+}
+
+function resolveClientBreakpoint(): BreakpointKey {
+  const measuredWidth = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
+  return resolveBreakpoint(measuredWidth);
+}
+
+function subscribeToBreakpoint(onBreakpointChange: () => void): () => void {
+  const throttledUpdate = throttle(onBreakpointChange, 100);
+  window.addEventListener("resize", throttledUpdate);
+
+  return () => {
+    window.removeEventListener("resize", throttledUpdate);
+    throttledUpdate.cancel();
   };
 }
 
 export const BreakpointProvider = ({ initialBreakpoint, children }: BreakpointProviderProps) => {
-  const [breakpoint, setBreakpoint] = useState<BreakpointKey>(initialBreakpoint);
-  const resolveClientBreakpoint = () => {
-    const measuredWidth = Math.max(window.innerWidth, document.documentElement.clientWidth || 0);
-    return resolveBreakpoint(measuredWidth);
-  };
-
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const nextBreakpoint = resolveClientBreakpoint();
-    setBreakpoint((currentBreakpoint) =>
-      currentBreakpoint === nextBreakpoint ? currentBreakpoint : nextBreakpoint
-    );
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const update = () => {
-      setBreakpoint(resolveClientBreakpoint());
-    };
-
-    // Первоначальное обновление
-    update();
-
-    // Throttled версия для resize событий (обновление максимум раз в 100ms)
-    const throttledUpdate = throttle(update, 100);
-
-    window.addEventListener("resize", throttledUpdate);
-
-    return () => {
-      window.removeEventListener("resize", throttledUpdate);
-    };
-  }, []);
+  const breakpoint = useSyncExternalStore(
+    subscribeToBreakpoint,
+    resolveClientBreakpoint,
+    () => initialBreakpoint
+  );
 
   return (
     <BreakpointContext.Provider value={breakpoint}>
