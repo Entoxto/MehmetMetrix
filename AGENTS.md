@@ -44,6 +44,7 @@ If you need a production build, stop any active dev server first. A running dev 
 - If `npm` is not available in the shell, prepend it before running commands:
   `$env:PATH = "$PWD\.tools\node;$env:PATH"`
 - `scripts/preflight.mjs` prefers `.tools/node/npm.cmd` and the bundled Codex Python runtime when present, so nested checks use local tools consistently.
+- `scripts/publish_data.mjs` also prefers the bundled Python runtime and verifies that `pandas` and `openpyxl` are importable before downloading or parsing source data. Override it with `MEHMET_PYTHON` when running elsewhere.
 - Agent guidance is editor-neutral and lives in `AGENTS.md`, `docs/AI_CONTEXT.md`, and nearby README files.
 
 ## Deployment

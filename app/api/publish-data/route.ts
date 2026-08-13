@@ -54,21 +54,43 @@ async function assertPhotosAreDeployed(
     throw new Error(`Недопустимый путь фотографии: ${invalidPath}`);
   }
 
-  const results = await Promise.all(
-    photoPaths.map(async (photo) => {
-      const response = await fetch(new URL(photo, requestUrl), {
-        method: "HEAD",
-        cache: "no-store",
-        signal: AbortSignal.timeout(10_000),
-      });
-      return response.ok ? null : `${photo} (HTTP ${response.status})`;
+  const pending = [...photoPaths];
+  const missing: string[] = [];
+  const workerCount = Math.min(6, pending.length);
+
+  async function checkPhoto(photo: string): Promise<string | null> {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await fetch(new URL(photo, requestUrl), {
+          method: "HEAD",
+          cache: "no-store",
+          signal: AbortSignal.timeout(10_000),
+        });
+        return response.ok ? null : `${photo} (HTTP ${response.status})`;
+      } catch (error) {
+        if (attempt === 0) continue;
+        const message = error instanceof Error ? error.message : "неизвестная ошибка";
+        return `${photo} (сетевая ошибка: ${message})`;
+      }
+    }
+
+    return `${photo} (не удалось проверить)`;
+  }
+
+  await Promise.all(
+    Array.from({ length: workerCount }, async () => {
+      while (pending.length > 0) {
+        const photo = pending.shift();
+        if (!photo) return;
+        const result = await checkPhoto(photo);
+        if (result) missing.push(result);
+      }
     })
   );
-  const missing = results.filter((item): item is string => item !== null);
 
   if (missing.length > 0) {
     throw new Error(
-      `Публикация ссылается на фотографии, которых ещё нет в текущем деплое: ${missing.join(
+      `Публикация ссылается на фотографии, которых ещё нет в текущем деплое: ${missing.sort().join(
         ", "
       )}`
     );

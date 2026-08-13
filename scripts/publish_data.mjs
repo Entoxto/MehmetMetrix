@@ -50,14 +50,26 @@ function run(executable, args, label) {
 }
 
 function resolvePython() {
+  const bundledPython = process.env.USERPROFILE
+    ? path.join(
+        process.env.USERPROFILE,
+        ".cache",
+        "codex-runtimes",
+        "codex-primary-runtime",
+        "dependencies",
+        "python",
+        process.platform === "win32" ? "python.exe" : "bin/python3"
+      )
+    : null;
   const candidates = [
     process.env.MEHMET_PYTHON,
+    bundledPython,
     process.platform === "win32" ? "python" : "python3",
     "python",
   ].filter(Boolean);
 
-  for (const candidate of candidates) {
-    const result = spawnSync(candidate, ["--version"], {
+  for (const candidate of new Set(candidates)) {
+    const result = spawnSync(candidate, ["-c", "import pandas, openpyxl"], {
       cwd: rootDir,
       encoding: "utf8",
       shell: false,
@@ -66,7 +78,7 @@ function resolvePython() {
   }
 
   throw new Error(
-    "Python не найден. Укажите путь в MEHMET_PYTHON или добавьте python в PATH."
+    "Не найден Python с pandas и openpyxl. Укажите подходящий путь в MEHMET_PYTHON."
   );
 }
 
