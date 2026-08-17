@@ -55,6 +55,15 @@ If you need a production build, stop any active dev server first. A running dev 
 - Normal table and `money.json` changes are published explicitly with `npm run publish:data`; they must not require a Git push or rebuild.
 - Run `npm run preflight` locally before pushing deployment changes to catch failures before Netlify repeats the same gate.
 
+## Git & Branch Management
+
+- All branches are created **only with explicit user approval**.
+- Agents (including Hermes, Codex, or any other AI) must not create,
+  push, or delete branches without a direct user instruction.
+- The production deployment branch is `main`. Netlify deploys from `main` only.
+- Feature/working branches are created by the user when needed; agents work
+  on the currently checked-out branch unless told otherwise.
+
 ## Source Of Truth
 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.

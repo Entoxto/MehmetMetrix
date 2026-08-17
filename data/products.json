@@ -1134,7 +1134,8 @@
         "lining": "%70 Acetate %30 Polyester"
       },
       "inStock": true,
-      "tags": []
+      "tags": [],
+      "price": 180
     },
     {
       "id": "auto-053",
