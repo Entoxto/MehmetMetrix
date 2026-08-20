@@ -87,6 +87,33 @@ class ParserLogicTests(unittest.TestCase):
         self.assertEqual(item["quantityOverride"], 10)
         self.assertNotIn("sizes", item)
 
+    def test_under_question_marker_coexists_with_sample_and_sizes(self):
+        row = self.create_row()
+        row.iloc[2] = (
+            "Дублёнка из пушистого меха — чёрная "
+            "(образец XS-1, под вопросом)"
+        )
+        row.iloc[6] = 1
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["underQuestion"])
+        self.assertTrue(item["sample"])
+        self.assertEqual(item["sizes"], {"xs": 1})
+        self.assertNotIn("sizesUnknown", item)
+
+    def test_under_question_marker_coexists_with_quantity_only(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (10 шт., под вопросом)"
+        row.iloc[6] = 10
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["underQuestion"])
+        self.assertTrue(item["sizesUnknown"])
+        self.assertEqual(item["quantityOverride"], 10)
+        self.assertNotIn("sizes", item)
+
     def test_quantity_only_suffix_must_match_formula_in_g(self):
         row = self.create_row()
         row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"

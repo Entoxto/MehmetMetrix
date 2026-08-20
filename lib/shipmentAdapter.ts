@@ -159,6 +159,7 @@ function toPosition(
     cost,
     sample: item.sample ?? false,
     sizesUnknown: item.sizesUnknown ?? false,
+    underQuestion: item.underQuestion ?? false,
     statusLabel,
     isPayable,
     noteEnabled,

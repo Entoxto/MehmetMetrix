@@ -15,6 +15,7 @@ import type { Position } from "@/types/domain";
 import { SizeChips } from "@/components/ui/SizeChips";
 import { SampleTag } from "@/components/ui/SampleTag";
 import { SizesPendingTag } from "@/components/ui/SizesPendingTag";
+import { UnderQuestionTag } from "@/components/ui/UnderQuestionTag";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 interface PositionRowColumn {
@@ -137,8 +138,8 @@ export const PositionRow = ({
                   </div>
                 )}
 
-                {/* Строка 2: Бейджи образца, уточнения размеров и статусов (под размерами) */}
-                {(position.sample || position.sizesUnknown || (position.noteEnabled && position.noteText)) && (
+                {/* Строка 2: позиционные маркеры и статусы (под размерами) */}
+                {(position.sample || position.sizesUnknown || position.underQuestion || (position.noteEnabled && position.noteText)) && (
                   <div
                     style={{
                       display: "flex",
@@ -150,6 +151,8 @@ export const PositionRow = ({
                     {position.sample && <SampleTag />}
 
                     {position.sizesUnknown && <SizesPendingTag />}
+
+                    {position.underQuestion && <UnderQuestionTag />}
                     
                     {position.noteEnabled && position.noteText && (
                       <StatusBadge 

@@ -21,6 +21,8 @@ export interface Position {
   sample: boolean;
   /** Размеры позиции пока не заданы (маркер "на уточнении" из Excel). */
   sizesUnknown?: boolean;
+  /** Возможность выпуска позиции пока не подтверждена. */
+  underQuestion?: boolean;
   /** Текстовый статус позиции — ровно то, что выбрал менеджер в Excel. */
   statusLabel: string;
   noteEnabled: boolean;

@@ -90,8 +90,11 @@ of duplicating them in this domain overview.
   value starts a cargo block that ends at the next explicit M marker or at the
   shipment boundary. N is `ROUND(K + cargo / sum(G in the block), 0)`; O is
   `N × G`. Cargo never crosses a shipment boundary, and repeated equal M values
-  in different blocks are calculated independently. Blank, zero, or negative M
-  leaves N and O blank; do not add zero sentinels to M.
+  in different blocks are calculated independently. N additionally requires a
+  calculated positive K. It is valid to enter cargo before the rate is known,
+  but blank, zero, or negative J keeps K, N, O, and shipment total Q blank.
+  Blank, zero, or negative M also leaves N and O blank; do not add zero
+  sentinels to M.
 - Column P has two intentional input types. A real date means the product was
   received; free-form text such as an expected dispatch or arrival window is
   ETA copy shown in the app. With dates only, the parser uses the latest date
@@ -102,6 +105,10 @@ of duplicating them in this domain overview.
   row, and sums O up to that boundary. It stays blank when O has no numeric
   values. Never replace it with a manually maintained `SUM(Ox:Oy)` range.
 - `sample` marks an item as an образец, but quantity still comes from explicit sizes or Excel column G when present.
+- `underQuestion` is a separate position marker parsed from the phrase
+  `под вопросом` in the final column C bracket. It may coexist with `sample`,
+  explicit sizes, or `(N шт.)`; it does not alter quantity, status inheritance,
+  payment visibility, or catalog identity. Work shows it as `Под вопросом`.
 - In the collapsed Work card, shipment type is composed from the actual
   positions: regular positions add the bronze `Партия` badge, sample positions
   add the violet `Образец` badge, and a mixed shipment shows both independent
@@ -129,6 +136,9 @@ of duplicating them in this domain overview.
   finished to look like ostrich, not natural ostrich leather. Do not flag or
   auto-correct it; send other unconfirmed species mismatches for review. See
   `docs/EXCEL_PIPELINE.md`, section `Состав и смысловая проверка C ↔ D`.
+- The confirmed model `Жакет Агнес из меха кенгуру` uses
+  `100% Натуральный мех кенгуру`. Kangaroo is fur for this product; do not
+  rename it to leather or write `Кожа кенгуру` in its composition.
 - `npm run validate:images` reports every model without a photo and its Excel row numbers. A missing `photo` is valid; a `photo` path whose file is missing or whose card WebP was not generated is an error.
 - `OptimizedImage` uses `webp/card` for grids and the home menu. Its fallback is card WebP -> full WebP -> the exact original JPG/JPEG path -> shared `__photo_pending` -> system image icon.
 - `public/images/products/jpg/` is the only manually maintained image source. `scripts/convert_to_webp.py` regenerates changed variants and recursively prunes derived `.webp` files with no JPG/JPEG source; never maintain `webp/` or `webp/card/` by hand.

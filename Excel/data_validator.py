@@ -40,6 +40,10 @@ def _validate_raw_item(
     if sizes_unknown is not None and not isinstance(sizes_unknown, bool):
         errors.append(f"{prefix}: sizesUnknown должен быть boolean")
 
+    under_question = item.get("underQuestion")
+    if under_question is not None and not isinstance(under_question, bool):
+        errors.append(f"{prefix}: underQuestion должен быть boolean")
+
     sizes = item.get("sizes")
     if sizes is not None:
         if not isinstance(sizes, dict):

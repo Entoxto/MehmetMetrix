@@ -49,6 +49,7 @@ describe("toShipmentPositions", () => {
       cost: 7000,
       sum: 500,
       sample: false,
+      underQuestion: false,
       statusLabel: "В производстве 🛠️",
       isPayable: true,
       noteEnabled: true,
@@ -111,6 +112,27 @@ describe("toShipmentPositions", () => {
 
     expect(positions[0].qty).toBe(1);
     expect(positions[0].sum).toBe(90);
+  });
+
+  it("сохраняет независимый признак «Под вопросом»", () => {
+    const positions = toShipmentPositions(
+      createShipmentConfig([
+        {
+          productId: "product-1",
+          sizes: { xs: 1 },
+          sample: true,
+          underQuestion: true,
+        },
+      ]),
+      products
+    );
+
+    expect(positions[0]).toMatchObject({
+      qty: 1,
+      sample: true,
+      underQuestion: true,
+      sizesUnknown: false,
+    });
   });
 
   it("не включает paidPreviously/noPayment позиции в сумму", () => {

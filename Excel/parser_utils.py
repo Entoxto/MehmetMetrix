@@ -22,6 +22,11 @@ QUANTITY_TOKEN_PATTERN = re.compile(
     r'(?<![A-ZА-ЯЁa-zа-яё])(?:шт\.?|штук(?:а|и)?)(?![A-ZА-ЯЁa-zа-яё])',
     re.IGNORECASE,
 )
+UNDER_QUESTION_PATTERN = re.compile(r'\bпод\s+вопросом\b', re.IGNORECASE)
+POSITION_MARKER_PATTERNS = (
+    re.compile(r'\bобразец\b', re.IGNORECASE),
+    UNDER_QUESTION_PATTERN,
+)
 
 
 def _get_last_bracket(name: str) -> Optional[str]:
@@ -31,6 +36,22 @@ def _get_last_bracket(name: str) -> Optional[str]:
 
     bracket_groups = re.findall(r'\(([^)]+)\)', name)
     return bracket_groups[-1].strip() if bracket_groups else None
+
+
+def _strip_position_markers(value: str) -> str:
+    """Удаляет независимые позиционные маркеры из содержимого скобок."""
+    cleaned = value
+    for pattern in POSITION_MARKER_PATTERNS:
+        cleaned = pattern.sub('', cleaned)
+
+    cleaned = re.sub(r'(?:\s*[,;]\s*)+', ', ', cleaned)
+    return re.sub(r'\s+', ' ', cleaned).strip(' ,;')
+
+
+def has_under_question_marker(name: str) -> bool:
+    """Проверяет маркер ``под вопросом`` в последних скобках названия."""
+    last_bracket = _get_last_bracket(name)
+    return bool(last_bracket and UNDER_QUESTION_PATTERN.search(last_bracket))
 
 
 def parse_quantity_only_from_name(
@@ -44,6 +65,10 @@ def parse_quantity_only_from_name(
     """
     last_bracket = _get_last_bracket(name)
     if last_bracket is None:
+        return None
+
+    last_bracket = _strip_position_markers(last_bracket)
+    if not last_bracket:
         return None
 
     match = QUANTITY_ONLY_PATTERN.fullmatch(last_bracket)
@@ -87,7 +112,7 @@ def has_sizes_unknown_marker(name: str) -> bool:
 
     normalized = last_bracket.lower()
     return (
-        QUANTITY_ONLY_PATTERN.fullmatch(last_bracket) is not None
+        parse_quantity_only_from_name(name) is not None
         or any(marker.lower() in normalized for marker in SIZES_UNKNOWN_MARKERS)
     )
 
@@ -121,16 +146,10 @@ def parse_sizes_from_name(name: str, excel_row: Optional[int] = None) -> Dict[st
     if quantity_only is not None:
         return {}
     
-    # Проверяем на "образец" - если только "образец" без размеров, возвращаем пустой словарь
-    # Но если есть "образец" вместе с размерами (например, "образец XS-2"), парсим размеры
-    if 'образец' in sizes_str.lower():
-        # Убираем слово "образец" из строки для парсинга размеров
-        sizes_str_cleaned = re.sub(r'образец\s*', '', sizes_str, flags=re.IGNORECASE).strip()
-        # Если после удаления "образец" ничего не осталось, значит это просто образец без размеров
-        if not sizes_str_cleaned:
-            return {}
-        # Иначе продолжаем парсить размеры из очищенной строки
-        sizes_str = sizes_str_cleaned
+    # Независимые маркеры не являются размерами и могут сочетаться с ними.
+    sizes_str = _strip_position_markers(sizes_str)
+    if not sizes_str:
+        return {}
     
     # Парсим обычные размеры и OneSize единым проходом, чтобы дубликаты
     # проверялись одинаково для всех допустимых вариантов записи.

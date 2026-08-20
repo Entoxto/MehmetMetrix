@@ -17,7 +17,7 @@
       },
       {
         "overrideName": "Куртка по новым лекалам из кожи питона — Etope (XS-5, S-3)",
-        "productId": "auto-059",
+        "productId": "auto-060",
         "price": 465,
         "sizes": {
           "xs": 5,
@@ -27,7 +27,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — коричневый матовый (10 шт.)",
-        "productId": "auto-060",
+        "productId": "auto-061",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 10,
@@ -60,7 +60,7 @@
     "rawItems": [
       {
         "overrideName": "Дублёнка в стиле 80-х из меха астроган — молочный (23 шт.)",
-        "productId": "auto-057",
+        "productId": "auto-058",
         "price": 300,
         "sizesUnknown": true,
         "quantityOverride": 23,
@@ -68,7 +68,7 @@
       },
       {
         "overrideName": "Дублёнка Аляска из меха астроган — молочный (20 шт.)",
-        "productId": "auto-058",
+        "productId": "auto-059",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 20,
@@ -129,7 +129,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — Etope (XS-5, S-4, M-1)",
-        "productId": "auto-056",
+        "productId": "auto-057",
         "price": 320,
         "sizes": {
           "xs": 5,
@@ -188,11 +188,19 @@
         "sample": true
       },
       {
-        "overrideName": "Дублёнка Агнес из пушистого меха — чёрный (образец XS-1)",
+        "overrideName": "Дублёнка Агнес из пушистого меха — чёрный (образец XS-1, под вопросом)",
         "productId": "auto-055",
         "sizes": {
           "xs": 1
         },
+        "underQuestion": true,
+        "status": "В производстве 🛠️",
+        "sample": true
+      },
+      {
+        "overrideName": "Жакет Агнес из меха кенгуру — чёрный (образец)",
+        "productId": "auto-056",
+        "quantityOverride": 1,
         "status": "В производстве 🛠️",
         "sample": true
       }

@@ -15,6 +15,7 @@ from parser_utils import (
     parse_sizes_from_name,
     parse_quantity_only_from_name,
     has_sizes_unknown_marker,
+    has_under_question_marker,
     find_or_create_product_id,
     parse_product_materials,
     apply_product_materials,
@@ -357,8 +358,8 @@ class ExcelParser:
             item["price"] = int(price_value) if price_value.is_integer() else price_value
         
         # cost: берём из колонки N только когда курс списания уже известен и положителен.
-        # При пустом или нулевом J формула N может содержать только карго,
-        # а не реальную себестоимость товара.
+        # Актуальная формула N остаётся пустой без рассчитанной K; проверка J здесь
+        # остаётся защитой импорта от старой, повреждённой или ручной формулы N.
         exchange_rate_value = self._parse_numeric_field(row, self.COL_EXCHANGE_RATE)
         if exchange_rate_value is not None and exchange_rate_value > 0:
             cost_value = self._parse_numeric_field(row, self.COL_COST_WITH_CARGO)
@@ -374,6 +375,11 @@ class ExcelParser:
             item["sizesUnknown"] = True
         elif sizes:
             item["sizes"] = sizes
+
+        # Независимый маркер неопределённости позиции. Он не меняет статус,
+        # количество, платёжность или признак образца.
+        if has_under_question_marker(name):
+            item["underQuestion"] = True
 
         # Колонка G вычисляется формулой из C. Для нового формата C остаётся
         # источником правды, а G обязана подтверждать то же количество.
