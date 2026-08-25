@@ -975,7 +975,7 @@
       "category": "Мех",
       "excelRows": [
         96,
-        118,
+        120,
         126
       ],
       "sizes": [
@@ -1142,7 +1142,7 @@
       "name": "Юбка из меха астраган — молочный",
       "category": "Мех",
       "excelRows": [
-        119
+        118
       ],
       "sizes": [
         "xs"
@@ -1152,14 +1152,15 @@
         "lining": "%70 Acetate %30 Polyester"
       },
       "inStock": true,
-      "tags": []
+      "tags": [],
+      "price": 190
     },
     {
       "id": "auto-054",
       "name": "Дублёнка Агнес из меха астроган — молочный",
       "category": "Мех",
       "excelRows": [
-        120
+        119
       ],
       "sizes": [
         "xs"
@@ -1169,7 +1170,8 @@
         "lining": "%70 Acetate %30 Polyester"
       },
       "inStock": true,
-      "tags": []
+      "tags": [],
+      "price": 250
     },
     {
       "id": "auto-055",

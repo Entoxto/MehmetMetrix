@@ -1,8 +1,8 @@
 [
   {
-    "id": "shipment-2026-31",
-    "number": 31,
-    "title": "Поставка №31",
+    "id": "shipment-2026-32",
+    "number": 32,
+    "title": "Поставка №32",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -53,9 +53,9 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-30",
-    "number": 30,
-    "title": "Поставка №30",
+    "id": "shipment-2026-31",
+    "number": 31,
+    "title": "Поставка №31",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -86,9 +86,9 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-29",
-    "number": 29,
-    "title": "Поставка №29",
+    "id": "shipment-2026-30",
+    "number": 30,
+    "title": "Поставка №30",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -111,9 +111,9 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-28",
-    "number": 28,
-    "title": "Поставка №28",
+    "id": "shipment-2026-29",
+    "number": 29,
+    "title": "Поставка №29",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -154,33 +154,15 @@
     "eta": "Отправка ожидается с 24.08 по 29.08"
   },
   {
-    "id": "shipment-2026-27",
-    "number": 27,
-    "title": "Поставка №27",
+    "id": "shipment-2026-28",
+    "number": 28,
+    "title": "Поставка №28",
     "status": "В работе 🧵",
     "rawItems": [
       {
         "overrideName": "Дублёнка Аляска из меха астроган — антрацит (образец XS-1)",
         "productId": "auto-045",
         "price": 320,
-        "sizes": {
-          "xs": 1
-        },
-        "status": "В производстве 🛠️",
-        "sample": true
-      },
-      {
-        "overrideName": "Юбка из меха астраган — молочный (образец XS-1)",
-        "productId": "auto-053",
-        "sizes": {
-          "xs": 1
-        },
-        "status": "В производстве 🛠️",
-        "sample": true
-      },
-      {
-        "overrideName": "Дублёнка Агнес из меха астроган — молочный (образец XS-1)",
-        "productId": "auto-054",
         "sizes": {
           "xs": 1
         },
@@ -206,6 +188,38 @@
       }
     ],
     "year": 2026
+  },
+  {
+    "id": "shipment-2026-27",
+    "number": 27,
+    "title": "Поставка №27",
+    "status": "В пути 🚚",
+    "rawItems": [
+      {
+        "overrideName": "Юбка из меха астраган — молочный (образец XS-1)",
+        "productId": "auto-053",
+        "price": 190,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В пути 🚚",
+        "inTransit": true,
+        "sample": true
+      },
+      {
+        "overrideName": "Дублёнка Агнес из меха астроган — молочный (образец XS-1)",
+        "productId": "auto-054",
+        "price": 250,
+        "sizes": {
+          "xs": 1
+        },
+        "status": "В пути 🚚",
+        "inTransit": true,
+        "sample": true
+      }
+    ],
+    "year": 2026,
+    "eta": "Доставка ожидается с 26.08 по 29.08"
   },
   {
     "id": "shipment-2026-26",
