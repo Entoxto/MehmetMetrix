@@ -193,7 +193,7 @@
     "id": "shipment-2026-27",
     "number": 27,
     "title": "Поставка №27",
-    "status": "В пути 🚚",
+    "status": "Получено, не оплачено 📦",
     "rawItems": [
       {
         "overrideName": "Юбка из меха астраган — молочный (образец XS-1)",
@@ -202,8 +202,7 @@
         "sizes": {
           "xs": 1
         },
-        "status": "В пути 🚚",
-        "inTransit": true,
+        "status": "Получено, не оплачено 📦",
         "sample": true
       },
       {
@@ -213,13 +212,12 @@
         "sizes": {
           "xs": 1
         },
-        "status": "В пути 🚚",
-        "inTransit": true,
+        "status": "Получено, не оплачено 📦",
         "sample": true
       }
     ],
     "year": 2026,
-    "eta": "Доставка ожидается с 26.08 по 29.08"
+    "receivedDate": "27.08.2026"
   },
   {
     "id": "shipment-2026-26",
