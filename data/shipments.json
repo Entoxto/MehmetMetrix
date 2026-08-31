@@ -1,8 +1,8 @@
 [
   {
-    "id": "shipment-2026-32",
-    "number": 32,
-    "title": "Поставка №32",
+    "id": "shipment-2026-31",
+    "number": 31,
+    "title": "Поставка №31",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -17,7 +17,7 @@
       },
       {
         "overrideName": "Куртка по новым лекалам из кожи питона — Etope (XS-5, S-3)",
-        "productId": "auto-060",
+        "productId": "auto-062",
         "price": 465,
         "sizes": {
           "xs": 5,
@@ -27,7 +27,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — коричневый матовый (10 шт.)",
-        "productId": "auto-061",
+        "productId": "auto-063",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 10,
@@ -53,39 +53,6 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-31",
-    "number": 31,
-    "title": "Поставка №31",
-    "status": "В работе 🧵",
-    "rawItems": [
-      {
-        "overrideName": "Дублёнка в стиле 80-х из меха астроган — молочный (23 шт.)",
-        "productId": "auto-058",
-        "price": 300,
-        "sizesUnknown": true,
-        "quantityOverride": 23,
-        "status": "В производстве 🛠️"
-      },
-      {
-        "overrideName": "Дублёнка Аляска из меха астроган — молочный (20 шт.)",
-        "productId": "auto-059",
-        "price": 320,
-        "sizesUnknown": true,
-        "quantityOverride": 20,
-        "status": "В производстве 🛠️"
-      },
-      {
-        "overrideName": "Штаны из меха астроган — антрацит (20 шт.)",
-        "productId": "auto-044",
-        "price": 255,
-        "sizesUnknown": true,
-        "quantityOverride": 20,
-        "status": "В производстве 🛠️"
-      }
-    ],
-    "year": 2026
-  },
-  {
     "id": "shipment-2026-30",
     "number": 30,
     "title": "Поставка №30",
@@ -103,6 +70,46 @@
         "overrideName": "Штаны из меха астроган — антрацит (20 шт.)",
         "productId": "auto-044",
         "price": 255,
+        "sizesUnknown": true,
+        "quantityOverride": 20,
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Юбка из меха астраган — антрацит (10 шт.)",
+        "productId": "auto-058",
+        "price": 190,
+        "sizesUnknown": true,
+        "quantityOverride": 10,
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Юбка из меха астраган — чёрный (10 шт.)",
+        "productId": "auto-059",
+        "price": 190,
+        "sizesUnknown": true,
+        "quantityOverride": 10,
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Жакет Агнес из меха астроган — молочный (25 шт.)",
+        "productId": "auto-060",
+        "price": 250,
+        "sizesUnknown": true,
+        "quantityOverride": 25,
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Дублёнка Аляска из меха астроган — молочный (24 шт.)",
+        "productId": "auto-061",
+        "price": 320,
+        "sizesUnknown": true,
+        "quantityOverride": 24,
+        "status": "В производстве 🛠️"
+      },
+      {
+        "overrideName": "Юбка из меха астраган — молочный (20 шт.)",
+        "productId": "auto-053",
+        "price": 190,
         "sizesUnknown": true,
         "quantityOverride": 20,
         "status": "В производстве 🛠️"
@@ -151,7 +158,7 @@
       }
     ],
     "year": 2026,
-    "eta": "Отправка ожидается с 24.08 по 29.08"
+    "eta": "Отправка ожидается с 01.09 по 05.09"
   },
   {
     "id": "shipment-2026-28",
