@@ -1153,6 +1153,7 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Юбка из меха астраган — молочный.jpg",
       "price": 190
     },
     {
@@ -1160,7 +1161,8 @@
       "name": "Дублёнка Агнес из меха астроган — молочный",
       "category": "Мех",
       "excelRows": [
-        119
+        119,
+        130
       ],
       "sizes": [
         "xs"
@@ -1171,6 +1173,7 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Дублёнка Агнес из меха астроган — молочный.jpg",
       "price": 250
     },
     {
@@ -1240,6 +1243,7 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Юбка из меха астраган — антрацит.jpg",
       "price": 190
     },
     {
@@ -1256,26 +1260,11 @@
       },
       "inStock": true,
       "tags": [],
+      "photo": "/images/products/jpg/Юбка из меха астраган — чёрный.jpg",
       "price": 190
     },
     {
       "id": "auto-060",
-      "name": "Жакет Агнес из меха астроган — молочный",
-      "category": "Мех",
-      "excelRows": [
-        130
-      ],
-      "sizes": [],
-      "materials": {
-        "outer": "100% Натуральный мех",
-        "lining": "%70 Acetate %30 Polyester"
-      },
-      "inStock": true,
-      "tags": [],
-      "price": 250
-    },
-    {
-      "id": "auto-061",
       "name": "Дублёнка Аляска из меха астроган — молочный",
       "category": "Мех",
       "excelRows": [
@@ -1292,7 +1281,7 @@
       "price": 320
     },
     {
-      "id": "auto-062",
+      "id": "auto-061",
       "name": "Куртка по новым лекалам из кожи питона — Etope",
       "category": "Экзотика",
       "excelRows": [
@@ -1312,7 +1301,7 @@
       "price": 465
     },
     {
-      "id": "auto-063",
+      "id": "auto-062",
       "name": "Юбка из кожи питона — коричневый матовый",
       "category": "Экзотика",
       "excelRows": [

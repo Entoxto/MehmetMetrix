@@ -17,7 +17,7 @@
       },
       {
         "overrideName": "Куртка по новым лекалам из кожи питона — Etope (XS-5, S-3)",
-        "productId": "auto-062",
+        "productId": "auto-061",
         "price": 465,
         "sizes": {
           "xs": 5,
@@ -27,7 +27,7 @@
       },
       {
         "overrideName": "Юбка из кожи питона — коричневый матовый (10 шт.)",
-        "productId": "auto-063",
+        "productId": "auto-062",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 10,
@@ -91,8 +91,8 @@
         "status": "В производстве 🛠️"
       },
       {
-        "overrideName": "Жакет Агнес из меха астроган — молочный (25 шт.)",
-        "productId": "auto-060",
+        "overrideName": "Дублёнка Агнес из меха астроган — молочный (25 шт.)",
+        "productId": "auto-054",
         "price": 250,
         "sizesUnknown": true,
         "quantityOverride": 25,
@@ -100,7 +100,7 @@
       },
       {
         "overrideName": "Дублёнка Аляска из меха астроган — молочный (24 шт.)",
-        "productId": "auto-061",
+        "productId": "auto-060",
         "price": 320,
         "sizesUnknown": true,
         "quantityOverride": 24,

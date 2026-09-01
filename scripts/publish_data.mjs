@@ -112,6 +112,120 @@ function buildBundle() {
   };
 }
 
+function postJsonWithPowerShell(url, body) {
+  const script = String.raw`
+$ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
+$headers = @{ Authorization = "Bearer $env:MEHMET_PUBLISH_TOKEN" }
+$body = [Convert]::FromBase64String([Console]::In.ReadToEnd())
+
+try {
+  $requestParameters = @{
+    Uri = $env:MEHMET_PUBLISH_URL
+    Method = "Post"
+    Headers = $headers
+    ContentType = "application/json; charset=utf-8"
+    Body = $body
+    TimeoutSec = 90
+  }
+  $response = Invoke-WebRequest @requestParameters
+  $statusCode = [int]$response.StatusCode
+  $responseBody = [string]$response.Content
+} catch {
+  $errorResponse = $_.Exception.Response
+  if ($null -eq $errorResponse) {
+    throw
+  }
+
+  $statusCode = [int]$errorResponse.StatusCode
+  if (-not [string]::IsNullOrWhiteSpace($_.ErrorDetails.Message)) {
+    $responseBody = [string]$_.ErrorDetails.Message
+  } elseif ($null -ne $errorResponse.Content) {
+    $responseBody = $errorResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+  } else {
+    $reader = [System.IO.StreamReader]::new($errorResponse.GetResponseStream())
+    try {
+      $responseBody = $reader.ReadToEnd()
+    } finally {
+      $reader.Dispose()
+    }
+  }
+}
+
+[Console]::Out.Write([string]$statusCode)
+[Console]::Out.Write([Environment]::NewLine)
+[Console]::Out.Write($responseBody)
+`;
+  const env = {
+    ...process.env,
+    MEHMET_PUBLISH_URL: url,
+  };
+  let lastMissingExecutable = null;
+
+  for (const executable of ["pwsh", "powershell"]) {
+    const result = spawnSync(
+      executable,
+      ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script],
+      {
+        cwd: rootDir,
+        encoding: "utf8",
+        env,
+        input: Buffer.from(body, "utf8").toString("base64"),
+        shell: false,
+        windowsHide: true,
+      }
+    );
+
+    if (result.error?.code === "ENOENT") {
+      lastMissingExecutable = result.error;
+      continue;
+    }
+    if (result.error) {
+      throw new Error(`Windows HTTP-клиент: ${result.error.message}`);
+    }
+    if (result.status !== 0) {
+      throw new Error(
+        `Windows HTTP-клиент завершился с кодом ${result.status}: ${result.stderr.trim()}`
+      );
+    }
+
+    const separatorIndex = result.stdout.indexOf("\n");
+    if (separatorIndex < 0) {
+      throw new Error("Windows HTTP-клиент вернул некорректный ответ");
+    }
+
+    return {
+      body: result.stdout.slice(separatorIndex + 1),
+      status: Number(result.stdout.slice(0, separatorIndex).trim()),
+    };
+  }
+
+  throw new Error(
+    `Не найден PowerShell для безопасной отправки пакета: ${lastMissingExecutable?.message ?? "неизвестная ошибка"}`
+  );
+}
+
+async function postJson(url, token, body) {
+  if (process.platform === "win32") {
+    return postJsonWithPowerShell(url, body);
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body,
+    signal: AbortSignal.timeout(90_000),
+  });
+
+  return {
+    body: await response.text(),
+    status: response.status,
+  };
+}
+
 async function publish(bundle) {
   const siteUrl = process.env.MEHMET_SITE_URL?.trim().replace(/\/$/u, "");
   const token = process.env.MEHMET_PUBLISH_TOKEN?.trim();
@@ -124,16 +238,12 @@ async function publish(bundle) {
   }
 
   console.log(`\n=== Публикация ${bundle.version} ===`);
-  const response = await fetch(`${siteUrl}/api/publish-data`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json; charset=utf-8",
-    },
-    body: JSON.stringify(bundle),
-    signal: AbortSignal.timeout(90_000),
-  });
-  const responseText = await response.text();
+  const response = await postJson(
+    `${siteUrl}/api/publish-data`,
+    token,
+    JSON.stringify(bundle)
+  );
+  const responseText = response.body;
   let result;
   try {
     result = JSON.parse(responseText);
@@ -141,7 +251,7 @@ async function publish(bundle) {
     result = { error: responseText || `HTTP ${response.status}` };
   }
 
-  if (!response.ok) {
+  if (response.status < 200 || response.status >= 300) {
     throw new Error(
       `Сервер отклонил публикацию (HTTP ${response.status}): ${
         result.error ?? responseText
