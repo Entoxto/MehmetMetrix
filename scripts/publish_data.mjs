@@ -1,17 +1,14 @@
 import { createHash } from "node:crypto";
-import {
-  copyFileSync,
-  existsSync,
-  mkdtempSync,
-  readFileSync,
-  renameSync,
-  rmSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import os from "node:os";
 import { resolvePython, pythonArgs } from "./python_runtime.mjs";
+import {
+  cleanupRegistryWorkspace,
+  commitLocalRegistry,
+  createRegistryWorkspace,
+  stageLocalRegistryFallback,
+} from "./product_registry_workspace.mjs";
 
 const rootDir = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
@@ -71,17 +68,31 @@ function activeRegistryPath() {
   return process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH || localRegistryPath;
 }
 
-function createRegistryWorkspace(registry) {
-  const directory = mkdtempSync(path.join(os.tmpdir(), "mehmet-product-registry-"));
-  const filePath = path.join(directory, "product-id-registry.json");
-  writeFileSync(filePath, `${JSON.stringify(registry, null, 2)}\n`, "utf8");
-  return { directory, filePath };
+function activateRegistryWorkspace(workspace, baseVersion) {
+  process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH = workspace.filePath;
+  return { ...workspace, baseVersion };
 }
 
-function commitLocalRegistry(filePath) {
-  const temporaryPath = `${localRegistryPath}.${process.pid}.tmp`;
-  copyFileSync(filePath, temporaryPath);
-  renameSync(temporaryPath, localRegistryPath);
+async function fetchCurrentDataVersion(siteUrl) {
+  const response = await fetch(`${siteUrl}/api/data-version`, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(30_000),
+  });
+  const responseText = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(responseText);
+  } catch {
+    throw new Error(`Не удалось прочитать current version (HTTP ${response.status})`);
+  }
+  if (!response.ok || typeof payload.version !== "string") {
+    throw new Error(
+      `Не удалось прочитать current version (HTTP ${response.status}): ${
+        payload.error ?? responseText
+      }`
+    );
+  }
+  return payload.version;
 }
 
 async function fetchAuthoritativeRegistry() {
@@ -93,7 +104,10 @@ async function fetchAuthoritativeRegistry() {
         "Для публикации нужен MEHMET_SITE_URL и MEHMET_PUBLISH_TOKEN до запуска парсинга"
       );
     }
-    return { filePath: localRegistryPath, directory: null, baseVersion: null };
+    return activateRegistryWorkspace(
+      stageLocalRegistryFallback(localRegistryPath),
+      null
+    );
   }
 
   const response = await fetch(`${siteUrl}/api/publish-data`, {
@@ -103,13 +117,17 @@ async function fetchAuthoritativeRegistry() {
   });
 
   // During the one-deploy migration window the old API has no GET handler.
-  // Keep parsing possible from the tracked seed, while every new API bundle
-  // thereafter supplies an authoritative version and registry.
+  // Stage the tracked seed in an isolated workspace and obtain the exact base
+  // version separately; never expose the tracked file to the parser.
   if (response.status === 404 || response.status === 405) {
     console.warn(
-      "⚠️ Текущий deploy ещё не умеет читать productId registry; используется локальный seed"
+      "⚠️ Текущий deploy ещё не умеет читать productId registry; локальный seed staged во временный workspace"
     );
-    return { filePath: localRegistryPath, directory: null, baseVersion: null };
+    const baseVersion = await fetchCurrentDataVersion(siteUrl);
+    return activateRegistryWorkspace(
+      stageLocalRegistryFallback(localRegistryPath),
+      baseVersion
+    );
   }
   const responseText = await response.text();
   let payload;
@@ -130,12 +148,10 @@ async function fetchAuthoritativeRegistry() {
   }
 
   const registry = payload.productIdRegistry ?? readJson(localRegistryPath);
-  const workspace = createRegistryWorkspace(registry);
-  process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH = workspace.filePath;
-  return {
-    ...workspace,
-    baseVersion: typeof payload.version === "string" ? payload.version : null,
-  };
+  return activateRegistryWorkspace(
+    createRegistryWorkspace(registry),
+    typeof payload.version === "string" ? payload.version : null
+  );
 }
 
 function buildBundle() {
@@ -330,9 +346,12 @@ async function publish(bundle) {
 async function main() {
   loadLocalPublishEnv();
   const registryWorkspace = await fetchAuthoritativeRegistry();
-  const python = resolvePython({ rootDir, requiredModules: ["pandas", "openpyxl"] });
 
   try {
+    const python = resolvePython({
+      rootDir,
+      requiredModules: ["pandas", "openpyxl"],
+    });
     if (dryRun) {
       run(
         python.command,
@@ -378,13 +397,9 @@ async function main() {
     });
     // The local checkout becomes a cache of the now-authoritative state only
     // after the remote atomic current switch has succeeded.
-    if (registryWorkspace.directory) {
-      commitLocalRegistry(registryWorkspace.filePath);
-    }
+    commitLocalRegistry(registryWorkspace.filePath, localRegistryPath);
   } finally {
-    if (registryWorkspace.directory) {
-      rmSync(registryWorkspace.directory, { recursive: true, force: true });
-    }
+    cleanupRegistryWorkspace(registryWorkspace.directory);
   }
 }
 

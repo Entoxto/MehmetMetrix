@@ -176,6 +176,12 @@ export async function POST(request: Request) {
 
     const bundle: unknown = JSON.parse(body);
     assertPublishedDataBundle(bundle);
+    if (bundle.productIdRegistry === undefined) {
+      return NextResponse.json(
+        { error: "Новая публикация обязана содержать productIdRegistry" },
+        { status: 409 }
+      );
+    }
 
     const calculatedHash = createHash("sha256")
       .update(
@@ -204,7 +210,6 @@ export async function POST(request: Request) {
     const currentBundle = currentBefore ? await readCurrentBundle() : null;
     const registryConflict = registryPublicationConflict({
       currentVersion: currentBundle?.version ?? null,
-      currentHasRegistry: currentBundle?.productIdRegistry !== undefined,
       incomingBaseVersion: bundle.registryBaseVersion,
       incomingHasRegistry: bundle.productIdRegistry !== undefined,
     });

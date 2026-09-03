@@ -58,7 +58,10 @@ identity. The parser normalizes names, preserves registry entries for models
 missing from the current sheet, and allocates monotonically increasing
 `auto-NNN` values. The publisher refreshes it from the latest versioned Blobs
 bundle and publishes it atomically with the runtime files. Legacy bundles may
-omit the field during migration; the UI never reads it.
+omit the field only for read compatibility during migration; every new POST
+must include a valid registry based on the exact current bundle version. The
+publisher parses against a temporary workspace and updates the tracked copy
+only after POST plus `/api/data-version` confirmation. The UI never reads it.
 
 Administrative text and voice commands are routed through
 `admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the

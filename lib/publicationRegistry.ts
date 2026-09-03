@@ -10,7 +10,6 @@ import type { ProductIdRegistryData } from "@/types/dataBundle";
  */
 export interface RegistryPublicationState {
   currentVersion: string | null;
-  currentHasRegistry: boolean;
   incomingBaseVersion: string | null | undefined;
   incomingHasRegistry: boolean;
 }
@@ -18,32 +17,14 @@ export interface RegistryPublicationState {
 export function registryPublicationConflict(
   state: RegistryPublicationState
 ): string | null {
-  if (state.currentHasRegistry && !state.incomingHasRegistry) {
-    return "Публикация без productIdRegistry не может заменить активный реестр";
+  if (!state.incomingHasRegistry) {
+    return "Новая публикация обязана содержать productIdRegistry";
   }
 
-  if (
-    state.incomingHasRegistry &&
-    state.currentHasRegistry &&
-    state.incomingBaseVersion !== state.currentVersion
-  ) {
+  if (state.incomingBaseVersion !== state.currentVersion) {
     return `Устаревший productIdRegistry: пакет основан на ${
       state.incomingBaseVersion ?? "отсутствующей версии"
     }, а текущая версия — ${state.currentVersion ?? "отсутствует"}`;
-  }
-
-  // A pre-migration client may not know the legacy bundle version (the old
-  // API had no registry endpoint). The atomic ETag write still serializes two
-  // simultaneous first migrations, so null is accepted only while no registry
-  // is active. A known but stale legacy version is rejected early.
-  if (
-    state.incomingHasRegistry &&
-    !state.currentHasRegistry &&
-    state.incomingBaseVersion !== null &&
-    state.incomingBaseVersion !== undefined &&
-    state.incomingBaseVersion !== state.currentVersion
-  ) {
-    return `Устаревший productIdRegistry: пакет основан на ${state.incomingBaseVersion}, а текущая версия — ${state.currentVersion ?? "отсутствует"}`;
   }
 
   return null;

@@ -74,8 +74,9 @@ If you need a production build, stop any active dev server first. A running dev 
 - `data/product-id-registry.json` is the durable technical source for stable
   product IDs. The publisher refreshes it from the latest authoritative
   versioned Blobs bundle and publishes it atomically with the runtime files;
-  legacy bundles may omit it during migration. Never remove entries or reuse
-  an issued ID for another normalized product name.
+  legacy bundles may omit it only when being read during migration. Every new
+  POST must include a registry based on the exact current version. Never remove
+  entries or reuse an issued ID for another normalized product name.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
 - The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files and the optional technical registry; UI rendering never depends on the registry.
@@ -86,6 +87,8 @@ If you need a production build, stop any active dev server first. A running dev 
 - Treat Google Sheets changes as a draft until the user separately confirms publication.
 - Use the canonical `npm run publish:data` workflow; it refreshes the whole sheet, validates the full snapshot, and atomically replaces the current Blob bundle.
 - `npm run publish:data:dry-run` must not fetch the sheet or write external state.
+- Parsing inside the publisher always uses a temporary registry workspace. The
+  tracked registry is replaced only after POST and `/api/data-version` succeed.
 - Never publish a data bundle that references a photo absent from the current deployment. Photo changes still deploy through Git first.
 - See `docs/DATA_PUBLISHING.md` and the confirmation protocol in `admin/mehmet-operator/references/workflows.md`.
 

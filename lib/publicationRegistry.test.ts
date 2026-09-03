@@ -18,7 +18,6 @@ describe("productId registry publication lock", () => {
     expect(
       registryPublicationConflict({
         currentVersion: "20260903T120000Z-aaaaaaaaaaaa",
-        currentHasRegistry: false,
         incomingBaseVersion: "20260903T120000Z-aaaaaaaaaaaa",
         incomingHasRegistry: true,
       })
@@ -29,7 +28,6 @@ describe("productId registry publication lock", () => {
     expect(
       registryPublicationConflict({
         currentVersion: null,
-        currentHasRegistry: false,
         incomingBaseVersion: null,
         incomingHasRegistry: true,
       })
@@ -39,7 +37,6 @@ describe("productId registry publication lock", () => {
   it("rejects a stale publisher after another machine has advanced the registry", () => {
     const stalePublisher = {
       currentVersion: "20260903T120000Z-aaaaaaaaaaaa",
-      currentHasRegistry: true,
       incomingBaseVersion: "20260903T120000Z-aaaaaaaaaaaa",
       incomingHasRegistry: true,
     };
@@ -62,11 +59,30 @@ describe("productId registry publication lock", () => {
     expect(
       registryPublicationConflict({
         currentVersion: "20260903T130000Z-bbbbbbbbbbbb",
-        currentHasRegistry: true,
         incomingBaseVersion: undefined,
         incomingHasRegistry: false,
       })
-    ).toContain("не может заменить активный реестр");
+    ).toContain("обязана содержать productIdRegistry");
+  });
+
+  it("rejects a registry-free POST even while current is legacy", () => {
+    expect(
+      registryPublicationConflict({
+        currentVersion: "20260903T120000Z-aaaaaaaaaaaa",
+        incomingBaseVersion: "20260903T120000Z-aaaaaaaaaaaa",
+        incomingHasRegistry: false,
+      })
+    ).toContain("обязана содержать productIdRegistry");
+  });
+
+  it("accepts a normal update based on the active registry version", () => {
+    expect(
+      registryPublicationConflict({
+        currentVersion: "20260903T130000Z-bbbbbbbbbbbb",
+        incomingBaseVersion: "20260903T130000Z-bbbbbbbbbbbb",
+        incomingHasRegistry: true,
+      })
+    ).toBeNull();
   });
 
   it("preserves retired IDs and allows only append-only registry updates", () => {

@@ -115,7 +115,8 @@ lib → data/types/Netlify Blobs
 - `money.json` редактируется вручную;
 - `product-id-registry.json` хранит постоянную техническую идентичность товаров
   и публикуется как необязательное техническое поле versioned bundle. Старый
-  bundle без поля поддерживается для миграции, а UI runtime его не использует;
+  bundle без поля поддерживается только для чтения при миграции; новый POST без
+  реестра запрещён, а UI runtime его не использует;
 - `README.md` фиксирует правила источника правды.
 
 ### `Excel/`
@@ -160,7 +161,8 @@ Query-параметр `batch` сохранён как legacy-контракт �
 
 ## Поток данных
 
-1. `scripts/publish_data.mjs` получает текущую версию и authoritative registry.
+1. `scripts/publish_data.mjs` получает текущую версию и authoritative registry,
+   затем staging-копию помещает во временный workspace.
 2. Google Sheet при необходимости скачивается как XLSX.
 3. `Excel/parse_excel.py` читает лист «Поставки» с этой registry-копией.
 4. Парсер строит поставки и каталог в памяти.
