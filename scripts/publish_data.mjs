@@ -1,11 +1,21 @@
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import os from "node:os";
 import { resolvePython, pythonArgs } from "./python_runtime.mjs";
 
 const rootDir = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
+const localRegistryPath = path.join(rootDir, "data", "product-id-registry.json");
 
 function loadLocalPublishEnv() {
   const envPath = path.join(rootDir, ".env.publish.local");
@@ -51,8 +61,81 @@ function run(executable, args, label) {
 }
 
 function readJson(relativePath) {
-  const absolutePath = path.join(rootDir, relativePath);
+  const absolutePath = path.isAbsolute(relativePath)
+    ? relativePath
+    : path.join(rootDir, relativePath);
   return JSON.parse(readFileSync(absolutePath, "utf8"));
+}
+
+function activeRegistryPath() {
+  return process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH || localRegistryPath;
+}
+
+function createRegistryWorkspace(registry) {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "mehmet-product-registry-"));
+  const filePath = path.join(directory, "product-id-registry.json");
+  writeFileSync(filePath, `${JSON.stringify(registry, null, 2)}\n`, "utf8");
+  return { directory, filePath };
+}
+
+function commitLocalRegistry(filePath) {
+  const temporaryPath = `${localRegistryPath}.${process.pid}.tmp`;
+  copyFileSync(filePath, temporaryPath);
+  renameSync(temporaryPath, localRegistryPath);
+}
+
+async function fetchAuthoritativeRegistry() {
+  const siteUrl = process.env.MEHMET_SITE_URL?.trim().replace(/\/$/u, "");
+  const token = process.env.MEHMET_PUBLISH_TOKEN?.trim();
+  if (!siteUrl || !token) {
+    if (!dryRun) {
+      throw new Error(
+        "Для публикации нужен MEHMET_SITE_URL и MEHMET_PUBLISH_TOKEN до запуска парсинга"
+      );
+    }
+    return { filePath: localRegistryPath, directory: null, baseVersion: null };
+  }
+
+  const response = await fetch(`${siteUrl}/api/publish-data`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+    signal: AbortSignal.timeout(30_000),
+  });
+
+  // During the one-deploy migration window the old API has no GET handler.
+  // Keep parsing possible from the tracked seed, while every new API bundle
+  // thereafter supplies an authoritative version and registry.
+  if (response.status === 404 || response.status === 405) {
+    console.warn(
+      "⚠️ Текущий deploy ещё не умеет читать productId registry; используется локальный seed"
+    );
+    return { filePath: localRegistryPath, directory: null, baseVersion: null };
+  }
+  const responseText = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(responseText);
+  } catch {
+    throw new Error(`Не удалось прочитать authoritative registry (HTTP ${response.status})`);
+  }
+  if (!response.ok) {
+    throw new Error(
+      `Не удалось прочитать authoritative registry (HTTP ${response.status}): ${
+        payload.error ?? responseText
+      }`
+    );
+  }
+  if (payload.version !== null && typeof payload.version !== "string") {
+    throw new Error("Ответ registry не содержит текущую version");
+  }
+
+  const registry = payload.productIdRegistry ?? readJson(localRegistryPath);
+  const workspace = createRegistryWorkspace(registry);
+  process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH = workspace.filePath;
+  return {
+    ...workspace,
+    baseVersion: typeof payload.version === "string" ? payload.version : null,
+  };
 }
 
 function buildBundle() {
@@ -61,6 +144,7 @@ function buildBundle() {
     products: readJson("data/products.json"),
     money: readJson("data/money.json"),
     meta: readJson("data/meta.json"),
+    productIdRegistry: readJson(activeRegistryPath()),
   };
   const sourceHash = createHash("sha256")
     .update(JSON.stringify(payload))
@@ -245,48 +329,63 @@ async function publish(bundle) {
 
 async function main() {
   loadLocalPublishEnv();
+  const registryWorkspace = await fetchAuthoritativeRegistry();
   const python = resolvePython({ rootDir, requiredModules: ["pandas", "openpyxl"] });
 
-  if (dryRun) {
-    run(
-      python.command,
-      pythonArgs(python, ["Excel/validate_generated_data.py"]),
-      "Проверка существующих JSON"
+  try {
+    if (dryRun) {
+      run(
+        python.command,
+        pythonArgs(python, ["Excel/validate_generated_data.py"]),
+        "Проверка существующих JSON"
+      );
+      run(
+        process.execPath,
+        ["scripts/validate_catalog_images.mjs"],
+        "Проверка изображений"
+      );
+    } else {
+      run(
+        python.command,
+        pythonArgs(python, ["Excel/fetch_google_sheet.py"]),
+        "Загрузка Google Sheet"
+      );
+      run(
+        python.command,
+        pythonArgs(python, ["Excel/parse_excel.py", "--auto"]),
+        "Преобразование XLSX в JSON"
+      );
+      run(
+        process.execPath,
+        ["scripts/preflight.mjs", "--fast"],
+        "Проверка данных перед публикацией"
+      );
+    }
+
+    const bundle = buildBundle();
+    console.log(
+      `\nПакет ${bundle.version}: ${bundle.shipments.length} поставок, ${bundle.products.products.length} товаров.`
     );
-    run(
-      process.execPath,
-      ["scripts/validate_catalog_images.mjs"],
-      "Проверка изображений"
-    );
-  } else {
-    run(
-      python.command,
-      pythonArgs(python, ["Excel/fetch_google_sheet.py"]),
-      "Загрузка Google Sheet"
-    );
-    run(
-      python.command,
-      pythonArgs(python, ["Excel/parse_excel.py", "--auto"]),
-      "Преобразование XLSX в JSON"
-    );
-    run(
-      process.execPath,
-      ["scripts/preflight.mjs", "--fast"],
-      "Проверка данных перед публикацией"
-    );
+
+    if (dryRun) {
+      console.log("DRY RUN: Netlify Blobs не изменялись; локальный registry не заменялся.");
+      return;
+    }
+
+    await publish({
+      ...bundle,
+      registryBaseVersion: registryWorkspace.baseVersion,
+    });
+    // The local checkout becomes a cache of the now-authoritative state only
+    // after the remote atomic current switch has succeeded.
+    if (registryWorkspace.directory) {
+      commitLocalRegistry(registryWorkspace.filePath);
+    }
+  } finally {
+    if (registryWorkspace.directory) {
+      rmSync(registryWorkspace.directory, { recursive: true, force: true });
+    }
   }
-
-  const bundle = buildBundle();
-  console.log(
-    `\nПакет ${bundle.version}: ${bundle.shipments.length} поставок, ${bundle.products.products.length} товаров.`
-  );
-
-  if (dryRun) {
-    console.log("DRY RUN: Netlify Blobs не изменялись.");
-    return;
-  }
-
-  await publish(bundle);
 }
 
 main().catch((error) => {

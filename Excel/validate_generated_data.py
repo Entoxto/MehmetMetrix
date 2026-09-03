@@ -9,6 +9,7 @@ CLI smoke-check для generated data.
 """
 
 import sys
+import os
 from pathlib import Path
 
 from data_validator import validate_generated_outputs
@@ -32,7 +33,12 @@ def validate_generated_data() -> bool:
     products_file = data_dir / "products.json"
     meta_file = data_dir / "meta.json"
     money_file = data_dir / "money.json"
-    registry_file = data_dir / "product-id-registry.json"
+    registry_file = Path(
+        os.environ.get(
+            "MEHMET_PRODUCT_ID_REGISTRY_PATH",
+            str(data_dir / "product-id-registry.json"),
+        )
+    )
 
     try:
         shipments = load_json_file(shipments_file)

@@ -27,6 +27,22 @@ def _is_positive_int(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value > 0
 
 
+def _reject_explicit_null(
+    item: Dict[str, Any],
+    field_name: str,
+    prefix: str,
+    errors: List[str],
+) -> None:
+    """Keep Python optional-field semantics identical to the TS validator.
+
+    ``dict.get`` cannot distinguish a missing key from an explicit JSON null.
+    The runtime contract allows omission, but never allows null for these
+    fields, so inspect membership before applying the normal type check.
+    """
+    if field_name in item and item[field_name] is None:
+        errors.append(f"{prefix}: {field_name} не может быть null")
+
+
 def _validate_raw_item(
     item: Dict[str, Any],
     shipment_id: str,
@@ -34,6 +50,22 @@ def _validate_raw_item(
     errors: List[str],
 ) -> None:
     prefix = f"{shipment_id} → rawItems[{index}]"
+
+    for field_name in (
+        "overrideName",
+        "status",
+        "sizesUnknown",
+        "underQuestion",
+        "sample",
+        "paidPreviously",
+        "noPayment",
+        "note",
+        "sizes",
+        "quantityOverride",
+        "price",
+        "cost",
+    ):
+        _reject_explicit_null(item, field_name, prefix, errors)
 
     if not _is_non_empty_string(item.get("productId")):
         errors.append(f"{prefix}: отсутствует productId")
@@ -131,6 +163,9 @@ def validate_shipments(shipments: Any) -> List[str]:
         if not _is_non_empty_string(shipment.get("status")):
             errors.append(f"{shipment_id}: отсутствует status")
 
+        for field_name in ("year", "eta", "receivedDate"):
+            _reject_explicit_null(shipment, field_name, shipment_id, errors)
+
         year = shipment.get("year")
         if year is not None and (not isinstance(year, int) or isinstance(year, bool)):
             errors.append(f"{shipment_id}: year должен быть целым числом")
@@ -196,6 +231,8 @@ def validate_products(products_data: Any) -> List[str]:
             )
 
         photo = product.get("photo")
+        for field_name in ("photo", "price", "cost", "materials"):
+            _reject_explicit_null(product, field_name, product_id, errors)
         if photo is not None and not _is_non_empty_string(photo):
             errors.append(f"{product_id}: photo должен быть непустой строкой")
 
@@ -231,6 +268,7 @@ def validate_products(products_data: Any) -> List[str]:
             errors.append(f"{product_id}: materials должен быть объектом")
         elif isinstance(materials, dict):
             for field_name in ("outer", "lining", "comments"):
+                _reject_explicit_null(materials, field_name, f"{product_id}: materials", errors)
                 value = materials.get(field_name)
                 if value is not None and not _is_non_empty_string(value):
                     errors.append(
@@ -348,6 +386,8 @@ def _validate_money_item_common(
     prefix: str,
     errors: List[str],
 ) -> None:
+    _reject_explicit_null(item, "id", prefix, errors)
+    _reject_explicit_null(item, "amount", prefix, errors)
     item_id = item.get("id")
     if item_id is not None and not _is_non_empty_string(item_id):
         errors.append(f"{prefix}: id должен быть непустой строкой")
@@ -364,6 +404,9 @@ def validate_money(money: Any) -> List[str]:
     if not isinstance(money, dict):
         return ["money.json должен содержать объект"]
 
+    for field_name in ("pendingManual", "deposits"):
+        _reject_explicit_null(money, field_name, "money.json", errors)
+
     pending_manual = money.get("pendingManual", [])
     if not isinstance(pending_manual, list):
         errors.append("money.json: pendingManual должен быть массивом")
@@ -375,6 +418,8 @@ def validate_money(money: Any) -> List[str]:
                 continue
 
             _validate_money_item_common(item, prefix, errors)
+
+            _reject_explicit_null(item, "title", prefix, errors)
 
             title = item.get("title")
             if not _is_non_empty_string(title):
@@ -391,6 +436,9 @@ def validate_money(money: Any) -> List[str]:
                 continue
 
             _validate_money_item_common(item, prefix, errors)
+
+            _reject_explicit_null(item, "title", prefix, errors)
+            _reject_explicit_null(item, "lines", prefix, errors)
 
             lines = item.get("lines")
             title = item.get("title")

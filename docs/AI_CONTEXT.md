@@ -56,8 +56,9 @@ publisher.
 `data/product-id-registry.json` is the durable technical source for product
 identity. The parser normalizes names, preserves registry entries for models
 missing from the current sheet, and allocates monotonically increasing
-`auto-NNN` values. The registry is validated but is not published in the
-runtime bundle.
+`auto-NNN` values. The publisher refreshes it from the latest versioned Blobs
+bundle and publishes it atomically with the runtime files. Legacy bundles may
+omit the field during migration; the UI never reads it.
 
 Administrative text and voice commands are routed through
 `admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the
@@ -210,7 +211,11 @@ of duplicating them in this domain overview.
   bundle reaches UI. Python and TypeScript validators share negative fixtures
   for malformed nested values.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
-- `lib/dataSource.ts` is the only runtime entrypoint for the four-file bundle. On Netlify it strongly reads Blob key `current` on every data-backed request and falls back to the build snapshot if Blob data is missing or invalid.
+- `lib/dataSource.ts` is the only runtime entrypoint for the four-file data
+  bundle. On Netlify it strongly reads Blob key `current` on every data-backed
+  request and falls back to the build snapshot if Blob data is missing or
+  invalid; the optional technical registry is carried through but never needed
+  by UI rendering.
 - Routes live in `app/`; screen components are grouped by owner in
   `components/home`, `catalog`, `money`, `product`, and `work`.
 - Route files are server components and generated JSON or the Blob loader must not be imported from `"use client"` modules. `/` stays Static; `/catalog`, `/money`, `/work`, and `/product/[id]` are request-rendered so a published bundle is visible without a deploy.

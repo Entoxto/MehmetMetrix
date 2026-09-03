@@ -29,14 +29,18 @@
           "category": "Кожа",
           "excelRows": [2],
           "sizes": ["xs"],
-          "materials": { "outer": "100% кожа" },
+          "materials": {
+            "outer": "100% кожа",
+            "lining": "100% хлопок",
+            "comments": "Ручная выделка"
+          },
           "price": 100
         }
       ]
     },
     "money": {
       "pendingManual": [{ "title": "Доплата", "amount": 10 }],
-      "deposits": [{ "lines": ["Депозит"], "amount": 20 }]
+      "deposits": [{ "title": "Депозит", "lines": ["Депозит"], "amount": 20 }]
     },
     "meta": { "updatedAt": "2026-09-03T11:59:00.000Z", "source": "excel" }
   },
@@ -50,6 +54,33 @@
     { "name": "object product sizes", "path": ["products", "products", 0, "sizes"], "value": { "xs": 1 } },
     { "name": "numeric material", "path": ["products", "products", 0, "materials", "outer"], "value": 100 },
     { "name": "boolean manual amount", "path": ["money", "pendingManual", 0, "amount"], "value": true },
-    { "name": "wrong meta source", "path": ["meta", "source"], "value": "sheet" }
+    { "name": "wrong meta source", "path": ["meta", "source"], "value": "sheet" },
+    { "name": "null raw price", "path": ["shipments", 0, "rawItems", 0, "price"], "value": null },
+    { "name": "null raw cost", "path": ["shipments", 0, "rawItems", 0, "cost"], "value": null },
+    { "name": "null raw override name", "path": ["shipments", 0, "rawItems", 0, "overrideName"], "value": null },
+    { "name": "null raw sizes", "path": ["shipments", 0, "rawItems", 0, "sizes"], "value": null },
+    { "name": "null raw status", "path": ["shipments", 0, "rawItems", 0, "status"], "value": null },
+    { "name": "null raw note", "path": ["shipments", 0, "rawItems", 0, "note"], "value": null },
+    { "name": "null raw sizes unknown", "path": ["shipments", 0, "rawItems", 0, "sizesUnknown"], "value": null },
+    { "name": "null raw under question", "path": ["shipments", 0, "rawItems", 0, "underQuestion"], "value": null },
+    { "name": "null raw sample", "path": ["shipments", 0, "rawItems", 0, "sample"], "value": null },
+    { "name": "null raw paid previously", "path": ["shipments", 0, "rawItems", 0, "paidPreviously"], "value": null },
+    { "name": "null raw no payment", "path": ["shipments", 0, "rawItems", 0, "noPayment"], "value": null },
+    { "name": "null raw quantity override", "path": ["shipments", 0, "rawItems", 0, "quantityOverride"], "value": null },
+    { "name": "null shipment eta", "path": ["shipments", 0, "eta"], "value": null },
+    { "name": "null shipment received date", "path": ["shipments", 0, "receivedDate"], "value": null },
+    { "name": "null shipment year", "path": ["shipments", 0, "year"], "value": null },
+    { "name": "null product photo", "path": ["products", "products", 0, "photo"], "value": null },
+    { "name": "null product price", "path": ["products", "products", 0, "price"], "value": null },
+    { "name": "null product cost", "path": ["products", "products", 0, "cost"], "value": null },
+    { "name": "null product materials", "path": ["products", "products", 0, "materials"], "value": null },
+    { "name": "null material lining", "path": ["products", "products", 0, "materials", "lining"], "value": null },
+    { "name": "null material comments", "path": ["products", "products", 0, "materials", "comments"], "value": null },
+    { "name": "null pending id", "path": ["money", "pendingManual", 0, "id"], "value": null },
+    { "name": "null deposit id", "path": ["money", "deposits", 0, "id"], "value": null },
+    { "name": "null deposit title", "path": ["money", "deposits", 0, "title"], "value": null },
+    { "name": "null deposit lines", "path": ["money", "deposits", 0, "lines"], "value": null },
+    { "name": "null pending manual list", "path": ["money", "pendingManual"], "value": null },
+    { "name": "null deposits list", "path": ["money", "deposits"], "value": null }
   ]
 }

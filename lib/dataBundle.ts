@@ -1,4 +1,7 @@
-import type { PublishedDataBundle } from "@/types/dataBundle";
+import type {
+  ProductIdRegistryData,
+  PublishedDataBundle,
+} from "@/types/dataBundle";
 
 const PRODUCT_CATEGORIES = new Set(["Мех", "Замша", "Кожа", "Экзотика"]);
 const SHIPMENT_SIZE_KEYS = new Set(["xs", "s", "m", "l", "xl", "OneSize"]);
@@ -38,6 +41,60 @@ function assertPositiveNumber(value: unknown, path: string): void {
 
 function assertOptionalPositiveNumber(value: unknown, path: string): void {
   if (value !== undefined) assertPositiveNumber(value, path);
+}
+
+function assertProductIdRegistry(
+  value: unknown,
+  path = "productIdRegistry"
+): asserts value is ProductIdRegistryData {
+  assertRecord(value, path);
+  if (value.schemaVersion !== 1) {
+    fail(`${path}.schemaVersion`, "ожидалось значение 1");
+  }
+  if (
+    !Number.isInteger(value.nextAutoNumber) ||
+    (value.nextAutoNumber as number) <= 0
+  ) {
+    fail(`${path}.nextAutoNumber`, "ожидалось целое число больше нуля");
+  }
+  if (!Array.isArray(value.entries)) fail(`${path}.entries`, "ожидался массив");
+
+  const names = new Set<string>();
+  const ids = new Set<string>();
+  let maxAutoNumber = 0;
+  value.entries.forEach((entry, index) => {
+    const entryPath = `${path}.entries[${index}]`;
+    assertRecord(entry, entryPath);
+    assertNonEmptyString(entry.name, `${entryPath}.name`);
+    assertNonEmptyString(entry.normalizedName, `${entryPath}.normalizedName`);
+    assertNonEmptyString(entry.productId, `${entryPath}.productId`);
+    const normalized = entry.name
+      .normalize("NFKC")
+      .trim()
+      .replace(/\s+/gu, " ")
+      .toLowerCase();
+    if (entry.normalizedName !== normalized) {
+      fail(`${entryPath}.normalizedName`, "не соответствует name");
+    }
+    if (names.has(entry.normalizedName)) {
+      fail(`${entryPath}.normalizedName`, "повторяющееся имя");
+    }
+    names.add(entry.normalizedName);
+    const match = /^auto-(\d+)$/iu.exec(entry.productId);
+    if (!match) fail(`${entryPath}.productId`, "ожидался ID вида auto-NNN");
+    if (ids.has(entry.productId.toLowerCase())) {
+      fail(`${entryPath}.productId`, "повторяющийся ID");
+    }
+    ids.add(entry.productId.toLowerCase());
+    maxAutoNumber = Math.max(maxAutoNumber, Number(match[1]));
+  });
+
+  if ((value.nextAutoNumber as number) <= maxAutoNumber) {
+    fail(
+      `${path}.nextAutoNumber`,
+      "должно быть больше всех выданных auto-ID"
+    );
+  }
 }
 
 function assertRawItem(value: unknown, path: string): void {
@@ -163,6 +220,12 @@ function assertProducts(value: unknown): void {
 
 function assertMoney(value: unknown): void {
   assertRecord(value, "money");
+  if (value.pendingManual !== undefined && !Array.isArray(value.pendingManual)) {
+    fail("money.pendingManual", "ожидался массив");
+  }
+  if (value.deposits !== undefined && !Array.isArray(value.deposits)) {
+    fail("money.deposits", "ожидался массив");
+  }
   const pending = value.pendingManual ?? [];
   const deposits = value.deposits ?? [];
   if (!Array.isArray(pending)) fail("money.pendingManual", "ожидался массив");
@@ -252,5 +315,14 @@ export function assertPublishedDataBundle(
   assertProducts(value.products);
   assertMoney(value.money);
   assertMeta(value.meta);
+  if (value.productIdRegistry !== undefined) {
+    assertProductIdRegistry(value.productIdRegistry);
+  }
+  if (
+    value.registryBaseVersion !== undefined &&
+    value.registryBaseVersion !== null
+  ) {
+    assertNonEmptyString(value.registryBaseVersion, "bundle.registryBaseVersion");
+  }
   assertCrossReferences(value);
 }

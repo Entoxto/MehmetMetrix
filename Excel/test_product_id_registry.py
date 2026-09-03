@@ -66,6 +66,29 @@ class ProductIdRegistryTests(unittest.TestCase):
         }
         self.assertTrue(any("уже используется" in error for error in validate_product_id_registry(data)))
 
+    def test_published_snapshot_survives_clean_checkout_and_continues_numbering(self):
+        # Machine A allocates a model and publishes the complete registry state.
+        machine_a = ProductIdRegistry.empty()
+        catalog_a = []
+        first_id = self.add_product(machine_a, catalog_a, "Куртка из меха — общая")
+        second_id = self.add_product(machine_a, catalog_a, "Пальто из кожи — A", 3)
+        published_snapshot = machine_a.to_data()
+
+        # Machine B starts with no local history and hydrates exactly that
+        # published snapshot before parsing its reordered sheet.
+        machine_b = ProductIdRegistry(published_snapshot)
+        catalog_b = []
+        self.assertEqual(
+            self.add_product(machine_b, catalog_b, "  КУРТКА   из меха — ОБЩАЯ  "),
+            first_id,
+        )
+        self.assertEqual(
+            self.add_product(machine_b, catalog_b, "Пальто из кожи — A", 3),
+            second_id,
+        )
+        next_id = self.add_product(machine_b, catalog_b, "Новое изделие из кожи — B", 4)
+        self.assertEqual(next_id, "auto-003")
+
 
 if __name__ == "__main__":
     unittest.main()

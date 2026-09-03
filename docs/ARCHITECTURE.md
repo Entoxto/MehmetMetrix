@@ -114,7 +114,8 @@ lib → data/types/Netlify Blobs
 - `shipments.json`, `products.json`, `meta.json` генерируются;
 - `money.json` редактируется вручную;
 - `product-id-registry.json` хранит постоянную техническую идентичность товаров
-  и не входит в runtime-пакет;
+  и публикуется как необязательное техническое поле versioned bundle. Старый
+  bundle без поля поддерживается для миграции, а UI runtime его не использует;
 - `README.md` фиксирует правила источника правды.
 
 ### `Excel/`
@@ -159,17 +160,18 @@ Query-параметр `batch` сохранён как legacy-контракт �
 
 ## Поток данных
 
-1. Google Sheet при необходимости скачивается как XLSX.
-2. `Excel/parse_excel.py` читает лист «Поставки».
-3. Парсер строит поставки и каталог в памяти.
-4. Актуальные price/cost вычисляются из поставок.
-5. Generated data валидируются до записи.
-6. JSON сохраняются атомарно.
-7. После отдельного подтверждения `scripts/publish_data.mjs` объединяет JSON с
-   ручным `money.json`, хеширует и отправляет пакет в защищённый API.
-8. API сохраняет неизменяемую версию и атомарно переключает `current` в
+1. `scripts/publish_data.mjs` получает текущую версию и authoritative registry.
+2. Google Sheet при необходимости скачивается как XLSX.
+3. `Excel/parse_excel.py` читает лист «Поставки» с этой registry-копией.
+4. Парсер строит поставки и каталог в памяти.
+5. Актуальные price/cost вычисляются из поставок.
+6. Generated data валидируются до записи.
+7. JSON сохраняются атомарно.
+8. После отдельного подтверждения `scripts/publish_data.mjs` объединяет JSON,
+   registry и ручной `money.json`, хеширует и отправляет пакет в защищённый API.
+9. API сохраняет неизменяемую версию и атомарно переключает `current` в
    Netlify Blobs.
-9. `lib/dataSource.ts` читает `current`, а `lib/shipments.ts` и `lib/money.ts`
+10. `lib/dataSource.ts` читает `current`, а `lib/shipments.ts` и `lib/money.ts`
    строят вычисленные модели.
 
 Контракт импорта описан в `docs/EXCEL_PIPELINE.md`, публикации — в

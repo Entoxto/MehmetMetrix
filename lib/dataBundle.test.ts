@@ -18,6 +18,54 @@ describe("assertPublishedDataBundle", () => {
     expect(() => assertPublishedDataBundle(validBundle)).not.toThrow();
   });
 
+  it("accepts a migrated bundle carrying the technical registry", () => {
+    expect(() =>
+      assertPublishedDataBundle({
+        ...validBundle,
+        registryBaseVersion: "20260813T170000Z-222222222222",
+        productIdRegistry: {
+          schemaVersion: 1,
+          nextAutoNumber: 2,
+          entries: [
+            {
+              name: "Жакет",
+              normalizedName: "жакет",
+              productId: "auto-001",
+            },
+          ],
+        },
+      })
+    ).not.toThrow();
+  });
+
+  it("keeps legacy bundles without a registry readable", () => {
+    expect(() => assertPublishedDataBundle(validBundle)).not.toThrow();
+  });
+
+  it("rejects a malformed technical registry", () => {
+    expect(() =>
+      assertPublishedDataBundle({
+        ...validBundle,
+        productIdRegistry: {
+          schemaVersion: 1,
+          nextAutoNumber: 2,
+          entries: [
+            {
+              name: "Жакет",
+              normalizedName: "жакет",
+              productId: "auto-001",
+            },
+            {
+              name: "Пальто",
+              normalizedName: "пальто",
+              productId: "auto-001",
+            },
+          ],
+        },
+      })
+    ).toThrow("повторяющийся ID");
+  });
+
   it("accepts the shared nested fixture", () => {
     expect(() => assertPublishedDataBundle(sharedFixtures.validBundle)).not.toThrow();
   });

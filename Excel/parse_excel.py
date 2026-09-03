@@ -4,6 +4,7 @@
 """
 
 import sys
+import os
 from pathlib import Path
 from datetime import datetime, timezone
 from catalog_pricing import apply_latest_prices
@@ -39,7 +40,12 @@ def parse_excel() -> bool:
     products_file = script_dir.parent / "data" / "products.json"
     shipments_file = script_dir.parent / "data" / "shipments.json"
     meta_file = script_dir.parent / "data" / "meta.json"
-    registry_file = script_dir.parent / "data" / "product-id-registry.json"
+    registry_file = Path(
+        os.environ.get(
+            "MEHMET_PRODUCT_ID_REGISTRY_PATH",
+            str(script_dir.parent / "data" / "product-id-registry.json"),
+        )
+    )
 
     if not excel_file.exists():
         print(f"❌ Excel файл не найден: {excel_file}")

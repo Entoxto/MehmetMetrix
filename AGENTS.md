@@ -72,11 +72,13 @@ If you need a production build, stop any active dev server first. A running dev 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
 - `data/product-id-registry.json` is the durable technical source for stable
-  product IDs. It is validated but not published in the runtime bundle; never
-  remove entries or reuse an issued ID for another normalized product name.
+  product IDs. The publisher refreshes it from the latest authoritative
+  versioned Blobs bundle and publishes it atomically with the runtime files;
+  legacy bundles may omit it during migration. Never remove entries or reuse
+  an issued ID for another normalized product name.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
-- The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files; repository JSON remains the publish input and build fallback.
+- The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files and the optional technical registry; UI rendering never depends on the registry.
 - Do not read or mutate the Google Sheets `Оплаты` tab as part of data publishing.
 
 ## Data Publication

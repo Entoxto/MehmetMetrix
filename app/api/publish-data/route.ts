@@ -2,6 +2,10 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { assertPublishedDataBundle } from "@/lib/dataBundle";
 import {
+  registryHistoryConflict,
+  registryPublicationConflict,
+} from "@/lib/publicationRegistry";
+import {
   CURRENT_DATA_KEY,
   openDataStoreForPublishing,
 } from "@/lib/dataSource";
@@ -106,6 +110,47 @@ function metadataFor(bundle: PublishedDataBundle) {
   };
 }
 
+async function readCurrentBundle() {
+  const current = await openDataStoreForPublishing().get(CURRENT_DATA_KEY, {
+    consistency: "strong",
+    type: "json",
+  });
+  if (current === null) return null;
+  assertPublishedDataBundle(current);
+  return current;
+}
+
+/**
+ * Returns only the publication state needed by the next parser. The registry
+ * is intentionally optional so a pre-migration production bundle remains
+ * readable until the first bundle created by this version of the publisher.
+ */
+export async function GET(request: Request) {
+  if (!process.env.MEHMET_PUBLISH_TOKEN?.trim()) {
+    return NextResponse.json(
+      { error: "На сервере не настроен MEHMET_PUBLISH_TOKEN" },
+      { status: 503 }
+    );
+  }
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Недостаточно прав" }, { status: 401 });
+  }
+
+  try {
+    const current = await readCurrentBundle();
+    return NextResponse.json(
+      {
+        version: current?.version ?? null,
+        productIdRegistry: current?.productIdRegistry ?? null,
+      },
+      { headers: { "Cache-Control": "no-store" } }
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Неизвестная ошибка";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
+
 export async function POST(request: Request) {
   if (!process.env.MEHMET_PUBLISH_TOKEN?.trim()) {
     return NextResponse.json(
@@ -139,6 +184,7 @@ export async function POST(request: Request) {
           products: bundle.products,
           money: bundle.money,
           meta: bundle.meta,
+          productIdRegistry: bundle.productIdRegistry,
         })
       )
       .digest("hex");
@@ -155,6 +201,31 @@ export async function POST(request: Request) {
     const currentBefore = await store.getMetadata(CURRENT_DATA_KEY, {
       consistency: "strong",
     });
+    const currentBundle = currentBefore ? await readCurrentBundle() : null;
+    const registryConflict = registryPublicationConflict({
+      currentVersion: currentBundle?.version ?? null,
+      currentHasRegistry: currentBundle?.productIdRegistry !== undefined,
+      incomingBaseVersion: bundle.registryBaseVersion,
+      incomingHasRegistry: bundle.productIdRegistry !== undefined,
+    });
+    if (registryConflict) {
+      return NextResponse.json(
+        { error: registryConflict, currentVersion: currentBundle?.version ?? null },
+        { status: 409 }
+      );
+    }
+    if (currentBundle?.productIdRegistry && bundle.productIdRegistry) {
+      const historyConflict = registryHistoryConflict(
+        currentBundle.productIdRegistry,
+        bundle.productIdRegistry
+      );
+      if (historyConflict) {
+        return NextResponse.json(
+          { error: historyConflict, currentVersion: currentBundle.version },
+          { status: 409 }
+        );
+      }
+    }
     const serialized = JSON.stringify(bundle);
     const metadata = metadataFor(bundle);
     const versionKey = `versions/${bundle.version}`;
