@@ -25,8 +25,6 @@ export interface ShipmentRawItem {
   note?: string;
   paidPreviously?: boolean;
   noPayment?: boolean;
-  inTransit?: boolean;
-  showStatusTag?: boolean;
 }
 
 export interface ShipmentConfig {
@@ -37,7 +35,6 @@ export interface ShipmentConfig {
   eta?: string;
   receivedDate?: string;
   year?: number;  // Год партии (если не указан, определяется из receivedDate или текущий год)
-  groupByPayment?: boolean;
   rawItems: readonly ShipmentRawItem[];
 }
 

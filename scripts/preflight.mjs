@@ -4,16 +4,6 @@ import path from "node:path";
 
 const rootDir = process.cwd();
 const localNodeDir = path.join(rootDir, ".tools", "node");
-const bundledPythonDir = process.env.USERPROFILE
-  ? path.join(
-      process.env.USERPROFILE,
-      ".cache",
-      "codex-runtimes",
-      "codex-primary-runtime",
-      "dependencies",
-      "python"
-    )
-  : null;
 const localNpmPath = path.join(localNodeDir, process.platform === "win32" ? "npm.cmd" : "npm");
 const npmCommand = existsSync(localNpmPath) ? localNpmPath : "npm";
 const npmLabel = existsSync(localNpmPath) ? path.relative(rootDir, localNpmPath) : "npm";
@@ -22,10 +12,6 @@ const extraPathDirs = [];
 
 if (existsSync(localNodeDir)) {
   extraPathDirs.push(localNodeDir);
-}
-
-if (bundledPythonDir && existsSync(path.join(bundledPythonDir, "python.exe"))) {
-  extraPathDirs.push(bundledPythonDir);
 }
 
 if (extraPathDirs.length > 0) {

@@ -65,17 +65,24 @@ describe("buildMoneyOverview", () => {
     });
 
     expect(result.pending.total).toBe(250);
+    expect(result.pending.knownTotal).toBe(250);
+    expect(result.pending.unknownPricePositions).toBe(0);
+    expect(result.pending.unknownPriceUnits).toBe(0);
     expect(result.pending.items).toEqual([
       {
         id: "shipment-2025-7",
         title: "Оплата за поставку №7",
         amount: 200,
         href: "/work?batch=shipment-2025-7",
+        unknownPricePositions: 0,
+        unknownPriceUnits: 0,
       },
       {
         id: "manual-1",
         title: "Ручная доплата",
         amount: 50,
+        unknownPricePositions: 0,
+        unknownPriceUnits: 0,
       },
     ]);
     expect(result.deposits.total).toBe(125);
@@ -108,5 +115,78 @@ describe("buildMoneyOverview", () => {
         pendingManual: [{ title: "Некорректная строка", amount: 0 }],
       })
     ).toThrow("money.pendingManual[0].amount");
+  });
+
+  it("показывает известную часть и считает физические единицы без цены", () => {
+    const result = buildMoneyOverview(
+      [
+        createShipment({
+          positions: [
+            createPosition({ id: "known", qty: 2, price: 100, sum: 200 }),
+            createPosition({ id: "unknown", qty: 5, price: null, sum: null }),
+          ],
+        }),
+      ],
+      {}
+    );
+
+    expect(result.pending).toMatchObject({
+      total: 200,
+      knownTotal: 200,
+      unknownPricePositions: 1,
+      unknownPriceUnits: 5,
+    });
+    expect(result.pending.items[0]).toMatchObject({
+      amount: 200,
+      unknownPricePositions: 1,
+      unknownPriceUnits: 5,
+    });
+  });
+
+  it("не превращает полностью неизвестный долг в нулевую сумму", () => {
+    const result = buildMoneyOverview(
+      [
+        createShipment({
+          positions: [
+            createPosition({ id: "unknown-1", qty: 2, price: null, sum: null }),
+            createPosition({ id: "unknown-2", qty: 3, price: null, sum: null }),
+          ],
+        }),
+      ],
+      {}
+    );
+
+    expect(result.pending.total).toBeNull();
+    expect(result.pending.knownTotal).toBe(0);
+    expect(result.pending.unknownPricePositions).toBe(2);
+    expect(result.pending.unknownPriceUnits).toBe(5);
+    expect(result.pending.items[0]?.amount).toBeNull();
+  });
+
+  it("не считает позицию без цены, если она не подлежит оплате", () => {
+    const result = buildMoneyOverview(
+      [
+        createShipment({
+          positions: [
+            createPosition({
+              id: "non-payable",
+              qty: 9,
+              price: null,
+              sum: null,
+              isPayable: false,
+            }),
+          ],
+        }),
+      ],
+      {}
+    );
+
+    expect(result.pending).toEqual({
+      total: 0,
+      knownTotal: 0,
+      unknownPricePositions: 0,
+      unknownPriceUnits: 0,
+      items: [],
+    });
   });
 });

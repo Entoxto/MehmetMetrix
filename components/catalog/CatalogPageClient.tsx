@@ -43,7 +43,7 @@ export const CatalogPageClient = ({ products, updatedAt }: CatalogPageClientProp
     if (!selectedCategory) return [];
 
     return products
-      .filter((product) => product.category === selectedCategory && product.inStock)
+      .filter((product) => product.category === selectedCategory)
       .sort((a, b) => a.name.localeCompare(b.name, "ru", { sensitivity: "base" }));
   }, [products, selectedCategory]);
 

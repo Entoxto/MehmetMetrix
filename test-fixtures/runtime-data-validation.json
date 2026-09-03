@@ -1,0 +1,55 @@
+{
+  "validBundle": {
+    "schemaVersion": 1,
+    "version": "20260903T120000Z-111111111111",
+    "publishedAt": "2026-09-03T12:00:00.000Z",
+    "sourceHash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "shipments": [
+      {
+        "id": "shipment-2026-1",
+        "title": "Поставка №1",
+        "status": "В производстве 🛠️",
+        "year": 2026,
+        "rawItems": [
+          {
+            "productId": "auto-001",
+            "overrideName": "Жакет из кожи — тестовый (XS-1)",
+            "sizes": { "xs": 1 },
+            "price": 100,
+            "sample": false
+          }
+        ]
+      }
+    ],
+    "products": {
+      "products": [
+        {
+          "id": "auto-001",
+          "name": "Жакет из кожи — тестовый",
+          "category": "Кожа",
+          "excelRows": [2],
+          "sizes": ["xs"],
+          "materials": { "outer": "100% кожа" },
+          "price": 100
+        }
+      ]
+    },
+    "money": {
+      "pendingManual": [{ "title": "Доплата", "amount": 10 }],
+      "deposits": [{ "lines": ["Депозит"], "amount": 20 }]
+    },
+    "meta": { "updatedAt": "2026-09-03T11:59:00.000Z", "source": "excel" }
+  },
+  "invalidCases": [
+    { "name": "boolean shipment year", "path": ["shipments", 0, "year"], "value": true },
+    { "name": "boolean size count", "path": ["shipments", 0, "rawItems", 0, "sizes", "xs"], "value": true },
+    { "name": "quantity override alongside sizes", "path": ["shipments", 0, "rawItems", 0, "quantityOverride"], "value": 1 },
+    { "name": "boolean raw price", "path": ["shipments", 0, "rawItems", 0, "price"], "value": true },
+    { "name": "array raw status", "path": ["shipments", 0, "rawItems", 0, "status"], "value": [] },
+    { "name": "boolean excel row", "path": ["products", "products", 0, "excelRows", 0], "value": true },
+    { "name": "object product sizes", "path": ["products", "products", 0, "sizes"], "value": { "xs": 1 } },
+    { "name": "numeric material", "path": ["products", "products", 0, "materials", "outer"], "value": 100 },
+    { "name": "boolean manual amount", "path": ["money", "pendingManual", 0, "amount"], "value": true },
+    { "name": "wrong meta source", "path": ["meta", "source"], "value": "sheet" }
+  ]
+}

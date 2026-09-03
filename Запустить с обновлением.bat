@@ -8,7 +8,6 @@ pushd "%~dp0" >nul || (
 )
 
 if exist "%~dp0.tools\node\npm.cmd" set "PATH=%~dp0.tools\node;%PATH%"
-if exist "%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe" set "PATH=%USERPROFILE%\.cache\codex-runtimes\codex-primary-runtime\dependencies\python;%PATH%"
 
 echo ========================================
 echo Starting Mehmet Metrics with data update
@@ -16,39 +15,31 @@ echo ========================================
 echo.
 
 echo [1/5] Downloading sheet from Google Docs...
-pushd "Excel" >nul
-python fetch_google_sheet.py
+call npm run data:fetch
 if %ERRORLEVEL% NEQ 0 (
-    popd >nul
     echo.
     echo ERROR: failed to download sheet from Google Docs
     echo        refusing to parse stale local Excel data
     goto :fail
 )
-popd >nul
 echo.
 
 echo [2/5] Parsing Excel file...
-pushd "Excel" >nul
-python parse_excel.py --auto
+call npm run data:parse
 if %ERRORLEVEL% NEQ 0 (
-    popd >nul
     echo.
     echo ERROR: Excel parsing failed
     goto :fail
 )
-popd >nul
 echo.
 
 echo [3/5] Synchronizing JPG sources and WebP variants...
-pushd "scripts" >nul
-python convert_to_webp.py --auto
+call npm run images:sync
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo WARNING: image synchronization failed
     echo          continuing to start the project...
 )
-popd >nul
 echo.
 
 echo [4/5] Running fast startup checks...

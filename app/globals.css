@@ -52,6 +52,16 @@ body {
   transform: translateY(0) scale(0.995);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .mm-money-details-row:hover {
+    background: rgba(255, 255, 255, 0.035);
+  }
+}
+
+.mm-money-details-row:focus-within {
+  background: rgba(244, 195, 77, 0.07);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

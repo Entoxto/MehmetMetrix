@@ -5,8 +5,10 @@ import type { Shipment } from "@/types/shipment";
 export interface MoneyStatusItem {
   id: string;
   title: string;
-  amount: number;
+  amount: number | null;
   href?: string;
+  unknownPricePositions: number;
+  unknownPriceUnits: number;
 }
 
 export interface MoneyDepositItem {
@@ -17,7 +19,10 @@ export interface MoneyDepositItem {
 
 export interface MoneyOverview {
   pending: {
-    total: number;
+    total: number | null;
+    knownTotal: number;
+    unknownPricePositions: number;
+    unknownPriceUnits: number;
     items: MoneyStatusItem[];
   };
   deposits: {
@@ -64,6 +69,8 @@ function readManualPendingItems(config: MoneyConfig): MoneyStatusItem[] {
       id: readOptionalText(item.id) ?? `pending-manual-${index}`,
       title,
       amount: readFiniteAmount(item.amount, `money.pendingManual[${index}].amount`),
+      unknownPricePositions: 0,
+      unknownPriceUnits: 0,
     };
   });
 }
@@ -93,20 +100,34 @@ export function buildMoneyOverview(
   config: MoneyConfig
 ): MoneyOverview {
   const shipmentPendingItems: MoneyStatusItem[] = getPendingShipmentSummaries(shipments).map(
-    ({ id, title, amount }) => ({
+    ({ id, title, amount, unknownPricePositions, unknownPriceUnits }) => ({
       id,
       title,
       amount,
       href: `/work?batch=${id}`,
+      unknownPricePositions,
+      unknownPriceUnits,
     })
   );
 
   const pendingItems = [...shipmentPendingItems, ...readManualPendingItems(config)];
   const depositItems = readDepositItems(config);
+  const knownTotal = pendingItems.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+  const unknownPricePositions = pendingItems.reduce(
+    (sum, item) => sum + item.unknownPricePositions,
+    0
+  );
+  const unknownPriceUnits = pendingItems.reduce(
+    (sum, item) => sum + item.unknownPriceUnits,
+    0
+  );
 
   return {
     pending: {
-      total: pendingItems.reduce((sum, item) => sum + item.amount, 0),
+      total: knownTotal > 0 || unknownPricePositions === 0 ? knownTotal : null,
+      knownTotal,
+      unknownPricePositions,
+      unknownPriceUnits,
       items: pendingItems,
     },
     deposits: {

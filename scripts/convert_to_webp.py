@@ -222,7 +222,7 @@ def main() -> int:
 
     if not jpg_dir.exists():
         print(f"❌ Папка не найдена: {jpg_dir}")
-        print("💡 Сначала запустите scripts/migrate_images.py для перемещения файлов")
+        print("💡 Создайте папку и добавьте в неё исходные JPG/JPEG каталога")
         return 1
 
     image_files = sorted(

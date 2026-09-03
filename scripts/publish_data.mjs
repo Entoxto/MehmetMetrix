@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { resolvePython, pythonArgs } from "./python_runtime.mjs";
 
 const rootDir = process.cwd();
 const dryRun = process.argv.includes("--dry-run");
@@ -47,39 +48,6 @@ function run(executable, args, label) {
   if (result.status !== 0) {
     throw new Error(`${label}: команда завершилась с кодом ${result.status}`);
   }
-}
-
-function resolvePython() {
-  const bundledPython = process.env.USERPROFILE
-    ? path.join(
-        process.env.USERPROFILE,
-        ".cache",
-        "codex-runtimes",
-        "codex-primary-runtime",
-        "dependencies",
-        "python",
-        process.platform === "win32" ? "python.exe" : "bin/python3"
-      )
-    : null;
-  const candidates = [
-    process.env.MEHMET_PYTHON,
-    bundledPython,
-    process.platform === "win32" ? "python" : "python3",
-    "python",
-  ].filter(Boolean);
-
-  for (const candidate of new Set(candidates)) {
-    const result = spawnSync(candidate, ["-c", "import pandas, openpyxl"], {
-      cwd: rootDir,
-      encoding: "utf8",
-      shell: false,
-    });
-    if (result.status === 0) return candidate;
-  }
-
-  throw new Error(
-    "Не найден Python с pandas и openpyxl. Укажите подходящий путь в MEHMET_PYTHON."
-  );
 }
 
 function readJson(relativePath) {
@@ -277,12 +245,12 @@ async function publish(bundle) {
 
 async function main() {
   loadLocalPublishEnv();
-  const python = resolvePython();
+  const python = resolvePython({ rootDir, requiredModules: ["pandas", "openpyxl"] });
 
   if (dryRun) {
     run(
-      python,
-      ["Excel/validate_generated_data.py"],
+      python.command,
+      pythonArgs(python, ["Excel/validate_generated_data.py"]),
       "Проверка существующих JSON"
     );
     run(
@@ -291,10 +259,14 @@ async function main() {
       "Проверка изображений"
     );
   } else {
-    run(python, ["Excel/fetch_google_sheet.py"], "Загрузка Google Sheet");
     run(
-      python,
-      ["Excel/parse_excel.py", "--auto"],
+      python.command,
+      pythonArgs(python, ["Excel/fetch_google_sheet.py"]),
+      "Загрузка Google Sheet"
+    );
+    run(
+      python.command,
+      pythonArgs(python, ["Excel/parse_excel.py", "--auto"]),
       "Преобразование XLSX в JSON"
     );
     run(

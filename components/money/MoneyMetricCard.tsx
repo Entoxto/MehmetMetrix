@@ -20,13 +20,13 @@ interface MoneyDetailsConfig<TItem> {
   amountColor: string;
   getKey: (item: TItem) => string;
   renderLabel: (item: TItem) => ReactNode;
-  getAmount: (item: TItem) => number;
+  renderAmount: (item: TItem) => ReactNode;
 }
 
 interface MoneyMetricCardProps<TItem> {
   animationIndex: number;
   label: string;
-  total: number;
+  total: number | null;
   summary: string;
   amountColor: string;
   isExpanded: boolean;
@@ -110,7 +110,7 @@ export const MoneyMetricCard = <TItem,>({
             weight="fill"
             style={{
               color: COLORS.text.secondary,
-              transition: "transform 0.3s ease",
+              transition: MOTION.interactiveTransition,
               transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
               flexShrink: 0,
             }}
@@ -125,7 +125,7 @@ export const MoneyMetricCard = <TItem,>({
           margin: 0,
         }}
       >
-        {formatCurrency(total)}
+        {total === null ? "Цена уточняется" : formatCurrency(total)}
       </p>
       <p
         style={{
@@ -143,7 +143,7 @@ export const MoneyMetricCard = <TItem,>({
         amountColor={details.amountColor}
         getKey={details.getKey}
         renderLabel={details.renderLabel}
-        getAmount={details.getAmount}
+        renderAmount={details.renderAmount}
         isMobile={isMobile}
         isDesktop={isDesktop}
         bodyTypography={bodyTypography}

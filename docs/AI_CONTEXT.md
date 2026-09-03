@@ -53,6 +53,12 @@ The same manual file is published inside the atomic runtime bundle. The Google
 Sheets `Оплаты` tab is not part of this flow and must not be edited by the
 publisher.
 
+`data/product-id-registry.json` is the durable technical source for product
+identity. The parser normalizes names, preserves registry entries for models
+missing from the current sheet, and allocates monotonically increasing
+`auto-NNN` values. The registry is validated but is not published in the
+runtime bundle.
+
 Administrative text and voice commands are routed through
 `admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the
 confirmed operator defaults for adding or moving positions, changing sizes,
@@ -64,12 +70,19 @@ of duplicating them in this domain overview.
 - Statuses are text-first. Do not replace them with enum-only logic unless you preserve the original Excel text.
 - Payment visibility depends on `isPayable` and the position status. A position without its own status inherits the shipment status; an explicit position status always decides its payment visibility.
 - Manual payment rows from `money.json.pendingManual` are additive and should stay separate from generated shipment-derived pending items.
+- Payable positions with positive quantity and no price remain visible in
+  Money. Keep their position count and physical unit count separate from the
+  known dollar amount; an entirely unknown debt must never appear as `$0`.
 - Excel column J (`Курс списания`) guards cost import: import column N as `cost`
   only when J is positive. A vertically merged J cell applies its top-left
   value to every covered item row. Blank, zero, or negative J means the final
   cost is still unknown and must not update catalog cost.
 - Size keys in shipment `rawItems.sizes` are strict data: `xs`, `s`, `m`, `l`, `xl`, `OneSize`. Unknown size keys should fail validation instead of falling back to `S`.
 - A quantity-only suffix such as `(10 шт.)` in the last bracket of column C means the total is known but sizes are not assigned. The parser emits `sizesUnknown: true` and `quantityOverride: 10`; formula G must calculate the same value and must not be replaced with a manual number. The legacy `(на уточнении)` + G form remains read-compatible only.
+- For an ordinary size grid, formula G must exactly equal the sum of the size
+  counts. `quantityOverride` is valid only together with `sizesUnknown`; plain
+  samples without a grid fall back to one item. Legacy `(образец-N)` is read as
+  an unknown-size total, while new rows should use `(N шт., образец)`.
 - Every source position represents at least one physical item. With no sizes and no explicit quantity, the TypeScript adapter and the G formula use `1`.
 - When an operator adds a repeated position and the user does not state a
   price, column H inherits the nearest previous price for the exact cleaned
@@ -95,6 +108,9 @@ of duplicating them in this domain overview.
   but blank, zero, or negative J keeps K, N, O, and shipment total Q blank.
   Blank, zero, or negative M also leaves N and O blank; do not add zero
   sentinels to M.
+- The parser inspects formulas with `data_only=False`: G, I, K, L, N and O are
+  required formulas on every position row, and Q is required at every shipment
+  start. A blank or manually entered replacement is a hard import error.
 - Column P has two intentional input types. A real date means the product was
   received; free-form text such as an expected dispatch or arrival window is
   ETA copy shown in the app. With dates only, the parser uses the latest date
@@ -185,11 +201,14 @@ of duplicating them in this domain overview.
 - `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
 - Netlify uses `npm run preflight` as its build command, so a deploy cannot pass by running only `next build`; run the same command locally first for faster feedback.
 - The live site is deployed by Netlify. Git push updates code, rules, and static photos; `npm run publish:data` updates the table/finance bundle without rebuilding.
-- If plain `npm` is unavailable on Windows, prepend the bundled runtime with `$env:PATH = "$PWD\.tools\node;$env:PATH"`; `scripts/preflight.mjs` also adds the bundled Codex Python runtime for nested validation steps when it exists.
+- If plain `npm` is unavailable on Windows, prepend the bundled runtime with `$env:PATH = "$PWD\.tools\node;$env:PATH"`. Python npm-scripts use the shared launcher: `MEHMET_PYTHON`, then local/bundled runtimes, then system Python; missing modules fail with an install hint for `requirements.txt`.
 - Agent rules are kept in editor-neutral docs (`AGENTS.md`, this file, and README files); do not reintroduce stale editor-specific rule files.
 - Shared visual tokens live in `constants/styles.ts`.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; the server route supplies config from the same published bundle as shipments.
+- `lib/dataBundle.ts` validates nested runtime fields before any published
+  bundle reaches UI. Python and TypeScript validators share negative fixtures
+  for malformed nested values.
 - `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
 - `lib/dataSource.ts` is the only runtime entrypoint for the four-file bundle. On Netlify it strongly reads Blob key `current` on every data-backed request and falls back to the build snapshot if Blob data is missing or invalid.
 - Routes live in `app/`; screen components are grouped by owner in

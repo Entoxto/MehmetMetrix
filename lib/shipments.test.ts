@@ -14,7 +14,6 @@ const products: Product[] = [
     category: "Кожа",
     excelRows: [2],
     sizes: [],
-    inStock: true,
   },
 ];
 
@@ -99,12 +98,16 @@ describe("getPendingShipmentSummaries", () => {
         title: "Оплата за поставку №1",
         amount: 200,
         unpaidUnits: 2,
+        unknownPricePositions: 0,
+        unknownPriceUnits: 0,
       },
       {
         id: "shipment-2025-2",
         title: "Оплата за поставку №2",
         amount: 300,
         unpaidUnits: 3,
+        unknownPricePositions: 0,
+        unknownPriceUnits: 0,
       },
     ]);
   });

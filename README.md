@@ -27,6 +27,11 @@ npm run dev
 $env:PATH = "$PWD\.tools\node;$env:PATH"
 ```
 
+Python-команды запускаются через `scripts/run_python.mjs`: сначала учитывается
+`MEHMET_PYTHON`, затем `.venv` / локальный runtime / bundled Codex Python и
+только после этого системный Python. Для внешнего окружения установите
+зависимости один раз: `python -m pip install -r requirements.txt`.
+
 Также доступны пользовательские Windows-сценарии:
 
 - `Запустить проект.bat` — fast preflight и dev server без обновления данных;
@@ -57,6 +62,9 @@ $env:PATH = "$PWD\.tools\node;$env:PATH"
 | `npm run test:images` | Регрессии синхронизации JPG → WebP |
 | `npm run validate:data` | Проверка generated JSON и ручных финансов |
 | `npm run validate:images` | Проверка фото, полноразмерных и карточных WebP |
+| `npm run data:fetch` | Скачать актуальный XLSX |
+| `npm run data:parse` | Локально распарсить XLSX и обновить generated JSON |
+| `npm run images:sync` | Синхронизировать JPG/JPEG → WebP |
 | `npm run publish:data:dry-run` | Проверка локального пакета без внешней записи |
 | `npm run publish:data` | Явная публикация свежей таблицы и `money.json` без rebuild |
 | `npm run preflight:fast` | Быстрая проверка данных и изображений |
@@ -145,6 +153,11 @@ Excel / Google Sheet — источник правды для:
 резервным снимком последнего deploy, но production-приложение обычно читает
 последнюю явно опубликованную версию из Netlify Blobs.
 
+`data/product-id-registry.json` — отдельный технический источник стабильных
+`productId`. Он не входит в runtime-пакет, не пересобирается из порядка строк и
+сохраняет записи моделей, временно исчезнувших из таблицы. Не удаляйте и не
+переназначайте его записи вручную.
+
 `data/money.json` редактируется вручную:
 
 - `deposits` — депозиты и предоплаты;
@@ -160,9 +173,9 @@ Excel / Google Sheet — источник правды для:
 Локальная подготовка без изменения работающего приложения:
 
 ```bash
-python Excel/fetch_google_sheet.py
-python Excel/parse_excel.py --auto
-python scripts/convert_to_webp.py --auto
+npm run data:fetch
+npm run data:parse
+npm run images:sync
 npm run preflight:fast
 ```
 
@@ -211,6 +224,8 @@ npm run publish:data
 - статусы сохраняются текстом из Excel 1:1;
 - пустой статус позиции наследует статус поставки;
 - `isPayable` определяет участие позиции в финансовых расчётах;
+- Money отдельно показывает известную сумму и количество позиций/физических
+  единиц без цены; полностью неизвестный долг не отображается как `$0`;
 - неизвестные размеры и категории останавливают импорт;
 - `sample` не принуждает количество к `1`;
 - cost из колонки N используется только при положительном курсе в J;
@@ -243,12 +258,12 @@ public/images/products/webp/card/  облегчённые WebP для карто
    которых больше нет исходника.
 
 ```bash
-python scripts/convert_to_webp.py --auto
+npm run images:sync
 npm run validate:images
 ```
 
 Если фото удалено без полного обновления данных, сначала запустите
-`python Excel/parse_excel.py --auto`: старый `photo` в generated
+`npm run data:parse`: старый `photo` в generated
 `data/products.json` должен также исчезнуть.
 
 Фотографии остаются статическими файлами и требуют Git push/deploy. Сервер

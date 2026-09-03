@@ -7,10 +7,12 @@ from datetime import datetime
 from typing import Any, Dict, Iterable, List, Set
 
 from catalog_pricing import collect_latest_product_values
+from product_id_registry import normalize_product_name, validate_product_id_registry
 
 
 ALLOWED_PRODUCT_CATEGORIES: Set[str] = {"Мех", "Замша", "Кожа", "Экзотика"}
 ALLOWED_SIZE_KEYS: Set[str] = {"xs", "s", "m", "l", "xl", "OneSize"}
+ALLOWED_PRODUCT_SIZES: Set[str] = {"xs", "s", "m", "l", "xl", "OneSize"}
 
 
 def _is_number(value: Any) -> bool:
@@ -19,6 +21,10 @@ def _is_number(value: Any) -> bool:
 
 def _is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
+
+
+def _is_positive_int(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool) and value > 0
 
 
 def _validate_raw_item(
@@ -32,6 +38,10 @@ def _validate_raw_item(
     if not _is_non_empty_string(item.get("productId")):
         errors.append(f"{prefix}: отсутствует productId")
 
+    override_name = item.get("overrideName")
+    if override_name is not None and not _is_non_empty_string(override_name):
+        errors.append(f"{prefix}: overrideName должен быть непустой строкой")
+
     status = item.get("status")
     if status is not None and not _is_non_empty_string(status):
         errors.append(f"{prefix}: status должен быть непустой строкой")
@@ -43,6 +53,15 @@ def _validate_raw_item(
     under_question = item.get("underQuestion")
     if under_question is not None and not isinstance(under_question, bool):
         errors.append(f"{prefix}: underQuestion должен быть boolean")
+
+    for field_name in ("sample", "paidPreviously", "noPayment"):
+        value = item.get(field_name)
+        if value is not None and not isinstance(value, bool):
+            errors.append(f"{prefix}: {field_name} должен быть boolean")
+
+    note = item.get("note")
+    if note is not None and not _is_non_empty_string(note):
+        errors.append(f"{prefix}: note должен быть непустой строкой")
 
     sizes = item.get("sizes")
     if sizes is not None:
@@ -58,14 +77,20 @@ def _validate_raw_item(
                     errors.append(
                         f"{prefix}: неизвестный размер {size_key!r}; допустимо {sorted(ALLOWED_SIZE_KEYS)}"
                     )
-                if not isinstance(count, int) or count < 0:
+                if not isinstance(count, int) or isinstance(count, bool) or count < 0:
                     errors.append(f"{prefix}: размер {size_key!r} должен иметь целое количество >= 0")
 
     quantity_override = item.get("quantityOverride")
-    if quantity_override is not None and (not isinstance(quantity_override, int) or quantity_override <= 0):
+    if quantity_override is not None and not _is_positive_int(quantity_override):
         errors.append(f"{prefix}: quantityOverride должен быть целым числом > 0")
 
-    if sizes_unknown and (quantity_override is None or quantity_override <= 0):
+    if sizes is not None and quantity_override is not None:
+        errors.append(f"{prefix}: sizes и quantityOverride не могут быть одновременно")
+
+    if quantity_override is not None and sizes_unknown is not True:
+        errors.append(f"{prefix}: quantityOverride допустим только вместе с sizesUnknown")
+
+    if sizes_unknown and not _is_positive_int(quantity_override):
         errors.append(f"{prefix}: sizesUnknown требует положительного quantityOverride")
 
     price = item.get("price")
@@ -107,8 +132,13 @@ def validate_shipments(shipments: Any) -> List[str]:
             errors.append(f"{shipment_id}: отсутствует status")
 
         year = shipment.get("year")
-        if year is not None and not isinstance(year, int):
+        if year is not None and (not isinstance(year, int) or isinstance(year, bool)):
             errors.append(f"{shipment_id}: year должен быть целым числом")
+
+        for field_name in ("eta", "receivedDate"):
+            value = shipment.get(field_name)
+            if value is not None and not _is_non_empty_string(value):
+                errors.append(f"{shipment_id}: {field_name} должен быть непустой строкой")
 
         raw_items = shipment.get("rawItems")
         if not isinstance(raw_items, list):
@@ -160,7 +190,7 @@ def validate_products(products_data: Any) -> List[str]:
             errors.append(f"{product_id}: отсутствует name")
 
         category = product.get("category")
-        if category not in ALLOWED_PRODUCT_CATEGORIES:
+        if not isinstance(category, str) or category not in ALLOWED_PRODUCT_CATEGORIES:
             errors.append(
                 f"{product_id}: category должна быть одной из {sorted(ALLOWED_PRODUCT_CATEGORIES)}"
             )
@@ -185,19 +215,27 @@ def validate_products(products_data: Any) -> List[str]:
         sizes = product.get("sizes")
         if not isinstance(sizes, list):
             errors.append(f"{product_id}: sizes должен быть массивом")
-        elif len(sizes) != len(set(sizes)):
-            errors.append(f"{product_id}: sizes содержит дубликаты")
-
-        if not isinstance(product.get("inStock"), bool):
-            errors.append(f"{product_id}: inStock должен быть boolean")
-
-        tags = product.get("tags")
-        if tags is not None and not isinstance(tags, list):
-            errors.append(f"{product_id}: tags должен быть массивом")
+        else:
+            for size in sizes:
+                if not isinstance(size, str) or size not in ALLOWED_PRODUCT_SIZES:
+                    errors.append(
+                        f"{product_id}: неизвестный размер каталога {size!r}; "
+                        f"допустимо {sorted(ALLOWED_PRODUCT_SIZES)}"
+                    )
+            valid_sizes = [size for size in sizes if isinstance(size, str)]
+            if len(valid_sizes) != len(set(valid_sizes)):
+                errors.append(f"{product_id}: sizes содержит дубликаты")
 
         materials = product.get("materials")
         if materials is not None and not isinstance(materials, dict):
             errors.append(f"{product_id}: materials должен быть объектом")
+        elif isinstance(materials, dict):
+            for field_name in ("outer", "lining", "comments"):
+                value = materials.get(field_name)
+                if value is not None and not _is_non_empty_string(value):
+                    errors.append(
+                        f"{product_id}: materials.{field_name} должен быть непустой строкой"
+                    )
 
         price = product.get("price")
         if price is not None and (not _is_number(price) or float(price) <= 0):
@@ -251,6 +289,36 @@ def validate_cross_references(shipments: Iterable[Dict[str, Any]], products_data
     return errors
 
 
+def validate_product_registry_links(
+    products_data: Dict[str, Any],
+    registry_data: Any,
+) -> List[str]:
+    """Проверяет, что текущий каталог использует закреплённые в реестре ID."""
+    errors = validate_product_id_registry(registry_data)
+    if errors or not isinstance(registry_data, dict):
+        return errors
+
+    entries = registry_data.get("entries", [])
+    ids_by_name = {
+        entry["normalizedName"]: entry["productId"]
+        for entry in entries
+        if isinstance(entry, dict)
+        and isinstance(entry.get("normalizedName"), str)
+        and isinstance(entry.get("productId"), str)
+    }
+    for product in products_data.get("products", []):
+        if not isinstance(product, dict) or not _is_non_empty_string(product.get("name")):
+            continue
+        expected_id = ids_by_name.get(normalize_product_name(product["name"]))
+        if expected_id is None:
+            errors.append(f"{product.get('id', '<unknown>')}: товар отсутствует в реестре productId")
+        elif product.get("id") != expected_id:
+            errors.append(
+                f"{product.get('id', '<unknown>')}: реестр закрепляет за товаром ID {expected_id}"
+            )
+    return errors
+
+
 def validate_meta(meta: Any) -> List[str]:
     """Проверяет структуру meta.json."""
     errors: List[str] = []
@@ -263,6 +331,8 @@ def validate_meta(meta: Any) -> List[str]:
         errors.append("meta.json: updatedAt должен быть непустой строкой")
     else:
         try:
+            if "T" not in updated_at:
+                raise ValueError
             datetime.fromisoformat(updated_at)
         except ValueError:
             errors.append("meta.json: updatedAt должен быть ISO-датой")
@@ -342,13 +412,14 @@ def validate_generated_outputs(
     products_data: Any,
     meta: Any | None = None,
     money: Any | None = None,
+    product_id_registry: Any | None = None,
 ) -> List[str]:
     """Полная проверка набора сгенерированных данных."""
-    errors = []
-    errors.extend(validate_shipments(shipments))
-    errors.extend(validate_products(products_data))
+    shipment_errors = validate_shipments(shipments)
+    product_errors = validate_products(products_data)
+    errors = [*shipment_errors, *product_errors]
 
-    if isinstance(shipments, list) and isinstance(products_data, dict):
+    if not shipment_errors and not product_errors:
         errors.extend(validate_cross_references(shipments, products_data))
 
     if meta is not None:
@@ -356,5 +427,8 @@ def validate_generated_outputs(
 
     if money is not None:
         errors.extend(validate_money(money))
+
+    if product_id_registry is not None and not product_errors:
+        errors.extend(validate_product_registry_links(products_data, product_id_registry))
 
     return errors

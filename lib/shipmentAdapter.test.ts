@@ -10,7 +10,6 @@ const products: Product[] = [
     category: "Кожа",
     excelRows: [2],
     sizes: [],
-    inStock: true,
   },
 ];
 

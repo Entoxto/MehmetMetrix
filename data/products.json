@@ -15,8 +15,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Плащ из замши — коричневый.jpg",
       "price": 260,
       "cost": 28571
@@ -37,8 +35,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из замши — коричневый.jpg",
       "price": 165,
       "cost": 16582
@@ -64,8 +60,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из замши — коричневый.jpg",
       "price": 190,
       "cost": 16866
@@ -86,8 +80,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из кожи Hermes — brown.jpg",
       "price": 180,
       "cost": 20917
@@ -104,8 +96,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка длинная из меха тасканы — коричневый.jpg",
       "price": 400,
       "cost": 41999
@@ -126,8 +116,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка короткая из меха кёрли — серый.jpg",
       "price": 260,
       "cost": 29100
@@ -146,8 +134,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из кожи Hermes — taupe.jpg",
       "price": 180,
       "cost": 18900
@@ -171,8 +157,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из кожи Hermes — mouse.jpg",
       "price": 180,
       "cost": 16056
@@ -189,8 +173,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка длинная из меха кёрли — серый.jpg",
       "price": 315,
       "cost": 33231
@@ -212,8 +194,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Брюки из замши — коричневый.jpg",
       "price": 180,
       "cost": 16487
@@ -234,8 +214,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Брюки из замши — чёрный.jpg",
       "price": 175,
       "cost": 18882
@@ -255,8 +233,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка двусторонняя из меха тасканы — etoupe.jpg",
       "price": 390,
       "cost": 44705
@@ -282,8 +258,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный глянцевый.jpg",
       "price": 550,
       "cost": 44388
@@ -300,8 +274,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы с замшей — бежевый.jpg",
       "price": 390,
       "cost": 43168
@@ -318,8 +290,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка мехом внутрь из тасканы овчина silk — чёрный montana.jpg",
       "price": 390,
       "cost": 43168
@@ -341,8 +311,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из замши — бежевый.jpg",
       "price": 190,
       "cost": 18239
@@ -359,8 +327,6 @@
         "outer": "100% Мех волка",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка с мехом наружу из волка — бежевый.jpg",
       "price": 390,
       "cost": 41376
@@ -377,8 +343,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка двусторонняя из тасканы silk с мехом montana — camel.jpg",
       "price": 390,
       "cost": 41376
@@ -399,8 +363,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из кожи Hermes — чёрный.jpg",
       "price": 180,
       "cost": 17972
@@ -425,8 +387,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — бежевый светлый.jpg",
       "price": 550,
       "cost": 46583
@@ -448,8 +408,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — чёрный матовый.jpg",
       "price": 550,
       "cost": 47113
@@ -471,8 +429,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Куртка по новым лекалам из кожи питона — коричневый матовый.jpg",
       "price": 465,
       "cost": 40210
@@ -496,8 +452,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — коричневый глянцевый.jpg",
       "price": 550,
       "cost": 44388
@@ -521,8 +475,6 @@
         "outer": "100% Кожа коровы с мехом",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный в стиле 80-х из меха пони — чёрный.jpg",
       "price": 300,
       "cost": 27345
@@ -539,8 +491,6 @@
         "outer": "100% Кожа коровы с мехом",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет по новым лекалам из меха пони — бежевый.jpg",
       "price": 310,
       "cost": 26725
@@ -557,8 +507,6 @@
         "outer": "100% Кожа коровы с мехом",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из меха пони — бежевый.jpg",
       "price": 330,
       "cost": 28378
@@ -575,8 +523,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Парка из кожи Hermes — mouse.jpg",
       "price": 195,
       "cost": 17220
@@ -593,8 +539,6 @@
         "outer": "100% Кожа коровы с мехом",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Парка из кожи коровы — леопард.jpg",
       "price": 400,
       "cost": 35160
@@ -615,8 +559,6 @@
         "outer": "100% Кожа коровы с мехом",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Штаны из меха пони — чёрный.jpg",
       "price": 270,
       "cost": 23936
@@ -639,8 +581,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Штаны из меха мериноса — бежевый.jpg",
       "price": 215,
       "cost": 19598
@@ -664,8 +604,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка из меха мериноса — бежевый.jpg",
       "price": 260,
       "cost": 22937
@@ -686,8 +624,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Брюки из замши — бежевый.jpg",
       "price": 190,
       "cost": 17314
@@ -704,8 +640,6 @@
         "outer": "100% Натуральная овчина",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка из меха тасканы — волк.jpg",
       "price": 360,
       "cost": 32312
@@ -729,8 +663,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — чёрный глянцевый.jpg",
       "price": 320,
       "cost": 26220
@@ -752,8 +684,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — бежевый светлый.jpg",
       "price": 320,
       "cost": 27644
@@ -774,8 +704,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — Etope.jpg",
       "price": 550,
       "cost": 44814
@@ -798,8 +726,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из плетёной кожи — чёрный глянцевый.jpg",
       "price": 310,
       "cost": 24853
@@ -821,8 +747,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — коричневый глянцевый.jpg",
       "price": 320,
       "cost": 26220
@@ -847,8 +771,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный из кожи питона — белый.jpg",
       "price": 560,
       "cost": 45593
@@ -874,8 +796,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
       "price": 325,
       "cost": 28742
@@ -898,8 +818,6 @@
         "outer": "100% Натуральная замша",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из плетёной замши — коричневый.jpg",
       "price": 340,
       "cost": 27967
@@ -918,8 +836,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Плащ из тонкой кожи — бежевый.jpg",
       "price": 320,
       "cost": 26021
@@ -941,8 +857,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из плетёной кожи — молочный.jpg",
       "price": 320,
       "cost": 26526
@@ -962,8 +876,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Штаны из меха астроган — антрацит.jpg",
       "price": 255,
       "cost": 22201
@@ -984,8 +896,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка Аляска из меха астроган — антрацит.jpg",
       "price": 320,
       "cost": 26789
@@ -1007,8 +917,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
       "price": 240,
       "cost": 20503
@@ -1027,8 +935,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Пальто из меха астроган — чёрный.jpg",
       "price": 315,
       "cost": 27083
@@ -1050,8 +956,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка в стиле 80-х из меха астроган — чёрный.jpg",
       "price": 300,
       "cost": 26022
@@ -1071,8 +975,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Куртка по новым лекалам из кожи питона — белый.jpg",
       "price": 480,
       "cost": 38721
@@ -1091,8 +993,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Штаны из молочной кожи.jpg",
       "price": 155,
       "cost": 13564
@@ -1111,8 +1011,6 @@
         "outer": "100% Натуральная кожа",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет в стиле 80-х из плетёной кожи — коричневый.jpg",
       "price": 290,
       "cost": 24014
@@ -1131,8 +1029,6 @@
         "outer": "100% Кожа барана",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Жакет приталенный удлинённый в стиле 80-х из кожи страуса — коричневый.jpg",
       "price": 180
     },
@@ -1151,8 +1047,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из меха астраган — молочный.jpg",
       "price": 190
     },
@@ -1171,8 +1065,6 @@
         "outer": "100% Натуральный мех",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка Агнес из меха астроган — молочный.jpg",
       "price": 250
     },
@@ -1189,9 +1081,7 @@
       "materials": {
         "outer": "100% Натуральный мех",
         "lining": "%70 Acetate %30 Polyester"
-      },
-      "inStock": true,
-      "tags": []
+      }
     },
     {
       "id": "auto-056",
@@ -1204,9 +1094,7 @@
       "materials": {
         "outer": "100% Натуральный мех кенгуру",
         "lining": "%70 Acetate %30 Polyester"
-      },
-      "inStock": true,
-      "tags": []
+      }
     },
     {
       "id": "auto-057",
@@ -1224,8 +1112,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — Etope.jpg",
       "price": 320
     },
@@ -1241,8 +1127,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из меха астраган — антрацит.jpg",
       "price": 190
     },
@@ -1258,8 +1142,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из меха астраган — чёрный.jpg",
       "price": 190
     },
@@ -1275,8 +1157,6 @@
         "outer": "100% Натуральный мех мериноса",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Дублёнка Аляска из меха астроган — молочный.jpg",
       "price": 320
     },
@@ -1295,8 +1175,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Куртка по новым лекалам из кожи питона — Etope.jpg",
       "price": 465
     },
@@ -1312,8 +1190,6 @@
         "outer": "100% Кожа питона",
         "lining": "%70 Acetate %30 Polyester"
       },
-      "inStock": true,
-      "tags": [],
       "photo": "/images/products/jpg/Юбка из кожи питона — коричневый матовый.jpg",
       "price": 320
     }

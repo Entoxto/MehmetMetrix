@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional, Dict, List
 import pandas as pd
+from product_id_registry import ProductIdRegistry, normalize_product_name
 
 # Порядок размеров для каталога (product.sizes)
 SIZE_ORDER = ["xs", "s", "m", "l", "xl", "onesize"]
@@ -225,24 +226,10 @@ def infer_category(name: str) -> str:
     )
 
 
-def get_next_auto_id(products: List[Dict]) -> str:
-    """
-    Возвращает следующий уникальный id вида auto-NNN для нового товара в каталоге.
-    Ищет среди product['id'] совпадения с шаблоном auto-(\\d+), берёт максимум, +1.
-    """
-    auto_numbers = []
-    for p in products:
-        pid = p.get('id') or ''
-        m = re.match(r'^auto-(\d+)$', pid, re.IGNORECASE)
-        if m:
-            auto_numbers.append(int(m.group(1)))
-    next_num = max(auto_numbers, default=0) + 1
-    return f"auto-{next_num:03d}"
-
-
 def find_or_create_product_id(
     name: str,
     products: List[Dict],
+    product_id_registry: ProductIdRegistry,
     excel_row: Optional[int] = None,
 ) -> str:
     """
@@ -256,17 +243,17 @@ def find_or_create_product_id(
             f"{name!r}. Проверьте формат наименования в Excel."
         )
 
-    normalized_clean = ' '.join(clean_name.split())
+    normalized_clean = normalize_product_name(clean_name)
     for product in products:
         product_name = product.get('name', '')
-        if ' '.join(product_name.split()) == normalized_clean:
+        if normalize_product_name(product_name) == normalized_clean:
             if excel_row is not None:
                 rows = product.setdefault("excelRows", [])
                 if excel_row not in rows:
                     rows.append(excel_row)
             return product.get('id', '')
 
-    new_id = get_next_auto_id(products)
+    new_id = product_id_registry.get_or_create(clean_name)
     new_product = {
         "id": new_id,
         "name": clean_name,
@@ -274,8 +261,6 @@ def find_or_create_product_id(
         "excelRows": [excel_row] if excel_row is not None else [],
         "sizes": [],
         "materials": {},
-        "inStock": True,
-        "tags": [],
     }
     products.append(new_product)
     print(f"  + Добавлен в каталог: {clean_name}")
@@ -606,7 +591,7 @@ def parse_numeric_value(value: Any) -> Optional[float]:
     Returns:
         Число как float или None, если не удалось распарсить
     """
-    if is_empty_value(value):
+    if isinstance(value, bool) or is_empty_value(value):
         return None
     
     try:

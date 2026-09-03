@@ -43,8 +43,11 @@ If you need a production build, stop any active dev server first. A running dev 
 - The repository may include a local Windows Node runtime in `.tools/node`.
 - If `npm` is not available in the shell, prepend it before running commands:
   `$env:PATH = "$PWD\.tools\node;$env:PATH"`
-- `scripts/preflight.mjs` prefers `.tools/node/npm.cmd` and the bundled Codex Python runtime when present, so nested checks use local tools consistently.
-- `scripts/publish_data.mjs` also prefers the bundled Python runtime and verifies that `pandas` and `openpyxl` are importable before downloading or parsing source data. Override it with `MEHMET_PYTHON` when running elsewhere.
+- `scripts/preflight.mjs` prefers `.tools/node/npm.cmd`. Python npm-scripts use
+  `scripts/run_python.mjs`: `MEHMET_PYTHON` → local `.venv` / `.tools/python`
+  → bundled Codex runtime → system Python, with required-module checks.
+- Install external Python dependencies with
+  `python -m pip install -r requirements.txt` when no bundled runtime is available.
 - Agent guidance is editor-neutral and lives in `AGENTS.md`, `docs/AI_CONTEXT.md`, and nearby README files.
 
 ## Deployment
@@ -68,6 +71,9 @@ If you need a production build, stop any active dev server first. A running dev 
 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.
 - `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
+- `data/product-id-registry.json` is the durable technical source for stable
+  product IDs. It is validated but not published in the runtime bundle; never
+  remove entries or reuse an issued ID for another normalized product name.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
 - The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files; repository JSON remains the publish input and build fallback.
@@ -87,6 +93,9 @@ If you need a production build, stop any active dev server first. A running dev 
 - Payment logic is derived from text status plus `paidPreviously` / `noPayment`.
 - Stable position IDs are built from `shipmentId + index`.
 - `isPayable` controls sums and price-gap logic.
+- Money keeps payable positions without a price visible, reports their position
+  count and physical units, and labels any dollar total as known-only. A fully
+  unknown debt must not be displayed as `$0`.
 - The parser emits `cost` from Excel column N only when column J (`Курс списания`) is positive; a blank, zero, or negative J means cost is still unknown.
 - Columns N and O are formula-driven on every position row. N distributes the latest explicit positive cargo marker from M only inside the current shipment and its current M block; equal cargo amounts in different blocks stay independent. N also requires a calculated positive K: cargo may be entered in M before the rate is known, but while J is not positive, K, N, O, and the shipment total Q stay blank. Missing cargo leaves N and O blank, so zero sentinels in M are not used.
 - Excel column P accepts either an actual receipt date or free-form ETA text. When a shipment contains only dates, the parser uses the latest date; any text value is treated as ETA and takes priority.
@@ -99,6 +108,8 @@ If you need a production build, stop any active dev server first. A running dev 
   in the final column C bracket. It may coexist with `sample`, sizes, or
   `(N шт.)` and must not change quantity, status, or payment logic.
 - Excel column G is computed and must not be replaced with manual quantities. When the total is known but sizes are not, encode it in the final column C suffix as `(10 шт.)`; the parser emits `sizesUnknown` and the same positive `quantityOverride`.
+- Formula G must equal the exact sum of a present size grid. `quantityOverride`
+  is valid only with `sizesUnknown`; plain samples without sizes fall back to one.
 - Every source position represents at least one item; without sizes or an explicit `(N шт.)` suffix, quantity falls back to `1`.
 - When adding a repeated position without an explicitly stated price, copy H
   from the nearest previous row whose column C has the same cleaned product
@@ -113,6 +124,9 @@ If you need a production build, stop any active dev server first. A running dev 
   rates leave K blank. L is `K × G` and stays blank with K. Never use a zero in
   J merely to stop a previous shipment's rate from leaking downward.
 - Catalog `photo` is optional. The parser writes it only when the matching JPG/JPEG exists; `excelRows` records every source row for startup diagnostics.
+- The parser verifies the formula structure with `data_only=False`: every
+  position row requires formulas in G, I, K, L, N, O, and every shipment start
+  requires Q. Manual replacements or missing formulas stop the import.
 - Missing catalog photos are valid and use the shared `__photo_pending` placeholder. A present-but-broken `photo` path remains a validation error.
 - Product grids and the home menu use square contain `webp/card` variants; product detail uses full `webp`. Keep the fallback chain card WebP → full WebP → exact source JPG/JPEG → shared placeholder.
 - `public/images/products/jpg/` is the only manually maintained image source. Full/card WebP files are generated; `scripts/convert_to_webp.py` safely prunes derived `.webp` files whose JPG/JPEG source was removed.

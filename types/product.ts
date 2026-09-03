@@ -14,8 +14,6 @@ export interface Product {
   price?: number;
   cost?: number;  // Себестоимость в рублях (обновляется из поставок)
   materials?: ProductMaterials;
-  inStock: boolean;
-  tags?: string[];
 }
 
 export interface ProductsData {

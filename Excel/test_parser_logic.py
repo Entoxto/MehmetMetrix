@@ -7,9 +7,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import pandas as pd
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 
 from excel_parser import ExcelParser
+from product_id_registry import ProductIdRegistry
 from parser_utils import parse_quantity_only_from_name, parse_sizes_from_name
 
 
@@ -24,7 +25,11 @@ class ParserLogicTests(unittest.TestCase):
 
     def parse_item(self, row):
         with redirect_stdout(StringIO()):
-            return ExcelParser("unused.xlsx", [])._parse_item(row, excel_row=2)
+            return ExcelParser(
+                "unused.xlsx",
+                [],
+                ProductIdRegistry.empty(),
+            )._parse_item(row, excel_row=2)
 
     def test_duplicate_size_stops_parsing_with_excel_row(self):
         with self.assertRaisesRegex(
@@ -114,6 +119,28 @@ class ParserLogicTests(unittest.TestCase):
         self.assertEqual(item["quantityOverride"], 10)
         self.assertNotIn("sizes", item)
 
+    def test_plain_sample_marker_does_not_create_quantity_override(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (образец)"
+        row.iloc[6] = 1
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["sample"])
+        self.assertNotIn("quantityOverride", item)
+        self.assertNotIn("sizesUnknown", item)
+
+    def test_legacy_sample_count_keeps_g_quantity_without_a_size_grid(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (образец-3)"
+        row.iloc[6] = 3
+
+        item = self.parse_item(row)
+
+        self.assertTrue(item["sample"])
+        self.assertTrue(item["sizesUnknown"])
+        self.assertEqual(item["quantityOverride"], 3)
+
     def test_quantity_only_suffix_must_match_formula_in_g(self):
         row = self.create_row()
         row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"
@@ -123,6 +150,32 @@ class ParserLogicTests(unittest.TestCase):
             ValueError,
             r"Строка 2: количество в наименовании \(10\).*G \(9\)",
         ):
+            self.parse_item(row)
+
+    def test_size_sum_must_match_formula_in_g(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый (XS-2, S-1)"
+        row.iloc[6] = 4
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Строка 2: сумма размеров \(3\).*G \(4\)",
+        ):
+            self.parse_item(row)
+
+    def test_boolean_quantity_in_g_is_rejected(self):
+        row = self.create_row()
+        row.iloc[6] = True
+
+        with self.assertRaisesRegex(ValueError, r"Строка 2: колонка G"):
+            self.parse_item(row)
+
+    def test_quantity_override_is_not_created_without_explicit_marker(self):
+        row = self.create_row()
+        row.iloc[2] = "Жакет из кожи — тестовый"
+        row.iloc[6] = 2
+
+        with self.assertRaisesRegex(ValueError, r"укажите количество.*\(N шт\.\)"):
             self.parse_item(row)
 
     def test_non_positive_quantity_in_g_is_rejected(self):
@@ -195,14 +248,70 @@ class ParserLogicTests(unittest.TestCase):
             workbook.save(excel_path)
             workbook.close()
 
+            parser = ExcelParser(
+                str(excel_path),
+                [],
+                ProductIdRegistry.empty(),
+            )
+            dataframe = parser._read_shipments_sheet()
             with redirect_stdout(StringIO()):
-                shipments = ExcelParser(str(excel_path), []).parse()
+                costs = [
+                    parser._parse_item(dataframe.iloc[index], index + 1).get("cost")
+                    for index in (1, 2)
+                ]
 
-        costs = [
-            item.get("cost")
-            for item in shipments[0]["rawItems"]
-        ]
         self.assertEqual(costs, [42000, 43000])
+
+    def create_formula_workbook(self, path):
+        workbook = Workbook()
+        worksheet = workbook.active
+        worksheet.title = "Поставки"
+        worksheet.cell(row=1, column=1, value="№")
+        worksheet.cell(row=2, column=1, value=1)
+        worksheet.cell(row=2, column=3, value="Жакет из кожи — тестовый (XS-1)")
+        for column in (7, 9, 11, 12, 14, 15, 17):
+            worksheet.cell(row=2, column=column, value="=1")
+        workbook.save(path)
+        workbook.close()
+
+    def test_position_formula_columns_are_required(self):
+        for column in ("G", "I", "K", "L", "N", "O"):
+            for replacement in (None, 1):
+                with self.subTest(column=column, replacement=replacement), TemporaryDirectory() as temp_dir:
+                    excel_path = Path(temp_dir) / "shipments.xlsx"
+                    self.create_formula_workbook(excel_path)
+                    workbook = load_workbook(excel_path)
+                    worksheet = workbook["Поставки"]
+                    worksheet[f"{column}2"] = replacement
+                    workbook.save(excel_path)
+                    workbook.close()
+
+                    parser = ExcelParser(
+                        str(excel_path),
+                        [],
+                        ProductIdRegistry.empty(),
+                    )
+                    with self.assertRaisesRegex(ValueError, rf"колонка {column}"):
+                        parser._validate_formula_columns()
+
+    def test_shipment_start_formula_in_q_is_required(self):
+        for replacement in (None, 1):
+            with self.subTest(replacement=replacement), TemporaryDirectory() as temp_dir:
+                excel_path = Path(temp_dir) / "shipments.xlsx"
+                self.create_formula_workbook(excel_path)
+                workbook = load_workbook(excel_path)
+                worksheet = workbook["Поставки"]
+                worksheet["Q2"] = replacement
+                workbook.save(excel_path)
+                workbook.close()
+
+                parser = ExcelParser(
+                    str(excel_path),
+                    [],
+                    ProductIdRegistry.empty(),
+                )
+                with self.assertRaisesRegex(ValueError, r"колонка Q"):
+                    parser._validate_formula_columns()
 
 
 if __name__ == "__main__":

@@ -12,10 +12,14 @@ import { MoneyMetricCard } from "@/components/money/MoneyMetricCard";
 import { PageFrame } from "@/components/ui/PageFrame";
 import { PageIntro } from "@/components/ui/PageIntro";
 import type { MoneyStatusItem, MoneyDepositItem } from "@/lib/money";
+import { formatCurrency } from "@/lib/format";
 
 interface MoneyScreenProps {
   pending: {
-    total: number;
+    total: number | null;
+    knownTotal: number;
+    unknownPricePositions: number;
+    unknownPriceUnits: number;
     items: MoneyStatusItem[];
   };
   deposits: {
@@ -66,9 +70,17 @@ export const MoneyScreen = ({
         <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : SPACING.lg, width: "100%" }}>
           <MoneyMetricCard
             animationIndex={0}
-            label="Всего к оплате"
+            label={
+              pending.unknownPricePositions > 0
+                ? "Известная сумма к оплате"
+                : "Всего к оплате"
+            }
             total={pending.total}
-            summary="По данным из партий и предоплат"
+            summary={
+              pending.unknownPricePositions > 0
+                ? `Без цены: ${pending.unknownPricePositions} поз. · ${pending.unknownPriceUnits} ед.`
+                : "По данным из партий и предоплат"
+            }
             amountColor={COLORS.error}
             isExpanded={expandedCards.has("total_payment")}
             onToggle={() => toggleCard("total_payment")}
@@ -81,40 +93,55 @@ export const MoneyScreen = ({
               emptyText: "Все партии оплачены",
               amountColor: COLORS.error,
               getKey: (item: MoneyStatusItem) => item.id,
-              getAmount: (item: MoneyStatusItem) => item.amount,
+              renderAmount: (item: MoneyStatusItem) =>
+                item.amount === null ? "Цена уточняется" : formatCurrency(item.amount),
               renderLabel: (item: MoneyStatusItem) => (
-                item.href ? (
-                  <Link
-                    href={item.href}
-                    onClick={(event) => event.stopPropagation()}
-                    style={{
-                      ...responsiveTypography.body,
-                      color: COLORS.text.primary,
-                      margin: 0,
-                      overflowWrap: "break-word",
-                      wordBreak: "break-word",
-                      whiteSpace: "normal",
-                      textDecoration: "underline",
-                      textDecorationStyle: "dotted",
-                      textUnderlineOffset: 2,
-                    }}
-                  >
-                    {item.title}
-                  </Link>
-                ) : (
-                  <span
-                    style={{
-                      ...responsiveTypography.body,
-                      color: COLORS.text.primary,
-                      margin: 0,
-                      overflowWrap: "break-word",
-                      wordBreak: "break-word",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    {item.title}
-                  </span>
-                )
+                <div style={{ display: "flex", flexDirection: "column", gap: SPACING.xs }}>
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      onClick={(event) => event.stopPropagation()}
+                      style={{
+                        ...responsiveTypography.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                        textDecoration: "underline",
+                        textDecorationStyle: "dotted",
+                        textUnderlineOffset: 2,
+                      }}
+                    >
+                      {item.title}
+                    </Link>
+                  ) : (
+                    <span
+                      style={{
+                        ...responsiveTypography.body,
+                        color: COLORS.text.primary,
+                        margin: 0,
+                        overflowWrap: "break-word",
+                        wordBreak: "break-word",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {item.title}
+                    </span>
+                  )}
+                  {item.unknownPricePositions > 0 && (
+                    <span
+                      style={{
+                        ...responsiveTypography.body,
+                        color: COLORS.text.muted,
+                        fontSize: 11,
+                        margin: 0,
+                      }}
+                    >
+                      Без цены: {item.unknownPricePositions} поз. · {item.unknownPriceUnits} ед.
+                    </span>
+                  )}
+                </div>
               ),
             }}
           />
@@ -172,7 +199,7 @@ export const MoneyScreen = ({
               emptyText: "Нет активных депозитов",
               amountColor: COLORS.success,
               getKey: (item: MoneyDepositItem) => item.id,
-              getAmount: (item: MoneyDepositItem) => item.amount,
+              renderAmount: (item: MoneyDepositItem) => formatCurrency(item.amount),
               renderLabel: (item: MoneyDepositItem) => (
                 <span
                   style={{

@@ -106,10 +106,9 @@ function getPositionNote(item: ShipmentRawItem): {
   noteText: string | null;
 } {
   const hasNoteText = item.note && item.note.toLowerCase() !== 'образец';
-  const noteEnabled = item.showStatusTag || hasNoteText;
 
   return {
-    noteEnabled: !!noteEnabled,
+    noteEnabled: !!hasNoteText,
     noteText: item.note || null,
   };
 }

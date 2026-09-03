@@ -2,13 +2,26 @@ import type { ProductsData } from "@/types/product";
 import type { ShipmentConfig } from "@/types/shipment";
 
 export interface DataMeta {
-  updatedAt?: string;
-  source?: string;
+  updatedAt: string;
+  source: "excel";
+}
+
+export interface MoneyPendingManualConfig {
+  id?: string;
+  title: string;
+  amount: number;
+}
+
+export interface MoneyDepositConfig {
+  id?: string;
+  title?: string;
+  lines?: string[];
+  amount: number;
 }
 
 export interface MoneyConfig {
-  pendingManual?: unknown;
-  deposits?: unknown;
+  pendingManual?: MoneyPendingManualConfig[];
+  deposits?: MoneyDepositConfig[];
 }
 
 export interface PublishedDataBundle {

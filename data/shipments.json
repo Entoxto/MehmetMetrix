@@ -189,7 +189,6 @@
       {
         "overrideName": "Жакет Агнес из меха кенгуру — чёрный (образец)",
         "productId": "auto-056",
-        "quantityOverride": 1,
         "status": "В производстве 🛠️",
         "sample": true
       }
@@ -1011,7 +1010,6 @@
         "productId": "auto-035",
         "price": 320,
         "cost": 27644,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1118,7 +1116,6 @@
         "productId": "auto-033",
         "price": 360,
         "cost": 32312,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1127,7 +1124,6 @@
         "productId": "auto-034",
         "price": 320,
         "cost": 30740,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1299,7 +1295,6 @@
         "productId": "auto-028",
         "price": 400,
         "cost": 35160,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1308,7 +1303,6 @@
         "productId": "auto-029",
         "price": 270,
         "cost": 24399,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1317,7 +1311,6 @@
         "productId": "auto-030",
         "price": 200,
         "cost": 18605,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1326,7 +1319,6 @@
         "productId": "auto-031",
         "price": 260,
         "cost": 23571,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1464,7 +1456,6 @@
         "productId": "auto-024",
         "price": 300,
         "cost": 25899,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1473,7 +1464,6 @@
         "productId": "auto-025",
         "price": 310,
         "cost": 26725,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1482,7 +1472,6 @@
         "productId": "auto-026",
         "price": 330,
         "cost": 28378,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1491,7 +1480,6 @@
         "productId": "auto-027",
         "price": 195,
         "cost": 17220,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1574,7 +1562,6 @@
         "productId": "auto-017",
         "price": 390,
         "cost": 41376,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1583,7 +1570,6 @@
         "productId": "auto-018",
         "price": 390,
         "cost": 41376,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1602,7 +1588,6 @@
         "productId": "auto-014",
         "price": 390,
         "cost": 43168,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1631,6 +1616,7 @@
         "productId": "auto-015",
         "price": 390,
         "cost": 43168,
+        "sizesUnknown": true,
         "quantityOverride": 3,
         "status": "Получено, оплачено ✅",
         "sample": true
@@ -1661,7 +1647,6 @@
         "productId": "auto-013",
         "price": 550,
         "cost": 61814,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1714,7 +1699,6 @@
         "productId": "auto-008",
         "price": 180,
         "cost": 20723,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1723,7 +1707,6 @@
         "productId": "auto-006",
         "price": 260,
         "cost": 29100,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1742,7 +1725,6 @@
         "productId": "auto-009",
         "price": 315,
         "cost": 33231,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }
@@ -1791,7 +1773,6 @@
         "productId": "auto-005",
         "price": 400,
         "cost": 41999,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1800,7 +1781,6 @@
         "productId": "auto-006",
         "price": 280,
         "cost": 30489,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       },
@@ -1809,7 +1789,6 @@
         "productId": "auto-001",
         "price": 260,
         "cost": 28571,
-        "quantityOverride": 1,
         "status": "Получено, оплачено ✅",
         "sample": true
       }

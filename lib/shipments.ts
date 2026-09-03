@@ -29,12 +29,16 @@ export const buildShipments = (
 interface PendingShipmentSummary {
   id: string;
   title: string;
-  amount: number;
+  amount: number | null;
   unpaidUnits: number;
+  unknownPricePositions: number;
+  unknownPriceUnits: number;
 }
 
 /**
- * Возвращает только те партии, где реально есть сумма к оплате по не оплаченным позициям.
+ * Возвращает партии, где есть хотя бы одна неоплаченная payable-позиция.
+ * Известную сумму и физический объём позиций без цены считаем отдельно, чтобы
+ * Money не выдавал частичную сумму за полный долг и не скрывал неизвестный долг.
  * Используется в сводках Money и Work, чтобы не дублировать финансовую логику.
  */
 export function getPendingShipmentSummaries(
@@ -43,14 +47,20 @@ export function getPendingShipmentSummaries(
   return shipments
     .map((shipment) => {
       const unpaidPositions = shipment.positions.filter(
-        (position) =>
-          position.isPayable && position.sum !== null && !isPaidStatus(position.statusLabel)
+        (position) => position.isPayable && !isPaidStatus(position.statusLabel)
       );
 
-      const amount = unpaidPositions.reduce((sum, position) => sum + (position.sum ?? 0), 0);
-      if (amount <= 0) {
+      if (unpaidPositions.length === 0) {
         return null;
       }
+
+      const knownAmount = unpaidPositions.reduce(
+        (sum, position) => sum + (position.sum ?? 0),
+        0
+      );
+      const unknownPricePositions = unpaidPositions.filter(
+        (position) => position.qty > 0 && position.price === null
+      );
 
       const normalizedTitle =
         shipment.title?.replace(/^Поставка/i, "поставку") ?? `поставку ${shipment.id}`;
@@ -58,8 +68,13 @@ export function getPendingShipmentSummaries(
       return {
         id: shipment.id,
         title: `Оплата за ${normalizedTitle}`,
-        amount,
+        amount: knownAmount > 0 ? knownAmount : null,
         unpaidUnits: unpaidPositions.reduce((sum, position) => sum + position.qty, 0),
+        unknownPricePositions: unknownPricePositions.length,
+        unknownPriceUnits: unknownPricePositions.reduce(
+          (sum, position) => sum + position.qty,
+          0
+        ),
       };
     })
     .filter((item): item is PendingShipmentSummary => Boolean(item));

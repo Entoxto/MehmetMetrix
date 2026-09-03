@@ -10,6 +10,7 @@ from catalog_pricing import apply_latest_prices
 from data_validator import validate_generated_outputs
 from excel_parser import ExcelParser
 from json_storage import write_json_atomic
+from product_id_registry import ProductIdRegistry
 from parser_utils import infer_category, aggregate_product_sizes, assign_product_photos
 
 # Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
@@ -38,6 +39,7 @@ def parse_excel() -> bool:
     products_file = script_dir.parent / "data" / "products.json"
     shipments_file = script_dir.parent / "data" / "shipments.json"
     meta_file = script_dir.parent / "data" / "meta.json"
+    registry_file = script_dir.parent / "data" / "product-id-registry.json"
 
     if not excel_file.exists():
         print(f"❌ Excel файл не найден: {excel_file}")
@@ -47,11 +49,16 @@ def parse_excel() -> bool:
     print(f"📂 Собираю каталог заново из Excel...")
     products_data = {"products": []}
     products = products_data["products"]
+    try:
+        product_id_registry = ProductIdRegistry.load(registry_file)
+    except Exception as error:
+        print(f"❌ Не удалось загрузить реестр productId: {error}")
+        return False
 
     print(f"\n📊 Парсинг Excel файла: {excel_file}...")
     # Создаём парсер и парсим
     try:
-        parser = ExcelParser(str(excel_file), products)
+        parser = ExcelParser(str(excel_file), products, product_id_registry)
         shipments = parser.parse()
         print(f"✅ Успешно обработано {len(shipments)} поставок")
         
@@ -83,7 +90,13 @@ def parse_excel() -> bool:
     pricing_stats = apply_latest_prices(products_data, shipments, log=print)
     meta = build_meta()
 
-    errors = validate_generated_outputs(shipments, products_data, meta)
+    registry_data = product_id_registry.to_data()
+    errors = validate_generated_outputs(
+        shipments,
+        products_data,
+        meta,
+        product_id_registry=registry_data,
+    )
     if errors:
         print("\n❌ Generated data не прошли валидацию:")
         for error in errors:
@@ -92,6 +105,10 @@ def parse_excel() -> bool:
 
     print(f"\n💾 Сохраняю validated data...")
     try:
+        # Сначала резервируем все новые ID. Если последующая запись generated
+        # data сорвётся, выданные номера всё равно никогда не переиспользуются.
+        write_json_atomic(registry_file, registry_data)
+        print(f"✅ Реестр productId сохранён: {registry_file}")
         write_json_atomic(shipments_file, shipments)
         print(f"✅ Поставки сохранены: {shipments_file}")
         write_json_atomic(products_file, products_data)

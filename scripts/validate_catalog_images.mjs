@@ -221,7 +221,7 @@ for (const relativePath of allDerivedWebpFiles) {
 
   if (!hasSupportedLayout) {
     errors.push(
-      `Неожиданный производный WebP ${relativePath}; запустите python scripts/convert_to_webp.py --auto`
+      `Неожиданный производный WebP ${relativePath}; запустите npm run images:sync`
     );
     continue;
   }
@@ -229,7 +229,7 @@ for (const relativePath of allDerivedWebpFiles) {
   const sourceStem = path.parse(pathParts.at(-1)).name;
   if (!sourceStems.has(sourceStem)) {
     errors.push(
-      `У производного WebP ${relativePath} нет исходного JPG/JPEG; запустите python scripts/convert_to_webp.py --auto`
+      `У производного WebP ${relativePath} нет исходного JPG/JPEG; запустите npm run images:sync`
     );
   }
 }

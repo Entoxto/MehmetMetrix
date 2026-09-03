@@ -11,6 +11,7 @@ import re
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
 from openpyxl import load_workbook
+from product_id_registry import ProductIdRegistry
 from parser_utils import (
     parse_sizes_from_name,
     parse_quantity_only_from_name,
@@ -46,7 +47,12 @@ class ExcelParser:
     COL_COST_WITH_CARGO = 13  # N: Себестоимость с учётом карго (в рублях) - используется для cost
     COL_DATE = 15         # P: Дата поступления продукции
     
-    def __init__(self, excel_file: str, products: List[Dict]):
+    def __init__(
+        self,
+        excel_file: str,
+        products: List[Dict],
+        product_id_registry: ProductIdRegistry,
+    ):
         """
         Инициализация парсера.
         
@@ -56,6 +62,7 @@ class ExcelParser:
         """
         self.excel_file = excel_file
         self.products = products
+        self.product_id_registry = product_id_registry
         self.current_year: Optional[int] = None
     
     def parse(self) -> List[Dict]:
@@ -67,6 +74,7 @@ class ExcelParser:
         """
         # Читаем Excel лист "Поставки"
         df = self._read_shipments_sheet()
+        self._validate_formula_columns()
         
         # Проверяем структуру файла
         self._validate_excel_structure(df)
@@ -180,6 +188,45 @@ class ExcelParser:
             workbook.close()
 
         return df
+
+    def _validate_formula_columns(self) -> None:
+        """Отклоняет удалённые или заменённые значениями обязательные формулы."""
+        workbook = load_workbook(self.excel_file, data_only=False, read_only=False)
+        try:
+            worksheet = workbook[self.SHEET_NAME]
+            position_formula_columns = ("G", "I", "K", "L", "N", "O")
+            errors = []
+
+            for excel_row in range(2, worksheet.max_row + 1):
+                name = worksheet[f"C{excel_row}"].value
+                if is_empty_value(name):
+                    continue
+
+                for column in position_formula_columns:
+                    cell = worksheet[f"{column}{excel_row}"]
+                    if cell.data_type != "f" and not (
+                        isinstance(cell.value, str) and cell.value.startswith("=")
+                    ):
+                        errors.append(
+                            f"строка {excel_row}, колонка {column}: обязательна формула"
+                        )
+
+                shipment_number = worksheet[f"A{excel_row}"].value
+                if not is_empty_value(shipment_number):
+                    cell = worksheet[f"Q{excel_row}"]
+                    if cell.data_type != "f" and not (
+                        isinstance(cell.value, str) and cell.value.startswith("=")
+                    ):
+                        errors.append(
+                            f"строка {excel_row}, колонка Q: в начале поставки обязательна формула"
+                        )
+
+            if errors:
+                raise ValueError(
+                    "Нарушен формульный контракт Excel: " + "; ".join(errors)
+                )
+        finally:
+            workbook.close()
     
     def _finish_shipment(
         self,
@@ -343,6 +390,7 @@ class ExcelParser:
         item["productId"] = find_or_create_product_id(
             name,
             self.products,
+            self.product_id_registry,
             excel_row=excel_row,
         )
 
@@ -381,6 +429,10 @@ class ExcelParser:
         if has_under_question_marker(name):
             item["underQuestion"] = True
 
+        # sample — независимый маркер позиции. Сам по себе он не задаёт
+        # количество; фактический итог по-прежнему подтверждает формула G.
+        is_sample = bool(re.search(r'\([^)]*образец[^)]*\)', name, re.IGNORECASE))
+
         # Колонка G вычисляется формулой из C. Для нового формата C остаётся
         # источником правды, а G обязана подтверждать то же количество.
         quantity = safe_get_cell(row, self.COL_QUANTITY)
@@ -404,9 +456,25 @@ class ExcelParser:
                 )
 
             sizes_sum = sum(sizes.values()) if sizes else 0
-            if quantity_from_name is not None or sizes_sum == 0 or sizes_sum != qty:
-                item["quantityOverride"] = (
-                    quantity_from_name if quantity_from_name is not None else qty
+            if sizes and sizes_sum != qty:
+                raise ValueError(
+                    f"Строка {excel_row}: сумма размеров ({sizes_sum}) не "
+                    f"совпадает с колонкой G ({qty})"
+                )
+            if quantity_from_name is not None:
+                item["quantityOverride"] = quantity_from_name
+            elif sizes_unknown:
+                # Read-compatible legacy: `(на уточнении)` хранит итог в G.
+                item["quantityOverride"] = qty
+            elif is_sample and not sizes and qty > 1:
+                # Legacy `(образец-N)`: размерной сетки нет, а G хранит число.
+                # Новые строки должны использовать `(N шт., образец)`.
+                item["sizesUnknown"] = True
+                item["quantityOverride"] = qty
+            elif not sizes and qty != 1:
+                raise ValueError(
+                    f"Строка {excel_row}: колонка G ({qty}) не подтверждается "
+                    "размерами; укажите количество в суффиксе C вида '(N шт.)'"
                 )
         elif sizes_unknown:
             # Legacy-маркер пока поддерживается, но всё ещё требует G.
@@ -420,17 +488,9 @@ class ExcelParser:
         status = normalize_status_text(status_raw)
         if status:
             item["status"] = status
-        
-        # inTransit (если статус содержит "В пути")
-        if status and "в пути" in status.lower():
-            item["inTransit"] = True
-        
-        # sample (если в названии есть "(образец)" или "(образец ...)")
-        # Проверяем наличие слова "образец" в скобках (может быть с размерами или без)
-        if re.search(r'\([^)]*образец[^)]*\)', name, re.IGNORECASE):
+
+        if is_sample:
             item["sample"] = True
-            if "quantityOverride" not in item and not sizes:
-                item["quantityOverride"] = 1
         
         return item
     
@@ -512,7 +572,7 @@ class ExcelParser:
         self, shipment: Dict, rows: List[pd.Series]
     ) -> Dict:
         """
-        Финализирует поставку: обрабатывает даты и определяет groupByPayment.
+        Финализирует поставку: обрабатывает даты/ETA.
         
         Args:
             shipment: Словарь поставки
@@ -528,16 +588,6 @@ class ExcelParser:
             shipment["eta"] = eta
         elif received_date:
             shipment["receivedDate"] = received_date
-        
-        # Определение groupByPayment: true если ВСЕ позиции без цены
-        raw_items = shipment.get("rawItems", [])
-        if raw_items:
-            all_items_no_price = all(
-                "price" not in item or item.get("price") is None
-                for item in raw_items
-            )
-            if all_items_no_price:
-                shipment["groupByPayment"] = True
         
         return shipment
     

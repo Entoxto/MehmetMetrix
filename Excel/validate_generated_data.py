@@ -32,12 +32,14 @@ def validate_generated_data() -> bool:
     products_file = data_dir / "products.json"
     meta_file = data_dir / "meta.json"
     money_file = data_dir / "money.json"
+    registry_file = data_dir / "product-id-registry.json"
 
     try:
         shipments = load_json_file(shipments_file)
         products_data = load_json_file(products_file)
         meta = load_json_file(meta_file)
         money = load_json_file(money_file)
+        product_id_registry = load_json_file(registry_file)
     except FileNotFoundError as error:
         print(f"❌ Не найден файл для проверки: {error.filename}")
         return False
@@ -45,7 +47,13 @@ def validate_generated_data() -> bool:
         print(f"❌ Не удалось загрузить generated data: {error}")
         return False
 
-    errors = validate_generated_outputs(shipments, products_data, meta, money)
+    errors = validate_generated_outputs(
+        shipments,
+        products_data,
+        meta,
+        money,
+        product_id_registry,
+    )
     if errors:
         print("ERROR: Проверка generated data не пройдена:")
         for error in errors:
@@ -57,6 +65,7 @@ def validate_generated_data() -> bool:
     print(f"   Товаров: {len(products_data.get('products', []))}")
     print(f"   Обновлено: {meta.get('updatedAt')}")
     print("   Ручные финансы: OK")
+    print("   Реестр productId: OK")
     return True
 
 
