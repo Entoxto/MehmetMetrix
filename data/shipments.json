@@ -1,8 +1,8 @@
 [
   {
-    "id": "shipment-2026-31",
-    "number": 31,
-    "title": "Поставка №31",
+    "id": "shipment-2026-32",
+    "number": 32,
+    "title": "Поставка №32",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -53,9 +53,9 @@
     "year": 2026
   },
   {
-    "id": "shipment-2026-30",
-    "number": 30,
-    "title": "Поставка №30",
+    "id": "shipment-2026-31",
+    "number": 31,
+    "title": "Поставка №31",
     "status": "В работе 🧵",
     "rawItems": [
       {
@@ -112,6 +112,24 @@
         "price": 190,
         "sizesUnknown": true,
         "quantityOverride": 20,
+        "status": "В производстве 🛠️"
+      }
+    ],
+    "year": 2026
+  },
+  {
+    "id": "shipment-2026-30",
+    "number": 30,
+    "title": "Поставка №30",
+    "status": "В работе 🧵",
+    "rawItems": [
+      {
+        "overrideName": "Штаны из меха астроган — чёрный (XS-5)",
+        "productId": "auto-046",
+        "price": 168,
+        "sizes": {
+          "xs": 5
+        },
         "status": "В производстве 🛠️"
       }
     ],
