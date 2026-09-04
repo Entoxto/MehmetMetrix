@@ -1,186 +1,14 @@
-import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import path from "node:path";
+import { loadEnvFile } from "node:process";
+import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { resolvePython, pythonArgs } from "./python_runtime.mjs";
-import {
-  cleanupRegistryWorkspace,
-  commitLocalRegistry,
-  createRegistryWorkspace,
-  stageLocalRegistryFallback,
-} from "./product_registry_workspace.mjs";
+import { assertProductIdRegistry } from "../lib/dataBundle.ts";
+import { buildSnapshot } from "./build_snapshot.mjs";
+import { validateCatalogImages } from "./validate_catalog_images.mjs";
+import { ROOT_DIR, SNAPSHOT_FILE, PREVIEW_FILE, localCandidate, readLocalSnapshot, writeSnapshot } from "./local_snapshot.mjs";
 
-const rootDir = process.cwd();
-const dryRun = process.argv.includes("--dry-run");
-const localRegistryPath = path.join(rootDir, "data", "product-id-registry.json");
-
-function loadLocalPublishEnv() {
-  const envPath = path.join(rootDir, ".env.publish.local");
-  if (!existsSync(envPath)) return;
-
-  for (const rawLine of readFileSync(envPath, "utf8").split(/\r?\n/u)) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) continue;
-
-    const separatorIndex = line.indexOf("=");
-    if (separatorIndex <= 0) continue;
-
-    const key = line.slice(0, separatorIndex).trim();
-    let value = line.slice(separatorIndex + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
-    }
-
-    if (!(key in process.env)) {
-      process.env[key] = value;
-    }
-  }
-}
-
-function run(executable, args, label) {
-  console.log(`\n=== ${label} ===`);
-  const result = spawnSync(executable, args, {
-    cwd: rootDir,
-    env: process.env,
-    stdio: "inherit",
-    shell: false,
-  });
-
-  if (result.error) {
-    throw new Error(`${label}: ${result.error.message}`);
-  }
-  if (result.status !== 0) {
-    throw new Error(`${label}: команда завершилась с кодом ${result.status}`);
-  }
-}
-
-function readJson(relativePath) {
-  const absolutePath = path.isAbsolute(relativePath)
-    ? relativePath
-    : path.join(rootDir, relativePath);
-  return JSON.parse(readFileSync(absolutePath, "utf8"));
-}
-
-function activeRegistryPath() {
-  return process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH || localRegistryPath;
-}
-
-function activateRegistryWorkspace(workspace, baseVersion) {
-  process.env.MEHMET_PRODUCT_ID_REGISTRY_PATH = workspace.filePath;
-  return { ...workspace, baseVersion };
-}
-
-async function fetchCurrentDataVersion(siteUrl) {
-  const response = await fetch(`${siteUrl}/api/data-version`, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(30_000),
-  });
-  const responseText = await response.text();
-  let payload;
-  try {
-    payload = JSON.parse(responseText);
-  } catch {
-    throw new Error(`Не удалось прочитать current version (HTTP ${response.status})`);
-  }
-  if (!response.ok || typeof payload.version !== "string") {
-    throw new Error(
-      `Не удалось прочитать current version (HTTP ${response.status}): ${
-        payload.error ?? responseText
-      }`
-    );
-  }
-  return payload.version;
-}
-
-async function fetchAuthoritativeRegistry() {
-  const siteUrl = process.env.MEHMET_SITE_URL?.trim().replace(/\/$/u, "");
-  const token = process.env.MEHMET_PUBLISH_TOKEN?.trim();
-  if (!siteUrl || !token) {
-    if (!dryRun) {
-      throw new Error(
-        "Для публикации нужен MEHMET_SITE_URL и MEHMET_PUBLISH_TOKEN до запуска парсинга"
-      );
-    }
-    return activateRegistryWorkspace(
-      stageLocalRegistryFallback(localRegistryPath),
-      null
-    );
-  }
-
-  const response = await fetch(`${siteUrl}/api/publish-data`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-    signal: AbortSignal.timeout(30_000),
-  });
-
-  // During the one-deploy migration window the old API has no GET handler.
-  // Stage the tracked seed in an isolated workspace and obtain the exact base
-  // version separately; never expose the tracked file to the parser.
-  if (response.status === 404 || response.status === 405) {
-    console.warn(
-      "⚠️ Текущий deploy ещё не умеет читать productId registry; локальный seed staged во временный workspace"
-    );
-    const baseVersion = await fetchCurrentDataVersion(siteUrl);
-    return activateRegistryWorkspace(
-      stageLocalRegistryFallback(localRegistryPath),
-      baseVersion
-    );
-  }
-  const responseText = await response.text();
-  let payload;
-  try {
-    payload = JSON.parse(responseText);
-  } catch {
-    throw new Error(`Не удалось прочитать authoritative registry (HTTP ${response.status})`);
-  }
-  if (!response.ok) {
-    throw new Error(
-      `Не удалось прочитать authoritative registry (HTTP ${response.status}): ${
-        payload.error ?? responseText
-      }`
-    );
-  }
-  if (payload.version !== null && typeof payload.version !== "string") {
-    throw new Error("Ответ registry не содержит текущую version");
-  }
-
-  const registry = payload.productIdRegistry ?? readJson(localRegistryPath);
-  return activateRegistryWorkspace(
-    createRegistryWorkspace(registry),
-    typeof payload.version === "string" ? payload.version : null
-  );
-}
-
-function buildBundle() {
-  const payload = {
-    shipments: readJson("data/shipments.json"),
-    products: readJson("data/products.json"),
-    money: readJson("data/money.json"),
-    meta: readJson("data/meta.json"),
-    productIdRegistry: readJson(activeRegistryPath()),
-  };
-  const sourceHash = createHash("sha256")
-    .update(JSON.stringify(payload))
-    .digest("hex");
-  const publishedAt = new Date().toISOString();
-  const timestamp = publishedAt
-    .replace(/\.\d{3}Z$/u, "Z")
-    .replaceAll("-", "")
-    .replaceAll(":", "");
-
-  return {
-    schemaVersion: 1,
-    version: `${timestamp}-${sourceHash.slice(0, 12)}`,
-    publishedAt,
-    sourceHash,
-    ...payload,
-  };
-}
-
-function postJsonWithPowerShell(url, body) {
+function postJsonWithPowerShell(url, token, body) {
   const script = String.raw`
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
@@ -227,6 +55,7 @@ try {
   const env = {
     ...process.env,
     MEHMET_PUBLISH_URL: url,
+    MEHMET_PUBLISH_TOKEN: token,
   };
   let lastMissingExecutable = null;
 
@@ -235,7 +64,7 @@ try {
       executable,
       ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script],
       {
-        cwd: rootDir,
+        cwd: ROOT_DIR,
         encoding: "utf8",
         env,
         input: Buffer.from(body, "utf8").toString("base64"),
@@ -275,7 +104,7 @@ try {
 
 async function postJson(url, token, body) {
   if (process.platform === "win32") {
-    return postJsonWithPowerShell(url, body);
+    return postJsonWithPowerShell(url, token, body);
   }
 
   const response = await fetch(url, {
@@ -294,116 +123,84 @@ async function postJson(url, token, body) {
   };
 }
 
-async function publish(bundle) {
+async function publishedVersion(siteUrl) {
+  const response = await fetch(`${siteUrl}/api/data-version`, {
+    cache: "no-store", signal: AbortSignal.timeout(30_000),
+  });
+  if (!response.ok) throw new Error(`data-version: HTTP ${response.status}`);
+  return response.json();
+}
+
+function isExpectedVersion(status, bundle) {
+  return status.version === bundle.version && status.sourceHash === bundle.sourceHash;
+}
+
+export async function publishData({ dryRun = false, rootDir = ROOT_DIR } = {}) {
+  // Offline means offline, even when the checkout has publication credentials.
+  if (dryRun) {
+    const bundle = localCandidate(rootDir);
+    validateCatalogImages(bundle.products, rootDir);
+    console.log(`DRY RUN: проверен локальный пакет ${bundle.version}. Сеть и файлы не изменялись.`);
+    return bundle;
+  }
+
+  const envPath = path.join(rootDir, ".env.publish.local");
+  if (existsSync(envPath)) loadEnvFile(envPath);
   const siteUrl = process.env.MEHMET_SITE_URL?.trim().replace(/\/$/u, "");
   const token = process.env.MEHMET_PUBLISH_TOKEN?.trim();
+  if (!siteUrl || !token) throw new Error("Нужны MEHMET_SITE_URL и MEHMET_PUBLISH_TOKEN до запуска импорта");
 
-  if (!siteUrl) {
-    throw new Error("Не задан MEHMET_SITE_URL");
-  }
-  if (!token) {
-    throw new Error("Не задан MEHMET_PUBLISH_TOKEN");
-  }
-
-  console.log(`\n=== Публикация ${bundle.version} ===`);
-  const response = await postJson(
-    `${siteUrl}/api/publish-data`,
-    token,
-    JSON.stringify(bundle)
-  );
-  const responseText = response.body;
-  let result;
-  try {
-    result = JSON.parse(responseText);
-  } catch {
-    result = { error: responseText || `HTTP ${response.status}` };
-  }
-
-  if (response.status < 200 || response.status >= 300) {
-    throw new Error(
-      `Сервер отклонил публикацию (HTTP ${response.status}): ${
-        result.error ?? responseText
-      }`
-    );
-  }
-
-  const statusResponse = await fetch(`${siteUrl}/api/data-version`, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(30_000),
+  const registryResponse = await fetch(`${siteUrl}/api/publish-data`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store", signal: AbortSignal.timeout(30_000),
   });
-  const status = await statusResponse.json();
-  if (!statusResponse.ok || status.version !== bundle.version) {
-    throw new Error(
-      `Проверка после публикации не подтвердила версию ${bundle.version}`
-    );
+  if (!registryResponse.ok) {
+    throw new Error(`GET publish-data: HTTP ${registryResponse.status}. Проверьте deployment и настройки; импорт не запускался.`);
   }
+  const current = await registryResponse.json();
+  if (current.version !== null && typeof current.version !== "string") throw new Error("API не вернул текущую version");
+  if (current.version !== null && !current.productIdRegistry) {
+    throw new Error("Текущий пакет не содержит registry. Требуется завершить миграцию deployment до публикации.");
+  }
+  const registry = current.productIdRegistry ?? readLocalSnapshot({ rootDir, preview: false }).productIdRegistry;
+  assertProductIdRegistry(registry);
+  const bundle = buildSnapshot({ registry, fetchSheet: true, rootDir });
+  validateCatalogImages(bundle.products, rootDir);
+  const body = JSON.stringify({ ...bundle, registryBaseVersion: current.version });
+  console.log(`Публикация ${bundle.version}`);
 
-  console.log(
-    `OK: опубликована версия ${result.version}; поставок ${result.shipments}, товаров ${result.products}.`
-  );
-}
-
-async function main() {
-  loadLocalPublishEnv();
-  const registryWorkspace = await fetchAuthoritativeRegistry();
+  let confirmed = false;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await postJson(`${siteUrl}/api/publish-data`, token, body)
+      .catch((error) => ({ status: 0, body: error.message }));
+    if (response.status >= 400 && response.status < 500) {
+      throw new Error(`Запрос отклонён (HTTP ${response.status}): ${response.body}. Локальный snapshot не изменён; после прерванной попытки проверьте /api/data-version.`);
+    }
+    const status = await publishedVersion(siteUrl).catch(() => null);
+    if (status && isExpectedVersion(status, bundle)) {
+      confirmed = true;
+      break;
+    }
+    // Re-send the identical candidate, including base/version/hash. Never parse
+    // again inside a retry: the server either confirms it or rejects a conflict.
+  }
+  if (!confirmed) {
+    throw new Error(`Результат публикации ${bundle.version} пока неизвестен. POST мог переключить current; проверьте /api/data-version. Локальный подтверждённый snapshot не заменён.`);
+  }
 
   try {
-    const python = resolvePython({
-      rootDir,
-      requiredModules: ["pandas", "openpyxl"],
-    });
-    if (dryRun) {
-      run(
-        python.command,
-        pythonArgs(python, ["Excel/validate_generated_data.py"]),
-        "Проверка существующих JSON"
-      );
-      run(
-        process.execPath,
-        ["scripts/validate_catalog_images.mjs"],
-        "Проверка изображений"
-      );
-    } else {
-      run(
-        python.command,
-        pythonArgs(python, ["Excel/fetch_google_sheet.py"]),
-        "Загрузка Google Sheet"
-      );
-      run(
-        python.command,
-        pythonArgs(python, ["Excel/parse_excel.py", "--auto"]),
-        "Преобразование XLSX в JSON"
-      );
-      run(
-        process.execPath,
-        ["scripts/preflight.mjs", "--fast"],
-        "Проверка данных перед публикацией"
-      );
-    }
-
-    const bundle = buildBundle();
-    console.log(
-      `\nПакет ${bundle.version}: ${bundle.shipments.length} поставок, ${bundle.products.products.length} товаров.`
-    );
-
-    if (dryRun) {
-      console.log("DRY RUN: Netlify Blobs не изменялись; локальный registry не заменялся.");
-      return;
-    }
-
-    await publish({
-      ...bundle,
-      registryBaseVersion: registryWorkspace.baseVersion,
-    });
-    // The local checkout becomes a cache of the now-authoritative state only
-    // after the remote atomic current switch has succeeded.
-    commitLocalRegistry(registryWorkspace.filePath, localRegistryPath);
-  } finally {
-    cleanupRegistryWorkspace(registryWorkspace.directory);
+    writeSnapshot(path.join(rootDir, SNAPSHOT_FILE), bundle);
+    rmSync(path.join(rootDir, PREVIEW_FILE), { force: true });
+  } catch (error) {
+    console.warn(`Production подтверждён, но локальный snapshot/preview не обновлён: ${error.message}`);
   }
+  console.log(`OK: опубликована и проверена ${bundle.version}; ${bundle.shipments.length} поставок, ${bundle.products.products.length} товаров.`);
+  return bundle;
 }
 
-main().catch((error) => {
-  console.error(`\nERROR: ${error instanceof Error ? error.message : error}`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  publishData({ dryRun: process.argv.includes("--dry-run") }).catch((error) => {
+    console.error(`ERROR: ${error.message}`);
+    process.exitCode = 1;
+  });
+}

@@ -1,9 +1,10 @@
 {
   "name": "mehmet-metrics",
   "private": true,
+  "type": "module",
   "version": "0.1.0",
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -13,13 +14,12 @@
     "typecheck": "tsc --noEmit",
     "typecheck:strict": "tsc -p tsconfig.strict-check.json",
     "test": "vitest run",
-    "test:excel": "node scripts/run_python.mjs --require pandas,openpyxl -- -m unittest discover -s Excel -p test_*.py",
+    "test:excel": "node scripts/run_python.mjs --require openpyxl -- -m unittest discover -s Excel -p test_*.py",
     "test:images": "node scripts/run_python.mjs --require PIL -- scripts/test_convert_to_webp.py",
-    "validate:data": "node scripts/run_python.mjs -- Excel/validate_generated_data.py",
+    "validate:data": "node scripts/local_snapshot.mjs",
     "validate:images": "node scripts/validate_catalog_images.mjs",
     "data:fetch": "node scripts/run_python.mjs -- Excel/fetch_google_sheet.py",
-    "data:parse": "node scripts/run_python.mjs --require pandas,openpyxl -- Excel/parse_excel.py --auto",
-    "data:update-prices": "node scripts/run_python.mjs -- Excel/update_prices.py",
+    "data:parse": "node scripts/build_snapshot.mjs",
     "images:sync": "node scripts/run_python.mjs --require PIL -- scripts/convert_to_webp.py --auto",
     "sheets:merge": "node scripts/run_python.mjs --require google.auth,googleapiclient.discovery -- scripts/merge_cells.py",
     "publish:data": "node scripts/publish_data.mjs",

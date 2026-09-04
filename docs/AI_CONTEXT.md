@@ -33,41 +33,43 @@ The app has three user-facing areas:
 
 ## Data Pipeline
 
-Excel / Google Sheet
--> `Excel/parse_excel.py`
--> in-memory catalog price update
--> in-memory validation
--> `data/shipments.json` + `data/products.json`
--> `data/meta.json`
--> explicit `npm run publish:data`
--> versioned Netlify Blobs bundle + atomic `current`
+Google Sheet / local XLSX -> Python openpyxl parser (in memory) -> Node catalog
+price/cost derivation + manual `data/money.json` -> shared TypeScript validation
+and hashing -> a complete snapshot.
 
-`Excel/update_prices.py` remains as a repair/maintenance script for re-syncing catalog prices from existing shipments.
+- `lib/dataBundle.ts` owns the snapshot schema, cross-references, registry/name
+  checks, catalog price consistency, and content checksum. Node 24 runs this TS
+  module directly; API and runtime import the same validator.
+- `data/snapshot.json` is the tracked build fallback and confirmed local cache.
+  It contains shipments/products/money/meta/productIdRegistry and its envelope.
+- `npm run data:parse` writes only ignored `tmp/preview-snapshot.json`. Only
+  `next dev` reads it. Production builds and Blob outages never expose preview.
+- `npm run publish:data` reads authoritative registry/version from the protected
+  API, fetches the entire Sheet, builds in memory and publishes one atomic bundle.
+  There are no generated file writes before publication. After runtime version
+  confirmation it replaces the full tracked snapshot and removes preview.
+- `publish:data:dry-run` validates local candidate/manual money/images offline:
+  no network, Python, publication settings, or file writes.
+- `money.json` is the manual source for `deposits` and `pendingManual`. The
+  Google Sheets `Оплаты` tab is never read or changed by publishing.
 
-`data/money.json` is separate manual data.
-It may contain:
-- `deposits` for the right-side deposited/prepaid block
-- `pendingManual` for manual extra rows inside `Всего к оплате`
-`npm run validate:data` validates this manual file too; manual amounts must stay positive finite numbers.
-The same manual file is published inside the atomic runtime bundle. The Google
-Sheets `Оплаты` tab is not part of this flow and must not be edited by the
-publisher.
+Stable ID history is embedded in the published bundle. Preserve retired model
+entries; never reassign IDs or lower nextAutoNumber. Local preview allocations
+are drafts and cannot override the authoritative registry at publication.
+Legacy bundles without registry remain readable, but new POSTs require it.
+GET 404/405 or a legacy active bundle without registry stops normal publishing;
+there is no silent fallback to local identity. Bootstrap from tracked registry
+is allowed only when the remote current version is null.
 
-`data/product-id-registry.json` is the durable technical source for product
-identity. The parser normalizes names, preserves registry entries for models
-missing from the current sheet, and allocates monotonically increasing
-`auto-NNN` values. The publisher refreshes it from the latest versioned Blobs
-bundle and publishes it atomically with the runtime files. Legacy bundles may
-omit the field only for read compatibility during migration; every new POST
-must include a valid registry based on the exact current bundle version. The
-publisher parses against a temporary workspace and updates the tracked copy
-only after POST plus `/api/data-version` confirmation. The UI never reads it.
+`registryBaseVersion` is a request precondition only, excluded from the stored
+snapshot and checksum. Current payload and ETag are read together; the server
+archives the candidate and conditionally replaces current. Identical replays
+acknowledge an existing commit or resume its archive. Replays never overwrite a
+later current. A lost response can follow a successful commit; do not claim
+that all failures preserve the previous version. See `docs/DATA_PUBLISHING.md`.
 
-Administrative text and voice commands are routed through
-`admin/mehmet-operator/SKILL.md`. Its `references/workflows.md` contains the
-confirmed operator defaults for adding or moving positions, changing sizes,
-and resolving relative ETA dates; keep detailed workflow rules there instead
-of duplicating them in this domain overview.
+Administrative commands use `admin/mehmet-operator/SKILL.md` and its workflow
+reference. Read source-data rules there before any Sheet operations.
 
 ## Invariants
 
@@ -201,7 +203,7 @@ of duplicating them in this domain overview.
 - A separate strict TypeScript check exists in `tsconfig.strict-check.json`.
 - Unit tests use Vitest and run through `npm run test`.
 - WebP source-sync regressions run through `npm run test:images`.
-- `npm run preflight:fast` is the daily startup check for data refresh flows: it validates generated JSON, manual money data, and image assets without running the full build.
+- `npm run preflight:fast` is the daily startup check for data refresh flows: it validates tracked snapshot, preview, manual money data, and image assets without running the full build.
 - `npm run preflight` is the safest one-command check before deploy: it runs lint, type checks, unit tests, data validation, image validation, and production build.
 - Netlify uses `npm run preflight` as its build command, so a deploy cannot pass by running only `next build`; run the same command locally first for faster feedback.
 - The live site is deployed by Netlify. Git push updates code, rules, and static photos; `npm run publish:data` updates the table/finance bundle without rebuilding.
@@ -211,10 +213,10 @@ of duplicating them in this domain overview.
 - Repeated screen intros should use common styles instead of bespoke inline copies.
 - `lib/money.ts` exposes `buildMoneyOverview(shipments, config)` for pure financial aggregation tests; the server route supplies config from the same published bundle as shipments.
 - `lib/dataBundle.ts` validates nested runtime fields before any published
-  bundle reaches UI. Python and TypeScript validators share negative fixtures
-  for malformed nested values.
-- `shipments.json` / `products.json` / `meta.json` are generated artifacts, not long-term manual sources.
-- `lib/dataSource.ts` is the only runtime entrypoint for the four-file data
+  bundle reaches UI. CLI/API/runtime share this implementation and its negative
+  fixtures; Python retains only source-reading and ID-allocation guards.
+- `snapshot.json` is a complete generated cache; do not hand-edit its fields.
+- `lib/dataSource.ts` is the only runtime entrypoint for the complete data
   bundle. On Netlify it strongly reads Blob key `current` on every data-backed
   request and falls back to the build snapshot if Blob data is missing or
   invalid; the optional technical registry is carried through but never needed

@@ -31,68 +31,23 @@ export interface MoneyOverview {
   };
 }
 
-type ManualPendingConfig = {
-  id?: unknown;
-  title?: unknown;
-  amount?: unknown;
-};
-
-type DepositConfig = {
-  id?: unknown;
-  title?: unknown;
-  lines?: unknown;
-  amount?: unknown;
-};
-
-function readFiniteAmount(value: unknown, path: string): number {
-  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
-    throw new Error(`${path} должен быть положительным числом`);
-  }
-
-  return value;
-}
-
-function readOptionalText(value: unknown): string | undefined {
-  if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
-
+// MoneyConfig has already passed the shared snapshot boundary validator.
 function readManualPendingItems(config: MoneyConfig): MoneyStatusItem[] {
-  const items = Array.isArray(config.pendingManual) ? config.pendingManual : [];
-
-  return items.map((rawItem, index) => {
-    const item = rawItem as ManualPendingConfig;
-    const title = readOptionalText(item.title) ?? `Ручная строка ${index + 1}`;
-
-    return {
-      id: readOptionalText(item.id) ?? `pending-manual-${index}`,
-      title,
-      amount: readFiniteAmount(item.amount, `money.pendingManual[${index}].amount`),
-      unknownPricePositions: 0,
-      unknownPriceUnits: 0,
-    };
-  });
+  return (config.pendingManual ?? []).map((item, index) => ({
+    id: item.id?.trim() ?? `pending-manual-${index}`,
+    title: item.title.trim(),
+    amount: item.amount,
+    unknownPricePositions: 0,
+    unknownPriceUnits: 0,
+  }));
 }
 
 function readDepositItems(config: MoneyConfig): MoneyDepositItem[] {
-  const items = Array.isArray(config.deposits) ? config.deposits : [];
-
-  return items.map((rawItem, index) => {
-    const item = rawItem as DepositConfig;
-    const lines = Array.isArray(item.lines)
-      ? item.lines
-          .map((line) => readOptionalText(line))
-          .filter((line): line is string => Boolean(line))
-      : [];
-    const fallbackTitle = readOptionalText(item.title);
-
-    return {
-      id: readOptionalText(item.id) ?? `deposit-${index}`,
-      lines: lines.length > 0 ? lines : [fallbackTitle ?? `Депозит ${index + 1}`],
-      amount: readFiniteAmount(item.amount, `money.deposits[${index}].amount`),
-    };
-  });
+  return (config.deposits ?? []).map((item, index) => ({
+    id: item.id?.trim() ?? `deposit-${index}`,
+    lines: item.lines?.map((line) => line.trim()) ?? [item.title!.trim()],
+    amount: item.amount,
+  }));
 }
 
 export function buildMoneyOverview(

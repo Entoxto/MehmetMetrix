@@ -50,6 +50,7 @@ describe("buildShipments", () => {
       }),
     ]);
 
+    expect(shipments[0]).not.toHaveProperty("rawItems");
     expect(shipments[0].totalAmount).toBe(200);
     expect(shipments[0].hasPriceGaps).toBe(true);
   });

@@ -6,7 +6,6 @@ from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import pandas as pd
 from openpyxl import Workbook, load_workbook
 
 from excel_parser import ExcelParser
@@ -16,11 +15,11 @@ from parser_utils import parse_quantity_only_from_name, parse_sizes_from_name
 
 class ParserLogicTests(unittest.TestCase):
     def create_row(self, exchange_rate=None, cost=42000):
-        row = pd.Series([None] * 16)
-        row.iloc[2] = "Жакет из кожи — тестовый (XS-1)"
-        row.iloc[7] = 100
-        row.iloc[9] = exchange_rate
-        row.iloc[13] = cost
+        row = [None] * 16
+        row[2] = "Жакет из кожи — тестовый (XS-1)"
+        row[7] = 100
+        row[9] = exchange_rate
+        row[13] = cost
         return row
 
     def parse_item(self, row):
@@ -83,8 +82,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_quantity_only_suffix_sets_unknown_sizes_and_quantity(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"
-        row.iloc[6] = 10
+        row[2] = "Жакет из кожи — тестовый (10 шт.)"
+        row[6] = 10
 
         item = self.parse_item(row)
 
@@ -94,11 +93,11 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_under_question_marker_coexists_with_sample_and_sizes(self):
         row = self.create_row()
-        row.iloc[2] = (
+        row[2] = (
             "Дублёнка из пушистого меха — чёрная "
             "(образец XS-1, под вопросом)"
         )
-        row.iloc[6] = 1
+        row[6] = 1
 
         item = self.parse_item(row)
 
@@ -109,8 +108,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_under_question_marker_coexists_with_quantity_only(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (10 шт., под вопросом)"
-        row.iloc[6] = 10
+        row[2] = "Жакет из кожи — тестовый (10 шт., под вопросом)"
+        row[6] = 10
 
         item = self.parse_item(row)
 
@@ -121,8 +120,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_plain_sample_marker_does_not_create_quantity_override(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (образец)"
-        row.iloc[6] = 1
+        row[2] = "Жакет из кожи — тестовый (образец)"
+        row[6] = 1
 
         item = self.parse_item(row)
 
@@ -132,8 +131,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_legacy_sample_count_keeps_g_quantity_without_a_size_grid(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (образец-3)"
-        row.iloc[6] = 3
+        row[2] = "Жакет из кожи — тестовый (образец-3)"
+        row[6] = 3
 
         item = self.parse_item(row)
 
@@ -143,8 +142,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_quantity_only_suffix_must_match_formula_in_g(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (10 шт.)"
-        row.iloc[6] = 9
+        row[2] = "Жакет из кожи — тестовый (10 шт.)"
+        row[6] = 9
 
         with self.assertRaisesRegex(
             ValueError,
@@ -154,8 +153,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_size_sum_must_match_formula_in_g(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (XS-2, S-1)"
-        row.iloc[6] = 4
+        row[2] = "Жакет из кожи — тестовый (XS-2, S-1)"
+        row[6] = 4
 
         with self.assertRaisesRegex(
             ValueError,
@@ -165,22 +164,22 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_boolean_quantity_in_g_is_rejected(self):
         row = self.create_row()
-        row.iloc[6] = True
+        row[6] = True
 
         with self.assertRaisesRegex(ValueError, r"Строка 2: колонка G"):
             self.parse_item(row)
 
     def test_quantity_override_is_not_created_without_explicit_marker(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый"
-        row.iloc[6] = 2
+        row[2] = "Жакет из кожи — тестовый"
+        row[6] = 2
 
         with self.assertRaisesRegex(ValueError, r"укажите количество.*\(N шт\.\)"):
             self.parse_item(row)
 
     def test_non_positive_quantity_in_g_is_rejected(self):
         row = self.create_row()
-        row.iloc[6] = 0
+        row[6] = 0
 
         with self.assertRaisesRegex(
             ValueError,
@@ -190,8 +189,8 @@ class ParserLogicTests(unittest.TestCase):
 
     def test_legacy_unknown_sizes_marker_remains_supported(self):
         row = self.create_row()
-        row.iloc[2] = "Жакет из кожи — тестовый (на уточнении)"
-        row.iloc[6] = 7
+        row[2] = "Жакет из кожи — тестовый (на уточнении)"
+        row[6] = 7
 
         item = self.parse_item(row)
 
@@ -253,10 +252,10 @@ class ParserLogicTests(unittest.TestCase):
                 [],
                 ProductIdRegistry.empty(),
             )
-            dataframe = parser._read_shipments_sheet()
+            rows = parser._read_shipments_sheet()
             with redirect_stdout(StringIO()):
                 costs = [
-                    parser._parse_item(dataframe.iloc[index], index + 1).get("cost")
+                    parser._parse_item(rows[index], index + 1).get("cost")
                     for index in (1, 2)
                 ]
 

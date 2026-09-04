@@ -3,7 +3,7 @@ import type { Shipment, ShipmentConfig } from "@/types/shipment";
 /**
  * Определяет год поставки: явный year → receivedDate → текущий год.
  */
-export function getShipmentYear(shipment: ShipmentConfig): number {
+export function getShipmentYear(shipment: Pick<ShipmentConfig, "year" | "receivedDate">): number {
   if (shipment.year != null) {
     return shipment.year;
   }

@@ -70,25 +70,31 @@ If you need a production build, stop any active dev server first. A running dev 
 ## Source Of Truth
 
 - Excel / Google Sheet is the source of truth for shipments, statuses, sizes, materials, and latest catalog prices.
-- `data/shipments.json`, `data/products.json`, and `data/meta.json` are generated artifacts.
-- `data/product-id-registry.json` is the durable technical source for stable
-  product IDs. The publisher refreshes it from the latest authoritative
-  versioned Blobs bundle and publishes it atomically with the runtime files;
-  legacy bundles may omit it only when being read during migration. Every new
-  POST must include a registry based on the exact current version. Never remove
-  entries or reuse an issued ID for another normalized product name.
+- `data/snapshot.json` is the complete tracked build fallback and confirmed local
+  cache. Its shipments/products/money/meta/productIdRegistry fields move together.
+- The authoritative `productIdRegistry` is embedded in the active Blobs bundle.
+  The publisher reads it before parsing; legacy bundles may omit it only for
+  reads. New POSTs require it and the exact current registryBaseVersion.
+  Never remove entries or reuse an issued ID for another normalized name.
+- `npm run data:parse` writes only ignored `tmp/preview-snapshot.json`; only
+  next dev reads it. Production builds and Blob fallback never use preview.
 - `data/money.json` is manual and may be edited directly, but `npm run validate:data` validates its structure and amounts.
 - `data/money.json` may contain both `deposits` and `pendingManual`; manual pending rows belong in `pendingManual`, not in generated shipment data.
-- The runtime reads the last explicitly published Netlify Blobs bundle containing all four JSON files and the optional technical registry; UI rendering never depends on the registry.
+- The runtime reads the last explicitly published Netlify Blobs bundle containing the complete snapshot and its technical registry; UI rendering never depends on the registry.
 - Do not read or mutate the Google Sheets `Оплаты` tab as part of data publishing.
 
 ## Data Publication
 
 - Treat Google Sheets changes as a draft until the user separately confirms publication.
 - Use the canonical `npm run publish:data` workflow; it refreshes the whole sheet, validates the full snapshot, and atomically replaces the current Blob bundle.
-- `npm run publish:data:dry-run` must not fetch the sheet or write external state.
-- Parsing inside the publisher always uses a temporary registry workspace. The
-  tracked registry is replaced only after POST and `/api/data-version` succeed.
+- `npm run publish:data:dry-run` is fully offline: no network, Python, publish
+  settings, or file writes. It validates the local candidate and manual money.
+- Publishing builds the whole candidate in memory, without generated file writes.
+  The complete tracked snapshot is replaced only after version/hash confirmation
+  from `/api/data-version`, then preview is removed.
+- A lost POST response may follow a successful commit. Retry identical bytes and
+  verify the runtime version; never claim every failure preserves old current.
+- Node.js 24+ runs the shared TypeScript validator directly in CLI and server.
 - Never publish a data bundle that references a photo absent from the current deployment. Photo changes still deploy through Git first.
 - See `docs/DATA_PUBLISHING.md` and the confirmation protocol in `admin/mehmet-operator/references/workflows.md`.
 

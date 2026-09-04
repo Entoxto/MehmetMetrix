@@ -7,7 +7,7 @@ if exist "%~dp0.tools\node\npm.cmd" set "PATH=%~dp0.tools\node;%PATH%"
 call npm run publish:data
 if errorlevel 1 (
   echo.
-  echo Publication failed. The previous application data remains active.
+  echo Publication was not confirmed. Check the reported version and /api/data-version.
   pause
   exit /b 1
 )

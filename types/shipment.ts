@@ -35,13 +35,14 @@ export interface ShipmentConfig {
   eta?: string;
   receivedDate?: string;
   year?: number;  // Год партии (если не указан, определяется из receivedDate или текущий год)
+  number?: number;
   rawItems: readonly ShipmentRawItem[];
 }
 
 /**
  * Расширенный интерфейс поставки с вычисленными данными
  */
-export interface Shipment extends ShipmentConfig {
+export interface Shipment extends Omit<ShipmentConfig, "rawItems"> {
   positions: import("@/types/domain").Position[];
   totalAmount: number;
   hasPriceGaps: boolean;

@@ -2,10 +2,8 @@
 
 import re
 import unicodedata
-from pathlib import Path
 from typing import Any, Dict, List
 
-from json_storage import load_json_file
 
 
 AUTO_ID_PATTERN = re.compile(r"^auto-(\d+)$", re.IGNORECASE)
@@ -21,10 +19,10 @@ def validate_product_id_registry(data: Any) -> List[str]:
     """Проверяет структуру реестра и запрет повторного использования ID."""
     errors: List[str] = []
     if not isinstance(data, dict):
-        return ["product-id-registry.json должен содержать объект"]
+        return ["productIdRegistry должен содержать объект"]
 
     if data.get("schemaVersion") != 1:
-        errors.append("product-id-registry.json: schemaVersion должен быть равен 1")
+        errors.append("productIdRegistry: schemaVersion должен быть равен 1")
 
     next_auto_number = data.get("nextAutoNumber")
     if (
@@ -32,18 +30,18 @@ def validate_product_id_registry(data: Any) -> List[str]:
         or isinstance(next_auto_number, bool)
         or next_auto_number <= 0
     ):
-        errors.append("product-id-registry.json: nextAutoNumber должен быть целым числом > 0")
+        errors.append("productIdRegistry: nextAutoNumber должен быть целым числом > 0")
 
     entries = data.get("entries")
     if not isinstance(entries, list):
-        errors.append("product-id-registry.json: entries должен быть массивом")
+        errors.append("productIdRegistry: entries должен быть массивом")
         return errors
 
     names = set()
     product_ids = set()
     max_auto_number = 0
     for index, entry in enumerate(entries):
-        prefix = f"product-id-registry.json → entries[{index}]"
+        prefix = f"productIdRegistry → entries[{index}]"
         if not isinstance(entry, dict):
             errors.append(f"{prefix} должен быть объектом")
             continue
@@ -77,7 +75,7 @@ def validate_product_id_registry(data: Any) -> List[str]:
         and next_auto_number <= max_auto_number
     ):
         errors.append(
-            "product-id-registry.json: nextAutoNumber должен быть больше всех выданных auto-ID"
+            "productIdRegistry: nextAutoNumber должен быть больше всех выданных auto-ID"
         )
 
     return errors
@@ -95,10 +93,6 @@ class ProductIdRegistry:
         self._entries_by_name = {
             entry["normalizedName"]: dict(entry) for entry in data["entries"]
         }
-
-    @classmethod
-    def load(cls, path: Path) -> "ProductIdRegistry":
-        return cls(load_json_file(path))
 
     @classmethod
     def empty(cls) -> "ProductIdRegistry":

@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional, Dict, List
-import pandas as pd
+import math
 from product_id_registry import ProductIdRegistry, normalize_product_name
 
 # Порядок размеров для каталога (product.sizes)
@@ -304,7 +304,7 @@ def parse_product_materials(raw_value: Any) -> Dict[str, str]:
     - строка с "подклад" -> lining
     - всё остальное -> comments
     """
-    if pd.isna(raw_value) or raw_value is None:
+    if is_empty_value(raw_value):
         return {}
 
     text = str(raw_value).strip()
@@ -412,7 +412,6 @@ def parse_date(value: Any) -> Optional[str]:
     Преобразует дату в формат "DD.MM.YYYY".
     
     Обрабатывает:
-    - datetime объекты pandas (pd.Timestamp)
     - datetime объекты Python
     - Строки в формате "DD.MM.YYYY"
     - Строки в формате "YYYY-MM-DD"
@@ -423,12 +422,8 @@ def parse_date(value: Any) -> Optional[str]:
     Returns:
         Строка в формате "DD.MM.YYYY" или None
     """
-    if pd.isna(value) or value is None:
+    if is_empty_value(value):
         return None
-    
-    # Обработка pandas Timestamp
-    if isinstance(value, pd.Timestamp):
-        return value.strftime('%d.%m.%Y')
     
     # Обработка datetime объектов
     if isinstance(value, datetime):
@@ -466,12 +461,8 @@ def is_date_value(value: Any) -> bool:
     Returns:
         True если значение является датой, иначе False
     """
-    if pd.isna(value) or value is None:
+    if is_empty_value(value):
         return False
-    
-    # Проверка на pandas Timestamp
-    if isinstance(value, pd.Timestamp):
-        return True
     
     # Проверка на datetime
     if isinstance(value, datetime):
@@ -505,7 +496,7 @@ def normalize_status_text(status: Any) -> Optional[str]:
     Returns:
         Текст статуса (без начальных/конечных пробелов) или None, если пусто
     """
-    if status is None or pd.isna(status):
+    if is_empty_value(status):
         return None
     
     text = str(status).strip()
@@ -534,12 +525,12 @@ def clean_eta_text(text: str) -> str:
     return text.strip()
 
 
-def safe_get_cell(row: pd.Series, index: int, default=None) -> Any:
+def safe_get_cell(row: List[Any], index: int, default=None) -> Any:
     """
     Безопасное извлечение значения ячейки из строки.
     
     Args:
-        row: Строка DataFrame
+        row: Строка Excel
         index: Индекс колонки
         default: Значение по умолчанию
         
@@ -549,10 +540,10 @@ def safe_get_cell(row: pd.Series, index: int, default=None) -> Any:
     if index >= len(row):
         return default
     
-    value = row.iloc[index]
+    value = row[index]
     
-    # Обработка NaN
-    if pd.isna(value):
+    # Обработка пустых ячеек и NaN
+    if value is None or isinstance(value, float) and math.isnan(value):
         return default
     
     return value
@@ -571,7 +562,7 @@ def is_empty_value(value: Any) -> bool:
     if value is None:
         return True
     
-    if pd.isna(value):
+    if isinstance(value, float) and math.isnan(value):
         return True
     
     if isinstance(value, str):

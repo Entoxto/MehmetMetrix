@@ -19,7 +19,13 @@ export const buildShipments = (
     );
 
     return {
-      ...config,
+      id: config.id,
+      title: config.title,
+      status: config.status,
+      year: config.year,
+      number: config.number,
+      eta: config.eta,
+      receivedDate: config.receivedDate,
       positions,
       totalAmount,
       hasPriceGaps,
