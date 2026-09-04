@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20260904T220231Z-297ded9c3ae7",
-  "publishedAt": "2026-09-04T22:02:31.856Z",
-  "sourceHash": "297ded9c3ae7768a19aea3bbce1bc0378109392d61e0add2e1ac18df2ba370e4",
+  "version": "20260904T223339Z-94ddffd5fee4",
+  "publishedAt": "2026-09-04T22:33:39.510Z",
+  "sourceHash": "94ddffd5fee46cbb88dc802293beed6760fed18e4d829482232a3046a86baa88",
   "shipments": [
     {
       "id": "shipment-2026-32",
@@ -181,7 +181,7 @@
         }
       ],
       "year": 2026,
-      "eta": "Отправка ожидается с 01.09 по 05.09"
+      "eta": "Отправка ожидается во вторник, 08.09"
     },
     {
       "id": "shipment-2026-28",
@@ -3083,7 +3083,7 @@
     ]
   },
   "meta": {
-    "updatedAt": "2026-09-03T19:11:50.569311+00:00",
+    "updatedAt": "2026-09-04T22:33:39.444531+00:00",
     "source": "excel"
   },
   "productIdRegistry": {
