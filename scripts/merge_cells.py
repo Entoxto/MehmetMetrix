@@ -5,6 +5,7 @@
 - A — номер поставки;
 - F — статус поставки, только для финальных/транспортных статусов;
 - J — курс, только если он заполнен;
+- M — карго, только если оно заполнено;
 - P — дата поступления или ETA;
 - Q — всего оплачено.
 
@@ -36,6 +37,7 @@ COLUMN_INDEX = {
     "a": 0,  # номер поставки
     "f": 5,  # статус поставки
     "j": 9,  # курс
+    "m": 12,  # карго
     "p": 15,  # дата поступления / ETA
     "q": 16,  # всего оплачено
 }
@@ -43,10 +45,11 @@ COLUMN_LABELS = {
     "a": "A (номер поставки)",
     "f": "F (статус поставки)",
     "j": "J (курс)",
+    "m": "M (карго)",
     "p": "P (дата поступления / ETA)",
     "q": "Q (всего оплачено)",
 }
-DEFAULT_COLUMNS = ("a", "f", "j", "p", "q")
+DEFAULT_COLUMNS = ("a", "f", "j", "m", "p", "q")
 MERGEABLE_STATUS_VALUES = {
     "в пути 🚚",
     "получено, не оплачено 📦",
@@ -135,7 +138,7 @@ def parse_columns(raw: str | None) -> tuple[str, ...]:
     unknown = sorted(set(columns) - set(COLUMN_INDEX))
     if unknown:
         raise ValueError(
-            f"Неизвестные колонки: {', '.join(unknown)}. Допустимы: A, F, J, P, Q"
+            f"Неизвестные колонки: {', '.join(unknown)}. Допустимы: A, F, J, M, P, Q"
         )
     if not columns:
         raise ValueError("Не указана ни одна колонка")
@@ -179,6 +182,12 @@ def select_merge_columns(columns: tuple[str, ...], values: list[list[object]], s
         if not normalize(course):
             print("Курс J пуст — J объединять не будем")
             selected = tuple(column for column in selected if column != "j")
+    if "m" in selected:
+        row = values[start_row] if start_row < len(values) else []
+        cargo = row[COLUMN_INDEX["m"]] if len(row) > COLUMN_INDEX["m"] else ""
+        if not normalize(cargo):
+            print("Карго M пусто — M объединять не будем")
+            selected = tuple(column for column in selected if column != "m")
     if "f" not in selected:
         return selected
     row = values[start_row] if start_row < len(values) else []
@@ -248,7 +257,7 @@ def main() -> int:
     parser.add_argument("--mode", choices=("merge", "unmerge"), default="merge")
     parser.add_argument(
         "--columns",
-        help="Колонки через запятую: a,f,p,q. По умолчанию: a,f,p,q",
+        help="Колонки через запятую: a,f,j,m,p,q. По умолчанию: a,f,j,m,p,q",
     )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()

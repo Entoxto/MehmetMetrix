@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20260904T223339Z-94ddffd5fee4",
-  "publishedAt": "2026-09-04T22:33:39.510Z",
-  "sourceHash": "94ddffd5fee46cbb88dc802293beed6760fed18e4d829482232a3046a86baa88",
+  "version": "20260907T203057Z-08dd2a83b59c",
+  "publishedAt": "2026-09-07T20:30:57.187Z",
+  "sourceHash": "08dd2a83b59c7535c6a762a9ac1b63440339410dd3479fdb3497587409e9398b",
   "shipments": [
     {
       "id": "shipment-2026-32",
@@ -222,26 +222,28 @@
       "id": "shipment-2026-27",
       "number": 27,
       "title": "Поставка №27",
-      "status": "Получено, не оплачено 📦",
+      "status": "Получено, оплачено ✅",
       "rawItems": [
         {
           "overrideName": "Юбка из меха астраган — молочный (образец XS-1)",
           "productId": "auto-053",
           "price": 190,
+          "cost": 17605,
           "sizes": {
             "xs": 1
           },
-          "status": "Получено, не оплачено 📦",
+          "status": "Получено, оплачено ✅",
           "sample": true
         },
         {
           "overrideName": "Дублёнка Агнес из меха астроган — молочный (образец XS-1)",
           "productId": "auto-054",
           "price": 250,
+          "cost": 22643,
           "sizes": {
             "xs": 1
           },
-          "status": "Получено, не оплачено 📦",
+          "status": "Получено, оплачено ✅",
           "sample": true
         }
       ],
@@ -252,39 +254,42 @@
       "id": "shipment-2026-26",
       "number": 26,
       "title": "Поставка №26",
-      "status": "Получено, не оплачено 📦",
+      "status": "Получено, оплачено ✅",
       "rawItems": [
         {
           "overrideName": "Жакет приталенный удлинённый в стиле 80-х из кожи страуса — коричневый (образец XS-1)",
           "productId": "auto-052",
           "price": 180,
+          "cost": 16584,
           "sizes": {
             "xs": 1
           },
-          "status": "Получено, не оплачено 📦",
+          "status": "Получено, оплачено ✅",
           "sample": true
         },
         {
           "overrideName": "Дублёнка в стиле 80-х из меха астроган — чёрный (XS-10, S-11, M-6)",
           "productId": "auto-048",
           "price": 300,
+          "cost": 26660,
           "sizes": {
             "xs": 10,
             "s": 11,
             "m": 6
           },
-          "status": "Получено, не оплачено 📦"
+          "status": "Получено, оплачено ✅"
         },
         {
           "overrideName": "Штаны из меха астроган — чёрный (XS-8, S-8, M-4)",
           "productId": "auto-046",
           "price": 240,
+          "cost": 21622,
           "sizes": {
             "xs": 8,
             "s": 8,
             "m": 4
           },
-          "status": "Получено, не оплачено 📦"
+          "status": "Получено, оплачено ✅"
         }
       ],
       "year": 2026,
@@ -294,16 +299,17 @@
       "id": "shipment-2026-25",
       "number": 25,
       "title": "Поставка №25",
-      "status": "Получено, не оплачено 📦",
+      "status": "Получено, оплачено ✅",
       "rawItems": [
         {
           "overrideName": "Юбка из кожи питона — белый (образец XS-1)",
           "productId": "auto-040",
           "price": 325,
+          "cost": 29441,
           "sizes": {
             "xs": 1
           },
-          "status": "Получено, не оплачено 📦",
+          "status": "Получено, оплачено ✅",
           "sample": true
         }
       ],
@@ -2672,7 +2678,7 @@
         },
         "photo": "/images/products/jpg/Юбка из кожи питона — белый.jpg",
         "price": 325,
-        "cost": 28742
+        "cost": 29441
       },
       {
         "id": "auto-041",
@@ -2794,7 +2800,7 @@
         },
         "photo": "/images/products/jpg/Штаны из меха астроган — чёрный.jpg",
         "price": 168,
-        "cost": 20503
+        "cost": 21622
       },
       {
         "id": "auto-047",
@@ -2833,7 +2839,7 @@
         },
         "photo": "/images/products/jpg/Дублёнка в стиле 80-х из меха астроган — чёрный.jpg",
         "price": 300,
-        "cost": 26022
+        "cost": 26660
       },
       {
         "id": "auto-049",
@@ -2905,7 +2911,8 @@
           "lining": "%70 Acetate %30 Polyester"
         },
         "photo": "/images/products/jpg/Жакет приталенный удлинённый в стиле 80-х из кожи страуса — коричневый.jpg",
-        "price": 180
+        "price": 180,
+        "cost": 16584
       },
       {
         "id": "auto-053",
@@ -2923,7 +2930,8 @@
           "lining": "%70 Acetate %30 Polyester"
         },
         "photo": "/images/products/jpg/Юбка из меха астраган — молочный.jpg",
-        "price": 190
+        "price": 190,
+        "cost": 17605
       },
       {
         "id": "auto-054",
@@ -2941,7 +2949,8 @@
           "lining": "%70 Acetate %30 Polyester"
         },
         "photo": "/images/products/jpg/Дублёнка Агнес из меха астроган — молочный.jpg",
-        "price": 250
+        "price": 250,
+        "cost": 22643
       },
       {
         "id": "auto-055",
@@ -3083,7 +3092,7 @@
     ]
   },
   "meta": {
-    "updatedAt": "2026-09-04T22:33:39.444531+00:00",
+    "updatedAt": "2026-09-07T20:30:56.950135+00:00",
     "source": "excel"
   },
   "productIdRegistry": {
