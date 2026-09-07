@@ -1,148 +1,49 @@
-"""
-Главный скрипт парсинга Excel файла для преобразования в JSON формат поставок.
-После парсинга обновляет каталог в памяти, валидирует generated data и только потом пишет JSON на диск.
-"""
+"""Read XLSX + registry from stdin and emit a candidate; never write project data.
 
+The Node entry point owns catalog prices, snapshot validation and atomic files.
+"""
+import argparse
+import json
 import sys
-import os
-from pathlib import Path
+from contextlib import redirect_stdout
 from datetime import datetime, timezone
-from catalog_pricing import apply_latest_prices
-from data_validator import validate_generated_outputs
+from io import BytesIO
+from pathlib import Path
 from excel_parser import ExcelParser
-from json_storage import write_json_atomic
+from fetch_google_sheet import download_google_sheet
+from parser_utils import aggregate_product_sizes, assign_product_photos
 from product_id_registry import ProductIdRegistry
-from parser_utils import infer_category, aggregate_product_sizes, assign_product_photos
-
-# Настраиваем кодировку вывода для Windows (чтобы эмодзи работали)
-if sys.platform == 'win32':
-    import io
-    try:
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-    except AttributeError:
-        # Если уже обёрнуто, пропускаем
-        pass
 
 
-def build_meta() -> dict:
-    """Формирует метаданные об обновлении данных."""
+def build_source_data(excel_source, registry_data, jpg_dir: Path) -> dict:
+    registry = ProductIdRegistry(registry_data)
+    products = []
+    with redirect_stdout(sys.stderr):
+        shipments = ExcelParser(excel_source, products, registry).parse()
+    aggregate_product_sizes(shipments, products)
+    assign_product_photos(products, jpg_dir)
     return {
-        "updatedAt": datetime.now(timezone.utc).isoformat(),
-        "source": "excel",
+        "shipments": shipments,
+        "products": {"products": products},
+        "meta": {"updatedAt": datetime.now(timezone.utc).isoformat(), "source": "excel"},
+        "productIdRegistry": registry.to_data(),
     }
 
 
-def parse_excel() -> bool:
-    """Парсит Excel файл, собирает generated data и сохраняет её только после валидации."""
-    script_dir = Path(__file__).parent
-    excel_file = script_dir / "Расчёты с мехметом new.xlsx"
-    products_file = script_dir.parent / "data" / "products.json"
-    shipments_file = script_dir.parent / "data" / "shipments.json"
-    meta_file = script_dir.parent / "data" / "meta.json"
-    registry_file = Path(
-        os.environ.get(
-            "MEHMET_PRODUCT_ID_REGISTRY_PATH",
-            str(script_dir.parent / "data" / "product-id-registry.json"),
-        )
-    )
-
-    if not excel_file.exists():
-        print(f"❌ Excel файл не найден: {excel_file}")
-        print(f"   Убедитесь, что файл 'Расчёты с мехметом new.xlsx' находится в папке Excel/")
-        return False
-
-    print(f"📂 Собираю каталог заново из Excel...")
-    products_data = {"products": []}
-    products = products_data["products"]
-    try:
-        product_id_registry = ProductIdRegistry.load(registry_file)
-    except Exception as error:
-        print(f"❌ Не удалось загрузить реестр productId: {error}")
-        return False
-
-    print(f"\n📊 Парсинг Excel файла: {excel_file}...")
-    # Создаём парсер и парсим
-    try:
-        parser = ExcelParser(str(excel_file), products, product_id_registry)
-        shipments = parser.parse()
-        print(f"✅ Успешно обработано {len(shipments)} поставок")
-        
-        # Подсчитываем общее количество позиций
-        total_items = sum(len(shipment.get('rawItems', [])) for shipment in shipments)
-        print(f"📦 Всего позиций: {total_items}")
-        
-    except Exception as e:
-        print(f"❌ Ошибка при парсинге Excel файла: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
-
-    # Собираем размеры каталога из всех позиций поставок (один проход)
-    aggregate_product_sizes(shipments, products)
-    assign_product_photos(
-        products,
-        script_dir.parent / "public" / "images" / "products" / "jpg",
-    )
-
-    # Обновляем категорию у всех товаров по названию (при каждом парсинге — полное обновление)
-    for product in products:
-        name = product.get("name", "")
-        if name:
-            product["category"] = infer_category(name)
-
-    print(f"\n" + "="*50)
-    print(f"🔄 Обновляю цены и себестоимость каталога в памяти...")
-    pricing_stats = apply_latest_prices(products_data, shipments, log=print)
-    meta = build_meta()
-
-    registry_data = product_id_registry.to_data()
-    errors = validate_generated_outputs(
-        shipments,
-        products_data,
-        meta,
-        product_id_registry=registry_data,
-    )
-    if errors:
-        print("\n❌ Generated data не прошли валидацию:")
-        for error in errors:
-            print(f"   - {error}")
-        return False
-
-    print(f"\n💾 Сохраняю validated data...")
-    try:
-        # Сначала резервируем все новые ID. Если последующая запись generated
-        # data сорвётся, выданные номера всё равно никогда не переиспользуются.
-        write_json_atomic(registry_file, registry_data)
-        print(f"✅ Реестр productId сохранён: {registry_file}")
-        write_json_atomic(shipments_file, shipments)
-        print(f"✅ Поставки сохранены: {shipments_file}")
-        write_json_atomic(products_file, products_data)
-        print(f"✅ Каталог сохранён: {products_file}")
-        write_json_atomic(meta_file, meta)
-        print(f"✅ Метаданные сохранены: {meta_file}")
-        print(f"\n✅ Парсинг, обновление цен и валидация завершены успешно!")
-        if pricing_stats["missingProductIds"]:
-            print(
-                "⚠️  Обнаружены productId без карточки каталога: "
-                + ", ".join(pricing_stats["missingProductIds"])
-            )
-        return True
-    except Exception as e:
-        print(f"❌ Ошибка при сохранении generated data: {e}")
-        return False
-
-
 if __name__ == "__main__":
-    success = parse_excel()
-    # Показываем сообщение только при интерактивном запуске (не при автоматическом вызове)
-    import sys
-    # Проверяем, запущен ли скрипт автоматически (через параметр --auto)
-    if "--auto" not in sys.argv:
-        try:
-            print("\n" + "="*50)
-            input("Нажмите Enter для выхода...")
-        except (EOFError, KeyboardInterrupt):
-            # Скрипт запущен неинтерактивно
-            pass
-    sys.exit(0 if success else 1)
+    sys.stdin.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+    args_parser = argparse.ArgumentParser(description=__doc__)
+    source = args_parser.add_mutually_exclusive_group()
+    source.add_argument("--fetch", action="store_true")
+    source.add_argument("--file", type=Path, default=Path(__file__).with_name("Расчёты с мехметом new.xlsx"))
+    args = args_parser.parse_args()
+    try:
+        registry_data = json.load(sys.stdin)
+        excel_source = BytesIO(download_google_sheet()) if args.fetch else args.file
+        data = build_source_data(excel_source, registry_data, Path(__file__).parent.parent / "public/images/products/jpg")
+        json.dump(data, sys.stdout, ensure_ascii=False, allow_nan=False)
+    except Exception as error:
+        print(f"ERROR: {error}", file=sys.stderr)
+        sys.exit(1)

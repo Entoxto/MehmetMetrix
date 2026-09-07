@@ -1,40 +1,19 @@
 import { getStore } from "@netlify/blobs";
 import { unstable_noStore as noStore } from "next/cache";
-import metaData from "@/data/meta.json";
-import moneyData from "@/data/money.json";
-import productsData from "@/data/products.json";
-import shipmentsData from "@/data/shipments.json";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import snapshotData from "@/data/snapshot.json";
 import { assertPublishedDataBundle } from "@/lib/dataBundle";
-import type {
-  DataMeta,
-  MoneyConfig,
-  PublishedDataBundle,
-} from "@/types/dataBundle";
-import type { ProductsData } from "@/types/product";
-import type { ShipmentConfig } from "@/types/shipment";
+import type { PublishedDataBundle } from "@/types/dataBundle";
 
 export const DATA_BLOB_STORE = "mehmet-metrics-data";
 export const CURRENT_DATA_KEY = "current";
 
-function createEmbeddedBundle(): PublishedDataBundle {
-  const meta = metaData as DataMeta;
-  const updatedAt = meta.updatedAt;
-  const publishedAt =
-    updatedAt && !Number.isNaN(Date.parse(updatedAt))
-      ? updatedAt
-      : "1970-01-01T00:00:00.000Z";
-
-  return {
-    schemaVersion: 1,
-    version: `embedded-${publishedAt}`,
-    publishedAt,
-    sourceHash: "embedded-build-snapshot",
-    shipments: shipmentsData as ShipmentConfig[],
-    products: productsData as ProductsData,
-    money: moneyData as MoneyConfig,
-    meta,
-  };
-}
+const embeddedBundle = (() => {
+  const bundle: unknown = snapshotData;
+  assertPublishedDataBundle(bundle);
+  return bundle;
+})();
 
 function shouldReadNetlifyBlobs(): boolean {
   const env = process.env;
@@ -74,9 +53,17 @@ function getDataStore() {
  */
 export async function getDataBundle(): Promise<PublishedDataBundle> {
   noStore();
-  const embeddedBundle = createEmbeddedBundle();
-
   if (!shouldReadNetlifyBlobs()) {
+    // Drafts are visible only in next dev. Builds and Blob outages always use
+    // the embedded snapshot, never an unpublished preview or manual money file.
+    if (process.env.NODE_ENV === "development") {
+      const previewPath = path.join(process.cwd(), "tmp/preview-snapshot.json");
+      if (existsSync(previewPath)) {
+        const preview: unknown = JSON.parse(readFileSync(previewPath, "utf8"));
+        assertPublishedDataBundle(preview);
+        return preview;
+      }
+    }
     return embeddedBundle;
   }
 

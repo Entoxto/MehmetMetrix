@@ -6,7 +6,6 @@
 Логика «оплачен / не оплачен» определяется на стороне TypeScript (isPaidStatus).
 """
 
-import pandas as pd
 import re
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple, Any
@@ -58,7 +57,7 @@ class ExcelParser:
         
         Args:
             excel_file: Путь к Excel файлу
-            products: Список товаров из products.json
+            products: Каталог, собираемый в памяти
         """
         self.excel_file = excel_file
         self.products = products
@@ -73,19 +72,19 @@ class ExcelParser:
             Список поставок в формате JSON
         """
         # Читаем Excel лист "Поставки"
-        df = self._read_shipments_sheet()
+        rows = self._read_shipments_sheet()
         self._validate_formula_columns()
         
         # Проверяем структуру файла
-        self._validate_excel_structure(df)
+        self._validate_excel_structure(rows)
         
         shipments = []
         current_shipment: Optional[Dict] = None
-        current_shipment_rows: List[pd.Series] = []
+        current_shipment_rows: List[List[Any]] = []
         
         # Итерация по строкам (начиная с индекса 1, пропуская заголовок)
-        for idx in range(1, len(df)):
-            row = df.iloc[idx]
+        for idx in range(1, len(rows)):
+            row = rows[idx]
             
             # Проверка разделителя года
             year = self._check_year_separator(row)
@@ -141,26 +140,12 @@ class ExcelParser:
         
         return shipments
 
-    def _read_shipments_sheet(self) -> pd.DataFrame:
-        """
-        Читает лист поставок и разворачивает объединённые ячейки курса списания.
-
-        Pandas оставляет значение объединённой ячейки только в первой строке.
-        В таблице курс J часто объединён на несколько позиций одной поставки,
-        поэтому значение нужно явно перенести на все строки этого диапазона.
-        """
-        df = pd.read_excel(
-            self.excel_file,
-            sheet_name=self.SHEET_NAME,
-            header=None,
-        )
-
-        if df.shape[1] <= self.COL_EXCHANGE_RATE:
-            return df
-
+    def _read_shipments_sheet(self) -> List[List[Any]]:
+        """Читает рассчитанные значения и раскрывает merged J в обычные строки."""
         workbook = load_workbook(self.excel_file, data_only=True, read_only=False)
         try:
             worksheet = workbook[self.SHEET_NAME]
+            rows = [list(row) for row in worksheet.iter_rows(values_only=True)]
             exchange_rate_column = self.COL_EXCHANGE_RATE + 1
 
             for merged_range in worksheet.merged_cells.ranges:
@@ -178,16 +163,13 @@ class ExcelParser:
                     continue
 
                 start_index = max(merged_range.min_row - 1, 0)
-                stop_index = min(merged_range.max_row, len(df))
-                if start_index < stop_index:
-                    df.iloc[
-                        start_index:stop_index,
-                        self.COL_EXCHANGE_RATE,
-                    ] = exchange_rate
+                stop_index = min(merged_range.max_row, len(rows))
+                for index in range(start_index, stop_index):
+                    rows[index][self.COL_EXCHANGE_RATE] = exchange_rate
         finally:
             workbook.close()
 
-        return df
+        return rows
 
     def _validate_formula_columns(self) -> None:
         """Отклоняет удалённые или заменённые значениями обязательные формулы."""
@@ -231,7 +213,7 @@ class ExcelParser:
     def _finish_shipment(
         self,
         shipment: Dict,
-        rows: List[pd.Series],
+        rows: List[List[Any]],
         shipments_list: List[Dict]
     ) -> None:
         """
@@ -245,12 +227,12 @@ class ExcelParser:
         finalized = self._finalize_shipment(shipment, rows)
         shipments_list.append(finalized)
     
-    def _check_year_separator(self, row: pd.Series) -> Optional[int]:
+    def _check_year_separator(self, row: List[Any]) -> Optional[int]:
         """
         Проверяет, является ли строка разделителем года.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             
         Returns:
             Год как int или None
@@ -275,12 +257,12 @@ class ExcelParser:
         
         return None
     
-    def _get_shipment_number(self, row: pd.Series) -> Optional[int]:
+    def _get_shipment_number(self, row: List[Any]) -> Optional[int]:
         """
         Получает номер поставки из колонки A.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             
         Returns:
             Номер поставки как int или None
@@ -295,12 +277,12 @@ class ExcelParser:
         except (ValueError, TypeError):
             return None
     
-    def _get_name(self, row: pd.Series) -> Optional[str]:
+    def _get_name(self, row: List[Any]) -> Optional[str]:
         """
         Получает наименование из колонки C.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             
         Returns:
             Наименование как str или None
@@ -312,12 +294,12 @@ class ExcelParser:
         
         return str(value).strip()
     
-    def _is_empty_row(self, row: pd.Series) -> bool:
+    def _is_empty_row(self, row: List[Any]) -> bool:
         """
         Проверяет, является ли строка полностью пустой.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             
         Returns:
             True если строка пустая
@@ -328,7 +310,7 @@ class ExcelParser:
         
         return is_empty_value(shipment_num) and is_empty_value(name)
     
-    def _create_shipment(self, row: pd.Series, shipment_num: int) -> Dict:
+    def _create_shipment(self, row: List[Any], shipment_num: int) -> Dict:
         """
         Создаёт новую поставку из строки.
         
@@ -367,12 +349,12 @@ class ExcelParser:
             return f"shipment-{self.current_year}-{shipment_num}"
         return f"shipment-{shipment_num}"
     
-    def _parse_item(self, row: pd.Series, excel_row: int) -> Optional[Dict]:
+    def _parse_item(self, row: List[Any], excel_row: int) -> Optional[Dict]:
         """
         Парсит позицию поставки из строки.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             
         Returns:
             Словарь с данными позиции или None
@@ -494,12 +476,12 @@ class ExcelParser:
         
         return item
     
-    def _parse_numeric_field(self, row: pd.Series, column_index: int) -> Optional[float]:
+    def _parse_numeric_field(self, row: List[Any], column_index: int) -> Optional[float]:
         """
         Парсит числовое значение из указанной колонки.
         
         Args:
-            row: Строка DataFrame
+            row: Строка Excel
             column_index: Индекс колонки
             
         Returns:
@@ -511,29 +493,29 @@ class ExcelParser:
         value = safe_get_cell(row, column_index)
         return parse_numeric_value(value)
     
-    def _validate_excel_structure(self, df: pd.DataFrame) -> None:
+    def _validate_excel_structure(self, rows: List[List[Any]]) -> None:
         """
         Проверяет структуру Excel файла и выводит предупреждения при проблемах.
         
         Args:
-            df: DataFrame с данными Excel
+            rows: Строки Excel
         """
-        num_cols = df.shape[1]
+        num_cols = max((len(row) for row in rows), default=0)
         if num_cols <= self.COL_COST_WITH_CARGO:
             print(f"⚠️  ВНИМАНИЕ: В Excel файле только {num_cols} колонок, а нужна колонка N (индекс {self.COL_COST_WITH_CARGO})")
             print(f"   Возможно, структура файла изменилась или данные в других колонках")
             return
         
         # Проверяем наличие данных в ключевых колонках
-        sample_rows = min(5, len(df) - 1)
+        sample_rows = min(5, len(rows) - 1)
         if sample_rows == 0:
             return
         
         found_prices = 0
         found_costs = 0
         for i in range(1, sample_rows + 1):
-            price_val = safe_get_cell(df.iloc[i], self.COL_PRICE_USD)
-            cost_val = safe_get_cell(df.iloc[i], self.COL_COST_WITH_CARGO)
+            price_val = safe_get_cell(rows[i], self.COL_PRICE_USD)
+            cost_val = safe_get_cell(rows[i], self.COL_COST_WITH_CARGO)
             if not is_empty_value(price_val):
                 found_prices += 1
             if not is_empty_value(cost_val):
@@ -569,7 +551,7 @@ class ExcelParser:
         return (-year, -shipment_num)  # Отрицательные для сортировки по убыванию
     
     def _finalize_shipment(
-        self, shipment: Dict, rows: List[pd.Series]
+        self, shipment: Dict, rows: List[List[Any]]
     ) -> Dict:
         """
         Финализирует поставку: обрабатывает даты/ETA.
@@ -592,7 +574,7 @@ class ExcelParser:
         return shipment
     
     def _process_date_column(
-        self, rows: List[pd.Series]
+        self, rows: List[List[Any]]
     ) -> Tuple[Optional[str], Optional[str]]:
         """
         Обрабатывает колонку P (даты/ETA) по всем строкам поставки.

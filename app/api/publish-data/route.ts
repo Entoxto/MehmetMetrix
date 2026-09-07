@@ -1,6 +1,6 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { assertPublishedDataBundle } from "@/lib/dataBundle";
+import { assertPublishedDataBundle, createDataBundle } from "@/lib/dataBundle";
 import {
   registryHistoryConflict,
   registryPublicationConflict,
@@ -9,7 +9,7 @@ import {
   CURRENT_DATA_KEY,
   openDataStoreForPublishing,
 } from "@/lib/dataSource";
-import type { PublishedDataBundle } from "@/types/dataBundle";
+import type { DataPublicationRequest, PublishedDataBundle } from "@/types/dataBundle";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -111,13 +111,21 @@ function metadataFor(bundle: PublishedDataBundle) {
 }
 
 async function readCurrentBundle() {
-  const current = await openDataStoreForPublishing().get(CURRENT_DATA_KEY, {
+  const current = await openDataStoreForPublishing().getWithMetadata(CURRENT_DATA_KEY, {
     consistency: "strong",
     type: "json",
   });
   if (current === null) return null;
-  assertPublishedDataBundle(current);
-  return current;
+  assertPublishedDataBundle(current.data);
+  return { bundle: current.data, etag: current.etag };
+}
+
+function success(bundle: PublishedDataBundle) {
+  return NextResponse.json({ ok: true, ...metadataFor(bundle) });
+}
+
+function sameVersion(a: PublishedDataBundle, b: PublishedDataBundle): boolean {
+  return a.version === b.version && a.sourceHash === b.sourceHash && a.publishedAt === b.publishedAt;
 }
 
 /**
@@ -140,8 +148,8 @@ export async function GET(request: Request) {
     const current = await readCurrentBundle();
     return NextResponse.json(
       {
-        version: current?.version ?? null,
-        productIdRegistry: current?.productIdRegistry ?? null,
+        version: current?.bundle.version ?? null,
+        productIdRegistry: current?.bundle.productIdRegistry ?? null,
       },
       { headers: { "Cache-Control": "no-store" } }
     );
@@ -168,117 +176,74 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Пакет данных слишком большой" }, { status: 413 });
   }
 
+  let storagePhase = false;
   try {
     const body = await request.text();
     if (Buffer.byteLength(body, "utf8") > MAX_REQUEST_BYTES) {
       return NextResponse.json({ error: "Пакет данных слишком большой" }, { status: 413 });
     }
-
-    const bundle: unknown = JSON.parse(body);
-    assertPublishedDataBundle(bundle);
-    if (bundle.productIdRegistry === undefined) {
+    const incoming: unknown = JSON.parse(body);
+    assertPublishedDataBundle(incoming);
+    if (incoming.productIdRegistry === undefined) {
       return NextResponse.json(
         { error: "Новая публикация обязана содержать productIdRegistry" },
         { status: 409 }
       );
     }
-
-    const calculatedHash = createHash("sha256")
-      .update(
-        JSON.stringify({
-          shipments: bundle.shipments,
-          products: bundle.products,
-          money: bundle.money,
-          meta: bundle.meta,
-          productIdRegistry: bundle.productIdRegistry,
-        })
-      )
-      .digest("hex");
-    if (calculatedHash !== bundle.sourceHash) {
-      throw new Error("sourceHash не соответствует содержимому пакета");
+    // Canonical stored data excludes the command's registryBaseVersion.
+    const bundle = createDataBundle(incoming, incoming.publishedAt);
+    if (bundle.version !== incoming.version) {
+      throw new Error("version не соответствует publishedAt пакета");
     }
-    if (!bundle.version.endsWith(bundle.sourceHash.slice(0, 12))) {
-      throw new Error("version не соответствует sourceHash пакета");
-    }
-
-    await assertPhotosAreDeployed(bundle, request.url);
-
+    storagePhase = true;
     const store = openDataStoreForPublishing();
-    const currentBefore = await store.getMetadata(CURRENT_DATA_KEY, {
-      consistency: "strong",
-    });
-    const currentBundle = currentBefore ? await readCurrentBundle() : null;
-    const registryConflict = registryPublicationConflict({
-      currentVersion: currentBundle?.version ?? null,
-      incomingBaseVersion: bundle.registryBaseVersion,
-      incomingHasRegistry: bundle.productIdRegistry !== undefined,
-    });
-    if (registryConflict) {
-      return NextResponse.json(
-        { error: registryConflict, currentVersion: currentBundle?.version ?? null },
-        { status: 409 }
-      );
+    const current = await readCurrentBundle();
+    if (current && sameVersion(current.bundle, bundle)) return success(bundle);
+
+    const conflict = registryPublicationConflict({
+      currentVersion: current?.bundle.version ?? null,
+      incomingBaseVersion: (incoming as DataPublicationRequest).registryBaseVersion,
+      incomingHasRegistry: true,
+    }) || (current?.bundle.productIdRegistry && registryHistoryConflict(
+      current.bundle.productIdRegistry, incoming.productIdRegistry
+    ));
+    if (conflict) {
+      return NextResponse.json({ error: conflict, currentVersion: current?.bundle.version ?? null }, { status: 409 });
     }
-    if (currentBundle?.productIdRegistry && bundle.productIdRegistry) {
-      const historyConflict = registryHistoryConflict(
-        currentBundle.productIdRegistry,
-        bundle.productIdRegistry
-      );
-      if (historyConflict) {
-        return NextResponse.json(
-          { error: historyConflict, currentVersion: currentBundle.version },
-          { status: 409 }
-        );
-      }
-    }
+    storagePhase = false;
+    await assertPhotosAreDeployed(bundle, request.url);
+    storagePhase = true;
     const serialized = JSON.stringify(bundle);
     const metadata = metadataFor(bundle);
     const versionKey = `versions/${bundle.version}`;
-
-    const versionWrite = await store.set(versionKey, serialized, {
-      metadata,
-      onlyIfNew: true,
-    });
+    const versionWrite = await store.set(versionKey, serialized, { metadata, onlyIfNew: true });
     if (!versionWrite.modified) {
-      throw new Error(`Версия ${bundle.version} уже существует`);
+      const archived = await store.get(versionKey, { consistency: "strong", type: "json" });
+      assertPublishedDataBundle(archived);
+      if (!sameVersion(archived, bundle)) {
+        return NextResponse.json({ error: "Ключ версии занят другим пакетом" }, { status: 409 });
+      }
+      // An identical archived candidate can resume after an interrupted request.
     }
-
     const currentWrite = await store.set(CURRENT_DATA_KEY, serialized, {
       metadata,
-      ...(currentBefore
-        ? { onlyIfMatch: currentBefore.etag }
-        : { onlyIfNew: true }),
+      ...(current ? { onlyIfMatch: current.etag } : { onlyIfNew: true }),
     });
     if (!currentWrite.modified) {
-      return NextResponse.json(
-        {
-          error:
-            "Опубликованная версия изменилась параллельно. Текущий снимок не заменён; повторите публикацию после проверки.",
-          preservedVersion: bundle.version,
-        },
-        { status: 409 }
-      );
+      const latest = await readCurrentBundle();
+      if (latest && sameVersion(latest.bundle, bundle)) return success(bundle);
+      return NextResponse.json({
+        error: "Версия изменилась параллельно. Повторите публикацию с новым реестром.",
+        currentVersion: latest?.bundle.version ?? null,
+      }, { status: 409 });
     }
-
-    const verified = await store.get(CURRENT_DATA_KEY, {
-      consistency: "strong",
-      type: "json",
-    });
-    assertPublishedDataBundle(verified);
-    if (verified.version !== bundle.version) {
-      throw new Error("Проверка опубликованной версии не совпала с отправленной");
-    }
-
-    return NextResponse.json({
-      ok: true,
-      version: bundle.version,
-      publishedAt: bundle.publishedAt,
-      shipments: bundle.shipments.length,
-      products: bundle.products.products.length,
-    });
+    return success(bundle);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Неизвестная ошибка";
     console.error("Публикация данных остановлена:", error);
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json({
+      error: message,
+      ...(storagePhase ? { publicationState: "unknown" } : {}),
+    }, { status: storagePhase ? 503 : 400 });
   }
 }

@@ -11,8 +11,8 @@
 
 ## Быстрый запуск
 
-Проект закреплён на Node.js 24 через `.nvmrc` (минимум для текущего Next.js —
-Node.js 20.9).
+Нужен Node.js 24 или новее; `.nvmrc` закрепляет 24. CLI использует встроенную
+поддержку TypeScript Node, чтобы делить валидатор с сервером без отдельной сборки.
 
 ```bash
 npm install
@@ -60,12 +60,12 @@ Python-команды запускаются через `scripts/run_python.mjs`
 | `npm run test` | TypeScript unit tests |
 | `npm run test:excel` | Python-регрессии Excel-парсера |
 | `npm run test:images` | Регрессии синхронизации JPG → WebP |
-| `npm run validate:data` | Проверка generated JSON и ручных финансов |
+| `npm run validate:data` | Проверка snapshot, preview и ручных финансов |
 | `npm run validate:images` | Проверка фото, полноразмерных и карточных WebP |
 | `npm run data:fetch` | Скачать актуальный XLSX |
-| `npm run data:parse` | Локально распарсить XLSX и обновить generated JSON |
+| `npm run data:parse` | Создать локальный preview из XLSX |
 | `npm run images:sync` | Синхронизировать JPG/JPEG → WebP |
-| `npm run publish:data:dry-run` | Проверка локального пакета без внешней записи |
+| `npm run publish:data:dry-run` | Полностью офлайн: проверка локального кандидата без записи |
 | `npm run publish:data` | Явная публикация свежей таблицы и `money.json` без rebuild |
 | `npm run preflight:fast` | Быстрая проверка данных и изображений |
 | `npm run preflight` | Полная проверка перед деплоем |
@@ -90,7 +90,7 @@ components/
 hooks/               Клиентские хуки состояния и адаптивности
 lib/                 Бизнес-логика и специализированные helpers
 types/               Доменная и входная TypeScript-модель
-data/                Generated JSON и ручной money.json
+data/                Единый snapshot.json и ручной money.json
 Excel/               Python-пайплайн Excel → JSON
 scripts/             Preflight, изображения и Windows helpers
 public/              Статические ассеты
@@ -109,9 +109,9 @@ docs/                Архитектура и контракт пайплайн
 ```text
 Excel / Google Sheet
         ↓
-Python parser + validation
+Python parser (в памяти) + ручной money.json
         ↓
-data/*.json
+TypeScript: цены → проверка → единый snapshot
         ↓
 explicit publish → Netlify Blobs (`current` + version history)
         ↓
@@ -128,14 +128,15 @@ components/<area>/*
 В TypeScript используется единый термин `Shipment`:
 
 ```typescript
-interface Shipment extends ShipmentConfig {
+interface Shipment extends Omit<ShipmentConfig, "rawItems"> {
   positions: Position[];
   totalAmount: number;
   hasPriceGaps: boolean;
 }
 ```
 
-Вычисленные позиции доступны как `shipment.positions`; отдельной внутренней
+Вычисленные позиции доступны как `shipment.positions`; исходные `rawItems`
+остаются на сервере и не дублируются в props Work. Отдельной внутренней
 сущности `Batch` нет. Query-параметр `batch` сохранён только как legacy-контракт
 существующих deep links.
 
@@ -148,26 +149,26 @@ Excel / Google Sheet — источник правды для:
 - материалов;
 - исторических и актуальных цен.
 
-Файлы `data/shipments.json`, `data/products.json`, `data/meta.json` генерируются
-и будут перезаписаны следующим импортом. Они являются входом публикации и
-резервным снимком последнего deploy, но production-приложение обычно читает
-последнюю явно опубликованную версию из Netlify Blobs.
+`data/snapshot.json` — единый полный снимок для локального запуска и резерва
+последней сборки. Production читает последний явно опубликованный пакет из
+Netlify Blobs. Снимок включает поставки, каталог, финансы, метаданные и реестр.
+Его нельзя редактировать по частям; обычная публикация строится из свежей
+таблицы и ручных финансов в памяти.
 
-`data/product-id-registry.json` — технический источник стабильных `productId`.
-Publisher получает его из последнего authoritative versioned bundle перед
-парсингом и публикует атомарно вместе с данными; история удалённых моделей и
-занятые ID сохраняются между машинами. Legacy bundle без поля поддерживается
-только для чтения до первой новой публикации; новый POST без реестра запрещён.
-Парсер работает с временной staging-копией, а tracked-файл заменяется лишь после
-подтверждения публикации. Runtime UI от реестра не зависит.
+`productIdRegistry` внутри опубликованного пакета сохраняет стабильные ID,
+включая исчезнувшие модели. Перед импортом publisher читает авторитетный
+реестр из Blobs. После подтверждения `/api/data-version` он атомарно обновляет
+весь локальный `snapshot.json`. Отдельного файла реестра и workspace нет.
+Локальный импорт записывает только игнорируемый `tmp/preview-snapshot.json`;
+он виден в `next dev`, но не участвует в production build или Blob fallback.
 
 `data/money.json` редактируется вручную:
 
 - `deposits` — депозиты и предоплаты;
 - `pendingManual` — дополнительные ручные строки к оплате.
 
-Все четыре JSON и технический реестр входят в один атомарный публикуемый пакет. Лист Google Sheets
-«Оплаты» в этот процесс не вовлечён.
+Все поля снимка публикуются атомарно. Лист Google Sheets «Оплаты» в этот
+процесс не вовлечён.
 
 Подробные правила: [`data/README.md`](data/README.md).
 
@@ -190,7 +191,10 @@ npm run publish:data
 
 Команда сама повторно скачивает полную таблицу, парсит и проверяет её, добавляет
 ручной `money.json`, после чего атомарно переключает `current` в Netlify Blobs.
-Если проверка или загрузка не удалась, предыдущая версия остаётся активной.
+Ошибка до отправки оставляет опубликованные данные прежними. Обрыв ответа
+после POST может означать успешный commit: скрипт проверяет версию и повторяет
+тот же пакет. Если подтвердить результат не удалось, он сообщает неопределённый
+исход и сохраняет локальный подтверждённый snapshot.
 Настройка секрета, диагностика и контракт отката описаны в
 [`docs/DATA_PUBLISHING.md`](docs/DATA_PUBLISHING.md).
 
@@ -267,7 +271,7 @@ npm run validate:images
 
 Если фото удалено без полного обновления данных, сначала запустите
 `npm run data:parse`: старый `photo` в generated
-`data/products.json` должен также исчезнуть.
+поле `photo` товара в новом snapshot должно также исчезнуть.
 
 Фотографии остаются статическими файлами и требуют Git push/deploy. Сервер
 отклоняет пакет данных, если он ссылается на фото, которого ещё нет в текущем

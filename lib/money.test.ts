@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { assertMoney } from "./dataBundle";
 import { buildMoneyOverview } from "./money";
 import type { Position } from "@/types/domain";
 import type { Shipment } from "@/types/shipment";
@@ -36,7 +37,6 @@ function createShipment({
     id,
     title,
     status,
-    rawItems: [],
     positions,
     totalAmount: positions.reduce((sum, position) => sum + (position.sum ?? 0), 0),
     hasPriceGaps: false,
@@ -111,7 +111,7 @@ describe("buildMoneyOverview", () => {
 
   it("падает на невалидной ручной сумме", () => {
     expect(() =>
-      buildMoneyOverview([], {
+      assertMoney({
         pendingManual: [{ title: "Некорректная строка", amount: 0 }],
       })
     ).toThrow("money.pendingManual[0].amount");

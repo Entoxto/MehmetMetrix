@@ -41,17 +41,23 @@ export interface ProductIdRegistryData {
   entries: ProductIdRegistryEntry[];
 }
 
-export interface PublishedDataBundle {
-  schemaVersion: 1;
-  version: string;
-  publishedAt: string;
-  sourceHash: string;
+export interface SnapshotData {
   shipments: ShipmentConfig[];
   products: ProductsData;
   money: MoneyConfig;
   meta: DataMeta;
   /** Optional for backwards compatibility with bundles created before migration. */
   productIdRegistry?: ProductIdRegistryData;
-  /** Version read immediately before parsing; used as an optimistic lock. */
+}
+
+export interface PublishedDataBundle extends SnapshotData {
+  schemaVersion: 1;
+  version: string;
+  publishedAt: string;
+  sourceHash: string;
+}
+
+/** A command precondition, never part of the stored snapshot or its content hash. */
+export interface DataPublicationRequest extends PublishedDataBundle {
   registryBaseVersion?: string | null;
 }

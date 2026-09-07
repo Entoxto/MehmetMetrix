@@ -1,7 +1,11 @@
+import { createHash } from "node:crypto";
 import type {
   ProductIdRegistryData,
   PublishedDataBundle,
+  SnapshotData,
 } from "@/types/dataBundle";
+import type { ShipmentConfig } from "@/types/shipment";
+import type { ProductsData } from "@/types/product";
 
 const PRODUCT_CATEGORIES = new Set(["Мех", "Замша", "Кожа", "Экзотика"]);
 const SHIPMENT_SIZE_KEYS = new Set(["xs", "s", "m", "l", "xl", "OneSize"]);
@@ -43,7 +47,7 @@ function assertOptionalPositiveNumber(value: unknown, path: string): void {
   if (value !== undefined) assertPositiveNumber(value, path);
 }
 
-function assertProductIdRegistry(
+export function assertProductIdRegistry(
   value: unknown,
   path = "productIdRegistry"
 ): asserts value is ProductIdRegistryData {
@@ -68,11 +72,7 @@ function assertProductIdRegistry(
     assertNonEmptyString(entry.name, `${entryPath}.name`);
     assertNonEmptyString(entry.normalizedName, `${entryPath}.normalizedName`);
     assertNonEmptyString(entry.productId, `${entryPath}.productId`);
-    const normalized = entry.name
-      .normalize("NFKC")
-      .trim()
-      .replace(/\s+/gu, " ")
-      .toLowerCase();
+    const normalized = normalizeRegistryName(entry.name);
     if (entry.normalizedName !== normalized) {
       fail(`${entryPath}.normalizedName`, "не соответствует name");
     }
@@ -158,6 +158,9 @@ function assertShipments(value: unknown): void {
     if (shipment.year !== undefined && !Number.isInteger(shipment.year)) {
       fail(`${path}.year`, "ожидалось целое число");
     }
+    if (shipment.number !== undefined && (!Number.isInteger(shipment.number) || (shipment.number as number) <= 0)) {
+      fail(`${path}.number`, "ожидалось целое число больше нуля");
+    }
     if (!Array.isArray(shipment.rawItems) || shipment.rawItems.length === 0) {
       fail(`${path}.rawItems`, "ожидался непустой массив");
     }
@@ -218,7 +221,7 @@ function assertProducts(value: unknown): void {
   });
 }
 
-function assertMoney(value: unknown): void {
+export function assertMoney(value: unknown): asserts value is SnapshotData["money"] {
   assertRecord(value, "money");
   if (value.pendingManual !== undefined && !Array.isArray(value.pendingManual)) {
     fail("money.pendingManual", "ожидался массив");
@@ -281,6 +284,90 @@ function assertCrossReferences(value: Record<string, unknown>): void {
       }
     });
   });
+
+  const latest = latestCatalogValues(value.shipments as ShipmentConfig[]);
+  const registry = value.productIdRegistry as ProductIdRegistryData | undefined;
+  const registryIds = registry && new Map(
+    registry.entries.map((entry) => [entry.normalizedName, entry.productId])
+  );
+  for (const product of productList) {
+    if (registryIds && registryIds.get(normalizeRegistryName(product.name as string)) !== product.id) {
+      fail(`products.${product.id}`, "имя и ID товара не соответствуют реестру productId");
+    }
+    const expected = latest.get(product.id as string);
+    for (const field of ["price", "cost"] as const) {
+      if (expected?.[field] !== undefined && product[field] !== expected[field]) {
+        fail(`products.${product.id}.${field}`, "не совпадает с последним известным значением из поставок");
+      }
+    }
+  }
+}
+
+function normalizeRegistryName(name: string): string {
+  return name.normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
+}
+
+function latestCatalogValues(shipments: readonly ShipmentConfig[]) {
+  const number = (shipment: ShipmentConfig) => shipment.number ?? (Number(shipment.id.split("-").at(-1)) || 0);
+  const sorted = [...shipments].sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || number(b) - number(a));
+  const latest = new Map<string, { price?: number; cost?: number }>();
+  for (const shipment of sorted) {
+    for (const item of shipment.rawItems) {
+      const values = latest.get(item.productId) ?? {};
+      values.price ??= item.price;
+      values.cost ??= item.cost;
+      latest.set(item.productId, values);
+    }
+  }
+  return latest;
+}
+
+/** The same calculation builds the catalog and verifies materialized snapshots. */
+export function updateCatalogPrices(products: ProductsData, shipments: readonly ShipmentConfig[]): void {
+  const latest = latestCatalogValues(shipments);
+  for (const product of products.products) {
+    delete product.price;
+    delete product.cost;
+    Object.assign(product, latest.get(product.id));
+  }
+}
+
+export function assertSnapshotData(value: unknown): asserts value is SnapshotData {
+  assertRecord(value, "snapshot");
+  assertShipments(value.shipments);
+  assertProducts(value.products);
+  assertMoney(value.money);
+  assertMeta(value.meta);
+  if (value.productIdRegistry !== undefined) assertProductIdRegistry(value.productIdRegistry);
+  assertCrossReferences(value);
+}
+
+function contentHash(data: SnapshotData): string {
+  return createHash("sha256").update(JSON.stringify({
+    shipments: data.shipments,
+    products: data.products,
+    money: data.money,
+    meta: data.meta,
+    productIdRegistry: data.productIdRegistry,
+  })).digest("hex");
+}
+
+export function createDataBundle(data: SnapshotData, publishedAt = new Date().toISOString()): PublishedDataBundle {
+  assertSnapshotData(data);
+  assertProductIdRegistry(data.productIdRegistry);
+  const sourceHash = contentHash(data);
+  const timestamp = new Date(publishedAt).toISOString().replace(/\.\d{3}Z$/u, "Z").replaceAll("-", "").replaceAll(":", "");
+  return {
+    schemaVersion: 1,
+    version: `${timestamp}-${sourceHash.slice(0, 12)}`,
+    publishedAt,
+    sourceHash,
+    shipments: data.shipments,
+    products: data.products,
+    money: data.money,
+    meta: data.meta,
+    productIdRegistry: data.productIdRegistry,
+  };
 }
 
 export function assertPublishedDataBundle(
@@ -311,18 +398,8 @@ export function assertPublishedDataBundle(
     throw new Error("В пакете данных отсутствует корректный sourceHash");
   }
 
-  assertShipments(value.shipments);
-  assertProducts(value.products);
-  assertMoney(value.money);
-  assertMeta(value.meta);
-  if (value.productIdRegistry !== undefined) {
-    assertProductIdRegistry(value.productIdRegistry);
+  assertSnapshotData(value);
+  if (contentHash(value) !== value.sourceHash || !value.version.endsWith(value.sourceHash.slice(0, 12))) {
+    throw new Error("sourceHash/version не соответствуют содержимому пакета");
   }
-  if (
-    value.registryBaseVersion !== undefined &&
-    value.registryBaseVersion !== null
-  ) {
-    assertNonEmptyString(value.registryBaseVersion, "bundle.registryBaseVersion");
-  }
-  assertCrossReferences(value);
 }

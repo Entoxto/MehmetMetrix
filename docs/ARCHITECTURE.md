@@ -12,9 +12,9 @@ Excel-пайплайна — в `docs/EXCEL_PIPELINE.md`.
 ```text
 Excel / Google Sheet
         ↓
-Excel/*.py
+Excel/*.py (in-memory) + money.json
         ↓
-data/*.json
+Node: shared validator + prices + one snapshot
         ↓
 explicit publish API → Netlify Blobs
         ↓
@@ -89,7 +89,8 @@ lib → data/types/Netlify Blobs
   на модель и цвет без изменения generated-данных;
 - `money.ts` — финансовая сводка с раздельным учётом известной суммы и
   позиций/единиц без цены;
-- `dataBundle.ts` — строгая runtime-проверка опубликованного пакета до UI;
+- `dataBundle.ts` — общий контракт snapshot, цены каталога, cross-reference
+  проверки и SHA-256 для Node CLI, API и runtime;
 - `dataSource.ts` — серверное чтение `current` из Netlify Blobs со строгой
   согласованностью и fallback на JSON текущей сборки;
 - `statusText.ts` — текстовая логика оплаты;
@@ -111,19 +112,20 @@ lib → data/types/Netlify Blobs
 
 ### `data/`
 
-- `shipments.json`, `products.json`, `meta.json` генерируются;
-- `money.json` редактируется вручную;
-- `product-id-registry.json` хранит постоянную техническую идентичность товаров
-  и публикуется как необязательное техническое поле versioned bundle. Старый
-  bundle без поля поддерживается только для чтения при миграции; новый POST без
-  реестра запрещён, а UI runtime его не использует;
-- `README.md` фиксирует правила источника правды.
+`snapshot.json` хранит полный подтверждённый пакет для локального запуска и
+fallback сборки. `money.json` — отдельный ручной источник следующей публикации.
+Preview хранится в игнорируемом `tmp/preview-snapshot.json` и доступен только
+в `next dev`. Правила: `data/README.md`.
 
 ### `Excel/`
 
-Python-пайплайн импорта, актуализации каталога и валидации generated data.
-Папка названа по внешнему источнику данных и остаётся отдельной от runtime-кода
-Next.js.
+Python читает XLSX через openpyxl: рассчитанные значения и отдельно наличие
+обязательных формул. `parse_excel.py` принимает JSON-реестр через stdin,
+возвращает данные через stdout и диагностику через stderr. Пайплайн не пишет
+snapshot/registry на диск. `product_id_registry.py` отвечает за монотонную
+выдачу ID; его входные проверки защищают allocator, полный снимок проверяет TS.
+Функция загрузки Google Sheet возвращает bytes; отдельная `data:fetch` сохраняет
+локальный XLSX только для offline preview.
 
 ### `scripts/`
 
@@ -142,7 +144,7 @@ Windows-helper для запуска dev-сервера. `scripts/publish_data.m
 В коде используется один термин: `shipment` / «поставка».
 
 ```typescript
-interface Shipment extends ShipmentConfig {
+interface Shipment extends Omit<ShipmentConfig, "rawItems"> {
   positions: Position[];
   totalAmount: number;
   hasPriceGaps: boolean;
@@ -150,7 +152,8 @@ interface Shipment extends ShipmentConfig {
 ```
 
 Промежуточной сущности `Batch` нет. `ShipmentConfig.rawItems` сохраняет входные
-данные, а `Shipment.positions` содержит нормализованные позиции для логики и UI.
+данные на сервере, а `Shipment.positions` содержит нормализованные позиции
+для логики и UI. Work получает только вычисленное представление без `rawItems`.
 
 `Position.id` строится из `shipmentId + index`, поэтому остаётся стабильным между
 рендерами при неизменном порядке исходных строк.
@@ -161,23 +164,20 @@ Query-параметр `batch` сохранён как legacy-контракт �
 
 ## Поток данных
 
-1. `scripts/publish_data.mjs` получает текущую версию и authoritative registry,
-   затем staging-копию помещает во временный workspace.
-2. Google Sheet при необходимости скачивается как XLSX.
-3. `Excel/parse_excel.py` читает лист «Поставки» с этой registry-копией.
-4. Парсер строит поставки и каталог в памяти.
-5. Актуальные price/cost вычисляются из поставок.
-6. Generated data валидируются до записи.
-7. JSON сохраняются атомарно.
-8. После отдельного подтверждения `scripts/publish_data.mjs` объединяет JSON,
-   registry и ручной `money.json`, хеширует и отправляет пакет в защищённый API.
-9. API сохраняет неизменяемую версию и атомарно переключает `current` в
-   Netlify Blobs.
-10. `lib/dataSource.ts` читает `current`, а `lib/shipments.ts` и `lib/money.ts`
-   строят вычисленные модели.
+`scripts/build_snapshot.mjs` соединяет Python parser с `money.json`, вычисляет
+цены каталога и использует общий TS-контракт. Локальный `data:parse` сохраняет
+кандидат одной заменой через `scripts/local_snapshot.mjs`; `publish_data.mjs`
+передаёт его прямо в API, без промежуточных JSON или registry workspace.
 
-Контракт импорта описан в `docs/EXCEL_PIPELINE.md`, публикации — в
-`docs/DATA_PUBLISHING.md`.
+API сохраняет неизменяемый `versions/<version>` и условно заменяет `current`
+в Netlify Blobs. Реестр является частью того же снимка, а `registryBaseVersion`
+существует только в POST-команде. Повтор идентичного пакета безопасен.
+После подтверждения `/api/data-version` обновляется целый локальный snapshot.
+
+`lib/dataSource.ts` проверяет и читает опубликованный пакет; `lib/shipments.ts`
+и `lib/money.ts` строят вычисленные модели. Ручные финансовые строки уже прошли
+валидацию на границе snapshot, поэтому Money занимается только представлением
+и расчётами. Контракт сбоев и отката: `docs/DATA_PUBLISHING.md`.
 
 ## Финансовая логика
 

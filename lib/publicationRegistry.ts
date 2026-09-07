@@ -30,10 +30,6 @@ export function registryPublicationConflict(
   return null;
 }
 
-function normalizeRegistryName(name: string): string {
-  return name.normalize("NFKC").trim().replace(/\s+/gu, " ").toLowerCase();
-}
-
 /**
  * Ensures a later publisher can only append to the active registry. This is a
  * second guard after the optimistic version check: even a publisher based on
@@ -60,10 +56,5 @@ export function registryHistoryConflict(
     }
   }
 
-  for (const entry of incoming.entries) {
-    if (entry.normalizedName !== normalizeRegistryName(entry.name)) {
-      return `normalizedName не соответствует name для ${entry.name}`;
-    }
-  }
   return null;
 }
