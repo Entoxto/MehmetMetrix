@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20260912T101910Z-63d61bd10e8c",
-  "publishedAt": "2026-09-12T10:19:10.012Z",
-  "sourceHash": "63d61bd10e8c8c70560a3b74f9d7dfb47afdc0672e4f53e53ad0cd67642732ff",
+  "version": "20260917T131904Z-68e8542c338c",
+  "publishedAt": "2026-09-17T13:19:04.578Z",
+  "sourceHash": "68e8542c338c2c6d50c89ebc7e61196d9119a2360273a055629a557dfe18cc08",
   "shipments": [
     {
       "id": "shipment-2026-32",
@@ -3087,12 +3087,12 @@
         "lines": [
           "Предоплата на изделие из питона"
         ],
-        "amount": 16314
+        "amount": 15989
       }
     ]
   },
   "meta": {
-    "updatedAt": "2026-09-12T10:19:09.840752+00:00",
+    "updatedAt": "2026-09-17T13:19:04.400739+00:00",
     "source": "excel"
   },
   "productIdRegistry": {
