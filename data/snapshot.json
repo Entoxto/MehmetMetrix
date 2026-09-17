@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "version": "20260917T131904Z-68e8542c338c",
-  "publishedAt": "2026-09-17T13:19:04.578Z",
-  "sourceHash": "68e8542c338c2c6d50c89ebc7e61196d9119a2360273a055629a557dfe18cc08",
+  "version": "20260917T133017Z-1dfc3b913d22",
+  "publishedAt": "2026-09-17T13:30:17.279Z",
+  "sourceHash": "1dfc3b913d2204cc7383cd6eb7dd91a626626353f428e848b15ce6dff483860f",
   "shipments": [
     {
       "id": "shipment-2026-32",
@@ -80,19 +80,25 @@
           "status": "В производстве 🛠️"
         },
         {
-          "overrideName": "Юбка из меха астраган — антрацит (10 шт.)",
+          "overrideName": "Юбка из меха астраган — антрацит (XS-10, S-8, M-2)",
           "productId": "auto-058",
           "price": 190,
-          "sizesUnknown": true,
-          "quantityOverride": 10,
+          "sizes": {
+            "xs": 10,
+            "s": 8,
+            "m": 2
+          },
           "status": "В производстве 🛠️"
         },
         {
-          "overrideName": "Юбка из меха астраган — чёрный (10 шт.)",
+          "overrideName": "Юбка из меха астраган — чёрный (XS-10, S-8, M-2)",
           "productId": "auto-059",
           "price": 190,
-          "sizesUnknown": true,
-          "quantityOverride": 10,
+          "sizes": {
+            "xs": 10,
+            "s": 8,
+            "m": 2
+          },
           "status": "В производстве 🛠️"
         },
         {
@@ -112,11 +118,14 @@
           "status": "В производстве 🛠️"
         },
         {
-          "overrideName": "Юбка из меха астраган — молочный (20 шт.)",
+          "overrideName": "Юбка из меха астраган — молочный (XS-10, S-8, M-2)",
           "productId": "auto-053",
           "price": 190,
-          "sizesUnknown": true,
-          "quantityOverride": 20,
+          "sizes": {
+            "xs": 10,
+            "s": 8,
+            "m": 2
+          },
           "status": "В производстве 🛠️"
         }
       ],
@@ -2923,7 +2932,9 @@
           133
         ],
         "sizes": [
-          "xs"
+          "xs",
+          "s",
+          "m"
         ],
         "materials": {
           "outer": "100% Натуральный мех мериноса",
@@ -3006,7 +3017,11 @@
         "excelRows": [
           129
         ],
-        "sizes": [],
+        "sizes": [
+          "xs",
+          "s",
+          "m"
+        ],
         "materials": {
           "outer": "100% Натуральный мех мериноса",
           "lining": "%70 Acetate %30 Polyester"
@@ -3021,7 +3036,11 @@
         "excelRows": [
           130
         ],
-        "sizes": [],
+        "sizes": [
+          "xs",
+          "s",
+          "m"
+        ],
         "materials": {
           "outer": "100% Натуральный мех мериноса",
           "lining": "%70 Acetate %30 Polyester"
@@ -3092,7 +3111,7 @@
     ]
   },
   "meta": {
-    "updatedAt": "2026-09-17T13:19:04.400739+00:00",
+    "updatedAt": "2026-09-17T13:30:17.106092+00:00",
     "source": "excel"
   },
   "productIdRegistry": {
